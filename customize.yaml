@@ -1,0 +1,29 @@
+# Customize via parent entity
+# customize.yaml
+domain.your_entity_id:
+  miot_local: true        # Force to read and write data in LAN (integrate by account)
+  miot_cloud: true        # Enable miot cloud for entity (read, write, action)
+  miot_cloud_write: true  # Enable miot cloud (only write)
+  miot_cloud_action: true # Enable miot cloud (only action)
+  check_lan: true         # Check LAN connection in cloud mode
+  miio_properties: power,battery # Get miio properties to state attributes
+  miio_cloud_props: prop.power,event.dev_online
+
+# Custom sub entities
+domain.parent_entity_id:
+  sensor_properties: temperature,humidity,illumination # Miot properties
+  binary_sensor_properties: is_volume_muted,any_boolen_property
+  switch_properties: on,power
+  number_properties: volume
+  select_properties: mode
+  fan_properties: mode,fan_level
+  cover_properties: motor_control
+
+camera.your_entity_id:
+  video_attribute: 1   # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
+  keep_streaming: true # Continuously update stream address
+
+domain.your_entity_id_xxxx:
+  interval_seconds: 30 # Seconds between each update state (Requires reload config entry)
+  chunk_properties: 10 # Chunk miot properties on update state (LAN)
+  reverse_state: true  # Reverse the On/Off state of a binary sensor

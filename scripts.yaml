@@ -1,0 +1,21 @@
+new_scriptaa:
+  alias: cameracast
+  sequence:
+  - alias: Cast the Camera
+    service: media_player.play_media
+    data:
+      entity_id: '{{ input_select.chromecast_tv.state }}'
+      media_content_id: '{{ input_select.camera_select.state }}'
+      media_content_type: camera
+  mode: single
+  icon: mdi:cast-variant
+switcherscript:
+  alias: Switcher
+  sequence:
+  - service: switcher_kis.turn_on_with_timer
+    data:
+      timer_minutes: 45
+    target:
+      device_id: 3d9226e0d372160b7307053c6332e5be
+  mode: single
+  icon: mdi:water-boiler-auto

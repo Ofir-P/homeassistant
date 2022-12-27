@@ -1,0 +1,20 @@
+- id: '1672002805360'
+  alias: Zone Notification
+  description: ''
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      notify_device: 11337776bbc7cb4d561c95d059379b78
+      person_entity: person.elian
+      zone_entity: zone.home
+- id: '1672140546661'
+  alias: GitHub Push
+  description: Everyday in 4AM will update the github.
+  trigger:
+  - platform: time
+    at: 04:00:00
+  condition: []
+  action:
+  - service: shell_command.pushupdates_to_github
+    data: {}
+  mode: single
