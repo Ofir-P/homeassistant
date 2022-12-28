@@ -1,0 +1,27 @@
+- sensor:
+    - name: "Average Travel Time S"
+      unit_of_measurement: "min"
+      state: >
+        {% set today_0 = states('sensor.S') | float %}
+        {% set today_1 = states('sensor.s1') | float %}
+        {% set today_2 = states('sensor.s2') | float %}
+        {% set today_3 = states('sensor.s3') | float %}
+        {% set today_4 = states('sensor.s4') | float %}
+        {% set today_5 = states('sensor.s5') | float %}
+        {% set today_6 = states('sensor.s6') | float %}
+        {% set today_7 = states('sensor.s7') | float %}
+        {{ ((today_0 + today_1 + today_2 + today_3 + today_4 + today_5 + today_6 + today_7) / 8) | round(1, default=0) }}
+
+- sensor:
+    - name: "Average Travel Time P"
+      unit_of_measurement: "min"
+      state: >
+        {% set today_P0 = states('sensor.p') | float %}
+        {% set today_P1 = states('sensor.p1') | float %}
+        {% set today_P2 = states('sensor.p2') | float %}
+        {% set today_P3 = states('sensor.p3') | float %}
+        {% set today_P4 = states('sensor.p4') | float %}
+        {% set today_P5 = states('sensor.p5') | float %}
+        {% set today_P6 = states('sensor.p6') | float %}
+        {% set today_P7 = states('sensor.p7') | float %}
+        {{ ((today_P0 + today_P1 + today_P2 + today_P3 + today_P4 + today_P5 + today_P6 + today_P7) / 8) | round(1, default=0) }}

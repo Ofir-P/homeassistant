@@ -18,3 +18,22 @@
   - service: shell_command.pushupdates_to_github
     data: {}
   mode: single
+- id: '1672248739829'
+  alias: Laundry Machine Notification
+  description: ''
+  use_blueprint:
+    path: sbyx/notify-or-do-something-when-an-appliance-like-a-dishwasher-or-washing-machine-finishes.yaml
+    input:
+      power_sensor: sensor.laundry_machine_power
+      actions:
+      - service: notify.mobile_app_elians_iphone
+        data:
+          message: Laundry Machine has finished!
+      - service: notify.mobile_app_ofir_phone
+        data:
+          message: Laundry machine has finished!
+      starting_threshold: 50
+      pre_actions:
+      - service: notify.mobile_app_ofir_phone
+        data:
+          message: Laundry machine started!

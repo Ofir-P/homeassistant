@@ -37,13 +37,7 @@ input_select:
       - camera.chuangmi_ipc016_e927_camera_control
       - camera.chuangmi_ipc016_e7fb_camera_control
 # [=========================]Input Select[=========================]
-group:
-  cams:
-    name: Camera Counter Sensor Page
-    entities:
-      - camera.chuangmi_ipc016_b764_camera_control
-      - camera.chuangmi_ipc016_e927_camera_control
-      - camera.chuangmi_ipc016_e7fb_camera_control
+
 # [=========================]System Monitor[=========================]
 sensor:
   - platform: systemmonitor
@@ -203,6 +197,7 @@ logger:
 # [=========================]Themes[=========================]
 frontend:
   themes: !include_dir_merge_named themes
+
 # [=========================]Themes[=========================]
 
 http:

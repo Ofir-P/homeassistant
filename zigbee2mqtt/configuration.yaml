@@ -1,1 +1,21 @@
 homeassistant: true
+mqtt:
+  server: mqtt://core-mosquitto:1883
+  user: mqtt_user
+  password: mqtt1234
+serial:
+  port: /dev/ttyUSB0
+frontend:
+  port: 8099
+advanced:
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
+device_options:
+  legacy: false
+devices:
+  '0xa4c138058812e73e':
+    friendly_name: Wireless Remote Switch
+  '0xa4c13870da020238':
+    friendly_name: Laundry Machine
+    description: Smart Switch EU
