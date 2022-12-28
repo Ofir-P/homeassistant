@@ -32,7 +32,7 @@ get_properties:
   fields:
     entity_id:
       description: ID of the entity.
-      example: climate.xiaomi_mc5_374e
+      example: climate.ofir_a_c
       required: true
       selector:
         entity:
@@ -61,7 +61,7 @@ set_property:
   fields:
     entity_id:
       description: ID of the entity.
-      example: climate.xiaomi_mc5_374e
+      example: climate.ofir_a_c
       required: true
       selector:
         entity:
@@ -84,7 +84,7 @@ set_miot_property:
   fields:
     entity_id:
       description: ID of the entity.
-      example: climate.xiaomi_mc5_374e
+      example: climate.ofir_a_c
       required: true
       selector:
         entity:

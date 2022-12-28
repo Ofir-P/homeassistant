@@ -214,12 +214,13 @@ http:
 tts:
   - platform: google_translate
 # [=========================]Text to speech[=========================]
+
 automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
 homeassistant:
   customize: !include customize.yaml
-  
+
 shell_command:
-    pushupdates_to_github: /bin/bash pushupdates.sh
+  pushupdates_to_github: /bin/bash pushupdates.sh
