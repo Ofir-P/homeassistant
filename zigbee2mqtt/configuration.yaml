@@ -19,3 +19,5 @@ devices:
   '0xa4c13870da020238':
     friendly_name: Laundry Machine
     description: Smart Switch EU
+  '0x70ac08fffe22f51e':
+    friendly_name: Smart IR Remote Control

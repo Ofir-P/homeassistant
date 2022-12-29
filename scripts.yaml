@@ -1,16 +1,57 @@
-new_scriptaa:
-  alias: cameracast
+camera_play:
+  alias: Play Video on Chromecast
   sequence:
-  - alias: Cast the Camera
-    service: media_player.play_media
+  - service: camera.play_stream
+    data_template:
+      media_player: '{% if is_state("input_select.camera_display", "Bedroom display")
+        %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
+        Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
+        "Office display") %} media_player.mibox4 {% endif %}
+
+        '
+      entity_id: '{% if is_state("input_select.camera_select", "Buiten Camera") %}
+        camera.buiten_camera {% elif is_state("input_select.camera_select", "Binnen
+        Camera") %} camera.binnen_camera {% endif %}
+
+        '
+ir_learn_mode_on:
+  alias: IR Learn Mode On
+  sequence:
+  - service: mqtt.publish
     data:
-      entity_id: '{{ input_select.chromecast_tv.state }}'
-      media_content_id: '{{ input_select.camera_select.state }}'
-      media_content_type: camera
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
   mode: single
-  icon: mdi:cast-variant
-switcherscript:
-  alias: Switcher
+  icon: mdi:remote
+ir_turn_on_off_living_room_tv:
+  alias: IR Turn On/OFF Living Room Tv
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+  mode: single
+  icon: mdi:remote-tv
+'1672322197141':
+  alias: IR Turn ON Living Room AC
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
+  mode: single
+  icon: mdi:air-conditioner
+ir_turn_off_living_room_ac:
+  alias: IR Turn OFF Living Room AC
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
+  mode: single
+  icon: mdi:air-conditioner
+turn_on_switcher_for_45mins:
+  alias: Turn ON Switcher for 45mins
   sequence:
   - service: switcher_kis.turn_on_with_timer
     data:
