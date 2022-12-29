@@ -49,11 +49,6 @@ sensor:
       - type: memory_use_percent
   - platform: authenticated
 
-  - platform: template
-    sensors:
-      cam_count:
-        value_template: "{{ states('group.cams').attributes.entity_id | count }}"
-        friendly_name: "Camera Count"
   # Time
   - platform: time_date
     display_options:
