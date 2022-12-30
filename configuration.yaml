@@ -26,12 +26,7 @@ recorder:
       - sensor.date_time
 
 # [=========================]Sensibo Sensor[=========================]
-template:
-  - sensor:
-      - name: Sensibo_Humidity
-        state: "{{ state_attr('climate.ofir_a_c', 'current_humidity') }}"
-        unit_of_measurement: "%"
-        icon: mdi:water-percent
+
 # [=========================]Sensibo Sensor[=========================]
 # [=========================]Camera's[=========================]
 camera:
@@ -78,6 +73,7 @@ input_select: !include input_select.yaml
 scene: !include scenes.yaml
 sensor: !include sensors.yaml
 group: !include groups.yaml
+template: !include templates.yaml
 
 homeassistant:
   customize: !include customize.yaml
