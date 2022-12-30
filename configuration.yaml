@@ -13,6 +13,18 @@ xiaomi_miot:
     - stream_address
     - motion_video_latest
 # [=========================]Xiaomi Miot[=========================]
+logbook:
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.date_time
+      - sensor.time
+recorder:
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.date_time
+
 # [=========================]Sensibo Sensor[=========================]
 template:
   - sensor:
@@ -45,6 +57,8 @@ logger:
 # [=========================]Themes[=========================]
 frontend:
   themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/hass-hue-icons/hass-hue-icons.js
 
 # [=========================]Themes[=========================]
 
