@@ -1,0 +1,12 @@
+cameras:
+  name: Cameras
+  entities:
+    - camera.chuangmi_ipc016_e7fb_camera_control
+    - camera.chuangmi_ipc016_e927_camera_control
+
+chromecast:
+  name: Chromecast
+  entities:
+    - media_player.mecool_ofir
+    - media_player.mibox4
+    - media_player.mibox4_2

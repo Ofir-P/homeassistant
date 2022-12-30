@@ -32,8 +32,27 @@
       - service: notify.mobile_app_ofir_phone
         data:
           message: Laundry machine has finished!
-      starting_threshold: 50
+      starting_threshold: 35
       pre_actions:
       - service: notify.mobile_app_ofir_phone
         data:
           message: Laundry machine started!
+      starting_hysteresis: 1
+- id: '1672416137952'
+  alias: Low battery level detection & notification for all battery sensors
+  description: ''
+  use_blueprint:
+    path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
+    input:
+      time: '19:00:00'
+      exclude:
+        entity_id: []
+        device_id:
+        - 611a494457823cb15ab854ae5b741ef0
+        - fc87ec384064e20b6a7049f417bf9869
+        - 11337776bbc7cb4d561c95d059379b78
+        - 611a494457823cb15ab854ae5b741ef0
+      actions:
+      - service: notify.mobile_app_ofir_phone
+        data:
+          message: '{{sensors}} has low on battery., please replace it.'

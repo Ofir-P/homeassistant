@@ -51,11 +51,11 @@ ir_turn_off_living_room_ac:
   mode: single
   icon: mdi:air-conditioner
 turn_on_switcher_for_45mins:
-  alias: Turn ON Switcher for 45mins
+  alias: Turn ON Switcher for 60mins
   sequence:
   - service: switcher_kis.turn_on_with_timer
     data:
-      timer_minutes: 45
+      timer_minutes: 58
     target:
       device_id: 3d9226e0d372160b7307053c6332e5be
   mode: single
