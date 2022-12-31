@@ -2,7 +2,7 @@
     - name: "Average Travel Time S"
       unit_of_measurement: "min"
       state: >
-        {% set today_0 = states('sensor.S') | float %}
+        {% set today_0 = states('sensor.s') | float %}
         {% set today_1 = states('sensor.s1') | float %}
         {% set today_2 = states('sensor.s2') | float %}
         {% set today_3 = states('sensor.s3') | float %}

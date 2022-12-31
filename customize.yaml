@@ -3,10 +3,13 @@ camera.chuangmi_ipc016_e7fb_camera_control:
   keep_streaming: true # Continuously update stream address
 
 binary_sensor.zigbee2mqtt_running:
-  entity_picture: /local/zigbee_system.png
+  entity_picture: /local/Logos/zigbee_system.png
 
 binary_sensor.mosquitto_broker_running:
-  entity_picture: /local/mqtt.png
+  entity_picture: /local/Logos/mqtt.png
 
 binary_sensor.cloudflared_running:
-  entity_picture: /local/cloudflare_icon.png
+  entity_picture: /local/Logos/cloudflare_icon.png
+
+binary_sensor.home_assistant_google_drive_backup_running:
+  entity_picture: /local/Logos/Google-Drive-Logo.jpg
