@@ -13,14 +13,18 @@ xiaomi_miot:
     - stream_address
     - motion_video_latest
 # [=========================]Xiaomi Miot[=========================]
+
+
 logbook:
   exclude:
     entities:
       - sensor.time
 
-# [=========================]Sensibo Sensor[=========================]
-
-# [=========================]Sensibo Sensor[=========================]
+alexa_media:
+  accounts:
+    - email: !secret amazon_user
+      password: !secret amazon_password
+      url: amazon.com
 # [=========================]Camera's[=========================]
 camera:
   - platform: generic

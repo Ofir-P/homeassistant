@@ -1,5 +1,9 @@
 camera.chuangmi_ipc016_e7fb_camera_control:
-  video_attribute: 1 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
+  video_attribute: 3 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
+  keep_streaming: true # Continuously update stream address
+
+camera.chuangmi_ipc016_e927_camera_control:
+  video_attribute: 3 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
   keep_streaming: true # Continuously update stream address
 
 binary_sensor.zigbee2mqtt_running:
@@ -12,4 +16,4 @@ binary_sensor.cloudflared_running:
   entity_picture: /local/Logos/cloudflare_icon.png
 
 binary_sensor.home_assistant_google_drive_backup_running:
-  entity_picture: /local/Logos/Google-Drive-Logo.jpg
+  entity_picture: /local/Logos/googledrive.jpg

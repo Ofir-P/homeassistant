@@ -18,7 +18,8 @@
   - service: shell_command.pushupdates_to_github
     data: {}
   mode: single
-- id: '1672248739829'
+- &id001
+  id: '1672248739829'
   alias: Laundry Machine Notification
   description: ''
   use_blueprint:
@@ -34,9 +35,9 @@
           message: Laundry machine has finished!
       starting_threshold: 35
       pre_actions:
-      - service: notify.mobile_app_ofir_phone
+      - service: notify.notify
         data:
-          message: Laundry machine started!
+          message: Laundry machine has started!
       starting_hysteresis: 1
 - id: '1672416137952'
   alias: Low battery level detection & notification for all battery sensors
@@ -56,3 +57,4 @@
       - service: notify.mobile_app_ofir_phone
         data:
           message: '{{sensors}} has low on battery., please replace it.'
+- *id001

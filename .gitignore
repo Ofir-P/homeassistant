@@ -57,3 +57,6 @@ dlib_unknown_faces
 .pc-session
 google*.deb
 .homekit.state
+core.config_entries
+core.config_entries.*
+config_entries.*
