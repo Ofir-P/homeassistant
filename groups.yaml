@@ -10,3 +10,19 @@ chromecast:
     - media_player.mecool_ofir
     - media_player.mibox4
     - media_player.mibox4_2
+
+ac_counter:
+  name: Test
+  entities:
+    - climate.ofir_a_c
+    - switch.switcher_v4_yair_stern
+    - media_player.mibox4_2
+    - binary_sensor.zigbee2mqtt_running
+
+radio:
+  name: Radio
+  entities:
+    - input_select.radio_station
+    - input_select.chromecast_radio
+    - script.radio
+    - input_number.volume_radio

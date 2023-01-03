@@ -13,8 +13,11 @@ xiaomi_miot:
     - stream_address
     - motion_video_latest
 # [=========================]Xiaomi Miot[=========================]
-
-
+# [=========================]Spotcast[=========================]
+spotcast:
+  sp_dc: !secret sp_dc
+  sp_key: !secret sp_key
+# [=========================]Spotcast[=========================]
 logbook:
   exclude:
     entities:
@@ -71,6 +74,7 @@ scene: !include scenes.yaml
 sensor: !include sensors.yaml
 group: !include groups.yaml
 template: !include templates.yaml
+input_number: !include input_number.yaml
 
 homeassistant:
   customize: !include customize.yaml

@@ -31,3 +31,21 @@
       state: "{{ state_attr('climate.ofir_a_c', 'current_humidity') }}"
       unit_of_measurement: "%"
       icon: mdi:water-percent
+
+- sensor:
+    - name: cast group
+      state: >-
+        {{ expand(state_attr('group.chromecast', 'entity_id') )
+          | selectattr('state', 'eq', 'on') 
+          | list 
+          | count
+        }}
+
+- sensor:
+    - name: ac_counter
+      state: >-
+        {{ expand(state_attr('group.ac_counter', 'entity_id') )
+          | selectattr('state', 'eq', 'on') 
+          | list 
+          | count
+        }}

@@ -18,27 +18,6 @@
   - service: shell_command.pushupdates_to_github
     data: {}
   mode: single
-- &id001
-  id: '1672248739829'
-  alias: Laundry Machine Notification
-  description: ''
-  use_blueprint:
-    path: sbyx/notify-or-do-something-when-an-appliance-like-a-dishwasher-or-washing-machine-finishes.yaml
-    input:
-      power_sensor: sensor.laundry_machine_power
-      actions:
-      - service: notify.mobile_app_elians_iphone
-        data:
-          message: Laundry Machine has finished!
-      - service: notify.mobile_app_ofir_phone
-        data:
-          message: Laundry machine has finished!
-      starting_threshold: 35
-      pre_actions:
-      - service: notify.notify
-        data:
-          message: Laundry machine has started!
-      starting_hysteresis: 1
 - id: '1672416137952'
   alias: Low battery level detection & notification for all battery sensors
   description: ''
@@ -57,7 +36,6 @@
       - service: notify.mobile_app_ofir_phone
         data:
           message: '{{sensors}} has low on battery., please replace it.'
-- *id001
 - id: '1672558313040'
   alias: Laundry Machine has started
   description: ''
@@ -109,12 +87,47 @@
       entity_id: input_select.washing_machine_status
   mode: single
 - id: '1672597703705'
-  alias: Water Leakage Notification
+  alias: Water Leakage Kitchen Notification
   description: ''
   trigger:
   - platform: state
     entity_id:
     - binary_sensor.water_leak_sensor_water_leak
+    from: Dry
+    to: Wet
+  condition: []
+  action:
+  - service: notify.notify
+    data:
+      message: ⚠️ Water Leak has been detected in Kitchen ⚠️
+  mode: single
+- alias: Listen Radio
+  trigger:
+  - platform: state
+    entity_id: input_select.radio_station
+  action:
+  - service: script.radio
+  id: 21c6ee4a48b14f26b12118d4302aaeee
+- alias: Set Chromecast Radio Volume
+  trigger:
+    platform: state
+    entity_id: input_number.volume_radio
+  action:
+    service: media_player.volume_set
+    data_template:
+      entity_id: '{% if is_state("input_select.chromecast_radio", "Office room") %}
+        media_player.ofir_s_echo_dot {% elif is_state("input_select.chromecast_radio",
+        "Bedroom") %} media_player.ofir_s_2nd_echo_dot {% endif %}
+
+        '
+      volume_level: '{{  states.input_number.volume_radio.state  }}'
+  id: c85ea318fb9b4016886a6351309b4d6c
+- id: '1672688044345'
+  alias: Water Leakage Bathroom Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
     - binary_sensor.water_leak_sensor2_water_leak
     from: 'off'
     to: 'on'
@@ -122,5 +135,63 @@
   action:
   - service: notify.notify
     data:
-      message: ⚠️ Water Leak has been detected ⚠️
+      message: ⚠️ Water Leak has been detected in Bathroom ⚠️
+  mode: single
+- id: '1672692110951'
+  alias: Switcher Boiler On Notification
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.switcher_v4_yair_stern_power_consumption
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 35
+    above: 5
+  condition:
+  - condition: state
+    entity_id: input_select.switcher_boiler_status
+    state: 'Off'
+  action:
+  - service: notify.notify
+    data:
+      message: "\U0001F6BF Switcher device has been turned ON "
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
+      entity_id: input_select.switcher_boiler_status
+  - service: notify.alexa_media
+    data:
+      target: media_player.ofir_s_echo_dot
+      message: The DUDE IS ON
+  mode: single
+- id: '1672692174596'
+  alias: Switcher Boiler Off Notification
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.switcher_v4_yair_stern_power_consumption
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
+    below: 5
+  condition:
+  - condition: state
+    entity_id: input_select.switcher_boiler_status
+    state: 'On'
+  action:
+  - service: notify.notify
+    data:
+      message: "\U0001F6BF Switcher device has been turned OFF"
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
+      entity_id: input_select.switcher_boiler_status
+  - service: notify.alexa_media
+    data:
+      target: media_player.ofir_s_echo_dot
+      message: The DUDE IS OFF
   mode: single
