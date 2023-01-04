@@ -6,14 +6,14 @@ camera.chuangmi_ipc016_e927_camera_control:
   video_attribute: 3 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
   keep_streaming: true # Continuously update stream address
 
-binary_sensor.zigbee2mqtt_running:
+sensor.zigbee_online:
   entity_picture: /local/Logos/zigbee_system.png
 
-binary_sensor.mosquitto_broker_running:
+sensor.mqtt_online:
   entity_picture: /local/Logos/mqtt.png
 
-binary_sensor.cloudflared_running:
+sensor.cloudflare_online:
   entity_picture: /local/Logos/cloudflare_icon.png
 
-binary_sensor.home_assistant_google_drive_backup_running:
+sensor.google_drive_online:
   entity_picture: /local/Logos/googledrive.jpg
