@@ -60,3 +60,6 @@ google*.deb
 core.config_entries
 core.config_entries.*
 config_entries.*
+token_extractor
+token_extractor.*
+/token_extractor

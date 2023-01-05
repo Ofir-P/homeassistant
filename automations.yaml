@@ -26,7 +26,8 @@
     input:
       time: '19:00:00'
       exclude:
-        entity_id: []
+        entity_id:
+        - sensor.elians_iphone_battery_state_2
         device_id:
         - 611a494457823cb15ab854ae5b741ef0
         - fc87ec384064e20b6a7049f417bf9869
@@ -93,8 +94,8 @@
   - platform: state
     entity_id:
     - binary_sensor.water_leak_sensor_water_leak
-    from: Dry
-    to: Wet
+    from: 'off'
+    to: 'on'
   condition: []
   action:
   - service: notify.notify
@@ -174,7 +175,7 @@
     entity_id: sensor.switcher_v4_yair_stern_power_consumption
     for:
       hours: 0
-      minutes: 3
+      minutes: 2
       seconds: 0
     below: 5
   condition:
@@ -190,8 +191,32 @@
       option: 'Off'
     target:
       entity_id: input_select.switcher_boiler_status
-  - service: notify.alexa_media
-    data:
-      target: media_player.ofir_s_echo_dot
-      message: The DUDE IS OFF
+  - if:
+    - condition: template
+      value_template: '{{ states(''sensor.time'') | int < 1 or states(''sensor.time'')
+        | int > 7 }}'
+    then:
+    - service: notify.alexa_media
+      data:
+        target: media_player.ofir_s_echo_dot
+        message: The DUDE IS OFF
   mode: single
+- id: '1672863829342'
+  alias: Sensor Light
+  description: ''
+  use_blueprint:
+    path: Blackshome/sensor-light.yaml
+    input:
+      motion_trigger:
+      - binary_sensor.motion_sensor_occupancy
+      light_switch:
+        entity_id: light.xiaomi_yeelink
+      end_scenes: []
+      time_delay: 1.5
+      include_bypass: bypass_disabled
+      ambient_light_options: ambient_light_option_disabled
+      include_ambient: ambient_disabled
+      include_time: time_enabled
+      after_time: 01:00:00
+      before_time: 07:00:00
+      include_sun: sun_disabled
