@@ -17,3 +17,23 @@ sensor.cloudflare_online:
 
 sensor.google_drive_online:
   entity_picture: /local/Logos/googledrive.jpg
+
+sensor.plex_online:
+  entity_picture: /local/Logos/plex-removebg.png
+
+sensor.chromecastcounter:
+  entity_picture: /local/Logos/chromecast-removebg-preview.png
+
+sensor.lightscounter:
+  entity_picture: /local/Logos/lightbulb-removebg-preview.png
+
+sensor.camerascounter:
+  entity_picture: /local/Logos/camera-removebg-preview.png
+
+sensor.tautulli_online:
+  entity_picture: /local/Logos/Tautulli-removebg-preview.png
+sensor.rf433counter:
+  entity_picture: /local/Logos/rf433.png
+
+sensor.tempcounter:
+  entity_picture: /local/Logos/temp.png

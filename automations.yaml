@@ -162,9 +162,8 @@
       option: 'On'
     target:
       entity_id: input_select.switcher_boiler_status
-  - service: notify.alexa_media
+  - service: notify.alexa_media_everywhere
     data:
-      target: media_player.ofir_s_echo_dot
       message: The DUDE IS ON
   mode: single
 - id: '1672692174596'
@@ -196,9 +195,8 @@
       value_template: '{{ states(''sensor.time'') | int < 1 or states(''sensor.time'')
         | int > 7 }}'
     then:
-    - service: notify.alexa_media
+    - service: notify.alexa_media_everywhere
       data:
-        target: media_player.ofir_s_echo_dot
         message: The DUDE IS OFF
   mode: single
 - id: '1672863829342'

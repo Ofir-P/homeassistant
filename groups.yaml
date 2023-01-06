@@ -1,8 +1,8 @@
 cameras:
   name: Cameras
   entities:
-    - camera.chuangmi_ipc016_e7fb_camera_control
-    - camera.chuangmi_ipc016_e927_camera_control
+    - switch.chuangmi_ipc016_e927_switch_status
+    - switch.chuangmi_ipc016_e7fb_switch_status
 
 chromecast:
   name: Chromecast
@@ -11,13 +11,22 @@ chromecast:
     - media_player.mibox4
     - media_player.mibox4_2
 
-ac_counter:
-  name: Test
+lights:
+  name: Lights
   entities:
-    - climate.ofir_a_c
-    - switch.switcher_v4_yair_stern
-    - media_player.mibox4_2
-    - binary_sensor.zigbee2mqtt_running
+    - light.xiaomi_yeelink
+
+rf433:
+  name: RF433
+  entities:
+    - switch.smart_ir_remote_control_living_room
+    - sensor.wireless_remote_switch_battery
+
+temp:
+  name: Tempature & Humidity
+  entities:
+    - switch.smart_ir_remote_control_living_room
+    - sensor.wireless_remote_switch_battery
 
 radio:
   name: Radio

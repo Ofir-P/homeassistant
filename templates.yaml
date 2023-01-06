@@ -33,22 +33,30 @@
       icon: mdi:water-percent
 
 - sensor:
-    - name: cast group
+    - name: chromecastcounter
       state: >-
-        {{ expand(state_attr('group.chromecast', 'entity_id') )
-          | selectattr('state', 'eq', 'on') 
-          | list 
-          | count
-        }}
-
+        {% set group = expand('group.chromecast') %}
+        {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
 - sensor:
-    - name: ac_counter
+    - name: camerascounter
       state: >-
-        {{ expand(state_attr('group.ac_counter', 'entity_id') )
-          | selectattr('state', 'eq', 'on') 
-          | list 
-          | count
-        }}
+        {% set group = expand('group.cameras') %}
+        {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
+- sensor:
+    - name: lightscounter
+      state: >-
+        {% set group = expand('group.lights') %}
+        {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
+- sensor:
+    - name: rf433counter
+      state: >-
+        {% set group = expand('group.rf433') %}
+        {{ group | count }}/{{ group | list | count }}
+- sensor:
+    - name: tempcounter
+      state: >-
+        {% set group = expand('group.temp') %}
+        {{ group | count }}/{{ group | list | count }}
 
 - sensor:
     - name: Zigbee Online
@@ -71,3 +79,13 @@
         {{ iif(is_state('binary_sensor.home_assistant_google_drive_backup_running', 'on'), 'Online', 'Offline') }}
       availability: >
         {{ states('binary_sensor.home_assistant_google_drive_backup_running') not in ['unavailable', 'unknown'] }}
+    - name: Plex Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_plex', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_plex') not in ['unavailable', 'unknown'] }}
+    - name: Tautulli Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_tautulli', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_tautulli') not in ['unavailable', 'unknown'] }}
