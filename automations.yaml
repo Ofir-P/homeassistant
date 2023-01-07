@@ -147,7 +147,7 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 35
+      seconds: 20
     above: 5
   condition:
   - condition: state
@@ -162,9 +162,15 @@
       option: 'On'
     target:
       entity_id: input_select.switcher_boiler_status
-  - service: notify.alexa_media_everywhere
-    data:
-      message: The DUDE IS ON
+  - if:
+    - alias: Time 1~7
+      condition: time
+      after: 07:00:00
+      before: 01:00:00
+    then:
+    - service: notify.alexa_media_everywhere
+      data:
+        message: The DUDE IS ON
   mode: single
 - id: '1672692174596'
   alias: Switcher Boiler Off Notification
@@ -174,8 +180,8 @@
     entity_id: sensor.switcher_v4_yair_stern_power_consumption
     for:
       hours: 0
-      minutes: 2
-      seconds: 0
+      minutes: 0
+      seconds: 55
     below: 5
   condition:
   - condition: state
@@ -191,9 +197,10 @@
     target:
       entity_id: input_select.switcher_boiler_status
   - if:
-    - condition: template
-      value_template: '{{ states(''sensor.time'') | int < 1 or states(''sensor.time'')
-        | int > 7 }}'
+    - alias: Time 1~7
+      condition: time
+      after: 07:00:00
+      before: 01:00:00
     then:
     - service: notify.alexa_media_everywhere
       data:
