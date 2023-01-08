@@ -168,9 +168,14 @@
       after: 07:00:00
       before: 01:00:00
     then:
-    - service: notify.alexa_media_everywhere
+    - service: notify.alexa_media
       data:
-        message: The DUDE IS ON
+        message: The Dude is on
+        data:
+          type: tts
+        target:
+        - media_player.ofir_s_echo_dot
+        - media_player.ofir_s_2nd_echo_dot
   mode: single
 - id: '1672692174596'
   alias: Switcher Boiler Off Notification
@@ -202,9 +207,14 @@
       after: 07:00:00
       before: 01:00:00
     then:
-    - service: notify.alexa_media_everywhere
+    - service: notify.alexa_media
       data:
-        message: The DUDE IS OFF
+        message: The Dude is off
+        data:
+          type: tts
+        target:
+        - media_player.ofir_s_echo_dot
+        - media_player.ofir_s_2nd_echo_dot
   mode: single
 - id: '1672863829342'
   alias: Sensor Light

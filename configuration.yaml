@@ -68,8 +68,7 @@ logger:
   default: info
   logs:
     custom_components.authenticated: debug
-# [=========================]Authenticated[=========================]
-
+    # [=========================]Authenticated[=========================]
 # [=========================]Themes[=========================]
 frontend:
   themes: !include_dir_merge_named themes
