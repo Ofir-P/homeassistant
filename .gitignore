@@ -63,3 +63,5 @@ config_entries.*
 token_extractor
 token_extractor.*
 /token_extractor
+/share
+share

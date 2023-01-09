@@ -3,20 +3,20 @@ send_command:
   fields:
     entity_id:
       description: Name of the miio entity.
-      example: "light.yeelight_living_e92c"
+      example: "light.xiaomi_yeelink"
     method:
       description: Method of the command.
       example: set_power
     params:
       description: Params for the method.
-      example: ['on']
+      example: ["on"]
 
 set_property:
   description: Set miot property.
   fields:
     entity_id:
       description: Name of the entity.
-      example: "light.yeelink_fancl1_45f3"
+      example: "light.xiaomi_yeelink"
     field:
       description: Field of property.
       example: power
@@ -29,7 +29,7 @@ light_set_scene:
   fields:
     entity_id:
       description: Name of the light entity.
-      example: "light.yeelight_living_e92c"
+      example: "light.xiaomi_yeelink"
     scene:
       description: >+
         Number of the scene, between 1 and 8.
@@ -52,7 +52,7 @@ light_set_delayed_turn_off:
   fields:
     entity_id:
       description: Name of the light entity.
-      example: "light.yeelight_living_e92c"
+      example: "light.xiaomi_yeelink"
     time_period:
       description: Time period for the delayed turn off.
       example: "120, '2:00', {'minutes': 5}"

@@ -28,11 +28,8 @@
       exclude:
         entity_id:
         - sensor.elians_iphone_battery_state_2
-        device_id:
-        - 611a494457823cb15ab854ae5b741ef0
-        - fc87ec384064e20b6a7049f417bf9869
-        - 11337776bbc7cb4d561c95d059379b78
-        - 611a494457823cb15ab854ae5b741ef0
+        - sensor.elians_iphone_battery_level
+        - sensor.ofir_phone_battery_level
       actions:
       - service: notify.mobile_app_ofir_phone
         data:
@@ -227,11 +224,11 @@
       light_switch:
         entity_id: light.xiaomi_yeelink
       end_scenes: []
-      time_delay: 1.5
+      time_delay: 1
       include_bypass: bypass_disabled
       ambient_light_options: ambient_light_option_disabled
       include_ambient: ambient_disabled
       include_time: time_enabled
-      after_time: 01:00:00
-      before_time: 07:00:00
+      after_time: 00:15:00
+      before_time: 06:45:00
       include_sun: sun_disabled

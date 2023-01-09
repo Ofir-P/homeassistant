@@ -14,7 +14,8 @@ chromecast:
 lights:
   name: Lights
   entities:
-    - light.xiaomi_yeelink
+    - light.xiaomi_yeelink #Xiaomi Light Hallway
+    - switch.bot_8552 #SwitchBot Bedroom
 
 rf433:
   name: RF433
@@ -25,8 +26,8 @@ rf433:
 temp:
   name: Tempature & Humidity
   entities:
-    - switch.smart_ir_remote_control_living_room
-    - sensor.wireless_remote_switch_battery
+    - sensor.sensibo_humidity
+    - sensor.temperature_humidity_sensor_temperature
 
 radio:
   name: Radio
