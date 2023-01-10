@@ -48,7 +48,7 @@ glances:
 # [=========================]trakt.tv[=========================]
 trakt_tv:
   language: en # Prefered language for movie/show title
-  timezone: Asia/Tel_Aviv # Prefered timezone
+  timezone: Europe/Paris
   sensors:
     upcoming:
       show:

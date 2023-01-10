@@ -30,3 +30,6 @@ devices:
     description: Bathroom
   '0xa4c138a831c3931c':
     friendly_name: Motion Sensor
+  '0xa4c138cf6f460fd1':
+    friendly_name: AC Bedroom
+    description: Smart Switch EU
