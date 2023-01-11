@@ -16,27 +16,3 @@ camera_display:
     - "Office display"
   initial: "Office display"
   icon: mdi:camera
-
-chromecast_radio:
-  name: 'Select Speakers:'
-  options:
-    - Office room
-    - Bedroom
-  initial: Office room
-  icon: mdi:speaker-wireless
-
-radio_station:
-  name: 'Select Radio Station:'
-  options:
-    - GalGalatz
-    - Galatz
-    - Radius 100FM
-    - Echo 99FM
-    - Kan 88FM
-    - 103FM
-    - Lev Hamedina 91FM
-    - Reshet Gimel
-    - Radio Darom
-    - Kol Hayam Haadom 102FM
-  initial: GalGalatz
-  icon: mdi:radio

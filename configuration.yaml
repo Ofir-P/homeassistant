@@ -47,7 +47,7 @@ glances:
 # [=========================]Glances[=========================]
 # [=========================]trakt.tv[=========================]
 trakt_tv:
-  language: en # Prefered language for movie/show title
+  language: en
   timezone: Europe/Paris
   sensors:
     upcoming:
@@ -89,7 +89,6 @@ scene: !include scenes.yaml
 sensor: !include sensors.yaml
 group: !include groups.yaml
 template: !include templates.yaml
-input_number: !include input_number.yaml
 
 homeassistant:
   customize: !include customize.yaml

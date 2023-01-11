@@ -12,8 +12,8 @@ sensor.zigbee_online:
 sensor.mqtt_online:
   entity_picture: /local/Logos/mqtt.png
 
-sensor.cloudflare_online:
-  entity_picture: /local/Logos/cloudflare_icon.png
+sensor.uptime_kuma_online:
+  entity_picture: /local/Logos/uptimekuma.png
 
 sensor.google_drive_online:
   entity_picture: /local/Logos/googledrive.jpg

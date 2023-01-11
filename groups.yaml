@@ -22,17 +22,14 @@ rf433:
   entities:
     - switch.smart_ir_remote_control_living_room
     - sensor.wireless_remote_switch_battery
+    - sensor.bedroom_smart_ir_remote_control_battery
 
 temp:
   name: Tempature & Humidity
   entities:
     - sensor.sensibo_humidity
     - sensor.temperature_humidity_sensor_temperature
-
-radio:
-  name: Radio
-  entities:
-    - input_select.radio_station
-    - input_select.chromecast_radio
-    - script.radio
-    - input_number.volume_radio
+    - sensor.hallway_temperature_sensor_temperature
+    - sensor.kitchen_temperature_sensor_temperature
+    - sensor.bathroom_temperature_sensor_temperature
+    - sensor.office_temperature_sensor_temperature

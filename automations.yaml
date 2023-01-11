@@ -99,27 +99,6 @@
     data:
       message: ⚠️ Water Leak has been detected in Kitchen ⚠️
   mode: single
-- alias: Listen Radio
-  trigger:
-  - platform: state
-    entity_id: input_select.radio_station
-  action:
-  - service: script.radio
-  id: 21c6ee4a48b14f26b12118d4302aaeee
-- alias: Set Chromecast Radio Volume
-  trigger:
-    platform: state
-    entity_id: input_number.volume_radio
-  action:
-    service: media_player.volume_set
-    data_template:
-      entity_id: '{% if is_state("input_select.chromecast_radio", "Office room") %}
-        media_player.ofir_s_echo_dot {% elif is_state("input_select.chromecast_radio",
-        "Bedroom") %} media_player.ofir_s_2nd_echo_dot {% endif %}
-
-        '
-      volume_level: '{{  states.input_number.volume_radio.state  }}'
-  id: c85ea318fb9b4016886a6351309b4d6c
 - id: '1672688044345'
   alias: Water Leakage Bathroom Notification
   description: ''

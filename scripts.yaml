@@ -1,98 +1,105 @@
 camera_play:
   alias: Play Video on Chromecast
   sequence:
-    - service: camera.play_stream
-      data_template:
-        media_player:
-          '{% if is_state("input_select.camera_display", "Bedroom display")
-          %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
-          Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
-          "Office display") %} media_player.mibox4 {% endif %}
+  - service: camera.play_stream
+    data_template:
+      media_player: '{% if is_state("input_select.camera_display", "Bedroom display")
+        %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
+        Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
+        "Office display") %} media_player.mibox4 {% endif %}
 
-          '
-        entity_id:
-          '{% if is_state("input_select.camera_select", "Buiten Camera") %}
-          switch.chuangmi_ipc016_e927_switch_status {% elif is_state("input_select.camera_select", "Binnen
-          Camera") %} switch.chuangmi_ipc016_e7fb_switch_status {% endif %} '
+        '
+      entity_id: '{% if is_state("input_select.camera_select", "Buiten Camera") %}
+        switch.chuangmi_ipc016_e927_switch_status {% elif is_state("input_select.camera_select",
+        "Binnen Camera") %} switch.chuangmi_ipc016_e7fb_switch_status {% endif %} '
 ir_learn_mode_on:
   alias: IR Learn Mode On
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"learn_ir_code":"ON"}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
   mode: single
   icon: mdi:remote
 ir_turn_on_off_living_room_tv:
   alias: IR Turn On/OFF Living Room Tv
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
   mode: single
   icon: mdi:remote-tv
-"1672322197141":
+'1672322197141':
   alias: IR Turn ON Living Room AC
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
   mode: single
   icon: mdi:air-conditioner
 ir_turn_off_living_room_ac:
   alias: IR Turn OFF Living Room AC
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
   mode: single
   icon: mdi:air-conditioner
 turn_on_switcher_for_45mins:
   alias: Turn ON Switcher for 60mins
   sequence:
-    - service: switcher_kis.turn_on_with_timer
-      data:
-        timer_minutes: 58
-      target:
-        device_id: 3d9226e0d372160b7307053c6332e5be
+  - service: switcher_kis.turn_on_with_timer
+    data:
+      timer_minutes: 58
+    target:
+      device_id: 3d9226e0d372160b7307053c6332e5be
   mode: single
   icon: mdi:water-boiler-auto
-radio:
-  alias: Play Radio on Chromecast Audio
-  sequence:
-    - service: media_player.volume_set
-      data_template:
-        entity_id:
-          "{% if is_state('input_select.chromecast_radio', 'Office room') %}
-          media_player.ofir_s_echo_dot {% elif is_state('input_select.chromecast_radio',
-          'Bedroom') %} media_player.ofir_s_2nd_echo_dot {% endif %}"
-        volume_level: "{{  states.input_number.volume_radio.state  }}"
-
-    - service: media_player.media_stop
-      data_template:
-        entity_id:
-          "{% if is_state('input_select.chromecast_radio', 'Office room') %}
-          media_player.ofir_s_echo_dot {% elif is_state('input_select.chromecast_radio',
-          'Bedroom') %} media_player.ofir_s_2nd_echo_dot {% endif %}"
-
-    - service: media_player.play_media
-      data_template:
-        entity_id:
-          "{% if is_state('input_select.chromecast_radio', 'Office room') %}
-          media_player.ofir_s_echo_dot {% elif is_state('input_select.chromecast_radio',
-          'Bedroom') %} media_player.ofir_s_2nd_echo_dot {% endif %}"
-        media_content_id: "{% if is_state('input_select.radio_station', 'GalGalatz') %} http://player.gl.bynetcdn.com/Redirector/glz/glglz/ICE-live {% elif is_state('input_select.radio_station', 'Galatz') %} http://player.gl.bynetcdn.com/Redirector/glz/glz/ICE-live {% elif is_state('input_select.radio_station', 'Radius 100FM') %} http://100fm.streamgates.net/Radios100Fm {% elif is_state('input_select.radio_station', 'Echo 99FM') %} http://99.livecdn.biz/99fm_aac {% elif is_state('input_select.radio_station', 'Kan 88FM') %} http://radiocast-rr-d.vidnt.com/ipbc_IPBC88LAM {% elif is_state('input_select.radio_station', '103FM') %} http://103fm.live.streamgates.net/103fm_live/1multix/icecast.audio {% elif is_state('input_select.radio_station', 'Lev Hamedina 91FM') %} http://gb92.multix-technologies.com/Lev91Fm {% elif is_state('input_select.radio_station', 'Reshet Gimel') %} http://radiocast-rr-d.vidnt.com/ipbc_IPBCgimmelLAM {% elif is_state('input_select.radio_station', 'Radio Darom') %} http://audio-darom.ecast.co.il:9000/darom97fm {% elif is_state('input_select.radio_station', 'Kol Hayam Haadom 102FM') %} http://eilat.cdnwz.net/102fm {% endif %}"
-        media_content_type: audio/mp4
-
 turn_off_bedroom_light:
   alias: Turn OFF Bedroom Light
   sequence:
-    - type: turn_off
-      device_id: afb33500a8d79e33ccc9290dae617155
-      entity_id: switch.bot_8552
-      domain: switch
+  - type: turn_off
+    device_id: afb33500a8d79e33ccc9290dae617155
+    entity_id: switch.bot_8552
+    domain: switch
   mode: single
   icon: hue:bulb-br30
+ir_learn_mode_on_bedroom:
+  alias: IR Learn Mode On (Bedroom)
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
+  mode: single
+  icon: mdi:remote
+ir_turn_on_bedroom_ac:
+  alias: 'IR Turn ON Bedroom AC '
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B2gj0RFAAqYGgAPgBwGAFwCCoAeAD8ABQA9AAcAH4AcBQBfAA+AvAUA/4DcB4DtD4AcBQFNAA+AfAcArwAfgBwFAF+ALAwdAAkACQAJAAg=="}'
+  mode: single
+  icon: mdi:air-conditioner
+ir_turn_on_off_bedroom_tv:
+  alias: IR Turn On/OFF Bedroom TV
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+  mode: single
+  icon: mdi:remote-tv
+ir_turn_off_bedroom_ac:
+  alias: IR Turn OFF Bedroom AC
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
+  mode: single
+  icon: mdi:air-conditioner

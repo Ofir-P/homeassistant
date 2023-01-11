@@ -69,11 +69,11 @@
         {{ iif(is_state('binary_sensor.mosquitto_broker_running', 'on'), 'Online', 'Offline') }}
       availability: >
         {{ states('binary_sensor.mosquitto_broker_running') not in ['unavailable', 'unknown'] }}
-    - name: Cloudflare Online
+    - name: Uptime Kuma Online
       state: >
-        {{ iif(is_state('binary_sensor.cloudflared_running', 'on'), 'Online', 'Offline') }}
+        {{ iif(is_state('binary_sensor.uptime_kuma_running', 'on'), 'Online', 'Offline') }}
       availability: >
-        {{ states('binary_sensor.cloudflared_running') not in ['unavailable', 'unknown'] }}
+        {{ states('binary_sensor.uptime_kuma_running') not in ['unavailable', 'unknown'] }}
     - name: Google Drive Online
       state: >
         {{ iif(is_state('binary_sensor.home_assistant_google_drive_backup_running', 'on'), 'Online', 'Offline') }}
