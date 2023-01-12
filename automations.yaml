@@ -211,3 +211,67 @@
       after_time: 00:15:00
       before_time: 06:45:00
       include_sun: sun_disabled
+- id: '1673446146273'
+  alias: Bedroom AC Shutdown
+  description: Will close the AC if the AC is on for 1.5 hours between 1am to 5am
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.bedroom_ac_status
+    from: 'On'
+    for:
+      hours: 1
+      minutes: 30
+      seconds: 0
+  condition:
+  - condition: time
+    before: 05:00:00
+    after: 01:00:00
+  action:
+  - service: script.ir_turn_off_bedroom_ac
+    data: {}
+  mode: single
+- id: '1673469552878'
+  alias: 'Helper: Set Bedroom AC Status to On'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.ac_bedroom_power
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    above: 5
+  condition:
+  - condition: state
+    entity_id: input_select.bedroom_ac_status
+    state: 'Off'
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
+      entity_id: input_select.bedroom_ac_status
+  mode: single
+- id: '1673469610479'
+  alias: 'Helper: Set Bedroom AC Status to Off'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.ac_bedroom_power
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 30
+    below: 4
+  condition:
+  - condition: state
+    entity_id: input_select.bedroom_ac_status
+    state: 'On'
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
+      entity_id: input_select.bedroom_ac_status
+  mode: single
