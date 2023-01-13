@@ -1,7 +1,7 @@
 cameras:
   name: Cameras
   entities:
-    - switch.chuangmi_ipc016_e927_switch_status
+    - camera.living_room_sub
     - switch.chuangmi_ipc016_e7fb_switch_status
 
 chromecast:

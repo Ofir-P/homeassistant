@@ -28,19 +28,6 @@ alexa_media:
     - email: !secret amazon_user
       password: !secret amazon_password
       url: amazon.com
-# [=========================]Camera's[=========================]
-camera:
-  - platform: generic
-    name: Yair Stern 22 - Bedroom & Kitchen Camera
-    still_image_url: http://192.xxxxxxx/jpg/image.jpg
-    stream_source: rtsp://192.xxxxxxx:554/11
-
-  - platform: generic
-    name: Yair Stern 22 - Main Door Camera
-    still_image_url: http://192.xxxxxxxx/jpg/image.jpg
-    stream_source: rtsp://192.xxxxxxxx.44:554/11
-
-# [=========================]Camera's[=========================]
 # [=========================]Glances[=========================]
 glances:
   - host: 10.0.0.46

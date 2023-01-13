@@ -218,15 +218,24 @@
   - platform: state
     entity_id:
     - input_select.bedroom_ac_status
-    from: 'On'
     for:
       hours: 1
       minutes: 30
       seconds: 0
+    to: 'On'
+  - platform: time
+    at: 01:01:00
   condition:
   - condition: time
     before: 05:00:00
     after: 01:00:00
+  - condition: state
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 30
+    entity_id: input_select.bedroom_ac_status
+    state: 'On'
   action:
   - service: script.ir_turn_off_bedroom_ac
     data: {}
