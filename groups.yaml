@@ -30,6 +30,5 @@ temp:
     - sensor.sensibo_humidity
     - sensor.temperature_humidity_sensor_temperature
     - sensor.hallway_temperature_sensor_temperature
-    - sensor.kitchen_temperature_sensor_temperature
     - sensor.bathroom_temperature_sensor_temperature
     - sensor.office_temperature_sensor_temperature

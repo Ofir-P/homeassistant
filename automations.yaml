@@ -6,7 +6,7 @@
     input:
       notify_device: 11337776bbc7cb4d561c95d059379b78
       person_entity: person.elian
-      zone_entity: zone.home
+      zone_entity: zone.house
 - id: '1672140546661'
   alias: GitHub Push
   description: Everyday in 4AM will update the github.
@@ -211,35 +211,6 @@
       after_time: 00:15:00
       before_time: 06:45:00
       include_sun: sun_disabled
-- id: '1673446146273'
-  alias: Bedroom AC Shutdown
-  description: Will close the AC if the AC is on for 1.5 hours between 1am to 5am
-  trigger:
-  - platform: state
-    entity_id:
-    - input_select.bedroom_ac_status
-    for:
-      hours: 1
-      minutes: 30
-      seconds: 0
-    to: 'On'
-  - platform: time
-    at: 01:01:00
-  condition:
-  - condition: time
-    before: 05:00:00
-    after: 01:00:00
-  - condition: state
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 30
-    entity_id: input_select.bedroom_ac_status
-    state: 'On'
-  action:
-  - service: script.ir_turn_off_bedroom_ac
-    data: {}
-  mode: single
 - id: '1673469552878'
   alias: 'Helper: Set Bedroom AC Status to On'
   description: ''
@@ -283,4 +254,25 @@
       option: 'Off'
     target:
       entity_id: input_select.bedroom_ac_status
+  mode: single
+- id: '1673736190655'
+  alias: AC Bedroom OFF
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.bedroom_ac_status
+    to: 'On'
+  condition:
+  - condition: time
+    before: 05:30:00
+    after: 01:00:00
+  action:
+  - delay:
+      hours: 1
+      minutes: 30
+      seconds: 0
+      milliseconds: 0
+  - service: script.ir_turn_off_bedroom_ac
+    data: {}
   mode: single
