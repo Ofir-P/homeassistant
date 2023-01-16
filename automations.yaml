@@ -276,3 +276,18 @@
   - service: script.ir_turn_off_bedroom_ac
     data: {}
   mode: single
+- id: '1673808016982'
+  alias: Grabbr
+  description: ''
+  trigger:
+  - platform: time
+    at: 01:00:00
+    alias: At 1:00 am
+  - platform: state
+    entity_id:
+    - input_select.bedroom_ac_status
+    to: 'On'
+    alias: Bedroom A/C turned on
+  condition: []
+  action: []
+  mode: single

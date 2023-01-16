@@ -89,3 +89,33 @@
         {{ iif(is_state('sensor.uptimekuma_tautulli', 'up'), 'Online', 'Offline') }}
       availability: >
         {{ states('sensor.uptimekuma_tautulli') not in ['unavailable', 'unknown'] }}
+    - name: Ubuntu Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_home_assistant_main', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_home_assistant_main') not in ['unavailable', 'unknown'] }}
+    - name: qBitTorrent Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_qbittorrent', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_qbittorrent') not in ['unavailable', 'unknown'] }}
+    - name: Radarr Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_radarr', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_radarr') not in ['unavailable', 'unknown'] }}
+    - name: Sonarr Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_sonarr', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_sonarr') not in ['unavailable', 'unknown'] }}
+    - name: Ombi Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_ombi', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_ombi') not in ['unavailable', 'unknown'] }}
+    - name: Prowlarr Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_prowlarr', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_prowlarr') not in ['unavailable', 'unknown'] }}
