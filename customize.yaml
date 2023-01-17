@@ -5,48 +5,54 @@ camera.chuangmi_ipc016_e7fb_camera_control:
 camera.chuangmi_ipc016_e927_camera_control:
   video_attribute: 3 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
   keep_streaming: true # Continuously update stream address
-#Zigbee
+# Zigbee
 sensor.zigbee_online:
   entity_picture: /local/Logos/zigbee_system.png
-#MQTT
+# MQTT
 sensor.mqtt_online:
   entity_picture: /local/Logos/mqtt.png
-#Uptime Kuma
+# Uptime Kuma
 sensor.uptime_kuma_online:
   entity_picture: /local/Logos/uptimekuma.png
-#Google Drive
+# Google Drive
 sensor.google_drive_online:
   entity_picture: /local/Logos/googledrive.jpg
-#Plex
+# Plex
 sensor.plex_online:
   entity_picture: /local/Logos/plex-removebg.png
-#Chromecast
+# Chromecast
 sensor.chromecastcounter:
   entity_picture: /local/Logos/chromecast-removebg-preview.png
-#Lightbulb
+# Lightbulb
 sensor.lightscounter:
   entity_picture: /local/Logos/lightbulb-removebg-preview.png
-#Camera
+# Camera
 sensor.camerascounter:
   entity_picture: /local/Logos/camera-removebg-preview.png
-#Ubuntu
+# Ubuntu
 sensor.ubuntu_online:
   entity_picture: /local/Logos/obuntu.png
-#qBitTorrent
+# qBitTorrent
 sensor.qBitTorrent_online:
   entity_picture: /local/Logos/qbittorrent.png
+# Radarr
 sensor.radarr_online:
   entity_picture: /local/Logos/radarr.png
+# Sonarr
 sensor.sonarr_online:
   entity_picture: /local/Logos/sonarr.png
+# Ombi
 sensor.ombi_online:
   entity_picture: /local/Logos/ombi.png
+# Prowlarr
 sensor.prowlarr_online:
   entity_picture: /local/Logos/prowlarr.png
+# Tautulli
 sensor.tautulli_online:
   entity_picture: /local/Logos/Tautulli-removebg-preview.png
+# RF433
 sensor.rf433counter:
   entity_picture: /local/Logos/rf433.png
-
+# Temp Counter
 sensor.tempcounter:
   entity_picture: /local/Logos/temp.png

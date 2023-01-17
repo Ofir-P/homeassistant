@@ -144,6 +144,6 @@
 # [=========================]System Monitor[=========================]
 
 - platform: qbittorrent
-  url: "http://10.0.0.46:8080"
+  url: "http://10.0.0.53:8080"
   username: !secret qbittorrent_user
   password: !secret qbittorrent_pass

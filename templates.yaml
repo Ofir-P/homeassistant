@@ -1,3 +1,4 @@
+# Waze Integration
 - sensor:
     - name: "Average Travel Time S"
       unit_of_measurement: "min"
@@ -26,12 +27,20 @@
         {% set today_P7 = states('sensor.p7') | float %}
         {{ ((today_P0 + today_P1 + today_P2 + today_P3 + today_P4 + today_P5 + today_P6 + today_P7) / 8) | round(1, default=0) }}
 
+# Sensibo
 - sensor:
-    - name: Sensibo_Humidity
+    - name: Sensibo Humidity
       state: "{{ state_attr('climate.ofir_a_c', 'current_humidity') }}"
       unit_of_measurement: "%"
       icon: mdi:water-percent
 
+- sensor:
+    - name: Sensibo Tempature
+      state: "{{ state_attr('climate.ofir_a_c', 'current_temperature') }}"
+      unit_of_measurement: "°C"
+      icon: mdi:thermometer
+
+# Counters
 - sensor:
     - name: chromecastcounter
       state: >-
@@ -58,6 +67,7 @@
         {% set group = expand('group.temp') %}
         {{ group | count }}/{{ group | list | count }}
 
+# Online States
 - sensor:
     - name: Zigbee Online
       state: >

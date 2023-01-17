@@ -138,20 +138,6 @@
       option: 'On'
     target:
       entity_id: input_select.switcher_boiler_status
-  - if:
-    - alias: Time 1~7
-      condition: time
-      after: 07:00:00
-      before: 01:00:00
-    then:
-    - service: notify.alexa_media
-      data:
-        message: The Dude is on
-        data:
-          type: tts
-        target:
-        - media_player.ofir_s_echo_dot
-        - media_player.ofir_s_2nd_echo_dot
   mode: single
 - id: '1672692174596'
   alias: Switcher Boiler Off Notification
@@ -177,20 +163,6 @@
       option: 'Off'
     target:
       entity_id: input_select.switcher_boiler_status
-  - if:
-    - alias: Time 1~7
-      condition: time
-      after: 07:00:00
-      before: 01:00:00
-    then:
-    - service: notify.alexa_media
-      data:
-        message: The Dude is off
-        data:
-          type: tts
-        target:
-        - media_player.ofir_s_echo_dot
-        - media_player.ofir_s_2nd_echo_dot
   mode: single
 - id: '1672863829342'
   alias: Sensor Light
@@ -277,17 +249,72 @@
     data: {}
   mode: single
 - id: '1673808016982'
-  alias: Grabbr
+  alias: Bedroom A/C Bedroom OFF Grabbr
   description: ''
   trigger:
   - platform: time
     at: 01:00:00
+    id: 1:00 am
     alias: At 1:00 am
   - platform: state
     entity_id:
     - input_select.bedroom_ac_status
     to: 'On'
+    id: Bedroom A/C turned on
     alias: Bedroom A/C turned on
-  condition: []
-  action: []
+  - platform: state
+    entity_id:
+    - input_select.bedroom_ac_status
+    to: 'Off'
+    id: Bedroom A/C turned off
+    alias: Bedroom A/C turned off
+  - platform: state
+    entity_id:
+    - timer.bedroom_a_c_timer
+    to: idle
+    id: Timer Finished
+    from: active
+    alias: Bedroom A/C timer finished/cancelled
+  condition:
+  - condition: time
+    before: 05:30:00
+    after: 01:00:00
+    alias: Time between 1am & 5am
+  action:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: 1:00 am
+          alias: Triggered at 01:00 am
+        - condition: trigger
+          id: Bedroom A/C turned on
+          alias: Triggered by Bedroom A/C turned on
+        alias: Triggered by 1:00 am or Bedroom A/C turned on
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'On'
+      sequence:
+      - service: timer.start
+        data:
+          duration: 01:30:00
+        alias: Start Bedroom A/C Timer
+        target:
+          entity_id: timer.a_c_timer
+    - conditions:
+      - condition: trigger
+        id: Bedroom A/C turned off
+        alias: Bedroom A/C turned off
+      sequence:
+      - service: timer.cancel
+        data: {}
+        alias: Cancel Bedroom A/C Timer
+    - conditions:
+      - condition: trigger
+        id: Timer Finished
+        alias: Bedroom A/C Timer Finished
+      sequence:
+      - service: script.ir_turn_off_bedroom_ac
+        data: {}
   mode: single
