@@ -50,7 +50,7 @@
     - name: camerascounter
       state: >-
         {% set group = expand('group.cameras') %}
-        {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
+        {{ group | count }}/{{ group | list | count }}
 - sensor:
     - name: lightscounter
       state: >-
@@ -124,6 +124,11 @@
         {{ iif(is_state('sensor.uptimekuma_ombi', 'up'), 'Online', 'Offline') }}
       availability: >
         {{ states('sensor.uptimekuma_ombi') not in ['unavailable', 'unknown'] }}
+    - name: Trakt Online
+      state: >
+        {{ iif(is_state('sensor.uptimekuma_trakt', 'up'), 'Online', 'Offline') }}
+      availability: >
+        {{ states('sensor.uptimekuma_trakt') not in ['unavailable', 'unknown'] }}
     - name: Prowlarr Online
       state: >
         {{ iif(is_state('sensor.uptimekuma_prowlarr', 'up'), 'Online', 'Offline') }}

@@ -2,7 +2,6 @@ cameras:
   name: Cameras
   entities:
     - camera.living_room_sub
-    - switch.chuangmi_ipc016_e7fb_switch_status
 
 chromecast:
   name: Chromecast
@@ -25,9 +24,9 @@ rf433:
     - sensor.bedroom_smart_ir_remote_control_battery
 
 temp:
-  name: Tempature & Humidity
+  name: Temp
   entities:
-    - sensor.sensibo_humidity
+    - sensor.sensibo_tempature
     - sensor.temperature_humidity_sensor_temperature
     - sensor.hallway_temperature_sensor_temperature
     - sensor.bathroom_temperature_sensor_temperature

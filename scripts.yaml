@@ -13,7 +13,7 @@ camera_play:
         entity_id:
           '{% if is_state("input_select.camera_select", "Living Room") %}
           camera.living_room_sub {% elif is_state("input_select.camera_select",
-          "Binnen Camera") %} switch.chuangmi_ipc016_e7fb_switch_status {% endif %} '
+          "Binnen Camera") %} camera.living_room_sub {% endif %} '
 ir_learn_mode_on:
   alias: IR Learn Mode On
   sequence:

@@ -13,6 +13,36 @@ xiaomi_miot:
     - stream_address
     - motion_video_latest
 # [=========================]Xiaomi Miot[=========================]
+rest_command:
+  switchbot_device_command:
+    url: "https://api.switch-bot.com/v1.0/devices/{{ deviceId }}/commands"
+    method: post
+    content_type: "application/json"
+    headers:
+      Authorization: !secret switchbot_api
+    payload: '{"command": "{{ command }}"}'
+
+switch:
+  - platform: template
+    switches:
+      tv_office:
+        friendly_name: Office TV
+        turn_on:
+          service: rest_command.switchbot_device_command
+          data:
+            deviceId: !secret switchbot_deviceId
+            command: "turnOn"
+        turn_off:
+          service: rest_command.switchbot_device_command
+          data:
+            deviceId: !secret switchbot_deviceId
+            command: "turnOff"
+        icon_template: >-
+          {% if is_state('switch.tv_office', 'off') %}
+            mdi:television
+          {% else %}
+            mdi:television
+          {% endif %}
 # [=========================]Spotcast[=========================]
 spotcast:
   sp_dc: !secret sp_dc
@@ -55,13 +85,12 @@ logger:
   default: info
   logs:
     custom_components.authenticated: debug
-    # [=========================]Authenticated[=========================]
+# [=========================]Authenticated[=========================]
 # [=========================]Themes[=========================]
 frontend:
   themes: !include_dir_merge_named themes
   extra_module_url:
     - /hacsfiles/hass-hue-icons/hass-hue-icons.js
-
 # [=========================]Themes[=========================]
 
 # [=========================]Text to speech[=========================]

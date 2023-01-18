@@ -1,10 +1,3 @@
-camera.chuangmi_ipc016_e7fb_camera_control:
-  video_attribute: 3 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
-  keep_streaming: true # Continuously update stream address
-
-camera.chuangmi_ipc016_e927_camera_control:
-  video_attribute: 3 # https://github.com/al-one/hass-xiaomi-miot/issues/11#issuecomment-773054167
-  keep_streaming: true # Continuously update stream address
 # Zigbee
 sensor.zigbee_online:
   entity_picture: /local/Logos/zigbee_system.png
@@ -44,6 +37,9 @@ sensor.sonarr_online:
 # Ombi
 sensor.ombi_online:
   entity_picture: /local/Logos/ombi.png
+# Trakt
+sensor.trakt_online:
+  entity_picture: /local/Logos/trakt.png
 # Prowlarr
 sensor.prowlarr_online:
   entity_picture: /local/Logos/prowlarr.png

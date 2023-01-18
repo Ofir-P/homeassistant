@@ -3,7 +3,7 @@ send_command:
   fields:
     entity_id:
       description: ID of the entity.
-      example: light.yeelight_living_e92c
+      example: light.xiaomi_yeelink
       required: true
       selector:
         entity:
@@ -16,7 +16,7 @@ send_command:
         text:
     params:
       description: Params for the method.
-      example: ['on']
+      example: ["on"]
       required: true
       selector:
         object:
@@ -32,7 +32,7 @@ get_properties:
   fields:
     entity_id:
       description: ID of the entity.
-      example: climate.xiaomi_mc5_374e
+      example: climate.ofir_a_c
       required: true
       selector:
         entity:
@@ -61,7 +61,7 @@ set_property:
   fields:
     entity_id:
       description: ID of the entity.
-      example: climate.xiaomi_mc5_374e
+      example: climate.ofir_a_c
       required: true
       selector:
         entity:
@@ -84,7 +84,7 @@ set_miot_property:
   fields:
     entity_id:
       description: ID of the entity.
-      example: climate.xiaomi_mc5_374e
+      example: climate.ofir_a_c
       required: true
       selector:
         entity:
@@ -119,7 +119,7 @@ call_action:
   fields:
     entity_id:
       description: ID of the entity.
-      example: media_player.xiaoai_x08c
+      example: media_player.mibox4
       required: true
       selector:
         entity:
@@ -159,7 +159,7 @@ intelligent_speaker:
   fields:
     entity_id:
       description: ID of the entity.
-      example: media_player.xiaoai_x08c
+      example: media_player.mibox4
       required: true
       selector:
         entity:
@@ -195,7 +195,7 @@ xiaoai_wakeup:
   fields:
     entity_id:
       description: ID of the xiaoai entity.
-      example: media_player.xiaoai_x08c
+      example: media_player.mibox4
       required: true
       selector:
         entity:
@@ -218,7 +218,7 @@ get_device_data:
   fields:
     entity_id:
       description: ID of the entity.
-      example: sensor.xiaomi_lock
+      example: sensor.ac_bedroom_power
       required: true
       selector:
         entity:
@@ -302,7 +302,7 @@ get_bindkey:
   fields:
     entity_id:
       description: ID of the entity.
-      example: sensor.lywsd03mmc_temperature
+      example: sensor.ac_bedroom_power
       required: true
       selector:
         entity:
@@ -317,7 +317,7 @@ request_xiaomi_api:
   fields:
     entity_id:
       description: ID of the entity.
-      example: sensor.xiaomi_device
+      example: sensor.ac_bedroom_power
       required: true
       selector:
         entity:
