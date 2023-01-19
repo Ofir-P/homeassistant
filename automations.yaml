@@ -1,177 +1,168 @@
-- id: "1672002805360"
-  alias: Zone Notification
-  description: ""
-  use_blueprint:
-    path: homeassistant/notify_leaving_zone.yaml
-    input:
-      notify_device: 11337776bbc7cb4d561c95d059379b78
-      person_entity: person.elian
-      zone_entity: zone.house
-- id: "1672140546661"
+- id: '1672140546661'
   alias: GitHub Push
   description: Everyday in 4AM will update the github.
   trigger:
-    - platform: time
-      at: 04:00:00
+  - platform: time
+    at: 04:00:00
   condition: []
   action:
-    - service: shell_command.pushupdates_to_github
-      data: {}
+  - service: shell_command.pushupdates_to_github
+    data: {}
   mode: single
-- id: "1672416137952"
+- id: '1672416137952'
   alias: Low battery level detection & notification for all battery sensors
-  description: ""
+  description: ''
   use_blueprint:
     path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
     input:
-      time: "19:00:00"
+      time: '19:00:00'
       exclude:
         entity_id:
-          - sensor.elians_iphone_battery_state_2
-          - sensor.elians_iphone_battery_level
-          - sensor.ofir_phone_battery_level
+        - sensor.elians_iphone_battery_state_2
+        - sensor.elians_iphone_battery_level
+        - sensor.ofir_phone_battery_level
       actions:
-        - service: notify.mobile_app_ofir_phone
-          data:
-            message: "{{sensors}} has low on battery., please replace it."
-- id: "1672558313040"
+      - service: notify.mobile_app_ofir_phone
+        data:
+          message: '{{sensors}} has low on battery., please replace it.'
+- id: '1672558313040'
   alias: Laundry Machine has started
-  description: ""
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.laundry_machine_power
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 12
-      above: 10
+  - platform: numeric_state
+    entity_id: sensor.laundry_machine_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 12
+    above: 10
   condition:
-    - condition: state
-      entity_id: input_select.washing_machine_status
-      state: "Off"
+  - condition: state
+    entity_id: input_select.washing_machine_status
+    state: 'Off'
   action:
-    - service: notify.notify
-      data:
-        message: "\U0001F49A Laundry Machine has started "
-    - service: input_select.select_option
-      data:
-        option: "On"
-      target:
-        entity_id: input_select.washing_machine_status
+  - service: notify.notify
+    data:
+      message: "\U0001F49A Laundry Machine has started "
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
+      entity_id: input_select.washing_machine_status
   mode: single
-- id: "1672558877974"
+- id: '1672558877974'
   alias: Laundry machine has finished
-  description: ""
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.laundry_machine_power
-      for:
-        hours: 0
-        minutes: 5
-        seconds: 0
-      below: 5
+  - platform: numeric_state
+    entity_id: sensor.laundry_machine_power
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    below: 5
   condition:
-    - condition: state
+  - condition: state
+    entity_id: input_select.washing_machine_status
+    state: 'On'
+  action:
+  - service: notify.notify
+    data:
+      message: "\U0001F456 Laundry machine has finished!"
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
       entity_id: input_select.washing_machine_status
-      state: "On"
-  action:
-    - service: notify.notify
-      data:
-        message: "\U0001F456 Laundry machine has finished!"
-    - service: input_select.select_option
-      data:
-        option: "Off"
-      target:
-        entity_id: input_select.washing_machine_status
   mode: single
-- id: "1672597703705"
+- id: '1672597703705'
   alias: Water Leakage Kitchen Notification
-  description: ""
+  description: ''
   trigger:
-    - platform: state
-      entity_id:
-        - binary_sensor.water_leak_sensor_kitchen_sink_water_leak
-      from: "off"
-      to: "on"
+  - platform: state
+    entity_id:
+    - binary_sensor.water_leak_sensor_kitchen_sink_water_leak
+    from: 'off'
+    to: 'on'
   condition: []
   action:
-    - service: notify.notify
-      data:
-        message: ⚠️ Water Leak has been detected in Kitchen ⚠️
+  - service: notify.notify
+    data:
+      message: ⚠️ Water Leak has been detected in Kitchen ⚠️
   mode: single
-- id: "1672688044345"
+- id: '1672688044345'
   alias: Water Leakage Bathroom Notification
-  description: ""
+  description: ''
   trigger:
-    - platform: state
-      entity_id:
-        - binary_sensor.water_leak_sensor_bathroom_sink_water_leak
-      from: "off"
-      to: "on"
+  - platform: state
+    entity_id:
+    - binary_sensor.water_leak_sensor_bathroom_sink_water_leak
+    from: 'off'
+    to: 'on'
   condition: []
   action:
-    - service: notify.notify
-      data:
-        message: ⚠️ Water Leak has been detected in Bathroom ⚠️
+  - service: notify.notify
+    data:
+      message: ⚠️ Water Leak has been detected in Bathroom ⚠️
   mode: single
-- id: "1672692110951"
+- id: '1672692110951'
   alias: Switcher Boiler On Notification
-  description: ""
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.switcher_v4_yair_stern_power_consumption
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 20
-      above: 5
+  - platform: numeric_state
+    entity_id: sensor.switcher_v4_yair_stern_power_consumption
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 20
+    above: 5
   condition:
-    - condition: state
-      entity_id: input_select.switcher_boiler_status
-      state: "Off"
+  - condition: state
+    entity_id: input_select.switcher_boiler_status
+    state: 'Off'
   action:
-    - service: notify.notify
-      data:
-        message: "\U0001F6BF Switcher device has been turned ON "
-    - service: input_select.select_option
-      data:
-        option: "On"
-      target:
-        entity_id: input_select.switcher_boiler_status
+  - service: notify.notify
+    data:
+      message: "\U0001F6BF Switcher device has been turned ON "
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
+      entity_id: input_select.switcher_boiler_status
   mode: single
-- id: "1672692174596"
+- id: '1672692174596'
   alias: Switcher Boiler Off Notification
-  description: ""
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.switcher_v4_yair_stern_power_consumption
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 55
-      below: 5
+  - platform: numeric_state
+    entity_id: sensor.switcher_v4_yair_stern_power_consumption
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 55
+    below: 5
   condition:
-    - condition: state
-      entity_id: input_select.switcher_boiler_status
-      state: "On"
+  - condition: state
+    entity_id: input_select.switcher_boiler_status
+    state: 'On'
   action:
-    - service: notify.notify
-      data:
-        message: "\U0001F6BF Switcher device has been turned OFF"
-    - service: input_select.select_option
-      data:
-        option: "Off"
-      target:
-        entity_id: input_select.switcher_boiler_status
+  - service: notify.notify
+    data:
+      message: "\U0001F6BF Switcher device has been turned OFF"
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
+      entity_id: input_select.switcher_boiler_status
   mode: single
-- id: "1672863829342"
+- id: '1672863829342'
   alias: Sensor Light
-  description: ""
+  description: ''
   use_blueprint:
     path: Blackshome/sensor-light.yaml
     input:
       motion_trigger:
-        - binary_sensor.motion_sensor_occupancy
+      - binary_sensor.motion_sensor_occupancy
       light_switch:
         entity_id: light.xiaomi_yeelink
       end_scenes: []
@@ -183,138 +174,126 @@
       after_time: 00:15:00
       before_time: 06:45:00
       include_sun: sun_disabled
-- id: "1673469552878"
-  alias: "Helper: Set Bedroom AC Status to On"
-  description: ""
+- id: '1673469552878'
+  alias: 'Helper: Set Bedroom AC Status to On'
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.ac_bedroom_power
-      for:
-        hours: 0
-        minutes: 1
-        seconds: 0
-      above: 5
+  - platform: numeric_state
+    entity_id: sensor.ac_bedroom_power
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    above: 5
   condition:
-    - condition: state
+  - condition: state
+    entity_id: input_select.bedroom_ac_status
+    state: 'Off'
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
       entity_id: input_select.bedroom_ac_status
-      state: "Off"
-  action:
-    - service: input_select.select_option
-      data:
-        option: "On"
-      target:
-        entity_id: input_select.bedroom_ac_status
   mode: single
-- id: "1673469610479"
-  alias: "Helper: Set Bedroom AC Status to Off"
-  description: ""
+- id: '1673469610479'
+  alias: 'Helper: Set Bedroom AC Status to Off'
+  description: ''
   trigger:
-    - platform: numeric_state
-      entity_id: sensor.ac_bedroom_power
-      for:
-        hours: 0
-        minutes: 3
-        seconds: 30
-      below: 4
+  - platform: numeric_state
+    entity_id: sensor.ac_bedroom_power
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 30
+    below: 4
   condition:
-    - condition: state
+  - condition: state
+    entity_id: input_select.bedroom_ac_status
+    state: 'On'
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
       entity_id: input_select.bedroom_ac_status
-      state: "On"
+  mode: single
+- id: '1673808016982'
+  alias: Bedroom A/C Bedroom OFF
+  description: ''
+  trigger:
+  - platform: time
+    at: 01:00:00
+    id: 1:00 am
+    alias: At 1:00 am
+  - platform: state
+    entity_id:
+    - input_select.bedroom_ac_status
+    to: 'On'
+    id: Bedroom A/C turned on
+    alias: Bedroom A/C turned on
+  - platform: state
+    entity_id:
+    - input_select.bedroom_ac_status
+    to: 'Off'
+    id: Bedroom A/C turned off
+    alias: Bedroom A/C turned off
+  - platform: state
+    entity_id:
+    - timer.a_c_timer
+    to: idle
+    id: Timer Finished
+    from: active
+    alias: Bedroom A/C timer finished/cancelled
+  condition:
+  - condition: time
+    before: 05:30:00
+    after: 01:00:00
+    alias: Time between 1am & 5am
   action:
-    - service: input_select.select_option
-      data:
-        option: "Off"
-      target:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: 1:00 am
+          alias: Triggered at 01:00 am
+        - condition: trigger
+          id: Bedroom A/C turned on
+          alias: Triggered by Bedroom A/C turned on
+        alias: Triggered by 1:00 am or Bedroom A/C turned on
+      - condition: state
         entity_id: input_select.bedroom_ac_status
+        state: 'On'
+      sequence:
+      - service: timer.start
+        data:
+          duration: 01:30:00
+        alias: Start Bedroom A/C Timer
+        target:
+          entity_id: timer.a_c_timer
+    - conditions:
+      - condition: trigger
+        id: Bedroom A/C turned off
+        alias: Bedroom A/C turned off
+      sequence:
+      - service: timer.cancel
+        data: {}
+        alias: Cancel Bedroom A/C Timer
+    - conditions:
+      - condition: trigger
+        id: Timer Finished
+        alias: Bedroom A/C Timer Finished
+      sequence:
+      - service: script.ir_turn_off_bedroom_ac
+        data: {}
   mode: single
-- id: "1673736190655"
-  alias: AC Bedroom OFF
-  description: ""
-  trigger:
-    - platform: state
-      entity_id:
-        - input_select.bedroom_ac_status
-      to: "On"
-  condition:
-    - condition: time
-      before: 05:30:00
-      after: 01:00:00
-  action:
-    - delay:
-        hours: 1
-        minutes: 30
-        seconds: 0
-        milliseconds: 0
-    - service: script.ir_turn_off_bedroom_ac
-      data: {}
-  mode: single
-- id: "1673808016982"
-  alias: Bedroom A/C Bedroom OFF Grabbr
-  description: ""
-  trigger:
-    - platform: time
-      at: 01:00:00
-      id: 1:00 am
-      alias: At 1:00 am
-    - platform: state
-      entity_id:
-        - input_select.bedroom_ac_status
-      to: "On"
-      id: Bedroom A/C turned on
-      alias: Bedroom A/C turned on
-    - platform: state
-      entity_id:
-        - input_select.bedroom_ac_status
-      to: "Off"
-      id: Bedroom A/C turned off
-      alias: Bedroom A/C turned off
-    - platform: state
-      entity_id:
-        - timer.a_c_timer
-      to: idle
-      id: Timer Finished
-      from: active
-      alias: Bedroom A/C timer finished/cancelled
-  condition:
-    - condition: time
-      before: 05:30:00
-      after: 01:00:00
-      alias: Time between 1am & 5am
-  action:
-    - choose:
-        - conditions:
-            - condition: or
-              conditions:
-                - condition: trigger
-                  id: 1:00 am
-                  alias: Triggered at 01:00 am
-                - condition: trigger
-                  id: Bedroom A/C turned on
-                  alias: Triggered by Bedroom A/C turned on
-              alias: Triggered by 1:00 am or Bedroom A/C turned on
-            - condition: state
-              entity_id: input_select.bedroom_ac_status
-              state: "On"
-          sequence:
-            - service: timer.start
-              data:
-                duration: 01:30:00
-              alias: Start Bedroom A/C Timer
-              target:
-                entity_id: timer.a_c_timer
-        - conditions:
-            - condition: trigger
-              id: Bedroom A/C turned off
-              alias: Bedroom A/C turned off
-          sequence:
-            - service: timer.cancel
-              data: {}
-              alias: Cancel Bedroom A/C Timer
-        - conditions:
-            - condition: trigger
-              id: Timer Finished
-              alias: Bedroom A/C Timer Finished
-          sequence:
-            - service: script.ir_turn_off_bedroom_ac
-              data: {}
-  mode: single
+- id: '1674052467014'
+  alias: Zone Notification
+  description: ''
+  use_blueprint:
+    path: homeassistant/notify_leaving_zone.yaml
+    input:
+      person_entity: person.elian
+      zone_entity: zone.home
+      notify_device: 11337776bbc7cb4d561c95d059379b78

@@ -142,8 +142,12 @@
         {{ states.zone | list | count }}
 
 # [=========================]System Monitor[=========================]
+- platform: ombi
+  host: "http://10.0.0.151:5000/"
+  username: !secret ombi_user
+  password: !secret ombi_pass
 
 - platform: qbittorrent
-  url: "http://10.0.0.53:8080"
+  url: "http://10.0.0.151:8080"
   username: !secret qbittorrent_user
   password: !secret qbittorrent_pass
