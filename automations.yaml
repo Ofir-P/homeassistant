@@ -297,3 +297,18 @@
       person_entity: person.elian
       zone_entity: zone.home
       notify_device: 11337776bbc7cb4d561c95d059379b78
+- id: '1674122231489'
+  alias: Tag Lights off is scanned
+  description: ''
+  trigger:
+  - platform: tag
+    tag_id: 7efb2f01-320d-4a37-813f-0f6bd3406141
+  condition: []
+  action:
+  - service: script.turn_off_bedroom_light
+    data: {}
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
+  mode: single

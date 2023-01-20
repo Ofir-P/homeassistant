@@ -142,12 +142,35 @@
         {{ states.zone | list | count }}
 
 # [=========================]System Monitor[=========================]
-- platform: ombi
-  host: "http://10.0.0.151:5000/"
-  username: !secret ombi_user
-  password: !secret ombi_pass
-
+# [=========================]qBitTorrent[=========================]
 - platform: qbittorrent
   url: "http://10.0.0.151:8080"
   username: !secret qbittorrent_user
   password: !secret qbittorrent_pass
+
+- platform: template
+  sensors:
+    bytes_sent:
+      friendly_name: "MB Sent"
+      unit_of_measurement: "MB/s"
+      value_template: "{{ (states('sensor.qbittorrent_down_speed') | int / 1000) | round(1) }}"
+    bytes_upload:
+      friendly_name: "MB Sent"
+      unit_of_measurement: "MB/s"
+      value_template: "{{ (states('sensor.qbittorrent_up_speed') | int / 1000) | round(1) }}"
+# [=========================]qBitTorrent[=========================]
+- platform: plex_recently_added
+  name: Recently Added Movies # will create sensor.recently_added_movies
+  token: !secret plex_token
+  host: !secret plex_host
+  port: 32400
+  section_types:
+    - movie
+
+- platform: plex_recently_added
+  name: Recently Added TV # will create sensor.recently_added_tv
+  token: !secret plex_token
+  host: !secret plex_host
+  port: 32400
+  section_types:
+    - show

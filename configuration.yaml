@@ -111,3 +111,8 @@ homeassistant:
 
 shell_command:
   pushupdates_to_github: /bin/bash pushupdates.sh
+
+ombi:
+  host: "10.0.0.151"
+  username: !secret ombi_user
+  password: !secret ombi_pass
