@@ -288,15 +288,6 @@
       - service: script.ir_turn_off_bedroom_ac
         data: {}
   mode: single
-- id: '1674052467014'
-  alias: Zone Notification
-  description: ''
-  use_blueprint:
-    path: homeassistant/notify_leaving_zone.yaml
-    input:
-      person_entity: person.elian
-      zone_entity: zone.home
-      notify_device: 11337776bbc7cb4d561c95d059379b78
 - id: '1674122231489'
   alias: Tag Lights off is scanned
   description: ''
