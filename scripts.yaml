@@ -1,107 +1,114 @@
 camera_play:
   alias: Play Video on Chromecast
   sequence:
-    - service: camera.play_stream
-      data_template:
-        media_player:
-          '{% if is_state("input_select.camera_display", "Bedroom display")
-          %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
-          Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
-          "Office display") %} media_player.mibox4 {% endif %}
+  - service: camera.play_stream
+    data_template:
+      media_player: '{% if is_state("input_select.camera_display", "Bedroom display")
+        %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
+        Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
+        "Office display") %} media_player.mibox4 {% endif %}
 
-          '
-        entity_id:
-          '{% if is_state("input_select.camera_select", "Living Room") %}
-          camera.living_room_sub {% elif is_state("input_select.camera_select",
-          "Binnen Camera") %} camera.living_room_sub {% endif %} '
+        '
+      entity_id: '{% if is_state("input_select.camera_select", "Living Room") %} camera.living_room_sub
+        {% elif is_state("input_select.camera_select", "Binnen Camera") %} camera.living_room_sub
+        {% endif %} '
 ir_learn_mode_on:
   alias: IR Learn Mode On
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"learn_ir_code":"ON"}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
   mode: single
   icon: mdi:remote
 ir_turn_on_off_living_room_tv:
   alias: IR Turn On/OFF Living Room Tv
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
   mode: single
   icon: mdi:remote-tv
-"1672322197141":
+'1672322197141':
   alias: IR Turn ON Living Room AC
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
   mode: single
   icon: mdi:air-conditioner
 ir_turn_off_living_room_ac:
   alias: IR Turn OFF Living Room AC
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
   mode: single
   icon: mdi:air-conditioner
 turn_on_switcher_for_45mins:
   alias: Turn ON Switcher for 60mins
   sequence:
-    - service: switcher_kis.turn_on_with_timer
-      data:
-        timer_minutes: 58
-      target:
-        device_id: 3d9226e0d372160b7307053c6332e5be
+  - service: switcher_kis.turn_on_with_timer
+    data:
+      timer_minutes: 58
+    target:
+      device_id: 3d9226e0d372160b7307053c6332e5be
   mode: single
   icon: mdi:water-boiler-auto
 turn_off_bedroom_light:
   alias: Turn OFF Bedroom Light
   sequence:
-    - type: turn_off
-      device_id: afb33500a8d79e33ccc9290dae617155
-      entity_id: switch.bot_8552
-      domain: switch
+  - type: turn_off
+    device_id: afb33500a8d79e33ccc9290dae617155
+    entity_id: switch.bot_8552
+    domain: switch
   mode: single
   icon: hue:bulb-br30
 ir_learn_mode_on_bedroom:
   alias: IR Learn Mode On (Bedroom)
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-        payload: '{"learn_ir_code":"ON"}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
   mode: single
   icon: mdi:remote
 ir_turn_on_bedroom_ac:
-  alias: "IR Turn ON Bedroom AC "
+  alias: 'IR Turn ON Bedroom AC '
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "B2gj0RFAAqYGgAPgBwGAFwCCoAeAD8ABQA9AAcAH4AcBQBfAA+AvAUA/4DcB4DtD4AcBQFNAA+AfAcArwAfgBwFAF+ALAwdAAkACQAJAAg=="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B2gj0RFAAqYGgAPgBwGAFwCCoAeAD8ABQA9AAcAH4AcBQBfAA+AvAUA/4DcB4DtD4AcBQFNAA+AfAcArwAfgBwFAF+ALAwdAAkACQAJAAg=="}'
   mode: single
   icon: mdi:air-conditioner
 ir_turn_on_off_bedroom_tv:
   alias: IR Turn On/OFF Bedroom TV
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
   mode: single
   icon: mdi:remote-tv
 ir_turn_off_bedroom_ac:
   alias: IR Turn OFF Bedroom AC
   sequence:
-    - service: mqtt.publish
-      data:
-        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-        payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
   mode: single
   icon: mdi:air-conditioner
+turn_off_on_living_room_light:
+  alias: 'Turn OFF/ON Living Room Light '
+  sequence:
+  - type: toggle
+    device_id: 121a0c6ddafe33985ea0806ad01fb779
+    entity_id: light.living_room_light_module
+    domain: light
+  mode: single
+  icon: hue:ceiling-round

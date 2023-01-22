@@ -15,6 +15,7 @@ lights:
   entities:
     - light.xiaomi_yeelink #Xiaomi Light Hallway
     - switch.bot_8552 #SwitchBot Bedroom
+    - light.living_room_light_module
 
 rf433:
   name: RF433

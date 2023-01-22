@@ -35,9 +35,13 @@ devices:
     description: Smart Switch EU
   '0xa4c1387bf0a99185':
     friendly_name: Office Temperature Sensor
+    description: Next to the camera on top of the wall
   '0xa4c13838ba9b0045':
     friendly_name: Hallway Temperature Sensor
   '0xa4c13852cfb738a6':
     friendly_name: Bathroom Temperature Sensor
   '0x943469fffef84a59':
     friendly_name: Bedroom Smart IR Remote Control
+  '0xa4c138211ff1b449':
+    friendly_name: Living Room Light Module
+    description: Inside the wall - living room switch
