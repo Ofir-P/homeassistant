@@ -15,15 +15,16 @@ lights:
   entities:
     - light.xiaomi_yeelink #Xiaomi Light Hallway
     - switch.bot_8552 #SwitchBot Bedroom
-    - light.living_room_light_module
+    - light.living_room_light_module #Living Room Light
 
 rf433:
   name: RF433
   entities:
-    - switch.smart_ir_remote_control_living_room
-    - sensor.wireless_remote_switch_battery
-    - sensor.bedroom_smart_ir_remote_control_battery
-
+    - switch.smart_ir_remote_control_living_room # Living room IR Remote
+    - sensor.wireless_remote_switch_battery # Wireless Remote
+    - sensor.bedroom_smart_ir_remote_control_battery # Bedroom IR Remote
+    - sensor.hallway_sticker_switch_button_action # Hallway Sticker button
+    - binary_sensor.main_door_sensor_contact # Main Door Sensor
 temp:
   name: Temp
   entities:

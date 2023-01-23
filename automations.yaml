@@ -320,3 +320,17 @@
   - service: script.turn_off_bedroom_light
     data: {}
   mode: single
+- id: '1674400177066'
+  alias: Hallway Light Switch Button
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.hallway_sticker_switch_button_action
+  condition: []
+  action:
+  - service: light.toggle
+    data: {}
+    target:
+      device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
+  mode: single
