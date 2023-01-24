@@ -48,6 +48,7 @@ devices:
   '0x00158d0006f84b67':
     friendly_name: Hallway Sticker Switch button
     description: Hallway above switches
+    legacy: false
   '0xa4c138dc96ec297c':
     friendly_name: Main Door Sensor
     description: Top of Main Door Entrance
