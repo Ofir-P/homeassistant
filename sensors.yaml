@@ -174,3 +174,15 @@
   port: 32400
   section_types:
     - show
+
+- platform: template
+  sensors:
+    feed_record_timestamp:
+      value_template: >-
+        {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
+          {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
+          {{ as_datetime(feed_record.timestamp)|timestamp_local }}
+        {%- endif -%}
+      friendly_name: "Last Fish Feed"
+      icon_template: "{{ 'mdi:fish' }}"
+      device_class: timestamp

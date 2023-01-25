@@ -3,15 +3,83 @@ default_config:
 
 # [=========================]Xiaomi Miot[=========================]
 xiaomi_miot:
-  # https://github.com/al-one/hass-xiaomi-miot/blob/master/custom_components/xiaomi_miot/core/device_customizes.py
+  ### Ideas/suggestions taken from https://github.com/al-one/hass-xiaomi-miot/issues/326
   device_customizes:
-    chuangmi.plug.212a01:
-      miot_local: true
-      chunk_properties: 7
+    hfjh.fishbowl.v2:
+      ### Generate number entities for pump flux, brightness and led color
+      number_properties: pump_flux,ledboard_brightness,ledboard_color
+      ### Generate a button entity to trigger the action to feed the fish
+      button_actions: set_feed_single
+      ### Add attribute to keep track of latest feed-record event
+      miio_cloud_props: event.4.1
   exclude_state_attributes:
-    - miot_type
-    - stream_address
-    - motion_video_latest
+    ### Generic attributes to exclude
+    - mac_address
+    ### Aquarium attributes to exclude
+    - function.mcu_type
+    - function.mcu_type_new
+    - function.key_switch
+    - function.feed_time_week
+    - function.feed_num
+    - function.feed_time
+    - function.feed_time_switch
+    - function.ledboard_time_switch
+    - function.ledboard_time_open
+    - function.ledboard_time_close
+    - function.ledboard_model
+    - function.ledboard_sun
+    - function.ledboard_stream
+    - function.ledboard_speed
+    - function.ledboard_time_switch
+    - function.ledboard_time_open
+    - function.ledboard_time_close
+
+light:
+  - platform: template
+    lights:
+      fishbowl_light:
+        friendly_name: "Aquarium Light"
+        ### Brightness returned by MioT is in %, while the light brightness is 0-255
+        level_template: >-
+          {%- if states('number.hfjh_v2_eadb_ledboard_brightness') -%}
+              {{ (((states('number.hfjh_v2_eadb_ledboard_brightness')|int)*255)/100)|int }}
+          {%- endif -%}
+        value_template: >-
+          {%- if states('number.hfjh_v2_eadb_ledboard_brightness') -%}
+            {{ states('number.hfjh_v2_eadb_ledboard_brightness')|int > 0 }}
+          {%- endif -%}
+        availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] }}"
+        icon_template: "{{ 'mdi:lightbulb' }}"
+        ### Brightness returned by MioT is in %, while the light brightness is 0-255
+        set_level:
+          service: number.set_value
+          data:
+            entity_id: number.hfjh_v2_eadb_ledboard_brightness
+            value: "{{ (((brightness|int)/255)*100)|int }}"
+        turn_on:
+          service: script.turn_on_fishbowl_light
+        turn_off:
+          service: script.turn_off_fishbowl_light
+
+binary_sensor:
+  - platform: template
+    sensors:
+      feed_record_result:
+        value_template: >-
+          {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
+              {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
+              {% set feed_result = feed_record.value[0].value.split(',')[5] %}
+              {{ feed_result|int != 0 }}
+          {%- endif -%}
+        availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] }}"
+        attribute_templates:
+          timestamp: >-
+            {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
+                {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
+                {{ as_datetime(feed_record.timestamp)|timestamp_local }}
+            {%- endif -%}
+        friendly_name: "Automatic Feeder"
+        device_class: problem
 # [=========================]Xiaomi Miot[=========================]
 rest_command:
   switchbot_device_command:
