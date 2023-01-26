@@ -342,3 +342,44 @@
     target:
       entity_id: light.xiaomi_yeelink
   mode: single
+- id: '1674642386773'
+  alias: Fish Feed Notification
+  description: When Feed was sucessful!
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.feed_record_result
+    to: 'off'
+  condition: []
+  action:
+  - service: notify.mobile_app_ofir_phone
+    data:
+      message: ' mdi:fishbowl Feeding has been successfully done! {{ feed_record.timestamp|timestamp_local
+        }}'
+  mode: single
+- id: '1674642449064'
+  alias: Problem with Feeding fish
+  description: When Feed was unsucessful!
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.feed_record_result
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.mobile_app_ofir_phone
+    data:
+      message: ' mdi:fishbowl There was a problem with the feeding of the fish!! {{
+        feed_record.timestamp|timestamp_local }}'
+  mode: single
+- id: '1674684738623'
+  alias: Send a notification with camera snapshot when motion is detected
+  description: ''
+  use_blueprint:
+    path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
+    input:
+      motion_sensor: binary_sensor.motion_sensor_occupancy
+      camera: camera.living_room_sub
+      notify_device: 11337776bbc7cb4d561c95d059379b78
+      delay: 4
+      blocker_entity: binary_sensor.both_phones_at_home
