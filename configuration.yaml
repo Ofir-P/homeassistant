@@ -83,8 +83,8 @@ binary_sensor:
   # [=========================]Phone at home[=========================]
   - platform: template
     sensors:
-      both_phones_at_home:
-        value_template: "{{ is_state('device_tracker.elians_iphone', 'home') and is_state('device_tracker.ofir_phone', 'home') }}"
+      any_phone_at_home:
+        value_template: "{{ is_state('device_tracker.elians_iphone', 'home') or is_state('device_tracker.ofir_phone', 'home') }}"
         device_class: presence
 
 # [=========================]Xiaomi Miot[=========================]

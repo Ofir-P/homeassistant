@@ -156,7 +156,7 @@
       entity_id: input_select.switcher_boiler_status
   mode: single
 - id: '1672863829342'
-  alias: Sensor Light
+  alias: Hallway Motion Light
   description: ''
   use_blueprint:
     path: Blackshome/sensor-light.yaml
@@ -373,7 +373,7 @@
         feed_record.timestamp|timestamp_local }}'
   mode: single
 - id: '1674684738623'
-  alias: Send a notification with camera snapshot when motion is detected
+  alias: Notify with camera snapshot when motion is detected
   description: ''
   use_blueprint:
     path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
@@ -382,4 +382,21 @@
       camera: camera.living_room_sub
       notify_device: 11337776bbc7cb4d561c95d059379b78
       delay: 4
-      blocker_entity: binary_sensor.both_phones_at_home
+      blocker_entity: binary_sensor.any_phone_at_home
+- id: '1674725094966'
+  alias: Zigbee2MQTT - Tuya 4-Button Scene Switch
+  description: ''
+  use_blueprint:
+    path: Stringer/zigbee2mqtt-tuya-4-button-scene-switch-ts0044.yaml
+    input:
+      switch: sensor.wireless_remote_switch_action
+      button_one_short_press:
+      - service: light.toggle
+        data: {}
+        target:
+          entity_id: light.living_room_light_module
+      button_two_short_press:
+      - service: light.toggle
+        data: {}
+        target:
+          entity_id: light.xiaomi_yeelink
