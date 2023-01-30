@@ -12,7 +12,7 @@ camera_play:
           '
         entity_id:
           '{% if is_state("input_select.camera_select", "Living Room") %} camera.living_room_sub
-          {% elif is_state("input_select.camera_select", "Binnen Camera") %} camera.living_room_sub
+          {% elif is_state("input_select.camera_select", "Dining Table") %} camera.dining_table_sub
           {% endif %} '
 ir_learn_mode_on:
   alias: IR Learn Mode On

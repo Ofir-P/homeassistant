@@ -4,7 +4,7 @@ camera_select:
   name: "Select Camera"
   options:
     - "Living Room"
-    - "Yair Stern 22 - Bedroom & Kitchen Camera"
+    - "Dining Table"
   initial: "Living Room"
   icon: mdi:camera
 

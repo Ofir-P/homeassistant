@@ -2,6 +2,7 @@ cameras:
   name: Cameras
   entities:
     - camera.living_room_sub
+    - camera.dining_table_sub
 
 chromecast:
   name: Chromecast
