@@ -127,12 +127,13 @@ logbook:
   exclude:
     entities:
       - sensor.time
-
+# [=========================]Alexa[=========================]
 alexa_media:
   accounts:
     - email: !secret amazon_user
       password: !secret amazon_password
       url: amazon.com
+# [=========================]Alexa[=========================]
 # [=========================]Glances[=========================]
 glances:
   - host: 10.0.0.151 # Plex
@@ -189,7 +190,26 @@ homeassistant:
 shell_command:
   pushupdates_to_github: /bin/bash pushupdates.sh
 
+# [=========================]Ombi[=========================]
 ombi:
   host: "10.0.0.151"
   username: !secret ombi_user
   password: !secret ombi_pass
+# [=========================]Ombi[=========================]
+
+# [=========================]Telegram[=========================]
+telegram_bot:
+  - platform: polling
+    api_key: !secret telegram_api
+    allowed_chat_ids:
+      - !secret telegram_chatId
+      - !secret telegram_groupChatId
+
+notify:
+  - platform: telegram
+    name: Ofir Telegram
+    chat_id: !secret telegram_chatId
+  - platform: telegram
+    name: Home Assistant Group
+    chat_id: !secret telegram_groupChatId
+# [=========================]Telegram[=========================]
