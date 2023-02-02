@@ -42,9 +42,6 @@
     entity_id: input_select.washing_machine_status
     state: 'Off'
   action:
-  - service: notify.notify
-    data:
-      message: "\U0001F49A Laundry Machine has started "
   - service: input_select.select_option
     data:
       option: 'On'
@@ -70,9 +67,6 @@
     entity_id: input_select.washing_machine_status
     state: 'On'
   action:
-  - service: notify.notify
-    data:
-      message: "\U0001F456 Laundry machine has finished!"
   - service: input_select.select_option
     data:
       option: 'Off'
