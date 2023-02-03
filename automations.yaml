@@ -391,7 +391,7 @@
   use_blueprint:
     path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
     input:
-      motion_sensor: binary_sensor.motion_sensor_occupancy
+      motion_sensor: binary_sensor.living_room_motion
       camera: camera.dining_table_sub
       notify_device: 11337776bbc7cb4d561c95d059379b78
       delay: 4
@@ -414,24 +414,4 @@
       data:
         clickAction: /shopping-list
         url: /shopping-list
-  mode: single
-- id: '1675156550328'
-  alias: Radarr Offline
-  description: Sends notification for HA Group in Telegram when Radarr is Offline
-    for more than 1 minute.
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.radarr_online
-    to: Offline
-    from: Online
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 0
-  condition: []
-  action:
-  - service: notify.home_assistant_group
-    data:
-      message: "\U0001F4FA Plex Server is down."
   mode: single
