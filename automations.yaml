@@ -175,7 +175,7 @@
     path: Blackshome/sensor-light.yaml
     input:
       motion_trigger:
-      - binary_sensor.motion_sensor_occupancy
+      - binary_sensor.dining_table_person
       light_switch:
         entity_id: light.xiaomi_yeelink
       end_scenes: []
@@ -354,21 +354,6 @@
     data: {}
     target:
       entity_id: light.xiaomi_yeelink
-  mode: single
-- id: '1674642386773'
-  alias: Fish Feed Notification
-  description: When Feed was sucessful!
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.feed_record_result
-    to: 'off'
-  condition: []
-  action:
-  - service: notify.mobile_app_ofir_phone
-    data:
-      message: ' mdi:fishbowl Feeding has been successfully done! {{ feed_record.timestamp|timestamp_local
-        }}'
   mode: single
 - id: '1674642449064'
   alias: Problem with Feeding fish
