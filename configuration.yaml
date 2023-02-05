@@ -205,6 +205,10 @@ telegram_bot:
       - !secret telegram_chatId
       - !secret telegram_groupChatId
 
+  - platform: polling
+    api_key: !secret telegramSupervisor_api
+    allowed_chat_ids:
+      - !secret telegramSupervisor_groupChatId
 notify:
   - platform: telegram
     name: Ofir Telegram
@@ -212,4 +216,7 @@ notify:
   - platform: telegram
     name: Home Assistant Group
     chat_id: !secret telegram_groupChatId
+  - platform: telegram
+    name: Supervisor Telegram
+    chat_id: !secret telegramSupervisor_groupChatId
 # [=========================]Telegram[=========================]

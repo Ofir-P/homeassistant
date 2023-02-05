@@ -8,6 +8,9 @@
   action:
   - service: shell_command.pushupdates_to_github
     data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: GitHub Push automation has been working successfully!
   mode: single
 - id: '1672416137952'
   alias: Low battery level detection & notification for all battery sensors
@@ -21,11 +24,9 @@
         - sensor.elians_iphone_battery_level
         - sensor.ofir_phone_battery_level
       actions:
-      - service: notify.mobile_app_ofir_phone
+      - service: notify.supervisor_telegram
         data:
           message: '{{sensors}} has low on battery., please replace it.'
-      - service: notify.home_assistant_group
-        data: {}
 - id: '1672558313040'
   alias: Laundry Machine has started
   description: ''
@@ -208,6 +209,9 @@
       option: 'On'
     target:
       entity_id: input_select.bedroom_ac_status
+  - service: notify.supervisor_telegram
+    data:
+      message: Bedroom AC Status has been changed to On!
   mode: single
 - id: '1673469610479'
   alias: 'Helper: Set Bedroom AC Status to Off'
@@ -230,6 +234,9 @@
       option: 'Off'
     target:
       entity_id: input_select.bedroom_ac_status
+  - service: notify.supervisor_telegram
+    data:
+      message: Bedroom AC Status has been changed to Off!
   mode: single
 - id: '1673808016982'
   alias: Bedroom A/C Bedroom OFF
@@ -300,6 +307,9 @@
       sequence:
       - service: script.ir_turn_off_bedroom_ac
         data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: Bedroom A/C automation has closed the A/C!
   mode: single
 - id: '1674326763431'
   alias: Tag Lights off is scanned
@@ -317,6 +327,9 @@
       - light.xiaomi_yeelink
   - service: script.turn_off_bedroom_light
     data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: NFC Tag has been scanned!
   mode: single
 - id: '1674400177066'
   alias: Hallway Light Switch Button
@@ -331,6 +344,9 @@
     data: {}
     target:
       device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
+  - service: notify.supervisor_telegram
+    data:
+      message: Hallway Light Switch Button automation has been trigged!
   mode: single
 - id: '1674445577046'
   alias: Turn OFF Hallway light after 3 mins
@@ -354,21 +370,9 @@
     data: {}
     target:
       entity_id: light.xiaomi_yeelink
-  mode: single
-- id: '1674642449064'
-  alias: Problem with Feeding fish
-  description: When Feed was unsucessful!
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.feed_record_result
-    to: 'on'
-  condition: []
-  action:
-  - service: notify.mobile_app_ofir_phone
+  - service: notify.supervisor_telegram
     data:
-      message: ' mdi:fishbowl There was a problem with the feeding of the fish!! {{
-        feed_record.timestamp|timestamp_local }}'
+      message: Turn OFF Hallway light after 3 mins automation has been triggered!
   mode: single
 - id: '1674684738623'
   alias: Notify with camera snapshot when motion is detected
@@ -376,7 +380,7 @@
   use_blueprint:
     path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
     input:
-      motion_sensor: binary_sensor.living_room_motion
+      motion_sensor: binary_sensor.motion_sensor_occupancy
       camera: camera.dining_table_sub
       notify_device: 11337776bbc7cb4d561c95d059379b78
       delay: 4
