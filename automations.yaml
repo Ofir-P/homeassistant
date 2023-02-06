@@ -404,3 +404,73 @@
         clickAction: /shopping-list
         url: /shopping-list
   mode: single
+- id: '1675577078929'
+  alias: Supervisor - Main Door Open
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    from: 'off'
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: device_tracker.ofir_phone
+    state: not_home
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: Main Door is open now!
+  mode: single
+- id: '1675577121363'
+  alias: Supervisor - Main Door Closed
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    from: 'on'
+    to: 'off'
+  condition:
+  - condition: state
+    entity_id: device_tracker.ofir_phone
+    state: not_home
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: Main Door is closed now!
+  mode: single
+- id: '1675577446512'
+  alias: Supervisor - Elian is Away
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - device_tracker.elians_iphone
+    from: home
+    to: not_home
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: Elian has left the house.
+  mode: single
+- id: '1675577604748'
+  alias: Supervisor - qBitTorrent is Offline
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.uptimekuma_qbittorrent
+    from: 'on'
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 0
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: qBitTorrent is Offline!
+  mode: single

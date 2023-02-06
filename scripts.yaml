@@ -12,6 +12,10 @@ camera_play:
       entity_id: '{% if is_state("input_select.camera_select", "Living Room") %} camera.living_room_sub
         {% elif is_state("input_select.camera_select", "Dining Table") %} camera.dining_table_sub
         {% endif %} '
+  - service: notify.supervisor_telegram
+    data:
+      message: Play Video on Chromecast script has been triggered!
+  mode: single
 ir_learn_mode_on:
   alias: IR Learn Mode On
   sequence:
@@ -19,6 +23,11 @@ ir_learn_mode_on:
     data:
       topic: zigbee2mqtt/Smart IR Remote Control/set
       payload: '{"learn_ir_code":"ON"}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: Living Room IR device is now on Learn Mode
   mode: single
   icon: mdi:remote
 ir_turn_on_off_living_room_tv:
@@ -28,6 +37,11 @@ ir_turn_on_off_living_room_tv:
     data:
       topic: zigbee2mqtt/Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: Living room IR has turned ON/OFF Living room TV!
   mode: single
   icon: mdi:remote-tv
 '1672322197141':
@@ -77,6 +91,11 @@ ir_learn_mode_on_bedroom:
     data:
       topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
       payload: '{"learn_ir_code":"ON"}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: Bedroom IR device is now on Learn Mode
   mode: single
   icon: mdi:remote
 ir_turn_on_bedroom_ac:
@@ -95,6 +114,11 @@ ir_turn_on_off_bedroom_tv:
     data:
       topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: Bedroom IR to turn ON/OFF TV has been triggered!
   mode: single
   icon: mdi:remote-tv
 ir_turn_off_bedroom_ac:
@@ -113,6 +137,9 @@ turn_off_on_living_room_light:
     device_id: 121a0c6ddafe33985ea0806ad01fb779
     entity_id: light.living_room_light_module
     domain: light
+  - service: notify.supervisor_telegram
+    data:
+      message: Living room light has been triggered!
   mode: single
   icon: hue:ceiling-round
 turn_on_fishbowl_light:
