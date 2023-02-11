@@ -490,17 +490,22 @@
   mode: single
 - id: '1675955302558'
   alias: Fish Fed Telegram Notification
-  description: ''
   trigger:
   - platform: state
-    entity_id:
-    - switch.hfjh_v2_eadb_fish_tank_2
-    attribute: event.4.1.
-  condition: []
+    entity_id: switch.hfjh_v2_eadb_fish_tank_2
+    attribute: event.4.1
   action:
   - service: notify.home_assistant_group
     data:
-      message: "\U0001F41F Fish are fed at "
+      message: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is
+        not none %}\n  {% set timestamp = (state_attr('switch.hfjh_v2_eadb_fish_tank_2',
+        'event.4.1') | from_json).timestamp %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2',
+        'event.4.1') | from_json).value[0].value.split(',') %}\n{% endif %} {% set
+        t = timestamp | default() | timestamp_custom('%H:%M', default='unknown') %}
+        {% set n = (value | default())[6] | default('unknown') %} {% if (value | default())[5]
+        | default() == 0 %}\n  \U0001F41F ❌ The fishes have not been fed at {{ t }}
+        ❌\n{% else %}\n  \U0001F41F The fishes have been fed {{ n }} portions at {{
+        t }}.\n{% endif %}\n"
   mode: single
 - id: '1675957403629'
   alias: Robot Vacuum Finished Notification Telegram
@@ -514,5 +519,7 @@
   action:
   - service: notify.home_assistant_group
     data:
-      message: "\U0001F9F9 Vacuum Robot has finished and returning to base!"
+      title: "\U0001F9F9 Vacuum Robot has finished and returning to base!"
+      message: It took {{state_attr('vacuum.mijia_v2_202f_robot_cleaner', 'clean_record.clean_time')}}
+        minutes and covered {{ states('sensor.vacuum_clean_area') }} m².
   mode: single
