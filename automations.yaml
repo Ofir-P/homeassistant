@@ -10,7 +10,7 @@
     data: {}
   - service: notify.supervisor_telegram
     data:
-      message: GitHub Push automation has been working successfully!
+      message: "\U0001F916 Automation - GitHub Push"
   mode: single
 - id: '1672416137952'
   alias: Low battery level detection & notification for all battery sensors
@@ -26,7 +26,8 @@
       actions:
       - service: notify.supervisor_telegram
         data:
-          message: '{{sensors}} has low on battery., please replace it.'
+          message: "\U0001F916 Automation - {{sensors}} has low on battery, please
+            replace it."
 - id: '1672558313040'
   alias: Laundry Machine has started
   description: ''
@@ -129,9 +130,6 @@
     entity_id: input_select.switcher_boiler_status
     state: 'Off'
   action:
-  - service: notify.notify
-    data:
-      message: "\U0001F6BF Switcher device has been turned ON "
   - service: input_select.select_option
     data:
       option: 'On'
@@ -157,9 +155,6 @@
     entity_id: input_select.switcher_boiler_status
     state: 'On'
   action:
-  - service: notify.notify
-    data:
-      message: "\U0001F6BF Switcher device has been turned OFF"
   - service: input_select.select_option
     data:
       option: 'Off'
@@ -172,6 +167,10 @@
 - id: '1672863829342'
   alias: Hallway Motion Light
   description: ''
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Hallway Motion Light"
   use_blueprint:
     path: Blackshome/sensor-light.yaml
     input:
@@ -211,7 +210,7 @@
       entity_id: input_select.bedroom_ac_status
   - service: notify.supervisor_telegram
     data:
-      message: Bedroom AC Status has been changed to On!
+      message: "\U0001F916 Automation - Bedroom AC Status has been changed to On!"
   mode: single
 - id: '1673469610479'
   alias: 'Helper: Set Bedroom AC Status to Off'
@@ -236,7 +235,7 @@
       entity_id: input_select.bedroom_ac_status
   - service: notify.supervisor_telegram
     data:
-      message: Bedroom AC Status has been changed to Off!
+      message: "\U0001F916 Automation - Bedroom AC Status has been changed to Off!"
   mode: single
 - id: '1673808016982'
   alias: Bedroom A/C Bedroom OFF
@@ -309,7 +308,7 @@
         data: {}
   - service: notify.supervisor_telegram
     data:
-      message: Bedroom A/C automation has closed the A/C!
+      message: "\U0001F916 Automation - Bedroom A/C automation has closed the A/C!"
   mode: single
 - id: '1674326763431'
   alias: Tag Lights off is scanned
@@ -329,7 +328,7 @@
     data: {}
   - service: notify.supervisor_telegram
     data:
-      message: NFC Tag has been scanned!
+      message: "\U0001F916 Automation - NFC Tag has been scanned!"
   mode: single
 - id: '1674400177066'
   alias: Hallway Light Switch Button
@@ -346,7 +345,7 @@
       device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
   - service: notify.supervisor_telegram
     data:
-      message: Hallway Light Switch Button automation has been trigged!
+      message: "\U0001F916 Automation - Hallway Light Switch Button"
   mode: single
 - id: '1674445577046'
   alias: Turn OFF Hallway light after 3 mins
@@ -372,7 +371,7 @@
       entity_id: light.xiaomi_yeelink
   - service: notify.supervisor_telegram
     data:
-      message: Turn OFF Hallway light after 3 mins automation has been triggered!
+      message: "\U0001F916 Automation - Turn OFF Hallway light after 3 mins"
   mode: single
 - id: '1674684738623'
   alias: Notify with camera snapshot when motion is detected
@@ -381,7 +380,7 @@
     path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
     input:
       motion_sensor: binary_sensor.motion_sensor_occupancy
-      camera: camera.dining_table_sub
+      camera: camera.dining_table_main
       notify_device: 11337776bbc7cb4d561c95d059379b78
       delay: 4
       blocker_entity: binary_sensor.any_phone_at_home
@@ -418,9 +417,21 @@
     entity_id: device_tracker.ofir_phone
     state: not_home
   action:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  - service: camera.snapshot
+    data:
+      filename: /config/www/tmp/snapshot_living_room_sub.jpg
+    target:
+      entity_id: camera.living_room_sub
   - service: notify.supervisor_telegram
     data:
-      message: Main Door is open now!
+      message: "\U0001F916 Automation - Main Door is open now!"
+      data:
+        filename: /config/www/tmp/snapshot_living_room_sub.jpg
   mode: single
 - id: '1675577121363'
   alias: Supervisor - Main Door Closed
@@ -438,7 +449,7 @@
   action:
   - service: notify.supervisor_telegram
     data:
-      message: Main Door is closed now!
+      message: "\U0001F916 Automation - Main Door is closed now!"
   mode: single
 - id: '1675577446512'
   alias: Supervisor - Elian is Away
@@ -453,7 +464,7 @@
   action:
   - service: notify.supervisor_telegram
     data:
-      message: Elian has left the house.
+      message: "\U0001F916 Automation - Elian has left the house."
   mode: single
 - id: '1675577604748'
   alias: Supervisor - qBitTorrent is Offline
@@ -472,7 +483,7 @@
   action:
   - service: notify.supervisor_telegram
     data:
-      message: qBitTorrent is Offline!
+      message: "\U0001F916 Automation - qBitTorrent is Offline!"
   mode: single
 - id: '1675954097249'
   alias: Robot Vacuum Started Notification Telegram
@@ -494,6 +505,10 @@
   - platform: state
     entity_id: switch.hfjh_v2_eadb_fish_tank_2
     attribute: event.4.1
+  condition:
+  - condition: template
+    value_template: '{{ not ''unavailable'' in [trigger.from_state.state, trigger.to_state.state]
+      }}'
   action:
   - service: notify.home_assistant_group
     data:
@@ -501,11 +516,11 @@
         not none %}\n  {% set timestamp = (state_attr('switch.hfjh_v2_eadb_fish_tank_2',
         'event.4.1') | from_json).timestamp %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2',
         'event.4.1') | from_json).value[0].value.split(',') %}\n{% endif %} {% set
-        t = timestamp | default() | timestamp_custom('%H:%M', default='unknown') %}
-        {% set n = (value | default())[6] | default('unknown') %} {% if (value | default())[5]
-        | default() == 0 %}\n  \U0001F41F ❌ The fishes have not been fed at {{ t }}
-        ❌\n{% else %}\n  \U0001F41F The fishes have been fed {{ n }} portions at {{
-        t }}.\n{% endif %}\n"
+        t = timestamp | default() | timestamp_custom('%H:%M %A', default='unknown')
+        %} {% set n = (value | default())[6] | default('unknown') %} {% if (value
+        | default())[5] | default() == 0 %}\n  \U0001F41F ❌ The fishes have not been
+        fed at {{ t }} ❌\n{% else %}\n  \U0001F41F The fishes have been fed {{ n }}
+        portions at {{ t }}.\n{% endif %}\n"
   mode: single
 - id: '1675957403629'
   alias: Robot Vacuum Finished Notification Telegram

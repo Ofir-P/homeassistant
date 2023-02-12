@@ -14,7 +14,7 @@ camera_play:
         {% endif %} '
   - service: notify.supervisor_telegram
     data:
-      message: Play Video on Chromecast script has been triggered!
+      message: "\U0001F4DC Script - Play Video on Chromecast script has been triggered!"
   mode: single
 ir_learn_mode_on:
   alias: IR Learn Mode On
@@ -27,7 +27,7 @@ ir_learn_mode_on:
       retain: false
   - service: notify.supervisor_telegram
     data:
-      message: Living Room IR device is now on Learn Mode
+      message: "\U0001F4DC Script - Living Room IR device is now on Learn Mode"
   mode: single
   icon: mdi:remote
 ir_turn_on_off_living_room_tv:
@@ -41,7 +41,7 @@ ir_turn_on_off_living_room_tv:
       retain: false
   - service: notify.supervisor_telegram
     data:
-      message: Living room IR has turned ON/OFF Living room TV!
+      message: "\U0001F4DC Script - Living room IR has turned ON/OFF Living room TV!"
   mode: single
   icon: mdi:remote-tv
 '1672322197141':
@@ -51,6 +51,11 @@ ir_turn_on_off_living_room_tv:
     data:
       topic: zigbee2mqtt/Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Living Room IR Turned ON AC"
   mode: single
   icon: mdi:air-conditioner
 ir_turn_off_living_room_ac:
@@ -60,6 +65,11 @@ ir_turn_off_living_room_ac:
     data:
       topic: zigbee2mqtt/Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Living Room IR Turned OFF AC"
   mode: single
   icon: mdi:air-conditioner
 turn_on_switcher_for_45mins:
@@ -67,12 +77,12 @@ turn_on_switcher_for_45mins:
   sequence:
   - service: switcher_kis.turn_on_with_timer
     data:
-      timer_minutes: 58
+      timer_minutes: 60
     target:
       device_id: 3d9226e0d372160b7307053c6332e5be
   - service: notify.supervisor_telegram
     data:
-      message: 'Script Turn On Switcher for 60 minutes has been triggered '
+      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered "
   mode: single
   icon: mdi:water-boiler-auto
 turn_off_bedroom_light:
@@ -82,6 +92,9 @@ turn_off_bedroom_light:
     device_id: afb33500a8d79e33ccc9290dae617155
     entity_id: switch.bot_8552
     domain: switch
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bedroom Light Turned OFF"
   mode: single
   icon: hue:bulb-br30
 ir_learn_mode_on_bedroom:
@@ -95,7 +108,7 @@ ir_learn_mode_on_bedroom:
       retain: false
   - service: notify.supervisor_telegram
     data:
-      message: Bedroom IR device is now on Learn Mode
+      message: "\U0001F4DC Script - Bedroom IR device is now on Learn Mode"
   mode: single
   icon: mdi:remote
 ir_turn_on_bedroom_ac:
@@ -105,6 +118,11 @@ ir_turn_on_bedroom_ac:
     data:
       topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "B2gj0RFAAqYGgAPgBwGAFwCCoAeAD8ABQA9AAcAH4AcBQBfAA+AvAUA/4DcB4DtD4AcBQFNAA+AfAcArwAfgBwFAF+ALAwdAAkACQAJAAg=="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bedroom IR Turned ON AC"
   mode: single
   icon: mdi:air-conditioner
 ir_turn_on_off_bedroom_tv:
@@ -118,7 +136,7 @@ ir_turn_on_off_bedroom_tv:
       retain: false
   - service: notify.supervisor_telegram
     data:
-      message: Bedroom IR to turn ON/OFF TV has been triggered!
+      message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered!"
   mode: single
   icon: mdi:remote-tv
 ir_turn_off_bedroom_ac:
@@ -128,6 +146,11 @@ ir_turn_off_bedroom_ac:
     data:
       topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bedroom IR Turned OFF AC"
   mode: single
   icon: mdi:air-conditioner
 turn_off_on_living_room_light:
@@ -139,7 +162,7 @@ turn_off_on_living_room_light:
     domain: light
   - service: notify.supervisor_telegram
     data:
-      message: Living room light has been triggered!
+      message: "\U0001F4DC Script - Living room light has been triggered!"
   mode: single
   icon: hue:ceiling-round
 turn_on_fishbowl_light:
@@ -153,6 +176,10 @@ turn_on_fishbowl_light:
     data:
       entity_id: number.hfjh_v2_eadb_ledboard_brightness
       value: 100
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Fishbowl light turned ON"
+  mode: single
 turn_off_fishbowl_light:
   alias: Turn off Fishbowl Light
   sequence:
@@ -160,6 +187,10 @@ turn_off_fishbowl_light:
     data:
       entity_id: number.hfjh_v2_eadb_ledboard_brightness
       value: 0
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Fishbowl light turned OFF"
+  mode: single
 feed_the_fish:
   alias: Feed the Fish
   sequence:
@@ -186,3 +217,7 @@ feed_the_fish:
       - service: notify.mobile_app_ofir_phone
         data:
           message: "\U0001F41F✔️ Fish feed time"
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Feed the Fish has been triggered!"
+  mode: single
