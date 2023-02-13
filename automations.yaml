@@ -295,10 +295,17 @@
       - condition: trigger
         id: Bedroom A/C turned off
         alias: Bedroom A/C turned off
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'Off'
       sequence:
       - service: timer.cancel
         data: {}
         alias: Cancel Bedroom A/C Timer
+      - service: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Bedroom A/C automation has cancelled because
+            AC is OFF"
     - conditions:
       - condition: trigger
         id: Timer Finished
@@ -306,9 +313,10 @@
       sequence:
       - service: script.ir_turn_off_bedroom_ac
         data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Bedroom A/C automation has closed the A/C!"
+      - service: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Bedroom A/C automation has closed the
+            A/C!"
   mode: single
 - id: '1674326763431'
   alias: Tag Lights off is scanned
@@ -431,7 +439,8 @@
     data:
       message: "\U0001F916 Automation - Main Door is open now!"
       data:
-        filename: /config/www/tmp/snapshot_living_room_sub.jpg
+        photo:
+        - file: /config/www/tmp/snapshot_living_room_sub.jpg
   mode: single
 - id: '1675577121363'
   alias: Supervisor - Main Door Closed
