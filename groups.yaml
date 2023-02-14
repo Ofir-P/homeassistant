@@ -21,7 +21,7 @@ lights:
 rf433:
   name: RF433
   entities:
-    - switch.smart_ir_remote_control_living_room # Living room IR Remote
+    - sensor.smart_ir_remote_control_living_room_learned_ir_code # Living room IR Remote
     - sensor.wireless_remote_switch_battery # Wireless Remote
     - sensor.bedroom_smart_ir_remote_control_battery # Bedroom IR Remote
     - sensor.hallway_sticker_switch_button_action # Hallway Sticker button

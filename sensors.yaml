@@ -159,6 +159,7 @@
       unit_of_measurement: "MB/s"
       value_template: "{{ (states('sensor.qbittorrent_up_speed') | int / 1000) | round(1) }}"
 # [=========================]qBitTorrent[=========================]
+# [=========================]Plex[=========================]
 - platform: plex_recently_added
   name: Recently Added Movies # will create sensor.recently_added_movies
   token: !secret plex_token
@@ -174,18 +175,18 @@
   port: 32400
   section_types:
     - show
-
+# [=========================]Plex[=========================]
+# [=========================]Xiaomi[=========================]
 - platform: template
   sensors:
     feed_record_timestamp:
       value_template: >-
-        {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
-          {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
-          {{ as_datetime(feed_record.timestamp)|timestamp_local }}
-        {%- endif -%}
+        {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') | from_json %}
+        {{ as_local(as_datetime(feed_record.timestamp)) }}
       friendly_name: "Last Fish Feed"
       icon_template: "{{ 'mdi:fish' }}"
       device_class: timestamp
+      availability_template: "{{ state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not none }}"
 
 - platform: template
   sensors:
@@ -193,3 +194,4 @@
       friendly_name: "Vacuum Clean Area"
       value_template: "{{ (state_attr('vacuum.mijia_v2_202f_robot_cleaner', 'clean_record.clean_area')|float(0) / 100) | round(2) }}"
       unit_of_measurement: "m²"
+# [=========================]Xiaomi[=========================]
