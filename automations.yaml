@@ -304,10 +304,6 @@
         alias: Cancel Bedroom A/C Timer
         target:
           entity_id: timer.a_c_timer
-      - service: notify.supervisor_telegram
-        data:
-          message: "\U0001F916 Automation - Bedroom A/C automation has canceled because
-            AC is OFF"
     - conditions:
       - condition: trigger
         id: Timer Finished
@@ -389,7 +385,7 @@
   use_blueprint:
     path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
     input:
-      motion_sensor: binary_sensor.motion_sensor_occupancy
+      motion_sensor: binary_sensor.living_room_motion
       camera: camera.dining_table_main
       notify_device: 11337776bbc7cb4d561c95d059379b78
       delay: 4
@@ -517,15 +513,21 @@
     entity_id: switch.hfjh_v2_eadb_fish_tank_2
     attribute: event.4.1
   condition:
-  - condition: template
+  - alias: Check if the switch didn't go from or to unavailable
+    condition: template
+    value_template: '{{ not ''unavailable'' in [trigger.from_state.state, trigger.to_state.state]
+      }}'
+  - alias: Check if the values are correct
+    condition: template
     value_template: '{{ not (values.value == ''unknown'' and values.timestamp == ''unknown'')
       }}'
   action:
-  - service: notify.home_assistant_group
+  - alias: Send the message
+    service: notify.home_assistant_group
     data:
       message: "{% if values.error %}\n  \U0001F41F ❌ The fishes have not been fed
-        at {{ t }} ❌\n{% else %}\n  \U0001F41F The fishes have been fed {{ n }} portions
-        at {{ t }}.\n{% endif %}\n"
+        at {{ values.timestamp }} ❌\n{% else %}\n  \U0001F41F The fishes have been
+        fed {{ values.value }} portions at {{ values.timestamp }}.\n{% endif %}\n"
   variables:
     values: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not
       none %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1')
