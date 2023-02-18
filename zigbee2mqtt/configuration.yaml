@@ -21,8 +21,6 @@ devices:
     description: Smart Switch EU
   '0x70ac08fffe22f51e':
     friendly_name: Smart IR Remote Control
-  '0x00158d0008dff275':
-    friendly_name: Water Leak Sensor Kitchen Sink
   '0xa4c1383422d28f86':
     friendly_name: Bedroom Temperature Sensor
   '0x00158d0008e0195a':
@@ -52,3 +50,5 @@ devices:
   '0xa4c138dc96ec297c':
     friendly_name: Main Door Sensor
     description: Top of Main Door Entrance
+  '0x00158d0008dff275':
+    friendly_name: Water Leak Sensor Kitchen Sink

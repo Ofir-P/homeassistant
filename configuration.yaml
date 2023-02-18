@@ -191,7 +191,15 @@ ombi:
   username: !secret ombi_user
   password: !secret ombi_pass
 # [=========================]Ombi[=========================]
-
+# [=========================]Home Zone[=========================]
+zone:
+  # This will override the default home zone
+  - name: Home
+    latitude: !secret latitude_home
+    longitude: !secret longitude_home
+    radius: 18
+    icon: mdi:account-multiple
+# [=========================]Home Zone[=========================]
 # [=========================]Telegram[=========================]
 telegram_bot:
   - platform: polling
