@@ -331,17 +331,6 @@
     data:
       message: "\U0001F916 Automation - Hallway Light Switch Button"
   mode: single
-- id: '1674684738623'
-  alias: Notify with camera snapshot when motion is detected
-  description: ''
-  use_blueprint:
-    path: Stan-Gobien/CriticalCollapseOptionNotHomeMotionCameraSnapshotWithClickAction.yaml
-    input:
-      motion_sensor: binary_sensor.living_room_motion
-      camera: camera.dining_table_main
-      notify_device: 11337776bbc7cb4d561c95d059379b78
-      delay: 4
-      blocker_entity: binary_sensor.any_phone_at_home
 - id: '1675145318623'
   alias: New Item Added to Shopping List
   description: Notification to Telegram Group when new Item has been added to Shopping
@@ -378,8 +367,8 @@
   - delay:
       hours: 0
       minutes: 0
-      seconds: 2
-      milliseconds: 0
+      seconds: 1
+      milliseconds: 45
   - service: camera.snapshot
     data:
       filename: /config/www/tmp/snapshot_living_room_sub.jpg
