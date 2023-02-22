@@ -574,3 +574,46 @@
       caption: "\U0001F916 Automation - Notify with camera snapshot when motion is
         detected"
   mode: single
+- id: '1677017796757'
+  alias: When Ofir Home and Door is open Blink Red Light Strip RGB
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    to: 'on'
+  condition:
+  - condition: device
+    device_id: 11337776bbc7cb4d561c95d059379b78
+    domain: device_tracker
+    entity_id: device_tracker.ofir_phone
+    type: is_home
+  - condition: time
+    after: '16:00:00'
+    before: 02:30:00
+  action:
+  - service: scene.create
+    data:
+      scene_id: thebeforetimes
+      snapshot_entities: light.office_desk_led_strip
+  - repeat:
+      count: '76'
+      sequence:
+      - service: light.toggle
+        data:
+          color_name: red
+        target:
+          entity_id: light.office_desk_led_strip
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 250
+  - service: scene.turn_on
+    target:
+      entity_id: scene.thebeforetimes
+    metadata: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Door Open Light Strip Office Flash Red Color"
+  mode: single

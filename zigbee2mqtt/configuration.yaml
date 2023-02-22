@@ -52,3 +52,5 @@ devices:
     description: Top of Main Door Entrance
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
+  '0x84fd27fffe600604':
+    friendly_name: Office Desk LED Strip
