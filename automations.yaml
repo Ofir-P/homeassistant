@@ -591,6 +591,10 @@
   - condition: time
     after: '18:30:00'
     before: 02:30:00
+  - condition: template
+    value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
+      < 600 }}'
+    alias: Has Ofir PC was active in the last 10 minutes ?
   action:
   - service: scene.create
     data:
