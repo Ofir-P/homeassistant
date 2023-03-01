@@ -39,6 +39,9 @@ SERVICE_ACCOUNT.json
 components
 /.ssh
 home-assistant.log
+snapshot_living_room_sub.jpg
+snapshot_dining_table_sub.jpg
+snapshot_dining_table_main.jpg
 home-assistant_v2.db
 deps
 tts

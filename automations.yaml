@@ -508,8 +508,8 @@
     to: 'off'
     for:
       hours: 0
-      minutes: 2
-      seconds: 0
+      minutes: 1
+      seconds: 40
   condition:
   - condition: time
     after: 00:00:00
@@ -534,7 +534,8 @@
         message: "\U0001F916 Automation - Hallway Motion Light"
     else:
     - service: light.turn_off
-      data: {}
+      data:
+        transition: 20
       target:
         device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
   mode: single
@@ -593,7 +594,7 @@
     before: 02:30:00
   - condition: template
     value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
-      < 600 }}'
+      < 300 }}'
     alias: Has Ofir PC was active in the last 10 minutes ?
   action:
   - service: scene.create
