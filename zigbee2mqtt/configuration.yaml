@@ -28,6 +28,7 @@ devices:
     description: Bathroom
   '0xa4c138a831c3931c':
     friendly_name: Motion Sensor
+    description: Microwave
   '0xa4c138cf6f460fd1':
     friendly_name: AC Bedroom
     description: Smart Switch EU
@@ -54,3 +55,7 @@ devices:
     friendly_name: Water Leak Sensor Kitchen Sink
   '0x84fd27fffe600604':
     friendly_name: Office Desk LED Strip
+  '0xa4c13825cb23672c':
+    friendly_name: 'TV Bedroom '
+  '0xa4c138c861145739':
+    friendly_name: Heater Bathroom

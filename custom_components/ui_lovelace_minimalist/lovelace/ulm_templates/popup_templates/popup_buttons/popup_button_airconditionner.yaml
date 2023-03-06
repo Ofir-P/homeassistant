@@ -19,5 +19,5 @@ popup_button_airconditionner:
     action: "call-service"
     service: "climate.set_hvac_mode"
     service_data:
-      entity_id: "climate.ofir_a_c"
+      entity_id: "climate.hvac"
       hvac_mode: "[[[ return variables.ulm_popup_button_airconditionner_state ]]]"
