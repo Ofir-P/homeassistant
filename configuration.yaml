@@ -48,7 +48,7 @@ light:
           {%- if states('number.hfjh_v2_eadb_ledboard_brightness') -%}
             {{ states('number.hfjh_v2_eadb_ledboard_brightness')|int > 0 }}
           {%- endif -%}
-        availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] }}"
+        availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] and states('number.hfjh_v2_eadb_ledboard_brightness') | is_number }}"
         icon_template: "{{ 'mdi:lightbulb' }}"
         ### Brightness returned by MioT is in %, while the light brightness is 0-255
         set_level:
