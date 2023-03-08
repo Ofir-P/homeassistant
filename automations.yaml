@@ -590,7 +590,7 @@
     entity_id: device_tracker.ofir_phone
     type: is_home
   - condition: time
-    after: '18:30:00'
+    after: '18:15:00'
     before: 02:30:00
   - condition: template
     value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
