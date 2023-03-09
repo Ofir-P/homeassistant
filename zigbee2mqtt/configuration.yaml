@@ -59,3 +59,5 @@ devices:
     friendly_name: 'TV Bedroom '
   '0xa4c138c861145739':
     friendly_name: Heater Bathroom
+  '0x00158d0008d0bf86':
+    friendly_name: Bedroom Door Vibration Sensor
