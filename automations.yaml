@@ -583,6 +583,10 @@
     entity_id:
     - binary_sensor.main_door_sensor_contact
     to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_door_vibration_sensor_vibration
+    to: 'on'
   condition:
   - condition: device
     device_id: 11337776bbc7cb4d561c95d059379b78
@@ -595,14 +599,14 @@
   - condition: template
     value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
       < 300 }}'
-    alias: Has Ofir PC was active in the last 10 minutes ?
+    alias: Has Ofir PC was active in the last 5 minutes ?
   action:
   - service: scene.create
     data:
       scene_id: thebeforetimes
       snapshot_entities: light.office_desk_led_strip
   - repeat:
-      count: '76'
+      count: '70'
       sequence:
       - service: light.toggle
         data:
