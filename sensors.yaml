@@ -187,6 +187,12 @@
       icon_template: "{{ 'mdi:fish' }}"
       device_class: timestamp
       availability_template: "{{ state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not none }}"
+    feed_is_missing_timestamp:
+      value_template: >-
+        {{ states('sensor.feed_record_timestamp') | as_datetime | as_local + timedelta(days=2, hours=3) }}
+      friendly_name: "Feeding is required"
+      icon_template: "{{ 'mdi:fish' }}"
+      device_class: timestamp
 
 - platform: template
   sensors:

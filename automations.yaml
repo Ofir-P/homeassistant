@@ -514,6 +514,9 @@
   - condition: time
     after: 00:00:00
     before: 06:36:00
+  - condition: state
+    entity_id: light.xiaomi_yeelink
+    state: 'off'
   action:
   - if:
     - condition: trigger
@@ -660,8 +663,8 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 20
-    below: 6
+      seconds: 27
+    below: 4
   condition:
   - condition: state
     entity_id: input_select.bedroom_tv_status
@@ -675,4 +678,16 @@
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Bedroom TV Status has been changed to Off!"
+  mode: single
+- id: '1678624466464'
+  alias: Feeding is Required
+  description: ''
+  trigger:
+  - platform: time
+    at: sensor.feed_is_missing_timestamp
+  condition: []
+  action:
+  - service: notify.home_assistant_group
+    data:
+      message: "\U0001F41F ❌ The fishes have not been fed for more than 2 days!"
   mode: single
