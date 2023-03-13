@@ -517,6 +517,7 @@
   - condition: state
     entity_id: light.xiaomi_yeelink
     state: 'off'
+    enabled: false
   action:
   - if:
     - condition: trigger
