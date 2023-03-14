@@ -221,3 +221,39 @@ feed_the_fish:
     data:
       message: "\U0001F4DC Script - Feed the Fish has been triggered!"
   mode: single
+turn_off_on_hallway_light:
+  alias: 'Turn OFF/ON Hallway Light '
+  sequence:
+  - service: light.toggle
+    data: {}
+    target:
+      device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Hallway light has been triggered!"
+  mode: single
+  icon: hue:ceiling-round
+turn_off_on_kitchen_light:
+  alias: Turn OFF/ON Kitchen Light
+  sequence:
+  - service: switch.toggle
+    data: {}
+    target:
+      device_id: ab9d9e64727b36fa67f4e85f6ce47c37
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Kitchen light has been triggered!"
+  mode: single
+  icon: hue:ceiling-round
+turn_off_on_office_light:
+  alias: Turn OFF/ON Office Light
+  sequence:
+  - service: switch.toggle
+    data: {}
+    target:
+      device_id: 9f3c7fdc8d12201ccf0b98a033ef0951
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Office light has been triggered!"
+  mode: single
+  icon: hue:ceiling-round
