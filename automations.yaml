@@ -301,13 +301,12 @@
     tag_id: 7efb2f01-320d-4a37-813f-0f6bd3406141
   condition: []
   action:
-  - service: switch.turn_on
+  - service: switch.turn_off
     data: {}
     target:
       device_id:
-      - ab9d9e64727b36fa67f4e85f6ce47c37
       - 9f3c7fdc8d12201ccf0b98a033ef0951
-    alias: Turn OFF Kitchen & Office Lights
+      - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: light.turn_off
     data: {}
     target:
@@ -606,7 +605,7 @@
     type: is_home
   - condition: time
     after: '18:15:00'
-    before: 02:30:00
+    before: 03:30:00
   - condition: template
     value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
       < 300 }}'

@@ -72,31 +72,6 @@ ir_turn_off_living_room_ac:
       message: "\U0001F4DC Script - Living Room IR Turned OFF AC"
   mode: single
   icon: mdi:air-conditioner
-turn_on_switcher_for_45mins:
-  alias: Turn ON Switcher for 60mins
-  sequence:
-  - service: switcher_kis.turn_on_with_timer
-    data:
-      timer_minutes: 60
-    target:
-      device_id: 3d9226e0d372160b7307053c6332e5be
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered "
-  mode: single
-  icon: mdi:water-boiler-auto
-turn_off_bedroom_light:
-  alias: Turn OFF Bedroom Light
-  sequence:
-  - type: turn_off
-    device_id: afb33500a8d79e33ccc9290dae617155
-    entity_id: switch.bot_8552
-    domain: switch
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom Light Turned OFF"
-  mode: single
-  icon: hue:bulb-br30
 ir_learn_mode_on_bedroom:
   alias: IR Learn Mode On (Bedroom)
   sequence:
@@ -257,3 +232,28 @@ turn_off_on_office_light:
       message: "\U0001F4DC Script - Office light has been triggered!"
   mode: single
   icon: hue:ceiling-round
+turn_off_on_bedroom_light:
+  alias: Turn OFF/ON Bedroom Light
+  sequence:
+  - type: toggle
+    device_id: afb33500a8d79e33ccc9290dae617155
+    entity_id: light.switchbot_bedroom_light_switch
+    domain: light
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bedroom Light Turned OFF/ON"
+  mode: single
+  icon: hue:bulb-br30
+turn_on_switcher_for_60mins:
+  alias: Turn ON Switcher for 60mins
+  sequence:
+  - service: switcher_kis.turn_on_with_timer
+    data:
+      timer_minutes: 60
+    target:
+      device_id: 3d9226e0d372160b7307053c6332e5be
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered "
+  mode: single
+  icon: mdi:water-boiler-auto
