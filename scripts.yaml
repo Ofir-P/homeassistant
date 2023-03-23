@@ -254,6 +254,35 @@ turn_on_switcher_for_60mins:
       device_id: 3d9226e0d372160b7307053c6332e5be
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered "
+      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered! "
   mode: single
   icon: mdi:water-boiler-auto
+office_led_strip_notify:
+  alias: Office LED Strip Notify
+  sequence:
+  - service: scene.create
+    data:
+      scene_id: thebeforetimes
+      snapshot_entities: light.office_desk_led_strip
+  - repeat:
+      count: '55'
+      sequence:
+      - service: light.toggle
+        data:
+          color_name: green
+        target:
+          device_id: 2b218245c8be8b065f4b50b22f37c9e8
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 295
+  - service: scene.turn_on
+    target:
+      entity_id: scene.thebeforetimes
+    metadata: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Office Light Strip Notify Green"
+  mode: single
+  icon: mdi:led-strip-variant

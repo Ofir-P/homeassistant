@@ -294,19 +294,17 @@
             A/C!"
   mode: single
 - id: '1674326763431'
-  alias: Tag Lights off is scanned
-  description: ''
+  alias: NFC Tag Lights off is scanned
+  description: NFC Tag next to the Main Door will turn off all the lights in the house
   trigger:
   - platform: tag
     tag_id: 7efb2f01-320d-4a37-813f-0f6bd3406141
   condition: []
   action:
-  - service: switch.turn_off
+  - service: script.turn_off_on_kitchen_light
     data: {}
-    target:
-      device_id:
-      - 9f3c7fdc8d12201ccf0b98a033ef0951
-      - ab9d9e64727b36fa67f4e85f6ce47c37
+  - service: script.turn_off_on_office_light
+    data: {}
   - service: light.turn_off
     data: {}
     target:
@@ -595,8 +593,9 @@
     to: 'on'
   - platform: state
     entity_id:
-    - binary_sensor.bedroom_door_vibration_sensor_vibration
-    to: 'on'
+    - device_tracker.elians_iphone
+    from: not_home
+    to: home
   condition:
   - condition: device
     device_id: 11337776bbc7cb4d561c95d059379b78
@@ -717,4 +716,119 @@
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
+  mode: single
+- id: '1679512193063'
+  alias: Wireless Remote - Button 4
+  description: Will trigger script to notify office led strip to green color
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 4_single
+  condition:
+  - condition: template
+    value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
+      < 300 }}'
+    alias: Has Ofir PC was active in the last 5 minutes ?
+  action:
+  - service: notify.alexa_media_office_echo_show5
+    data:
+      message: Elian is calling you
+  - service: script.office_led_strip_notify
+    data: {}
+  mode: single
+- id: '1679512412588'
+  alias: Wireless Remote - Button 1
+  description: Will toggle kitchen light when button 1 is pressed.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 1_single
+  condition: []
+  action:
+  - service: script.turn_off_on_kitchen_light
+    data: {}
+  mode: single
+- id: '1679512495607'
+  alias: Wireless Remote - Button 2
+  description: Will toggle office light when button 2 is pressed.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 2_single
+  condition: []
+  action:
+  - service: script.turn_off_on_office_light
+    data: {}
+  mode: single
+- id: '1679512554388'
+  alias: Wireless Remote - Button 3
+  description: Will turn on boiler for 60 minutes when button 3 is pressed.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 3_single
+  condition: []
+  action:
+  - service: script.turn_on_switcher_for_60mins
+    data: {}
+  mode: single
+- id: '1679515975008'
+  alias: Sky is at the door
+  description: When Motion detected and Ofir is at home and by the PC, time is around
+    23:00 and Bedroom door is closed.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_motion_sensor_occupancy
+    to: 'on'
+    from: 'off'
+  condition:
+  - condition: device
+    device_id: 11337776bbc7cb4d561c95d059379b78
+    domain: device_tracker
+    entity_id: device_tracker.ofir_phone
+    type: is_home
+  - condition: time
+    after: '23:15:00'
+    before: 03:50:00
+  - condition: template
+    value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
+      < 300 }}'
+    alias: Has Ofir PC was active in the last 5 minutes ?
+  - condition: state
+    entity_id: binary_sensor.bedroom_door_sensor_contact
+    state: 'off'
+  action:
+  - service: scene.create
+    data:
+      scene_id: thebeforetimes
+      snapshot_entities: light.office_desk_led_strip
+  - service: notify.ofir_pc
+    data:
+      message: SKY AT THE DOOR!!!!
+  - repeat:
+      count: '85'
+      sequence:
+      - service: light.toggle
+        data:
+          color_name: red
+        target:
+          entity_id: light.office_desk_led_strip
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 250
+  - service: scene.turn_on
+    target:
+      entity_id: scene.thebeforetimes
+    metadata: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Sky is at the door Light Strip Office Flash
+        Red Color"
   mode: single

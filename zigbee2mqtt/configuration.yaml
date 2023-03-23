@@ -27,8 +27,8 @@ devices:
     friendly_name: Water Leak Sensor Bathroom Sink
     description: Bathroom
   '0xa4c138a831c3931c':
-    friendly_name: Motion Sensor
-    description: Microwave
+    friendly_name: Bedroom Motion Sensor
+    description: Bedroom Panel
   '0xa4c138cf6f460fd1':
     friendly_name: AC Bedroom
     description: Smart Switch EU
@@ -63,3 +63,5 @@ devices:
     friendly_name: Bedroom Door Vibration Sensor
   '0x00158d0006c8f369':
     friendly_name: Kitchen Sticker Switch button
+  '0xa4c138e832f03f77':
+    friendly_name: Bedroom Door Sensor
