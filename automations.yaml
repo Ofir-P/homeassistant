@@ -668,8 +668,8 @@
     entity_id: sensor.tv_bedroom_power
     for:
       hours: 0
-      minutes: 2
-      seconds: 27
+      minutes: 1
+      seconds: 50
     below: 4
   condition:
   - condition: state
