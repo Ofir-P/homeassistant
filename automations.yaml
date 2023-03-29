@@ -363,10 +363,7 @@
     - binary_sensor.main_door_sensor_contact
     from: 'off'
     to: 'on'
-  condition:
-  - condition: state
-    entity_id: device_tracker.ofir_phone
-    state: not_home
+  condition: []
   action:
   - delay:
       hours: 0
@@ -393,11 +390,13 @@
     - binary_sensor.main_door_sensor_contact
     from: 'on'
     to: 'off'
-  condition:
-  - condition: state
-    entity_id: device_tracker.ofir_phone
-    state: not_home
+  condition: []
   action:
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Main Door is closed now!"
@@ -411,6 +410,10 @@
     - device_tracker.elians_iphone
     from: home
     to: not_home
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
   condition: []
   action:
   - service: notify.supervisor_telegram
@@ -668,8 +671,8 @@
     entity_id: sensor.tv_bedroom_power
     for:
       hours: 0
-      minutes: 1
-      seconds: 50
+      minutes: 3
+      seconds: 17
     below: 4
   condition:
   - condition: state
