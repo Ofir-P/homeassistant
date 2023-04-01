@@ -65,3 +65,7 @@ devices:
     friendly_name: Kitchen Sticker Switch button
   '0xa4c138e832f03f77':
     friendly_name: Bedroom Door Sensor
+  '0xa4c1389c053df036':
+    friendly_name: Office TV
+  '0xa4c13849a2e5e351':
+    friendly_name: Living Room TV

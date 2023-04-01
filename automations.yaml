@@ -835,3 +835,124 @@
       message: "\U0001F916 Automation - Sky is at the door Light Strip Office Flash
         Red Color"
   mode: single
+- id: '1680267194597'
+  alias: 'Helper: Set Office TV Status to On'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.office_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 9
+    above: 12
+  condition:
+  - condition: state
+    entity_id: input_select.office_tv_status
+    state: 'Off'
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
+      entity_id: input_select.office_tv_status
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office TV Status has been changed to On!"
+  mode: single
+- id: '1680267264459'
+  alias: 'Helper: Set Office TV Status to Off'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.office_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 27
+    below: 11
+  condition:
+  - condition: state
+    entity_id: input_select.office_tv_status
+    state: 'On'
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
+      entity_id: input_select.office_tv_status
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office TV Status has been changed to Off!"
+  mode: single
+- id: '1680274781889'
+  alias: 'Helper: Set Living Room TV Status to On'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.living_room_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 9
+    above: 5
+  condition:
+  - condition: state
+    state: 'Off'
+    entity_id: input_select.living_room_tv_status
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'On'
+    target:
+      entity_id: input_select.living_room_tv_status
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Living Room TV Status has been changed to
+        On!"
+  mode: single
+- id: '1680274832575'
+  alias: 'Helper: Set Living Room TV Status to Off'
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.living_room_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 27
+    below: 4
+  condition:
+  - condition: state
+    state: 'On'
+    entity_id: input_select.living_room_tv_status
+  action:
+  - service: input_select.select_option
+    data:
+      option: 'Off'
+    target:
+      entity_id: input_select.living_room_tv_status
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Living Room TV Status has been changed to
+        Off!"
+  mode: single
+- id: '1680276199792'
+  alias: Test - Bedroom Button
+  description: Will turn off lights & TV's in the entire house that is not in the
+    Bedroom.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.kitchen_sticker_switch_button_action
+  condition: []
+  action:
+  - repeat:
+      for_each:
+      - helper: input_select.living_room_tv_status
+        script: script.ir_turn_on_off_living_room_tv
+      sequence:
+      - if: '{{ is_state(repeat.item.helper, ''On'') }}'
+        then:
+        - service: '{{ repeat.item.script }}'
+  mode: single
