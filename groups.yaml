@@ -7,9 +7,9 @@ cameras:
 chromecast:
   name: Chromecast
   entities:
-    - media_player.mecool_ofir
-    - media_player.mibox4
-    - media_player.mibox4_2
+    - input_select.office_tv_status
+    - input_select.bedroom_tv_status
+    - input_select.living_room_tv_status
 
 lights:
   name: Lights
@@ -17,6 +17,8 @@ lights:
     - light.xiaomi_yeelink #Xiaomi Light Hallway
     - switch.bot_8552 #SwitchBot Bedroom
     - light.living_room_light_module #Living Room Light
+    - switch.kitchen_light_switch
+    - switch.office_light_switch
 
 rf433:
   name: RF433

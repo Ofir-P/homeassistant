@@ -412,8 +412,8 @@
     to: not_home
     for:
       hours: 0
-      minutes: 3
-      seconds: 0
+      minutes: 0
+      seconds: 15
   condition: []
   action:
   - service: notify.supervisor_telegram
@@ -672,7 +672,7 @@
     for:
       hours: 0
       minutes: 3
-      seconds: 17
+      seconds: 45
     below: 4
   condition:
   - condition: state
@@ -919,7 +919,7 @@
     entity_id: sensor.living_room_tv_power
     for:
       hours: 0
-      minutes: 3
+      minutes: 4
       seconds: 27
     below: 4
   condition:
