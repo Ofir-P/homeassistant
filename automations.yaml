@@ -920,7 +920,7 @@
     for:
       hours: 0
       minutes: 4
-      seconds: 27
+      seconds: 47
     below: 4
   condition:
   - condition: state
