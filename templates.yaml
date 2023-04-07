@@ -15,7 +15,7 @@
     - name: chromecastcounter
       state: >-
         {% set group = expand('group.chromecast') %}
-        {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
+        {{ group | count }}/{{ group | selectattr('state','eq','On') | list | count }}
 - sensor:
     - name: camerascounter
       state: >-

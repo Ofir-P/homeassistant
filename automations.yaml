@@ -868,7 +868,7 @@
     entity_id: sensor.office_tv_power
     for:
       hours: 0
-      minutes: 0
+      minutes: 3
       seconds: 27
     below: 11
   condition:
