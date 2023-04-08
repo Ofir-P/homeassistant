@@ -710,15 +710,14 @@
     to: single
   condition: []
   action:
-  - service: switch.toggle
+  - service: script.turn_off_on_kitchen_light
     data: {}
-    target:
-      device_id:
-      - ab9d9e64727b36fa67f4e85f6ce47c37
-      - 9f3c7fdc8d12201ccf0b98a033ef0951
+  - service: script.turn_off_on_office_light
+    data: {}
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
+    enabled: false
   mode: single
 - id: '1679512193063'
   alias: Wireless Remote - Button 4
