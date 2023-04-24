@@ -26,9 +26,6 @@ devices:
   '0x00158d0008e0195a':
     friendly_name: Water Leak Sensor Bathroom Sink
     description: Bathroom
-  '0xa4c138a831c3931c':
-    friendly_name: Bedroom Motion Sensor
-    description: Bedroom Panel
   '0xa4c138cf6f460fd1':
     friendly_name: AC Bedroom
     description: Smart Switch EU
