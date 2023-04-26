@@ -485,9 +485,9 @@ class XiaomiMiotFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 uds = {}
                 for v in self.hass.data[DOMAIN].values():
                     if isinstance(v, dict):
-                        v = v.get(CONF_XIAOMI_CLOUD)
                         if mod := v.get('miio_info', {}).get(CONF_MODEL):
                             models.append(mod)
+                        v = v.get(CONF_XIAOMI_CLOUD)
                     if isinstance(v, MiotCloud):
                         mic = v
                         if mic.user_id not in uds:
@@ -719,9 +719,11 @@ def get_customize_options(hass, options={}, bool2selects=[], entity_id='', model
             'brightness_for_off': cv.string,
         })
 
-    if domain == 'fan' or re.search(r'\.fan\.', model, re.I):
+    if domain == 'fan' or re.search(r'\.fan\.|airpurifier|airfresh', model, re.I):
         options.update({
             'disable_preset_modes': cv.string,
+            'speed_property': cv.string,
+            'percentage_property': cv.string,
         })
 
     if domain == 'camera' or re.search(r'camera|videodoll', model, re.I):
@@ -769,7 +771,10 @@ def get_customize_options(hass, options={}, bool2selects=[], entity_id='', model
     if domain == 'number':
         bool2selects.extend(['restore_state'])
 
-    if domain == 'device_tracker':
+    if domain == 'device_tracker' or re.search(r'watch', model, re.I):
+        options.update({
+            'coord_type': cv.string,
+        })
         bool2selects.extend(['disable_location_name'])
 
     if domain == 'text' and re.search(r'execute_text_directive', entity_id, re.I):

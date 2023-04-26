@@ -5,9 +5,12 @@ DEVICE_CUSTOMIZES = {
         'select_properties': 'curtain-2.mode-5,default_open_position',
         'number_properties': 'curtain-2.mode-10,default_close_position',
     },
-
     '090615.curtain.*': {
         'exclude_miot_properties': 'motor_control',
+    },
+    '090615.plug.plus01': {
+        'exclude_miot_properties': 'fault,mode,name,status',
+        'chunk_properties': 1,
     },
 
     'aice.motor.kzmu3': {
@@ -24,6 +27,9 @@ DEVICE_CUSTOMIZES = {
         'select_properties': 'bt_level',
         'number_properties': 'offline_timeout,motion_timeout,online_level,offline_level,online_duration,'
                              'offline_duration,ble_in_threshold,ble_out_threshold,ble_far_timeout',
+    },
+    'air.fan.ca23ad9': {
+        'unreadable_properties': True,  # issues/1097
     },
     'ateai.mosq.dakuo': {
         'switch_properties': 'dakuo_mosq_dispeller.status',
@@ -455,6 +461,11 @@ DEVICE_CUSTOMIZES = {
         'select_properties': 'work_mode,hip_water_gage,woman_water_gage,hip_nozzle_position,woman_nozzle_pos,'
                              'seat_temperature,wind_temperature,water_temperature,auto_mode',
     },
+    'isa.camera.hlc7': {
+        'select_properties': 'night_shot,recording_mode,detection_sensitivity',
+        'switch_properties': 'on,time_watermark,motion_detection',
+        'number_properties': 'image_rollover,alarm_interval',
+    },
     'isleep.blanket.hs2205': {
         'chunk_properties': 1,
     },
@@ -693,6 +704,11 @@ DEVICE_CUSTOMIZES = {
         'device_class': 'problem',
     },
 
+    'opple.light.yrtd': {
+        'switch_properties': 'night_light,time_display,wake_up_at_night,voice',
+        'select_properties': 'study_time',
+        'number_properties': 'love_bright,love_color',
+    },
     'ows.towel_w.mj1x0': {
         'sensor_properties': 'temperature',
         'select_properties': 'mode',
@@ -975,6 +991,7 @@ DEVICE_CUSTOMIZES = {
         'sensor_properties': 'warming_time',
         'switch_properties': 'auto_keep_warm,keep_warm_reminder,custom_knob_temp,'
                              'lift_remember_temp,boiling_reminder,no_disturb',
+        'select_properties': 'target_mode',
         'number_properties': 'keep_warm_temperature,keep_warm_time',
         'exclude_miot_services': 'knob_setting,local_timing',
     },
@@ -1009,6 +1026,11 @@ DEVICE_CUSTOMIZES = {
         'brightness_for_on': 0,
         'brightness_for_off': 2,
     },
+    'zhimi.airp.cpa4': {
+        'chunk_properties': 1,
+        'number_properties': 'favorite_level',
+        'exclude_miot_properties': 'country_code',
+    },
     'zhimi.airp.mb4a': {
         'number_properties': 'favorite_speed',
     },
@@ -1033,8 +1055,9 @@ DEVICE_CUSTOMIZES = {
         'button_actions': 'reset_filter_life',
     },
     'zhimi.airpurifier.*': {
-        'sensor_properties': 'illumination,motor_speed',
+        'speed_property': 'favorite_level,favorite_fan_level',
         'number_properties': 'favorite_level,favorite_fan_level',
+        'sensor_properties': 'illumination,motor_speed',
         # https://github.com/rytilahti/python-miio/blob/31c5d740d403c6f45f1e7e0d4a8a6276684a8ecd/miio/integrations/airpurifier/zhimi/airpurifier_miot.py#L13
         'exclude_miot_services': 'button,filter_time,rfid,others',
         'exclude_miot_properties': 'average_aqi_cnt,aqi_zone,sensor_state,aqi_goodh,aqi_runstate,aqi_state,'
@@ -1053,6 +1076,10 @@ DEVICE_CUSTOMIZES = {
     'zhimi.airpurifier.za2': {
         'brightness_for_on': 0,
         'brightness_for_off': 2,
+    },
+    'zhimi.fan.*': {
+        'switch_properties': 'anion,alarm',
+        'number_properties': 'horizontal_angle,off_delay',
     },
     'zhimi.heater.na1': {
         'switch_properties': 'return_to_middle,alarm',

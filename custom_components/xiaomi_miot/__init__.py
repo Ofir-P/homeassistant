@@ -1501,9 +1501,9 @@ class MiotEntity(MiioEntity):
                 [
                     'temperature', 'indoor_temperature', 'relative_humidity', 'humidity',
                     'pm2_5_density', 'pm10_density', 'co2_density', 'tvoc_density', 'hcho_density',
-                    'air_quality', 'air_quality_index', 'illumination', 'motion_state', 'motion_detection',
+                    'air_quality', 'air_quality_index', 'illumination', 'motion_state',
                 ],
-                ['environment', 'illumination_sensor', 'motion_detection'],
+                ['environment', 'illumination_sensor'],
                 domain='sensor',
             )
             self._update_sub_entities(
@@ -1841,6 +1841,8 @@ class MiotEntity(MiioEntity):
         mcw = self.miot_cloud_write
         if self.custom_config_bool('auto_cloud') and not self._local_state:
             mcw = self.xiaomi_cloud
+        if not self.miot_device:
+            mcw = self.xiaomi_cloud
         try:
             if m2m and self._miio2miot.has_setter(siid, piid=piid):
                 results = [
@@ -1909,7 +1911,7 @@ class MiotEntity(MiioEntity):
             mca = self.xiaomi_cloud
         try:
             if m2m and self._miio2miot.has_setter(siid, aiid=aiid):
-                result = self._miio2miot.call_action(self.miot_device, siid, aiid, pms)
+                result = self._miio2miot.call_action(self.miot_device, siid, aiid, params)
             elif isinstance(mca, MiotCloud):
                 result = mca.do_action(pms)
                 dly = self.custom_config_integer('cloud_delay_update', 5)
