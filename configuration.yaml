@@ -88,6 +88,7 @@ binary_sensor:
         device_class: presence
 
 # [=========================]Xiaomi Miot[=========================]
+# [=========================]Switchbot[=========================]
 rest_command:
   switchbot_device_command:
     url: "https://api.switch-bot.com/v1.0/devices/{{ deviceId }}/commands"
@@ -118,6 +119,7 @@ switch:
           {% else %}
             mdi:television
           {% endif %}
+# [=========================]Switchbot[=========================]
 # [=========================]Spotcast[=========================]
 spotcast:
   sp_dc: !secret sp_dc
