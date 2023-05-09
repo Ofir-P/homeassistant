@@ -286,3 +286,19 @@ office_led_strip_notify:
       message: "\U0001F4DC Script - Office Light Strip Notify Green"
   mode: single
   icon: mdi:led-strip-variant
+turn_off_on_bathroom_light:
+  alias: Turn OFF/ON Bathroom Light
+  sequence:
+  - type: toggle
+    device_id: 974fe480eea5ad9851e2b94d16cb3baa
+    entity_id: switch.bot_b296
+    domain: switch
+  - type: toggle
+    device_id: 8b0b37e639c674161245a6a30534f8e5
+    entity_id: switch.bot_5b1c
+    domain: switch
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bathroom Lights Turned OFF/ON"
+  mode: single
+  icon: hue:bulb-br30
