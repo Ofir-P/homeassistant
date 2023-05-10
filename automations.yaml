@@ -293,36 +293,6 @@
           message: "\U0001F916 Automation - Bedroom A/C automation has closed the
             A/C!"
   mode: single
-- id: '1674326763431'
-  alias: NFC Tag Lights off is scanned
-  description: NFC Tag next to the Main Door will turn off all the lights in the house
-  trigger:
-  - platform: tag
-    tag_id: 7efb2f01-320d-4a37-813f-0f6bd3406141
-  condition: []
-  action:
-  - service: script.turn_off_on_kitchen_light
-    data: {}
-  - service: script.turn_off_on_office_light
-    data: {}
-  - service: switch.turn_off
-    data: {}
-    target:
-      device_id:
-      - 8b0b37e639c674161245a6a30534f8e5
-      - 974fe480eea5ad9851e2b94d16cb3baa
-  - service: light.turn_off
-    data: {}
-    target:
-      device_id:
-      - afb33500a8d79e33ccc9290dae617155
-      - 121a0c6ddafe33985ea0806ad01fb779
-      - 3e6f5b46bee6ed340dcbc9c7419e4e10
-    alias: Turn OFF Bedroom Switchbot & Living Room & Hallway Lights
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - NFC Tag has been scanned!"
-  mode: single
 - id: '1674400177066'
   alias: Hallway Light Switch Button
   description: ''
@@ -902,11 +872,12 @@
         Off!"
   mode: single
 - id: '1680276199792'
-  alias: Turn off devices
+  alias: Turn off devices except Bedroom TV
+  description: ''
   trigger:
   - platform: state
     entity_id:
-    - sensor.kitchen_sticker_switch_button_action
+    - sensor.bedroom_sticker_switch_button_action
     to: hold
   action:
   - service: switch.turn_off
@@ -915,8 +886,12 @@
       device_id:
       - 8b0b37e639c674161245a6a30534f8e5
       - 974fe480eea5ad9851e2b94d16cb3baa
-      - ab9d9e64727b36fa67f4e85f6ce47c37
+  - service: switch.turn_on
+    data: {}
+    target:
+      device_id:
       - 9f3c7fdc8d12201ccf0b98a033ef0951
+      - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: light.turn_off
     data: {}
     target:
@@ -927,9 +902,8 @@
   - repeat:
       while:
       - condition: template
-        value_template: '{{ is_state(''input_select.bedroom_tv_status'', ''On'') or
-          is_state(''input_select.bedroom_ac_status'', ''On'') or is_state(''input_select.hallway_light_status'',
-          ''on'') or is_state(''input_select.living_room_tv_status'', ''On'') or is_state(''input_select.office_tv_status'',
+        value_template: '{{ is_state(''input_select.bedroom_ac_status'', ''On'') or
+          is_state(''input_select.living_room_tv_status'', ''On'') or is_state(''input_select.office_tv_status'',
           ''On'') }}'
       sequence:
       - choose:
@@ -982,8 +956,114 @@
       - delay:
           hours: 0
           minutes: 4
+          seconds: 59
+          milliseconds: 0
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Turn off devices except Bedroom TV"
+- id: '1683640835671'
+  alias: NFC Tag Turn Off House Devices
+  description: When NFC Tagged is scanned, turn off lights & tv's.
+  trigger:
+  - platform: tag
+    tag_id: 7efb2f01-320d-4a37-813f-0f6bd3406141
+  condition: []
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      device_id:
+      - 8b0b37e639c674161245a6a30534f8e5
+      - 974fe480eea5ad9851e2b94d16cb3baa
+  - service: switch.turn_on
+    data: {}
+    target:
+      device_id:
+      - 9f3c7fdc8d12201ccf0b98a033ef0951
+      - ab9d9e64727b36fa67f4e85f6ce47c37
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id:
+      - 121a0c6ddafe33985ea0806ad01fb779
+      - 3e6f5b46bee6ed340dcbc9c7419e4e10
+      - afb33500a8d79e33ccc9290dae617155
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ is_state(''input_select.bedroom_tv_status'', ''On'') or
+          is_state(''input_select.bedroom_ac_status'', ''On'') or is_state(''input_select.living_room_tv_status'',
+          ''On'') or is_state(''input_select.office_tv_status'', ''On'') }}'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.bedroom_tv_status
+            state: 'On'
+          sequence:
+          - service: mqtt.publish
+            data:
+              topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+              payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+              qos: 0
+              retain: false
+        enabled: true
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.bedroom_ac_status
+            state: 'On'
+          sequence:
+          - service: mqtt.publish
+            data:
+              topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+              payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
+              qos: 0
+              retain: false
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.living_room_tv_status
+            state: 'On'
+          sequence:
+          - service: mqtt.publish
+            data:
+              topic: zigbee2mqtt/Smart IR Remote Control/set
+              payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+              qos: 0
+              retain: false
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.office_tv_status
+            state: 'On'
+          sequence:
+          - service: rest_command.switchbot_device_command
+            data:
+              deviceId: 01-202301072012-55513632
+              command: turnOff
+      - delay:
+          hours: 0
+          minutes: 4
           seconds: 50
           milliseconds: 0
   - service: notify.supervisor_telegram
     data:
-      message: DEVICES ARE OFF, GN
+      message: DEVICES ARE OFF  VIA NFC TAG
+  mode: single
+- id: '1683641424442'
+  alias: Bedroom Light Switch Button
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.bedroom_sticker_switch_button_action
+    to: single
+  condition: []
+  action:
+  - service: script.turn_off_on_bedroom_light
+    data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Bedroom Light Switch Button"
+  mode: single

@@ -66,3 +66,6 @@ devices:
     friendly_name: Office TV
   '0xa4c13849a2e5e351':
     friendly_name: Living Room TV
+  '0x00158d00076b15f3':
+    friendly_name: Bedroom Sticker Switch button
+    description: Under the table next to the bed
