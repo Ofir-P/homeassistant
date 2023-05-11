@@ -1045,7 +1045,7 @@
       - delay:
           hours: 0
           minutes: 4
-          seconds: 50
+          seconds: 59
           milliseconds: 0
   - service: notify.supervisor_telegram
     data:
