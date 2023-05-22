@@ -122,8 +122,17 @@ switch:
 # [=========================]Switchbot[=========================]
 # [=========================]Spotcast[=========================]
 spotcast:
-  sp_dc: !secret sp_dc
-  sp_key: !secret sp_key
+  sp_dc: !secret primary_sp_dc
+  sp_key: !secret primary_sp_key
+  country: IL #optional, added in 3.6.24
+  accounts:
+    elian:
+      sp_dc: !secret elian_sp_dc
+      sp_key: !secret elian_sp_key
+    ofir:
+      sp_dc: !secret ofir_sp_dc
+      sp_key: !secret ofir_sp_key
+
 # [=========================]Spotcast[=========================]
 logbook:
   exclude:

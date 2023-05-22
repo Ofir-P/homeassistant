@@ -302,3 +302,15 @@ turn_off_on_bathroom_light:
       message: "\U0001F4DC Script - Bathroom Lights Turned OFF/ON"
   mode: single
   icon: hue:bulb-br30
+shower_music:
+  alias: Shower Music
+  sequence:
+  - service: spotcast.start
+    data:
+      device_name: Shower Echo Dot
+      uri: spotify:playlist:3OrzpgkRM3gHd4xAhy86Zr
+      random_song: true
+      shuffle: true
+      force_playback: true
+  mode: single
+  icon: mdi:account-music
