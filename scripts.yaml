@@ -312,5 +312,6 @@ shower_music:
       random_song: true
       shuffle: true
       force_playback: true
+      start_volume: 90
   mode: single
   icon: mdi:account-music
