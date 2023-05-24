@@ -19,6 +19,7 @@ lights:
     - light.living_room_light_module #Living Room Light
     - switch.kitchen_light_switch
     - switch.office_light_switch
+    
 
 rf433:
   name: RF433

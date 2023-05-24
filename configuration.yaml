@@ -198,9 +198,10 @@ shell_command:
 
 # [=========================]Ombi[=========================]
 ombi:
-  host: "10.0.0.151"
+  host: "10.0.0.153"
   username: !secret ombi_user
-  password: !secret ombi_pass
+  api_key: !secret ombi_api
+  port: 3579
 # [=========================]Ombi[=========================]
 # [=========================]Home Zone[=========================]
 zone:
