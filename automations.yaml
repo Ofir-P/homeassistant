@@ -508,6 +508,9 @@
     - condition: time
       after: 00:01:00
       before: 06:35:00
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'Off'
     then:
     - condition: state
       entity_id: light.xiaomi_yeelink
