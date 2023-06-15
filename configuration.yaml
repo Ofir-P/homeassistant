@@ -60,33 +60,6 @@ light:
           service: script.turn_on_fishbowl_light
         turn_off:
           service: script.turn_off_fishbowl_light
-
-binary_sensor:
-  - platform: template
-    sensors:
-      feed_record_result:
-        value_template: >-
-          {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
-              {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
-              {% set feed_result = feed_record.value[0].value.split(',')[5] %}
-              {{ feed_result|int != 0 }}
-          {%- endif -%}
-        availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] }}"
-        attribute_templates:
-          timestamp: >-
-            {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
-                {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
-                {{ as_datetime(feed_record.timestamp)|timestamp_local }}
-            {%- endif -%}
-        friendly_name: "Automatic Feeder"
-        device_class: problem
-  # [=========================]Phone at home[=========================]
-  - platform: template
-    sensors:
-      any_phone_at_home:
-        value_template: "{{ is_state('device_tracker.elians_iphone', 'home') or is_state('device_tracker.ofir_phone', 'home') }}"
-        device_class: presence
-
 # [=========================]Xiaomi Miot[=========================]
 # [=========================]Switchbot[=========================]
 rest_command:
@@ -187,6 +160,7 @@ script: !include scripts.yaml
 input_select: !include input_select.yaml
 scene: !include scenes.yaml
 sensor: !include sensors.yaml
+binary_sensor: !include binary_sensor.yaml
 group: !include groups.yaml
 template: !include templates.yaml
 

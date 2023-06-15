@@ -9,8 +9,8 @@ DEVICE_CUSTOMIZES = {
         'exclude_miot_properties': 'motor_control',
     },
     '090615.plug.plus01': {
-        'exclude_miot_properties': 'fault,mode,name,status',
         'chunk_properties': 1,
+        'exclude_miot_properties': 'fault,mode,name,status,temperature',
     },
 
     'aice.motor.kzmu3': {
@@ -124,6 +124,9 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'childlock',
         'select_properties': 'tempactivate,tempcomp',
         'exclude_miot_properties': 'fault,sensortype,maxsettemp,minsettemp',
+    },
+    'cuco.acpartner.cp6': {
+        'switch_properties': 'air_conditioner.on',
     },
     'cuco.light.sl4': {
         'switch_properties': 'swich',
@@ -338,6 +341,10 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'air_purifier.on,screen.on,alarm',
         'number_properties': 'favorite_speed,moto_hz',
     },
+    'dmaker.fan.1e': {
+        'button_actions': 'toggle_mode,loop_gear',
+        'number_properties': 'off_delay_time,speed_level',
+    },
     'dmaker.fan.p5': {
         'percentage_property': 'prop.2.6',
     },
@@ -351,7 +358,9 @@ DEVICE_CUSTOMIZES = {
         'percentage_property': 'prop.2.6',
     },
     'dmaker.fan.*': {
-        'number_select_properties': 'horizontal_swing_included_angle,horizontal_angle',
+        'switch_properties': 'alarm,horizontal_swing,vertical_swing',
+        'number_select_properties': 'horizontal_swing_included_angle,horizontal_angle,'
+                                    'vertical_swing_included_angle,vertical_angle',
         'number_properties': 'off_delay_time',
     },
     'dmaker.humidifier.*': {
@@ -364,6 +373,11 @@ DEVICE_CUSTOMIZES = {
         'chunk_properties': 1,
         'sensor_properties': 'status',
         'switch_properties': 'mode',
+    },
+    'dooya.curtain.m1': {
+        'chunk_properties': 1,
+        'sensor_properties': 'status',
+        'switch_properties': 'mode,motor_reverse',
     },
     'dooya.curtain.*': {
         'exclude_miot_properties': 'fault',
@@ -640,6 +654,12 @@ DEVICE_CUSTOMIZES = {
     'lumi.sensor_wleak.*': {
         'time_start_offset': -86400 * 365,
     },
+    'lumi.switch.acn032': {
+        'sensor_properties': 'electric_power',
+        'switch_properties': 'screen.on,mute,no_disturb',
+        'select_properties': 'volume',
+        'number_properties': 'brightness,auto_screen_off_time',
+    },
     'lumi.switch.*': {
         'cloud_delay_update': 10,
     },
@@ -694,6 +714,7 @@ DEVICE_CUSTOMIZES = {
     },
 
     'novo.curtain.n21': {
+        'chunk_properties': 1,
         'exclude_miot_properties': 'fault',
         'select_properties': 'motor_control',
     },
@@ -728,7 +749,9 @@ DEVICE_CUSTOMIZES = {
         'number_properties': 'numleds,pixel_per_step,fade_delay,step_delay,stair_travel_time',
     },
     'qdhkl.aircondition.b23': {
+        'local_delay_update': 8,
         'cloud_delay_update': 8,
+        'miot_type': 'urn:miot-spec-v2:device:air-conditioner:0000A004:qdhkl-b23:2',
     },
     'qmi.plug.2a1c1': {
         'main_miot_services': 'switch-2',
@@ -1020,6 +1043,8 @@ DEVICE_CUSTOMIZES = {
     },
     'zhimi.airfresh.ua1': {
         'exclude_miot_services': 'custom_serveice',
+        'brightness_for_on': 100,
+        'brightness_for_off': 1,
     },
     'zhimi.airfresh.va4': {
         'sensor_properties': 'motor_speed',
@@ -1078,8 +1103,8 @@ DEVICE_CUSTOMIZES = {
         'brightness_for_off': 2,
     },
     'zhimi.fan.*': {
-        'switch_properties': 'anion,alarm',
-        'number_properties': 'horizontal_angle,off_delay',
+        'switch_properties': 'anion,alarm,horizontal_swing,vertical_swing',
+        'number_properties': 'horizontal_angle,vertical_angle,off_delay',
     },
     'zhimi.heater.na1': {
         'switch_properties': 'return_to_middle,alarm',
