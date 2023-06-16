@@ -124,14 +124,6 @@
       friendly_name: "Count Of Timers"
       value_template: >-
         {{ states.timer | list | count }}
-# Count YAML Files
-- platform: command_line
-  name: "Count YAML Files"
-  command: " find /config/ -name '*.yaml' | wc -l"
-# Count YAML Lines
-- platform: command_line
-  name: "Count YAML Lines"
-  command: " find /config/ -name '*.yaml' | xargs cat | wc -l"
 # Count Number Of Zones
 - platform: template
   sensors:

@@ -722,16 +722,20 @@
     - sensor.wireless_remote_switch_action
     to: 4_single
   condition:
-  - condition: template
-    value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
-      < 300 }}'
-    alias: Has Ofir PC was active in the last 5 minutes ?
+  - condition: state
+    entity_id: input_select.living_room_tv_status
+    state: 'On'
   action:
-  - service: notify.alexa_media_office_echo_show5
-    data:
-      message: Elian is calling you
-  - service: script.office_led_strip_notify
+  - service: switch.turn_off
     data: {}
+    target:
+      entity_id:
+      - switch.bot_b296
+      - switch.bot_5b1c
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Remote Control button 4 - Turn off bathroom
+        lights!"
   mode: single
 - id: '1679512412588'
   alias: Wireless Remote - Button 1

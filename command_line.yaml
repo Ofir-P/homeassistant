@@ -1,0 +1,8 @@
+# Count YAML Files
+- sensor:
+    name: "Count YAML Files"
+    command: " find /config/ -name '*.yaml' | wc -l"
+# Count YAML Lines
+- sensor:
+    name: "Count YAML Lines"
+    command: " find /config/ -name '*.yaml' | xargs cat | wc -l"

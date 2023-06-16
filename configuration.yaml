@@ -33,33 +33,6 @@ xiaomi_miot:
     - function.ledboard_time_switch
     - function.ledboard_time_open
     - function.ledboard_time_close
-
-light:
-  - platform: template
-    lights:
-      fishbowl_light:
-        friendly_name: "Aquarium Light"
-        ### Brightness returned by MioT is in %, while the light brightness is 0-255
-        level_template: >-
-          {%- if states('number.hfjh_v2_eadb_ledboard_brightness') -%}
-              {{ (((states('number.hfjh_v2_eadb_ledboard_brightness')|int)*255)/100)|int }}
-          {%- endif -%}
-        value_template: >-
-          {%- if states('number.hfjh_v2_eadb_ledboard_brightness') -%}
-            {{ states('number.hfjh_v2_eadb_ledboard_brightness')|int > 0 }}
-          {%- endif -%}
-        availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] and states('number.hfjh_v2_eadb_ledboard_brightness') | is_number }}"
-        icon_template: "{{ 'mdi:lightbulb' }}"
-        ### Brightness returned by MioT is in %, while the light brightness is 0-255
-        set_level:
-          service: number.set_value
-          data:
-            entity_id: number.hfjh_v2_eadb_ledboard_brightness
-            value: "{{ (((brightness|int)/255)*100)|int }}"
-        turn_on:
-          service: script.turn_on_fishbowl_light
-        turn_off:
-          service: script.turn_off_fishbowl_light
 # [=========================]Xiaomi Miot[=========================]
 # [=========================]Switchbot[=========================]
 rest_command:
@@ -163,6 +136,7 @@ sensor: !include sensors.yaml
 binary_sensor: !include binary_sensor.yaml
 group: !include groups.yaml
 template: !include templates.yaml
+command_line: !include command_line.yaml
 
 homeassistant:
   customize: !include customize.yaml
