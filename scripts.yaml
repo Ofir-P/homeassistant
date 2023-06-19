@@ -313,3 +313,22 @@ shower_music:
       start_volume: 90
   mode: single
   icon: mdi:account-music
+bedroom_ac_tablet_button:
+  alias: Bedroom AC Tablet Button
+  sequence:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'On'
+      sequence:
+      - service: script.ir_turn_off_bedroom_ac
+        data: {}
+    - conditions:
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'Off'
+      sequence:
+      - service: script.ir_turn_on_bedroom_ac
+        data: {}
+  mode: single
