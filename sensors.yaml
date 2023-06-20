@@ -26,13 +26,6 @@
       friendly_name: "Count Of Binary Sensors"
       value_template: >-
         {{ states.binary_sensor | list | count }}
-# Count Number Of Covers
-- platform: template
-  sensors:
-    count_covers:
-      friendly_name: "Count Of Cover (Doors)"
-      value_template: >-
-        {{ states.cover | list | count }}
 # Count Number Of Device Trackers
 - platform: template
   sensors:
@@ -40,41 +33,6 @@
       friendly_name: "Count Of Device Trackers"
       value_template: >-
         {{ states.device_tracker | list | count }}
-# Count Number Of Entities
-- platform: template
-  sensors:
-    count_entities:
-      friendly_name: "Count Of Entities"
-      value_template: >
-        {{ states | length }}
-# Count Number Of Groups
-- platform: template
-  sensors:
-    count_groups:
-      friendly_name: "Count Of Groups"
-      value_template: >-
-        {{ states.group | list | count }}
-# Count Number Of Input Numbers
-- platform: template
-  sensors:
-    count_input_numbers:
-      friendly_name: "Count Of Input Numbers"
-      value_template: >-
-        {{ states.input_number | list | count }}
-# Count Number Of Input Select
-- platform: template
-  sensors:
-    count_input_selects:
-      friendly_name: "Count Of Input Selects"
-      value_template: >-
-        {{ states.input_select | list | count }}
-# Count Number Of Input Text
-- platform: template
-  sensors:
-    count_input_texts:
-      friendly_name: "Count Of Input Texts"
-      value_template: >-
-        {{ states.input_text | list | count }}
 # Count Number Of Lights
 - platform: template
   sensors:
@@ -82,20 +40,6 @@
       friendly_name: "Count Of Lights"
       value_template: >-
         {{ states.light | list | count }}
-# Count Number Of Media Players
-- platform: template
-  sensors:
-    count_media_players:
-      friendly_name: "Count Of Media Players"
-      value_template: >-
-        {{ states.media_player | list | count }}
-# Count Number Of Persons
-- platform: template
-  sensors:
-    count_persons:
-      friendly_name: "Count Of Persons"
-      value_template: >-
-        {{ states.person | list | count }}
 # Count Number Of Scripts
 - platform: template
   sensors:
@@ -117,20 +61,6 @@
       friendly_name: "Count Of Switches"
       value_template: >-
         {{ states.switch | list | count }}
-# Count Number Of Timers
-- platform: template
-  sensors:
-    count_timers:
-      friendly_name: "Count Of Timers"
-      value_template: >-
-        {{ states.timer | list | count }}
-# Count Number Of Zones
-- platform: template
-  sensors:
-    count_zones:
-      friendly_name: "Count Of Zones"
-      value_template: >-
-        {{ states.zone | list | count }}
 
 # [=========================]System Monitor[=========================]
 # [=========================]Plex[=========================]
@@ -179,6 +109,7 @@
       friendly_name: "Feeding is required"
       icon_template: "{{ 'mdi:fish' }}"
       device_class: timestamp
+      availability_template: "{{ 'sensor.feed_record_timestamp' | has_value }}"
 
 - platform: template
   sensors:

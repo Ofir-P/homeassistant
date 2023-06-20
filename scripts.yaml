@@ -44,20 +44,6 @@ ir_turn_on_off_living_room_tv:
       message: "\U0001F4DC Script - Living room IR has turned ON/OFF Living room TV!"
   mode: single
   icon: mdi:remote-tv
-'1672322197141':
-  alias: IR Turn ON Living Room AC
-  sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living Room IR Turned ON AC"
-  mode: single
-  icon: mdi:air-conditioner
 ir_turn_off_living_room_ac:
   alias: IR Turn OFF Living Room AC
   sequence:
@@ -140,32 +126,6 @@ turn_off_on_living_room_light:
       message: "\U0001F4DC Script - Living room light has been triggered!"
   mode: single
   icon: hue:ceiling-round
-turn_on_fishbowl_light:
-  alias: Turn on Fishbowl Light
-  sequence:
-  - service: number.set_value
-    data:
-      entity_id: number.hfjh_v2_eadb_ledboard_color
-      value: 16777215
-  - service: number.set_value
-    data:
-      entity_id: number.hfjh_v2_eadb_ledboard_brightness
-      value: 100
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Fishbowl light turned ON"
-  mode: single
-turn_off_fishbowl_light:
-  alias: Turn off Fishbowl Light
-  sequence:
-  - service: number.set_value
-    data:
-      entity_id: number.hfjh_v2_eadb_ledboard_brightness
-      value: 0
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Fishbowl light turned OFF"
-  mode: single
 feed_the_fish:
   alias: Feed the Fish
   sequence:
@@ -286,20 +246,6 @@ office_led_strip_notify:
       message: "\U0001F4DC Script - Office Light Strip Notify Green"
   mode: single
   icon: mdi:led-strip-variant
-turn_off_on_bathroom_light:
-  alias: Turn OFF Bathroom Light
-  sequence:
-  - service: switch.turn_off
-    data: {}
-    target:
-      device_id:
-      - 974fe480eea5ad9851e2b94d16cb3baa
-      - 8b0b37e639c674161245a6a30534f8e5
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bathroom Lights Turned OFF"
-  mode: single
-  icon: hue:bulb-br30
 shower_music:
   alias: Shower Music
   sequence:
@@ -331,4 +277,171 @@ bedroom_ac_tablet_button:
       sequence:
       - service: script.ir_turn_on_bedroom_ac
         data: {}
+  mode: single
+masterlights_turn_off_all_lights:
+  alias: MasterLights Turn Off All Lights
+  sequence:
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.bot_b296
+      - switch.bot_5b1c
+    alias: Turn off Bathroom Lights
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.kitchen_light_switch
+    alias: Turn off Kitchen Light
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_light_module
+      - light.xiaomi_yeelink
+      - light.switchbot_bedroom_light_switch
+  - service: notify.supervisor_telegram
+    data:
+      message: " \U0001F4DC Script - Master Lights - Turn Off All Lights in the House"
+  mode: single
+  icon: mdi:string-lights-off
+masterlights_turn_on_all_lights:
+  alias: MasterLights Turn On All Lights
+  sequence:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id:
+      - switch.bot_b296
+      - switch.bot_5b1c
+    alias: Turn on Bathroom Lights
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.kitchen_light_switch
+    alias: Turn on Kitchen Light
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_light_module
+      - light.xiaomi_yeelink
+      - light.switchbot_bedroom_light_switch
+  - service: notify.supervisor_telegram
+    data:
+      message: " \U0001F4DC Script - Master Lights - Turn On All Lights in the House"
+  mode: single
+  icon: mdi:string-lights
+ir_turn_on_living_room_ac:
+  alias: IR Turn ON Living Room AC
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
+      qos: 0
+      retain: false
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Living Room IR Turned ON AC"
+  mode: single
+  icon: mdi:air-conditioner
+turn_off_bathroom_light:
+  alias: Turn OFF Bathroom Light
+  sequence:
+  - service: switch.turn_off
+    data: {}
+    target:
+      device_id:
+      - 974fe480eea5ad9851e2b94d16cb3baa
+      - 8b0b37e639c674161245a6a30534f8e5
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bathroom Lights Turned OFF"
+  mode: single
+  icon: hue:bulb-br30
+bedtime_scene:
+  alias: Bedtime Scene
+  sequence:
+  - service: switch.turn_off
+    data: {}
+    target:
+      device_id:
+      - 8b0b37e639c674161245a6a30534f8e5
+      - 974fe480eea5ad9851e2b94d16cb3baa
+  - service: switch.turn_on
+    data: {}
+    target:
+      device_id:
+      - 9f3c7fdc8d12201ccf0b98a033ef0951
+      - ab9d9e64727b36fa67f4e85f6ce47c37
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id:
+      - 121a0c6ddafe33985ea0806ad01fb779
+      - 3e6f5b46bee6ed340dcbc9c7419e4e10
+      - afb33500a8d79e33ccc9290dae617155
+  - repeat:
+      while:
+      - condition: template
+        value_template: '{{ is_state(''input_select.living_room_tv_status'', ''On'')
+          or is_state(''input_select.office_tv_status'', ''On'') }}'
+      sequence:
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.bedroom_tv_status
+            state: 'On'
+          sequence:
+          - service: mqtt.publish
+            data:
+              topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+              payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+              qos: 0
+              retain: false
+        enabled: false
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.bedroom_ac_status
+            state: 'On'
+          sequence:
+          - service: mqtt.publish
+            data:
+              topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+              payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
+              qos: 0
+              retain: false
+        enabled: false
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.living_room_tv_status
+            state: 'On'
+          sequence:
+          - service: mqtt.publish
+            data:
+              topic: zigbee2mqtt/Smart IR Remote Control/set
+              payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+              qos: 0
+              retain: false
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.office_tv_status
+            state: 'On'
+          sequence:
+          - service: rest_command.switchbot_device_command
+            data:
+              deviceId: 01-202301072012-55513632
+              command: turnOff
+      - delay:
+          hours: 0
+          minutes: 4
+          seconds: 59
+          milliseconds: 0
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script - Bedtime Scene"
   mode: single

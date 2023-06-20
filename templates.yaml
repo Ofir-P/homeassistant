@@ -12,9 +12,9 @@
       icon: mdi:thermometer
 # Counters
 - sensor:
-    - name: chromecastcounter
+    - name: tvscounter
       state: >-
-        {% set group = expand('group.chromecast') %}
+        {% set group = expand('group.tvs') %}
         {{ group | count }}/{{ group | selectattr('state','eq','On') | list | count }}
 - sensor:
     - name: camerascounter

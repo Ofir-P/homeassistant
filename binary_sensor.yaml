@@ -15,12 +15,6 @@
             {% set feed_result = feed_record.value[0].value.split(',')[5] %}              {{ feed_result|int != 0 }}
         {%- endif -%}
       availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] }}"
-      attribute_templates:
-        timestamp: >-
-          {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
-              {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
-              {{ as_datetime(feed_record.timestamp)|timestamp_local }}
-          {%- endif -%}
       friendly_name: "Automatic Feeder"
       device_class: problem
 # [=========================]Xiaomi Miot - Aquarium[=========================]

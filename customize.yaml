@@ -14,7 +14,7 @@ sensor.google_drive_online:
 sensor.plex_online:
   entity_picture: /local/Logos/plex-removebg.png
 # Chromecast
-sensor.chromecastcounter:
+sensor.tvscounter:
   entity_picture: /local/Logos/chromecast-removebg-preview.png
 # Lightbulb
 sensor.lightscounter:
