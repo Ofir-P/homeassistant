@@ -277,6 +277,13 @@ bedroom_ac_tablet_button:
       sequence:
       - service: script.ir_turn_on_bedroom_ac
         data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 350
+      - service: script.ir_turn_on_bedroom_ac
+        data: {}
   mode: single
 masterlights_turn_off_all_lights:
   alias: MasterLights Turn Off All Lights

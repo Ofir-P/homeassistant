@@ -7,7 +7,7 @@ xiaomi_miot:
   device_customizes:
     hfjh.fishbowl.v2:
       ### Generate number entities for pump flux, brightness and led color
-      number_properties: pump_flux,ledboard_brightness,ledboard_color
+      number_properties: pump_flux,ledboard_color
       ### Generate a button entity to trigger the action to feed the fish
       button_actions: set_feed_single
       ### Add attribute to keep track of latest feed-record event
@@ -33,6 +33,7 @@ xiaomi_miot:
     - function.ledboard_time_switch
     - function.ledboard_time_open
     - function.ledboard_time_close
+    - function.ledboard_brightness
 # [=========================]Xiaomi Miot[=========================]
 # [=========================]Switchbot[=========================]
 rest_command:

@@ -1078,3 +1078,18 @@
     data:
       message: "\U0001F916 Automation - Turn off devices except Bedroom TV"
   mode: single
+- id: '1687258354025'
+  alias: Backup failed notification
+  description: Send notification to Supervisor telegram group when backup has failed
+    to upload to NAS / Google Drive.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.backups_stale
+    to: 'on'
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6D1 Backup failed!  \U0001F6D1 "
+  mode: single
