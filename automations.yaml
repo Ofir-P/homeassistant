@@ -1093,3 +1093,43 @@
     data:
       message: "\U0001F916 Automation - \U0001F6D1 Backup failed!  \U0001F6D1 "
   mode: single
+- id: '1687353252073'
+  alias: 'Helper: Set Living Room AC Status to On'
+  description: Notification to Supervisor group when Living Room AC changed to On
+    status.
+  trigger:
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: 'on'
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: cool
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: heat
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Living Room AC Status has been changed to
+        On!"
+  mode: single
+- id: '1687353338494'
+  alias: 'Helper: Set Living Room AC Status to Off'
+  description: Notification to Supervisor group when Living Room AC changed to Off
+    status.
+  trigger:
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: 'off'
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Living Room AC Status has been changed to
+        Off!"
+  mode: single
