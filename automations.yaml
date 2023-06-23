@@ -962,8 +962,8 @@
               command: turnOff
       - delay:
           hours: 0
-          minutes: 4
-          seconds: 59
+          minutes: 5
+          seconds: 28
           milliseconds: 0
   - service: notify.supervisor_telegram
     data:
@@ -1072,7 +1072,7 @@
       - delay:
           hours: 0
           minutes: 5
-          seconds: 25
+          seconds: 35
           milliseconds: 0
   - service: notify.supervisor_telegram
     data:
