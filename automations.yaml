@@ -861,7 +861,7 @@
     entity_id: sensor.living_room_tv_power
     for:
       hours: 0
-      minutes: 5
+      minutes: 4
       seconds: 25
     below: 4
   condition:
@@ -963,7 +963,7 @@
       - delay:
           hours: 0
           minutes: 5
-          seconds: 28
+          seconds: 35
           milliseconds: 0
   - service: notify.supervisor_telegram
     data:
