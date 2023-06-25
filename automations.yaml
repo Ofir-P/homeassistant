@@ -666,7 +666,7 @@
     for:
       hours: 0
       minutes: 4
-      seconds: 25
+      seconds: 45
     below: 4
   condition:
   - condition: state
@@ -862,7 +862,7 @@
     for:
       hours: 0
       minutes: 4
-      seconds: 25
+      seconds: 45
     below: 4
   condition:
   - condition: state
