@@ -187,7 +187,7 @@
       entity_id: input_select.bedroom_ac_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Bedroom AC Status has been changed to On!"
+      message: "\U0001F916 Automation - Bedroom AC ❄️ Status has been changed to On!"
   mode: single
 - id: '1673469610479'
   alias: 'Helper: Set Bedroom AC Status to Off'
@@ -212,7 +212,7 @@
       entity_id: input_select.bedroom_ac_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Bedroom AC Status has been changed to Off!"
+      message: "\U0001F916 Automation - Bedroom AC ❄️ Status has been changed to Off!"
   mode: single
 - id: '1673808016982'
   alias: Bedroom A/C Bedroom OFF
@@ -655,7 +655,8 @@
       entity_id: input_select.bedroom_tv_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Bedroom TV Status has been changed to On!"
+      message: "\U0001F916 Automation - Bedroom TV \U0001F4FA Status has been changed
+        to On!"
   mode: single
 - id: '1678080898486'
   alias: 'Helper: Set Bedroom TV Status to Off'
@@ -680,7 +681,8 @@
       entity_id: input_select.bedroom_tv_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Bedroom TV Status has been changed to Off!"
+      message: "\U0001F916 Automation - Bedroom TV \U0001F4FA Status has been changed
+        to Off!"
   mode: single
 - id: '1678624466464'
   alias: Feeding is Required
@@ -800,7 +802,8 @@
       entity_id: input_select.office_tv_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Office TV Status has been changed to On!"
+      message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
+        to On!"
   mode: single
 - id: '1680267264459'
   alias: 'Helper: Set Office TV Status to Off'
@@ -825,7 +828,8 @@
       entity_id: input_select.office_tv_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Office TV Status has been changed to Off!"
+      message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
+        to Off!"
   mode: single
 - id: '1680274781889'
   alias: 'Helper: Set Living Room TV Status to On'
@@ -850,8 +854,8 @@
       entity_id: input_select.living_room_tv_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Living Room TV Status has been changed to
-        On!"
+      message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
+        changed to On!"
   mode: single
 - id: '1680274832575'
   alias: 'Helper: Set Living Room TV Status to Off'
@@ -876,8 +880,8 @@
       entity_id: input_select.living_room_tv_status
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Living Room TV Status has been changed to
-        Off!"
+      message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
+        changed to Off!"
   mode: single
 - id: '1683640835671'
   alias: NFC Tag Turn Off House Devices
@@ -1076,7 +1080,7 @@
           milliseconds: 0
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Turn off devices except Bedroom TV"
+      message: "\U0001F916 Automation - Turn off devices except Bedroom TV & AC"
   mode: single
 - id: '1687258354025'
   alias: Backup failed notification
@@ -1114,8 +1118,8 @@
   action:
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Living Room AC Status has been changed to
-        On!"
+      message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
+        to On!"
   mode: single
 - id: '1687353338494'
   alias: 'Helper: Set Living Room AC Status to Off'
@@ -1130,6 +1134,6 @@
   action:
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Living Room AC Status has been changed to
-        Off!"
+      message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
+        to Off!"
   mode: single
