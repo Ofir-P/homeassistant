@@ -445,12 +445,22 @@
     value_template: '{{ not (values.value == ''unknown'' and values.timestamp == ''unknown'')
       }}'
   action:
+  - service: camera.snapshot
+    data:
+      filename: /config/www/tmp/snapshot_aquarium_sub.jpg
+    target:
+      entity_id: camera.aquarium_sub
   - alias: Send the message
     service: notify.home_assistant_group
     data:
       message: "{% if values.error %}\n  \U0001F41F ❌ The fishes have not been fed
         at {{ values.timestamp }} ❌\n{% else %}\n  \U0001F41F The fishes have been
         fed {{ values.value }} portions at {{ values.timestamp }}.\n{% endif %}\n"
+  - service: telegram_bot.send_photo
+    data:
+      authentication: digest
+      file: /config/www/tmp/snapshot_aquarium_sub.jpg
+      caption: test
   variables:
     values: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not
       none %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1')
