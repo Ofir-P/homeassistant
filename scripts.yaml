@@ -31,7 +31,7 @@ ir_learn_mode_on:
   mode: single
   icon: mdi:remote
 ir_turn_on_off_living_room_tv:
-  alias: IR Turn On/OFF Living Room Tv
+  alias: IR Toggle Living Room TV
   sequence:
   - service: mqtt.publish
     data:
@@ -87,7 +87,7 @@ ir_turn_on_bedroom_ac:
   mode: single
   icon: mdi:air-conditioner
 ir_turn_on_off_bedroom_tv:
-  alias: IR Turn On/OFF Bedroom TV
+  alias: IR Toggle Bedroom TV
   sequence:
   - service: mqtt.publish
     data:
@@ -115,7 +115,7 @@ ir_turn_off_bedroom_ac:
   mode: single
   icon: mdi:air-conditioner
 turn_off_on_living_room_light:
-  alias: 'Turn OFF/ON Living Room Light '
+  alias: 'Toggle Living Room Light '
   sequence:
   - type: toggle
     device_id: 121a0c6ddafe33985ea0806ad01fb779
@@ -157,7 +157,7 @@ feed_the_fish:
       message: "\U0001F4DC Script - Feed the Fish has been triggered!"
   mode: single
 turn_off_on_hallway_light:
-  alias: 'Turn OFF/ON Hallway Light '
+  alias: 'Toggle Hallway Light '
   sequence:
   - service: light.toggle
     data: {}
@@ -169,7 +169,7 @@ turn_off_on_hallway_light:
   mode: single
   icon: hue:ceiling-round
 turn_off_on_kitchen_light:
-  alias: Turn OFF/ON Kitchen Light
+  alias: Toggle Kitchen Light
   sequence:
   - service: switch.toggle
     data: {}
@@ -181,7 +181,7 @@ turn_off_on_kitchen_light:
   mode: single
   icon: hue:ceiling-round
 turn_off_on_office_light:
-  alias: Turn OFF/ON Office Light
+  alias: Toggle Office Light
   sequence:
   - service: switch.toggle
     data: {}
@@ -193,7 +193,7 @@ turn_off_on_office_light:
   mode: single
   icon: hue:ceiling-round
 turn_off_on_bedroom_light:
-  alias: Turn OFF/ON Bedroom Light
+  alias: Toggle Bedroom Light
   sequence:
   - type: toggle
     device_id: afb33500a8d79e33ccc9290dae617155
@@ -452,3 +452,35 @@ bedtime_scene:
     data:
       message: "\U0001F4DC Script - Bedtime Scene"
   mode: single
+toggle_living_room_ac:
+  alias: Toggle Living Room AC
+  sequence:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: cool
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: heat
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: heat_cool
+      sequence:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.ofir_a_c
+    - conditions:
+      - condition: state
+        entity_id: climate.ofir_a_c
+        state: 'off'
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.ofir_a_c
+  mode: single
+  icon: mdi:air-conditioner
