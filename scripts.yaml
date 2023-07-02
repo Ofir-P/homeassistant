@@ -256,7 +256,7 @@ shower_music:
       random_song: true
       shuffle: true
       force_playback: true
-      start_volume: 90
+      start_volume: 86
   mode: single
   icon: mdi:account-music
 bedroom_ac_tablet_button:
