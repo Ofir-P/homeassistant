@@ -456,11 +456,14 @@
       message: "{% if values.error %}\n  \U0001F41F ❌ The fishes have not been fed
         at {{ values.timestamp }} ❌\n{% else %}\n  \U0001F41F The fishes have been
         fed {{ values.value }} portions at {{ values.timestamp }}.\n{% endif %}\n"
+    enabled: false
   - service: telegram_bot.send_photo
     data:
       authentication: digest
       file: /config/www/tmp/snapshot_aquarium_sub.jpg
-      caption: test
+      caption: "    {% if values.error %} \U0001F41F ❌ The fishes have not been fed
+        at {{ values.timestamp }} ❌ {% else %} \U0001F41F The fishes have been fed
+        {{ values.value }} portions at {{ values.timestamp }}. {% endif %}"
   variables:
     values: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not
       none %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1')
@@ -932,11 +935,11 @@
       device_id:
       - 8b0b37e639c674161245a6a30534f8e5
       - 974fe480eea5ad9851e2b94d16cb3baa
+      - e42ad30ecad8a8a8efdbd7e8c1f1b37f
   - service: switch.turn_on
     data: {}
     target:
       device_id:
-      - 9f3c7fdc8d12201ccf0b98a033ef0951
       - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: light.turn_off
     data: {}
@@ -1041,11 +1044,11 @@
       device_id:
       - 8b0b37e639c674161245a6a30534f8e5
       - 974fe480eea5ad9851e2b94d16cb3baa
+      - e42ad30ecad8a8a8efdbd7e8c1f1b37f
   - service: switch.turn_on
     data: {}
     target:
       device_id:
-      - 9f3c7fdc8d12201ccf0b98a033ef0951
       - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: light.turn_off
     data: {}
