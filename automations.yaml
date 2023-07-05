@@ -197,8 +197,8 @@
     entity_id: sensor.ac_bedroom_power
     for:
       hours: 0
-      minutes: 3
-      seconds: 30
+      minutes: 4
+      seconds: 25
     below: 4
   condition:
   - condition: state
@@ -726,11 +726,11 @@
     data: {}
   - service: script.turn_off_on_office_light
     data: {}
-    enabled: false
+    enabled: true
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
-    enabled: false
+    enabled: true
   mode: single
 - id: '1679512193063'
   alias: Wireless Remote - Button 4
