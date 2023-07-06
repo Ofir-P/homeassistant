@@ -714,7 +714,7 @@
   mode: single
 - id: '1678737477375'
   alias: Kitchen & Office Light Switch Button
-  description: Toggle the lights in Kitchen & Office whenever single button is pressed.
+  description: Turn on the lights in Kitchen & Office whenever single button is pressed.
   trigger:
   - platform: state
     entity_id:
@@ -722,11 +722,14 @@
     to: single
   condition: []
   action:
-  - service: script.turn_off_on_kitchen_light
+  - service: switch.turn_off
     data: {}
-  - service: script.turn_off_on_office_light
+    target:
+      entity_id: switch.kitchen_light_switch
+  - service: switch.turn_on
     data: {}
-    enabled: true
+    target:
+      device_id: e42ad30ecad8a8a8efdbd7e8c1f1b37f
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
@@ -1174,4 +1177,27 @@
     data:
       message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
         to Off!"
+  mode: single
+- id: '1688592685175'
+  alias: Kitchen & Office Lights Switch Button OFF
+  description: Hold press will turn off the lights in Kitchen & Office.
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.kitchen_sticker_switch_button_action
+    to: hold
+  condition: []
+  action:
+  - service: switch.turn_on
+    data: {}
+    target:
+      entity_id: switch.kitchen_light_switch
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.office_light
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
+    enabled: true
   mode: single

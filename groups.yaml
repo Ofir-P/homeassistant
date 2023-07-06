@@ -20,7 +20,7 @@ lights:
     - switch.bot_5b1c #SwitchBot Bathroom Fan
     - light.living_room_light_module #Living Room Light
     - switch.kitchen_light_switch
-    - switch.office_light_switch
+    - switch.office_light
 
 rf433:
   name: RF433
