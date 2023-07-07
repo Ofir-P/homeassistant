@@ -938,7 +938,7 @@
       device_id:
       - 8b0b37e639c674161245a6a30534f8e5
       - 974fe480eea5ad9851e2b94d16cb3baa
-      - e42ad30ecad8a8a8efdbd7e8c1f1b37f
+      entity_id: switch.office_light
   - service: switch.turn_on
     data: {}
     target:
