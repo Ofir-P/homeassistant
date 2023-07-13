@@ -3,6 +3,7 @@ cameras:
   entities:
     - camera.living_room_sub
     - camera.dining_table_sub
+    - camera.aquarium_sub
 
 tvs:
   name: TVs
