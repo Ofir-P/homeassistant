@@ -175,6 +175,16 @@
       minutes: 1
       seconds: 0
     above: 5
+  - platform: state
+    entity_id:
+    - climate.bedroom_ac
+    from: 'off'
+    to: cool
+  - platform: state
+    entity_id:
+    - climate.bedroom_ac
+    from: 'off'
+    to: heat
   condition:
   - condition: state
     entity_id: input_select.bedroom_ac_status
@@ -200,6 +210,11 @@
       minutes: 4
       seconds: 25
     below: 4
+  - platform: state
+    entity_id:
+    - climate.bedroom_ac
+    to: 'off'
+    from:
   condition:
   - condition: state
     entity_id: input_select.bedroom_ac_status
@@ -286,8 +301,10 @@
         id: Timer Finished
         alias: Bedroom A/C Timer Finished
       sequence:
-      - service: script.ir_turn_off_bedroom_ac
+      - service: climate.turn_off
         data: {}
+        target:
+          entity_id: climate.bedroom_ac
       - service: notify.supervisor_telegram
         data:
           message: "\U0001F916 Automation - Bedroom A/C automation has closed the
@@ -977,12 +994,25 @@
             entity_id: input_select.bedroom_ac_status
             state: 'On'
           sequence:
-          - service: mqtt.publish
-            data:
-              topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-              payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
-              qos: 0
-              retain: false
+          - service: climate.turn_off
+            data: {}
+            target:
+              entity_id: climate.bedroom_ac
+      - choose:
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: climate.ofir_a_c
+              state: cool
+            - condition: state
+              entity_id: climate.ofir_a_c
+              state: heat
+          sequence:
+          - service: climate.turn_off
+            data: {}
+            target:
+              entity_id: climate.ofir_a_c
       - choose:
         - conditions:
           - condition: state
@@ -1024,8 +1054,25 @@
     to: single
   condition: []
   action:
-  - service: script.turn_off_on_bedroom_light
-    data: {}
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'Off'
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id: climate.bedroom_ac
+    - conditions:
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'On'
+      sequence:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id: climate.bedroom_ac
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Bedroom Light Switch Button"

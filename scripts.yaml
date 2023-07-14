@@ -44,20 +44,6 @@ ir_turn_on_off_living_room_tv:
       message: "\U0001F4DC Script - Living room IR has turned ON/OFF Living room TV!"
   mode: single
   icon: mdi:remote-tv
-ir_turn_off_living_room_ac:
-  alias: IR Turn OFF Living Room AC
-  sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "B60jqBFRAqgGQAMDgAJRAkADwAEBgAJAEwKoBlGgA4ALQAEBqAbgAQMEUQKAAlEgAeAFEwFRAuALD8ABwBvgAwFARUADwAFAI8ABQBfgEwPgCwHAP0A34BEB4BUdAVEC4AsfQBNAA+AhAcCLwAcBUQJAP0ADAVECQAVAF+AHAwtRAlECUQJRAqgGgAI="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living Room IR Turned OFF AC"
-  mode: single
-  icon: mdi:air-conditioner
 ir_learn_mode_on_bedroom:
   alias: IR Learn Mode On (Bedroom)
   sequence:
@@ -72,20 +58,6 @@ ir_learn_mode_on_bedroom:
       message: "\U0001F4DC Script - Bedroom IR device is now on Learn Mode"
   mode: single
   icon: mdi:remote
-ir_turn_on_bedroom_ac:
-  alias: 'IR Turn ON Bedroom AC '
-  sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "B2gj0RFAAqYGgAPgBwGAFwCCoAeAD8ABQA9AAcAH4AcBQBfAA+AvAUA/4DcB4DtD4AcBQFNAA+AfAcArwAfgBwFAF+ALAwdAAkACQAJAAg=="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom IR Turned ON AC"
-  mode: single
-  icon: mdi:air-conditioner
 ir_turn_on_off_bedroom_tv:
   alias: IR Toggle Bedroom TV
   sequence:
@@ -100,20 +72,6 @@ ir_turn_on_off_bedroom_tv:
       message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered!"
   mode: single
   icon: mdi:remote-tv
-ir_turn_off_bedroom_ac:
-  alias: IR Turn OFF Bedroom AC
-  sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "B14j7xFAAqcGgAPgBwHAF+ADB8ABQBNAAcAH4AcBQBfAA+AvAUA/4DcB4DtD4DcBwIPAB+AHAUAX4AMD4AQBAgJAAg=="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom IR Turned OFF AC"
-  mode: single
-  icon: mdi:air-conditioner
 turn_off_on_living_room_light:
   alias: 'Toggle Living Room Light '
   sequence:
@@ -259,32 +217,6 @@ shower_music:
       start_volume: 86
   mode: single
   icon: mdi:account-music
-bedroom_ac_tablet_button:
-  alias: Bedroom AC Tablet Button
-  sequence:
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_select.bedroom_ac_status
-        state: 'On'
-      sequence:
-      - service: script.ir_turn_off_bedroom_ac
-        data: {}
-    - conditions:
-      - condition: state
-        entity_id: input_select.bedroom_ac_status
-        state: 'Off'
-      sequence:
-      - service: script.ir_turn_on_bedroom_ac
-        data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 350
-      - service: script.ir_turn_on_bedroom_ac
-        data: {}
-  mode: single
 masterlights_turn_off_all_lights:
   alias: MasterLights Turn Off All Lights
   sequence:
@@ -341,20 +273,6 @@ masterlights_turn_on_all_lights:
       message: " \U0001F4DC Script - Master Lights - Turn On All Lights in the House"
   mode: single
   icon: mdi:string-lights
-ir_turn_on_living_room_ac:
-  alias: IR Turn ON Living Room AC
-  sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "CK8jthGIArYGU2AD4AcBwBfgAwdAAeABDwKIAlOgAQG2BuABA0AV4AMPQAHgCw/gEwFAL0ABQEvgKwGAP+AvPeAZAYBf4B0BwCvAB+AHAUAXQANAAUAHwAMHUwJTArYGUwI="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living Room IR Turned ON AC"
-  mode: single
-  icon: mdi:air-conditioner
 turn_off_bathroom_light:
   alias: Turn OFF Bathroom Light
   sequence:
