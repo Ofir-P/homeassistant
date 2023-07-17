@@ -1045,7 +1045,7 @@
       message: "\U0001F916 Automation - House devices are OFF via NFC Tag"
   mode: single
 - id: '1683641424442'
-  alias: Bedroom Light Switch Button
+  alias: Bedroom Sticker Button
   description: ''
   trigger:
   - platform: state
@@ -1075,7 +1075,7 @@
           entity_id: climate.bedroom_ac
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Bedroom Light Switch Button"
+      message: "\U0001F916 Automation - Bedroom AC Switch Sticker Button"
   mode: single
 - id: '1687162895738'
   alias: Turn off devices except Bedroom TV & AC
