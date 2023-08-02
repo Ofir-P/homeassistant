@@ -120,7 +120,8 @@ turn_off_on_hallway_light:
   - service: light.toggle
     data: {}
     target:
-      device_id: 3e6f5b46bee6ed340dcbc9c7419e4e10
+      device_id:
+      - 54892fd42bdc03ee6a4ef97974e9f7d9
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F4DC Script - Hallway light has been triggered!"
@@ -238,8 +239,8 @@ masterlights_turn_off_all_lights:
     target:
       entity_id:
       - light.living_room_light_module
-      - light.xiaomi_yeelink
       - light.switchbot_bedroom_light_switch
+      device_id: 54892fd42bdc03ee6a4ef97974e9f7d9
   - service: notify.supervisor_telegram
     data:
       message: " \U0001F4DC Script - Master Lights - Turn Off All Lights in the House"
@@ -266,8 +267,8 @@ masterlights_turn_on_all_lights:
     target:
       entity_id:
       - light.living_room_light_module
-      - light.xiaomi_yeelink
       - light.switchbot_bedroom_light_switch
+      - light.yeelink_color5_6079_light
   - service: notify.supervisor_telegram
     data:
       message: " \U0001F4DC Script - Master Lights - Turn On All Lights in the House"
@@ -307,8 +308,8 @@ bedtime_scene:
     target:
       device_id:
       - 121a0c6ddafe33985ea0806ad01fb779
-      - 3e6f5b46bee6ed340dcbc9c7419e4e10
       - afb33500a8d79e33ccc9290dae617155
+      - 54892fd42bdc03ee6a4ef97974e9f7d9
   - repeat:
       while:
       - condition: template
