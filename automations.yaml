@@ -530,7 +530,7 @@
     before: 06:36:00
   - condition: state
     state: 'off'
-    enabled: true
+    enabled: false
     entity_id: light.yeelink_color5_6079_light_2
   action:
   - if:
