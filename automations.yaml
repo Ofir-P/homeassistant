@@ -1221,6 +1221,7 @@
     entity_id:
     - climate.ofir_a_c
     to: 'off'
+    from:
   condition: []
   action:
   - service: notify.supervisor_telegram
