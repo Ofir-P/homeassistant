@@ -1,5 +1,8 @@
 DEVICE_CUSTOMIZES = {
 
+    '090615.aircondition.ktf': {
+        'miot_type': 'urn:miot-spec-v2:device:air-conditioner:0000A004:090615-ktf:2',
+    },
     '090615.curtain.wsdml1': {
         'switch_properties': 'on,wake_up_mode',
         'select_properties': 'curtain-2.mode-5,default_open_position',
@@ -57,6 +60,21 @@ DEVICE_CUSTOMIZES = {
     },
     'cgllc.airm.cgdn1': {
         'exclude_miot_services': 'mac,settings',
+    },
+    'cgllc.airm.cgdn1:voltage': {
+        'value_ratio': 0.001,
+        'state_class': 'measurement',
+        'device_class': 'voltage',
+        'unit_of_measurement': 'V',
+    },
+    'cgllc.airm.cgd1st': {
+        'exclude_miot_services': 'mac,settings',
+    },
+    'cgllc.airm.cgd1st:voltage': {
+        'value_ratio': 0.001,
+        'state_class': 'measurement',
+        'device_class': 'voltage',
+        'unit_of_measurement': 'V',
     },
     'chuangmi.camera.v6': {
         'use_alarm_playlist': True,
@@ -159,11 +177,18 @@ DEVICE_CUSTOMIZES = {
     },
     'cuco.plug.cp1md': {
         'chunk_properties': 1,
-        'exclude_miot_services': 'setting,cyc',
-        'exclude_miot_properties': 'power_consumption',
-        'sensor_properties': 'power-consumption,voltage,electric_current',
+        'sensor_properties': 'power,voltage,electric_current',
         'sensor_attributes': 'power_cost_today,power_cost_month',
         'stat_power_cost_key': '2.2',
+        'miot_mapping': {
+            'switch.on': {'siid': 2, 'piid': 1},
+            'switch.electric_current': {'siid': 2, 'piid': 4},
+            'switch.power': {'siid': 4, 'piid': 2},
+            'physical_controls_locked': {'siid': 6, 'piid': 1},
+        },
+    },
+    'cuco.plug.cp1md:power': {
+        'value_ratio': 1,
     },
     'cuco.plug.cp2': {
         'chunk_properties': 1,
@@ -382,6 +407,13 @@ DEVICE_CUSTOMIZES = {
     'dooya.curtain.*': {
         'exclude_miot_properties': 'fault',
     },
+    'dreame.light.r2229': {
+        'sensor_properties': 'interaction_gesture',
+        'switch_properties': 'timer_delay_switch,interaction_switch,flow_switch,lighting_switch',
+        'select_properties': 'personality',
+        'number_properties': 'timer_delay_value',
+        'descriptions_for_on': 'On,Opened,Opend',
+    },
     'dreame.vacuum.p2008': {
         'miot_type': 'urn:miot-spec-v2:device:vacuum:0000A006:dreame-p2008:2',
     },
@@ -420,6 +452,13 @@ DEVICE_CUSTOMIZES = {
 
     'hfjh.fishbowl.v1': {
         'light_services': 'light',
+    },
+    'hfjh.fishbowl.m100': {
+        'light_services': 'light',
+        'sensor_properties': 'water_pump_status,filter_life_level,alarm.alarm',
+        'switch_properties': 'water_pump,feed_protect_on,no_disturb,light_status_on,pump_status_on,temperature_warn_on',
+        'select_properties': 'pump_flux,light_status_mode,light_status_flow,pump_status_flux,flow_speed_level',
+        'number_properties': 'temperature,repeat_cycle,light_status_bright,temperature_warn_min,temperature_warn_max',
     },
     'hmpace.bracelet.*': {
         'sensor_properties': 'current_step_count,current_distance',
@@ -494,7 +533,12 @@ DEVICE_CUSTOMIZES = {
         'sensor_properties': 'illumination,distance,has_someone_duration,no_one_duration',
         'number_properties': 'no_one_determine_time',
     },
-
+    'izq.sensor_occupy.solo': {
+        'sensor_properties': 'occupancy_status,illumination',
+        'number_properties': 'bio_sensitive',
+        'switch_properties': 'indicator_light,shadow_tracking',
+        'button_actions': 'led_toggle,find_device'
+    },
     'leishi.light.*': {
         'exclude_miot_services': 'scenes,scene,scens,remote',
         'exclude_miot_properties': 'default.user_save,professional_setting.delay',
@@ -664,6 +708,11 @@ DEVICE_CUSTOMIZES = {
         'cloud_delay_update': 10,
     },
 
+    'mibx5.washer.*': {
+        'sensor_properties': 'fault,left_time,door_state,run_status,detergent_left_level',
+        'switch_properties': 'sleep_mode,steam_sterilization,detergent_self_delivery',
+        'select_properties': 'soak_time,reservation_wash_status,reservation_left_time,detergent_self_delivery_level',
+    },
     'mijia.light.*': {
         'cloud_delay_update': 7,
     },
@@ -680,9 +729,10 @@ DEVICE_CUSTOMIZES = {
     'mmgg.feeder.fi1': {
         'chunk_properties': 1,
         'state_property': 'pet_food_left_level',
-        'button_actions': 'reset_desiccant_life',
-        'binary_sensor_properties': 'outletstatus,doorstatus',
-        'sensor_properties': 'outfood_num,desiccant_left_time,cleantime',
+        'button_actions': 'reset_desiccant_life,resetclean,pet_food_out',
+        'sensor_properties': 'desiccant_left_time,cleantime,fault,outletstatus,doorstatus',
+        'number_properties': 'key_stat,indicator_light.on',
+        'exclude_miot_properties': 'outfood_num,outfood_id,contrycode,feddplan_string,factory_result',
     },
     'mmgg.feeder.petfeeder': {
         'state_property': 'pet_food_left_level',
@@ -701,6 +751,14 @@ DEVICE_CUSTOMIZES = {
         'button_actions': 'reset_filter_life,reset_clean_time',
         'sensor_properties': 'remain_clean_time,fault,filter_left_time,no_water_time',
         'select_properties': 'mode',
+    },
+    'mrbond.airer.m53pro': {
+        'position_reverse': False,
+        'sensor_properties': 'fault,left_time',
+        'select_properties': 'dryer,drying_level',
+        'switch_properties': '',
+        'fan_properties': '',
+        'chunk_properties': 1,
     },
     'msj.f_washer.m2': {
         'chunk_properties': 1,
@@ -855,6 +913,7 @@ DEVICE_CUSTOMIZES = {
         'brightness_for_off': 1,
     },
     'suittc.airrtc.wk168': {
+        'sensor_properties': 'temperature',
         'switch_properties': 'on',
         'turn_on_hvac': 'heat',
     },
@@ -929,6 +988,10 @@ DEVICE_CUSTOMIZES = {
         'exclude_miot_properties': 'enhance.timer,humidity_range,filter_core_rest,sleep_diy_sign',
     },
     'xiaomi.aircondition.mt6': {
+        'exclude_miot_services': 'iot_linkage,machine_state,screen_show',
+        'exclude_miot_properties': 'enhance.timer,humidity_range,filter_core_rest,sleep_diy_sign',
+    },
+    'xiaomi.aircondition.m9': {
         'exclude_miot_services': 'iot_linkage,machine_state,screen_show',
         'exclude_miot_properties': 'enhance.timer,humidity_range,filter_core_rest,sleep_diy_sign',
     },
