@@ -3,19 +3,19 @@ settings:
     entity_tablet: switch.galaxy_tab_a_screensaver
     entity_browser_mod: media_player.tablet
 
-    translate_unknown: Okänt
-    translate_idle: Inaktiv
-    translate_home: Ja
-    translate_not_home: Nej
-    translate_available: tillgänglig
-    translate_no_updates: Inga uppdateringar
-    translate_update_available: uppdatering tillgänglig
-    translate_updates_available: uppdateringar tillgängliga
+    translate_unknown: Unknown
+    translate_idle: Idle
+    translate_home: Home
+    translate_not_home: Away
+    translate_available: Available
+    translate_no_updates: No Updates
+    translate_update_available: Update available
+    translate_updates_available: Updates available
 
-    translate_on: På
-    translate_off: Av
-    translate_cool: Kyla
+    translate_on: On
+    translate_off: Off
+    translate_cool: Cool
     translate_fan_only: Endast fläkt
-    translate_playing: Spelar
+    translate_playing: Playing
     translate_paused: Pausad
-    translate_standby: Viloläge
+    translate_standby: Standby

@@ -2,7 +2,7 @@ action: fire-dom-event
 browser_mod:
   service: browser_mod.popup
   data:
-    title: Matte
+    title: Ofir
     card_mod:
       style:
         #popup header
@@ -16,7 +16,7 @@ browser_mod:
           card_mod:
             class: content
           entities:
-            - entity: person.matte
+            - entity: person.ofir
               secondary_info: last-changed
 
         - type: history-graph
@@ -26,7 +26,7 @@ browser_mod:
                 padding: 0 2em 1em 1.6em !important;
               }
           entities:
-            - entity: person.matte
+            - entity: person.ofir
 
         - type: glance
           card_mod:
@@ -37,8 +37,7 @@ browser_mod:
               }
           show_state: false
           entities:
-
-            - entity: device_tracker.mattias_iphone_unifi
+            - entity: device_tracker.ofir_honor_magic_5_pro
               name: Router
               icon: mdi:wifi
               card_mod:
@@ -46,14 +45,7 @@ browser_mod:
                   state-badge {
                     color: {{ is_state(config.entity, 'home') | iif('#3182b7', '#3c3f3f') }};
                   }
-
-            - entity: device_tracker.mattias_iphone_unifi
-              name: Bluetooth
-              icon: mdi:bluetooth
-              card_mod:
-                style: *state
-
-            - entity: device_tracker.iphone
+            - entity: device_tracker.ofir_honor_magic_5_pro
               name: Position
               icon: cil:iphone-modern
               card_mod:
@@ -71,15 +63,15 @@ browser_mod:
             type: horizontal-stack
             cards:
               - type: custom:button-card
-                name: Spela upp ljud på iPhone X
+                name: Play audio on Honor Magic 5 Pro
                 icon: mdi:volume-high
                 template: icon_name
                 tap_action:
                   action: call-service
-                  service: notify.mobile_app_iphone
+                  service: notify.mobile_app_ofir_honor_magic_5_pro
                   service_data:
-                    title: Hitta min iPhone
-                    message: Här är jag
+                    title: Find my Phone
+                    message: You found me!
                     data:
                       push:
                         sound:
@@ -91,7 +83,7 @@ browser_mod:
           default_zoom: 16
           dark_mode: true
           entities:
-            - device_tracker.iphone
+            - device_tracker.ofir_honor_magic_5_pro
           card_mod:
             style:
               .: |

@@ -11,7 +11,8 @@
 # Time
 - platform: time_date
   display_options:
-    - "time"
+    - time
+    - date
 # Count Number Of Automations
 - platform: template
   sensors:
