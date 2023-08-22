@@ -80,34 +80,11 @@ media:
       icon:
         - width: 70%
         - margin-left: 2%
-        - fill: '#9da0a2'
-        - display: >
-            [[[
-            if (variables.is_youtube) {
-                return `none`;
-            }
-            else {
-                return variables.media_off || variables.entity_picture === undefined
-                    ? 'initial'
-                    : 'none';
-            }
-            ]]]
+        - fill: "#9da0a2"
     card:
       - background-color: none
       - background-size: cover
       - background-position: center
-      - background-image: >
-          [[[
-            if (variables.is_youtube) {
-                return `linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,0) 100%), url(${states[this._config?.triggers_update].state})`;
-            } else {
-                return variables.media_on && variables.entity_picture === undefined
-                    ? 'linear-gradient(0deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.8) 100%)'
-                    : variables.media_off
-                        ? 'linear-gradient(0deg, rgba(115, 115, 115, 0.2) 0%, rgba(115, 115, 115, 0.2) 100%)'
-                        : `linear-gradient(0deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,0) 100%), url(${variables.entity_picture})`;
-            }
-          ]]]
 
 #################################################
 #                                               #
@@ -140,7 +117,7 @@ conditional_media:
               gridTitle.textContent = "Media";
           }
           else if (swipeCard.swiper.realIndex === 1) {
-              gridTitle.textContent = "Spelare";
+              gridTitle.textContent = "Media";
           }
       });
 

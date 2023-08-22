@@ -613,9 +613,9 @@
     to: home
   condition:
   - condition: device
-    device_id: 11337776bbc7cb4d561c95d059379b78
+    device_id: 3991a8dcff5132448a99a281daf3577d
     domain: device_tracker
-    entity_id: device_tracker.ofir_phone
+    entity_id: ee5300687733e0be5478ba30e2f369e0
     type: is_home
   - condition: time
     after: '18:15:00'

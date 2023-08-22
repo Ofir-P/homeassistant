@@ -1,0 +1,40 @@
+update_entities:
+  action: >
+    [[[
+      hass.callService('homeassistant', 'update_entity', {
+          entity_id: [
+            'sensor.udm_unifios'
+          ]
+      });
+    ]]]
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Cams
+    card_mod:
+      style:
+        #popup header
+        .:
+    content:
+      type: vertical-stack
+      cards:
+        - square: false
+          columns: 1
+          type: grid
+          cards:
+            - camera_view: auto
+              type: picture-glance
+              entities: []
+              camera_image: camera.living_room_sub
+              aspect_ratio: "20:15"
+            - camera_view: auto
+              type: picture-glance
+              entities: []
+              camera_image: camera.dining_table_main
+              aspect_ratio: "20:15"
+            - camera_view: auto
+              type: picture-glance
+              entities: []
+              camera_image: camera.aquarium_sub
+              aspect_ratio: "20:15"

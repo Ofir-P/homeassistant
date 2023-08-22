@@ -1,0 +1,38 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Calendar
+    card_mod:
+      style:
+        #popup header
+        .:
+    content:
+      type: vertical-stack
+      cards:
+        - type: custom:mushroom-person-card
+          entity: person.ofir
+          icon_type: entity-picture
+          secondary_info: none
+          layout: vertical
+          fill_container: false
+          primary_info: name
+
+        - initial_view: listWeek
+          type: calendar
+          entities:
+            - calendar.ofirx3_gmail_com
+            - calendar.birthdays
+            - calendar.real_madrid
+            - calendar.birthdays_2
+            - calendar.champions_league
+        - type: custom:mushroom-person-card
+          entity: person.elian
+          layout: vertical
+          secondary_info: none
+          icon_type: entity-picture
+          primary_info: name
+        - initial_view: listWeek
+          type: calendar
+          entities:
+            - calendar.calendar_2

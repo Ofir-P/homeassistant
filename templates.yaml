@@ -12,30 +12,10 @@
       icon: mdi:thermometer
 # Counters
 - sensor:
-    - name: tvscounter
-      state: >-
-        {% set group = expand('group.tvs') %}
-        {{ group | count }}/{{ group | selectattr('state','eq','On') | list | count }}
-- sensor:
-    - name: camerascounter
-      state: >-
-        {% set group = expand('group.cameras') %}
-        {{ group | count }}/{{ group | list | count }}
-- sensor:
     - name: lightscounter
       state: >-
         {% set group = expand('group.lights') %}
         {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
-- sensor:
-    - name: rf433counter
-      state: >-
-        {% set group = expand('group.rf433') %}
-        {{ group | count }}/{{ group | list | count }}
-- sensor:
-    - name: tempcounter
-      state: >-
-        {% set group = expand('group.temp') %}
-        {{ group | count }}/{{ group | list | count }}
 
 # Online States
 - sensor:
@@ -157,13 +137,8 @@
           ] %}
 
           {% set devices = [
-            states.input_select.office_tv_status,
-            states.input_select.bedroom_ac_status,
-            states.input_select.bedroom_tv_status,
-            states.input_select.living_room_tv_status,
             states.switch.switcher_v4_yair_stern,
             states.input_select.washing_machine_status,
-            states.climate.ofir_a_c,
             states.vacuum.mijia_v2_202f_robot_cleaner,
             states.sensor.ofir_pc_lastactive
           ] %}
@@ -213,11 +188,11 @@
 
         battery: >
           {% set entities = states.sensor 
-            | selectattr('entity_id', 'search', 'battery', 'battery_level')
-            | rejectattr('entity_id', 'search', 'iphone')
+            | selectattr('entity_id', 'search', 'battery')
+            | rejectattr('entity_id', 'search', 'battery_state')
             | map(attribute = 'entity_id') | list %}
           {% for sensor in entities if states(sensor) != 'unknown' and states(sensor) !=
-          'unavailable' and states(sensor) != 'None' and states(sensor) | int(default=0) <= 5 %}
+          'unavailable' and states(sensor) != 'None' and states(sensor) | int(default=0) <= 25 %}
             {% if loop.first %} {{'\u26A0\uFE0F'}} Battery {% else %}, {% endif %}
             {{ state_attr(sensor, 'friendly_name') }} {{ states(sensor) }}%
           {% endfor %}

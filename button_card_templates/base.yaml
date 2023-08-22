@@ -5,7 +5,7 @@ base:
     - extra_styles
   variables:
     state_on: >
-      [[[ return ['on', 'home', 'cool', 'fan_only', 'playing', 'unlocked'].indexOf(!entity || entity.state) !== -1; ]]]
+      [[[ return ['on', 'On', 'home', 'cool', 'fan_only', 'playing', 'unlocked'].indexOf(!entity || entity.state) !== -1; ]]]
     state: >
       [[[ return !entity || entity.state; ]]]
     entity_id: >
@@ -31,6 +31,7 @@ base:
     [[[
       const stateDict = {
         'on': variables.translate_on,
+        'On': variables.translate_on,
         'off': variables.translate_off,
         'cool': variables.translate_cool,
         'fan_only': variables.translate_fan_only,

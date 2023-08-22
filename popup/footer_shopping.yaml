@@ -1,0 +1,31 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Shopping
+    card_mod:
+      style:
+        #popup header
+        .:
+    content:
+      type: custom:mod-card
+      card_mod:
+        style:
+          hui-grid-card:
+            $: |
+              button-card:nth-child(2) {
+                margin: 0.6em 0 2.1em 0.8em;
+              }
+              button-card:nth-child(4) {
+                margin: 0.6em 0 0.5em 0.8em;
+              }
+              #root {
+                grid-gap: 0 !important;
+                padding: var(--tablet-popup-content-padding);
+              }
+      card:
+        type: grid
+        columns: 1
+        square: false
+        cards:
+          - type: shopping-list

@@ -15,7 +15,7 @@ settings:
     translate_on: On
     translate_off: Off
     translate_cool: Cool
-    translate_fan_only: Endast fläkt
+    translate_fan_only: Fan Only
     translate_playing: Playing
     translate_paused: Pausad
     translate_standby: Standby
