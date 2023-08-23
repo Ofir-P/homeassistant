@@ -22,7 +22,7 @@
       exclude:
         entity_id:
         - sensor.elians_iphone_battery_level
-        - sensor.ofir_phone_battery_level
+        - sensor.ofir_honor_magic_5_pro_battery_level
       actions:
       - service: notify.supervisor_telegram
         data:
@@ -208,7 +208,7 @@
     for:
       hours: 0
       minutes: 4
-      seconds: 25
+      seconds: 47
     below: 4
   - platform: state
     entity_id:
@@ -513,12 +513,12 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.dining_table_person
+    - binary_sensor.6e64af54_0576e2c7
     to: 'on'
     id: Motion Detected on Dining Table by Person
   - platform: state
     entity_id:
-    - binary_sensor.dining_table_person
+    - binary_sensor.1914b3fa_d7a6f0ec
     to: 'off'
     for:
       hours: 0
@@ -576,9 +576,9 @@
   - condition: and
     conditions:
     - condition: device
-      device_id: 11337776bbc7cb4d561c95d059379b78
+      device_id: 3991a8dcff5132448a99a281daf3577d
       domain: device_tracker
-      entity_id: device_tracker.ofir_phone
+      entity_id: ee5300687733e0be5478ba30e2f369e0
       type: is_not_home
     - condition: device
       device_id: 611a494457823cb15ab854ae5b741ef0

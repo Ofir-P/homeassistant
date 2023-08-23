@@ -16,7 +16,7 @@ browser_mod:
           card_mod:
             class: content
           entities:
-            - entity: person.sanja
+            - entity: person.elian
               secondary_info: last-changed
 
         - type: history-graph
@@ -26,7 +26,7 @@ browser_mod:
                 padding: 0 2em 1em 1.6em !important;
               }
           entities:
-            - entity: person.sanja
+            - entity: person.elian
 
         - type: glance
           card_mod:
@@ -34,26 +34,24 @@ browser_mod:
               ha-card > div {
                 padding: 1em 1.5em 0.2em 1em !important;
               }
-          show_state: false
+          show_state: true
           entities:
-            - entity: device_tracker.sanjas_iphone_unifi
-              name: Router
+            - entity: sensor.elians_iphone_ssid
+              name: WiFi Name
               icon: mdi:wifi
               card_mod:
                 style: &state |
                   state-badge {
-                    color: {{ '#3182b7' if is_state(config.entity, 'home') else '#3c3f3f' }};
+                    color: {{ is_state(config.entity, 'home') | iif('#3182b7', '#3c3f3f') }};
                   }
-
-            - entity: device_tracker.sanja_iphone_13
-              name: Bluetooth
-              icon: mdi:bluetooth
+            - entity: sensor.elians_iphone_battery_level
+              name: Battery
+              icon: mdi:battery
               card_mod:
                 style: *state
-
-            - entity: device_tracker.sanja_iphone_13
-              name: Position
-              icon: cil:iphone-modern
+            - entity: sensor.elians_iphone_geocoded_location
+              name: Geo Location
+              icon: mdi:map-marker-radius
               card_mod:
                 style: *state
 
@@ -69,15 +67,15 @@ browser_mod:
             type: horizontal-stack
             cards:
               - type: custom:button-card
-                name: Spela upp ljud på iPhone 13
+                name: Play audio on iPhone
                 icon: mdi:volume-high
                 template: icon_name
                 tap_action:
                   action: call-service
-                  service: notify.mobile_app_sanja_iphone_13
+                  service: notify.mobile_app_elians_iphone
                   service_data:
-                    title: Hitta min iPhone
-                    message: Här är jag
+                    title: Find my iPhone
+                    message: You found me!
                     data:
                       push:
                         sound:

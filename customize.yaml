@@ -1,27 +1,9 @@
-# Zigbee
-sensor.zigbee_online:
-  entity_picture: /local/Logos/zigbee_system.png
-# MQTT
-sensor.mqtt_online:
-  entity_picture: /local/Logos/mqtt.png
-# Uptime Kuma
-sensor.uptime_kuma_online:
-  entity_picture: /local/Logos/uptimekuma.png
-# Google Drive
-sensor.google_drive_online:
-  entity_picture: /local/Logos/googledrive.jpg
 # Plex
 sensor.plex_online:
   entity_picture: /local/Logos/plex-removebg.png
-# Chromecast
-sensor.tvscounter:
-  entity_picture: /local/Logos/chromecast-removebg-preview.png
 # Lightbulb
 sensor.lightscounter:
   entity_picture: /local/Logos/lightbulb-removebg-preview.png
-# Camera
-sensor.camerascounter:
-  entity_picture: /local/Logos/camera-removebg-preview.png
 # Ubuntu
 sensor.ubuntu_online:
   entity_picture: /local/Logos/obuntu.png
@@ -46,9 +28,3 @@ sensor.prowlarr_online:
 # Tautulli
 sensor.tautulli_online:
   entity_picture: /local/Logos/Tautulli-removebg-preview.png
-# RF433
-sensor.rf433counter:
-  entity_picture: /local/Logos/rf433.png
-# Temp Counter
-sensor.tempcounter:
-  entity_picture: /local/Logos/temp.png

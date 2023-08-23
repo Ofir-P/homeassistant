@@ -1,0 +1,40 @@
+homeassistant:
+  customize:
+    device_tracker.iphone:
+      entity_picture: /local/device_tracker.svg
+
+mqtt:
+  sensor:
+    - name: ofir_last_changed
+      state_topic: homeassistant/persistence/ofir
+      value_template: >
+        {{ value | replace(' ', 'T') }}
+
+    - name: elian_last_changed
+      state_topic: homeassistant/persistence/elian
+      value_template: >
+        {{ value | replace(' ', 'T') }}
+
+automation:
+  - alias: person_home
+    id: "8423590985012"
+    mode: parallel
+    trigger:
+      platform: state
+      entity_id:
+        - person.ofir
+        - person.elian
+      from:
+        - home
+        - not_home
+      to:
+        - home
+        - not_home
+    action:
+      service: mqtt.publish
+      data:
+        topic_template: >
+          homeassistant/persistence/{{ trigger.to_state.name | lower }}
+        payload_template: >
+          {{ now() }}
+        retain: true

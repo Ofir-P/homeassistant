@@ -1,5 +1,6 @@
 button_card_templates: !include_dir_merge_named button_card_templates
-
+kiosk_mode:
+  hide_header: true
 views:
   - type: custom:grid-layout
     title: Home
@@ -95,7 +96,7 @@ views:
         cards:
           - type: custom:button-card
             entity: light.living_room_light_module
-            name: Living-Room
+            name: Light
             template:
               - light
               - icon_hue
@@ -175,7 +176,7 @@ views:
 
           - type: custom:button-card
             entity: switch.office_light
-            name: Office
+            name: Light
             template:
               - light
               - icon_spot
@@ -236,8 +237,8 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.sovrum_group
-            name: Sänglampor
+            entity: light.switchbot_bedroom_light_switch
+            name: Light
             template:
               - light
               - icon_lamp
@@ -429,34 +430,36 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.badrum_group
-            name: Shower
+            entity: switch.bot_b296
+            name: Lights
             template:
               - light
-              - icon_bathroom
+              - icon_hue
+            tap_action:
+              action: call-service
+              service: script.turn_off_bathroom_light
 
           - type: custom:button-card
-            entity: switch.gosund_fan_switch
-            name: "Fan\u00B2"
-            double_tap_action: !include popup/studio_flakt.yaml
-            template:
-              - base
-              - icon_fan2
-              - loader
-
-          - type: custom:button-card
-            entity: light.garderob_lampa
-            name: Garderob
-            template:
-              - light
-              - icon_closet
-
-          - type: custom:button-card
-            entity: light.hall_group
+            entity: light.yeelink_color5_6079_light_2
             name: Hall
             template:
               - light
               - icon_spot
+
+          - type: custom:button-card
+            name: "Laundry"
+            entity: input_select.washing_machine_status
+            template:
+              - base
+              - icon_aquarium
+              - loader
+
+          - type: custom:button-card
+            entity: script.shower_music
+            name: Shower Music
+            template:
+              - base
+              - icon_spotify
 
       #################################################
       #                                               #
@@ -474,10 +477,10 @@ views:
             entity: person.ofir
             name: Ofir
             triggers_update:
-              - device_tracker.ofir_honor_magic_5_pro
+              - sensor.ofir_last_changed
             double_tap_action: !include popup/home_ofir.yaml
             variables:
-              retain: device_tracker.ofir_honor_magic_5_pro
+              retain: sensor.ofir_last_changed
             template:
               - person
               - circle
@@ -486,10 +489,10 @@ views:
             entity: person.elian
             name: Elian
             triggers_update:
-              - device_tracker.elians_iphone
+              - sensor.elian_last_changed
             double_tap_action: !include popup/home_elian.yaml
             variables:
-              retain: device_tracker.elians_iphone
+              retain: sensor.elian_last_changed
             template:
               - person
               - circle
@@ -519,28 +522,6 @@ views:
           grid-area: footer
         cards:
           - type: custom:button-card
-            name: >
-              <ha-icon icon="mdi:nas"></ha-icon> NAS
-            tap_action: !include popup/footer_nas.yaml
-            triggers_update:
-              - update.nas_dsm_update
-              - sensor.nas_volume_1_status
-              - binary_sensor.nas_security_status
-              - sensor.disk_use_percent
-            variables:
-              notify: >
-                [[[
-                  let id = this._config.triggers_update;
-                  if (id.every(e => states[e]))
-                      return states[id[0]].state === 'on'
-                          ? 1
-                          : states[id[1]].state === 'background_scrubbing' ||
-                            states[id[2]].state === 'on' ||
-                            parseFloat(states[id[3]].state) >= 85;
-                ]]]
-            template: footer
-
-          - type: custom:button-card
             entity: sensor.template_updates
             name: >
               <ha-icon icon="mdi:cart"></ha-icon> Shopping
@@ -550,27 +531,6 @@ views:
                 [[[
                   return parseInt(entity?.state);
                 ]]]
-            template: footer
-
-          - type: custom:button-card
-            name: >
-              <ha-icon icon="mdi:robot-vacuum-variant"></ha-icon> Vacuum
-            tap_action: !include popup/footer_vacuum.yaml
-            triggers_update:
-              - sensor.date
-              - clean_record.clean_time
-            variables:
-              notify: >
-                [[[
-                  let id = states['clean_record.clean_time'];
-                  if (id) return (Date.now() - Date.parse(id.state)) > 6048e5;
-                ]]]
-            template: footer
-
-          - type: custom:button-card
-            name: >
-              <ha-icon icon="mdi:shower-head"></ha-icon> Boiler
-            tap_action: !include popup/footer_boiler.yaml
             template: footer
 
           - type: custom:button-card
@@ -594,5 +554,47 @@ views:
                       return states[id[0]].state === 'on'
                           ? 1
                           : states[id[1]].state === 'off';
+                ]]]
+            template: footer
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:shower-head"></ha-icon> Boiler
+            tap_action: !include popup/footer_boiler.yaml
+            template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:robot-vacuum-variant"></ha-icon> Vacuum
+            tap_action: !include popup/footer_vacuum.yaml
+            triggers_update:
+              - sensor.date
+              - clean_record.clean_time
+            variables:
+              notify: >
+                [[[
+                  let id = states['clean_record.clean_time'];
+                  if (id) return (Date.now() - Date.parse(id.state)) > 6048e5;
+                ]]]
+            template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:nas"></ha-icon> NAS
+            tap_action: !include popup/footer_nas.yaml
+            triggers_update:
+              - update.nas_dsm_update
+              - sensor.nas_volume_1_status
+              - binary_sensor.nas_security_status
+              - sensor.disk_use_percent
+            variables:
+              notify: >
+                [[[
+                  let id = this._config.triggers_update;
+                  if (id.every(e => states[e]))
+                      return states[id[0]].state === 'on'
+                          ? 1
+                          : states[id[1]].state === 'background_scrubbing' ||
+                            states[id[2]].state === 'on' ||
+                            parseFloat(states[id[3]].state) >= 85;
                 ]]]
             template: footer

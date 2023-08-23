@@ -10,12 +10,6 @@
       state: "{{ state_attr('climate.ofir_a_c', 'current_temperature') }}"
       unit_of_measurement: "°C"
       icon: mdi:thermometer
-# Counters
-- sensor:
-    - name: lightscounter
-      state: >-
-        {% set group = expand('group.lights') %}
-        {{ group | count }}/{{ group | selectattr('state','eq','on') | list | count }}
 
 # Online States
 - sensor:
@@ -131,7 +125,7 @@
             states.light.office_desk_led_strip,
             states.light.switchbot_bedroom_light_switch,
             states.light.yeelink_color5_6079_light_2,
-            states.switch.bot_8552,
+            states.switch.bot_5b1c,
             states.switch.kitchen_light_switch,
             states.switch.office_light
           ] %}
@@ -156,7 +150,7 @@
             {{ lights_name }} and {{devices_name }} is on
 
           {% elif (lights_on | length == 1) and (devices_on | length > 1) %}
-            {{ lights_name }}, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} are on
+            {{ lights_name }}, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} is on
 
           {% elif (lights_on | length > 1) and (devices_on | length == 1) %}
             {{ lights_on | length }} lamps and {{ devices_name }} are on
