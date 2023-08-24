@@ -513,12 +513,12 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.6e64af54_0576e2c7
+    - binary_sensor.dining_table_person
     to: 'on'
     id: Motion Detected on Dining Table by Person
   - platform: state
     entity_id:
-    - binary_sensor.1914b3fa_d7a6f0ec
+    - binary_sensor.dining_table_person
     to: 'off'
     for:
       hours: 0

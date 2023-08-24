@@ -1,0 +1,79 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Spotify
+    timeout: 300000
+    style: |
+      --popup-max-width: calc(385px + 495px);
+      --primary-color: transparent; /* hide timeout progress */
+    card_mod:
+      style:
+        # card divider border
+        layout-card$grid-layout$: |
+          #root {
+            margin: -24px 0 !important;
+          }
+          hui-vertical-stack-card {
+            border-right: 1.5px solid rgba(0, 0, 0, 0.2);
+            border-radius: 0;
+            transition: none;
+          }
+          /* phone */
+          @media screen and (max-width: 800px) {
+            hui-vertical-stack-card {
+              border-right: none;
+              border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
+            }
+          }
+    content:
+      type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        margin: 0
+        grid-template-columns: 385px 495px
+        grid-template-rows: 1fr
+        grid-template-areas: |
+          "info map"
+        mediaquery:
+          #phone
+          "(max-width: 800px)":
+            grid-template-columns: 1fr
+            grid-template-rows: repeat(2, 1fr)
+            grid-template-areas: |
+              "info"
+              "map"
+      cards:
+        ### Overview
+        - type: vertical-stack
+          cards:
+            - content: >
+                # <img width="30" height="30" src='/local/Logos/spotify.png'
+                style='vertical-align:middle' /> Spotify
+              style:
+                .: |
+                  ha-card {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                  }
+                ha-markdown:
+                  $: |
+                    h1 {
+                      font-size: 25px;
+                    # font-weight: bold;
+                      text-align: center;
+                      letter-spacing: '-0.01em';
+                    }
+              type: markdown
+            - account: default
+              device: media_player.shower_echo_dot
+              grid_covers_per_row: "5"
+              hide_warning: true
+              limit: 15
+              playlist_type: default
+              spotify_entity: media_player.spotify_elian_sarfaty
+              type: custom:spotify-card
+              grid_center_covers: true
+              display_style: grid
+              always_play_random_song: true
+              hide_top_header: true

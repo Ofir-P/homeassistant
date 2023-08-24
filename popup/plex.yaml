@@ -1,0 +1,300 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Plex
+    timeout: 300000
+    style: |
+      --popup-max-width: calc(385px + 495px);
+      --primary-color: transparent; /* hide timeout progress */
+    card_mod:
+      style:
+        # card divider border
+        layout-card$grid-layout$: |
+          #root {
+            margin: -24px 0 !important;
+          }
+          hui-vertical-stack-card {
+            border-right: 1.5px solid rgba(0, 0, 0, 0.2);
+            border-radius: 0;
+            transition: none;
+          }
+          /* phone */
+          @media screen and (max-width: 800px) {
+            hui-vertical-stack-card {
+              border-right: none;
+              border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
+            }
+          }
+    content:
+      type: custom:layout-card
+      layout_type: custom:grid-layout
+      layout:
+        margin: 0
+        grid-template-columns: 385px 495px
+        grid-template-rows: 1fr
+        grid-template-areas: |
+          "info map"
+        mediaquery:
+          #phone
+          "(max-width: 800px)":
+            grid-template-columns: 1fr
+            grid-template-rows: repeat(2, 1fr)
+            grid-template-areas: |
+              "info"
+              "map"
+      cards:
+        ### Overview
+        - cards:
+            - content: >
+                # <img width="30" height="30" src='/local/Logos/plex-removebg.png'
+                style='vertical-align:middle' /> Recently Added
+              style:
+                .: |
+                  ha-card {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                  }
+                ha-markdown:
+                  $: |
+                    h1 {
+                      font-size: 25px;
+                    # font-weight: bold;
+                      text-align: center;
+                      letter-spacing: '-0.01em';
+                    }
+              type: markdown
+            - accent_color: "#2b374e"
+              border_color: "#13274b"
+              date: ddmm
+              entity: sensor.recently_added_tv
+              flag: false
+              flag_color: "#13274b"
+              image_style: fanart
+              line1_text: $empty
+              line2_size: small
+              line2_text: $episode
+              line3_text: $number
+              line4_text: "Runtime: $runtime"
+              max: 2
+              title: false
+              title_size: large
+              title_text: $title
+              type: custom:upcoming-media-card
+            - accent_color: "#2b374e"
+              border_color: "#13274b"
+              date: ddmm
+              entity: sensor.recently_added_movies
+              flag: false
+              flag_color: "#13274b"
+              image_style: fanart
+              line1_text: $empty
+              line2_size: small
+              line2_text: $rating
+              line3_text: $genres
+              line4_text: "Runtime: $runtime"
+              max: 3
+              title: false
+              title_size: large
+              title_text: $title
+              type: custom:upcoming-media-card
+            - content: >
+                # <img width="30" height="30" src='/local/Logos/plex-removebg.png'
+                style='vertical-align:middle' /> Upcoming Media
+              style:
+                .: |
+                  ha-card {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                  }
+                ha-markdown:
+                  $: |
+                    h1 {
+                      font-size: 25px;
+                    # font-weight: bold;
+                      text-align: center;
+                      letter-spacing: '-0.01em';
+                    }
+              type: markdown
+            - cards:
+                - accent_color: "#2b374e"
+                  border_color: "#13274b"
+                  date: ddmm
+                  entity: sensor.trakt_upcoming_shows
+                  flag: false
+                  flag_color: "#13274b"
+                  image_style: fanart
+                  line1_text: $empty
+                  line2_size: small
+                  line2_text: $episode
+                  line3_text: $number
+                  line4_text: "Runtime: $runtime"
+                  max: 3
+                  title: false
+                  title_size: large
+                  title_text: $title
+                  type: custom:upcoming-media-card
+              type: vertical-stack
+          type: vertical-stack
+        - cards:
+            - content: >
+                # <img width="30" height="30" src='/local/Logos/plex-removebg.png'
+                style='vertical-align:middle' /> Plex Media Server
+              style:
+                .: |
+                  ha-card {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                  }
+                ha-markdown:
+                  $: |
+                    h1 {
+                      font-size: 25px;
+                    # font-weight: bold;
+                      text-align: center;
+                      letter-spacing: '-0.01em';
+                    }
+              type: markdown
+            - columns: 2
+              entities:
+                - entity: sensor.plex_online
+                  name: Plex Media Server
+                  show_entity_picture: true
+                - entity: sensor.ubuntu_online
+                  name: Ubuntu OS
+                  show_entity_picture: true
+              show_icon: true
+              show_name: true
+              show_state: true
+              style: |
+                ha-card {
+                  text-align: center;
+                  
+                      }
+              title: false
+              type: glance
+            - cards:
+                - align_icon: left
+                  align_state: center
+                  entities:
+                    - sensor.nas_cpu_utilization_user
+                  font_size: 75
+                  icon: mdi:chip
+                  name: CPU
+                  show:
+                    fill: false
+                  type: custom:mini-graph-card
+                - align_icon: left
+                  align_state: center
+                  entities:
+                    - sensor.nas_volume_1_volume_used
+                  font_size: 75
+                  name: Disk
+                  show:
+                    fill: false
+                    legend: false
+                  type: custom:mini-graph-card
+                - align_icon: left
+                  align_state: center
+                  entities:
+                    - sensor.nas_memory_usage_real
+                  font_size: 75
+                  icon: mdi:memory
+                  name: RAM
+                  show:
+                    fill: false
+                  type: custom:mini-graph-card
+                - align_icon: left
+                  align_state: center
+                  entities:
+                    - sensor.nas_temperature
+                  font_size: 75
+                  icon: mdi:thermometer
+                  name: Temp
+                  show:
+                    fill: false
+                  type: custom:mini-graph-card
+              type: horizontal-stack
+            - entities:
+                - entity: sensor.sonarr_online
+                  name: Sonarr
+                - entity: sensor.radarr_online
+                  name: Radarr
+                - entity: sensor.ombi_online
+                  name: Ombi
+                - entity: sensor.tautulli_online
+                  name: Tautulli
+              type: glance
+            - entities:
+                - entity: sensor.qbittorrent_online
+                  name: qBitTorrent
+                - entity: sensor.prowlarr_online
+                  name: Prowlarr
+                - entity: sensor.trakt_online
+                  name: Trakt
+              type: glance
+            - content: >
+                # <img width="30" height="30" src='/local/Logos/qbittorrent.png'
+                style='vertical-align:middle' /> qBitTorrent
+              style:
+                .: |
+                  ha-card {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                  }
+                ha-markdown:
+                  $: |
+                    h1 {
+                      font-size: 20px;
+                      font-weight: bold;
+                      text-align: center;
+                      letter-spacing: '-0.01em';
+                    }
+              type: markdown
+            - entities:
+                - entity: sensor.bytes_sent
+                  name: Download Speed
+                  icon: mdi:download
+                - entity: sensor.bytes_upload
+                  name: Upload Speed
+                  icon: mdi:upload
+              style: |
+                ha-card {
+                  text-align: center;
+
+                      }
+              title: false
+              type: glance
+            - content: >
+                # <img width="30" height="30" src='/local/Logos/ombi.png'
+                style='vertical-align:middle' /> Ombi Requests
+              style:
+                .: |
+                  ha-card {
+                    background-color: transparent !important;
+                    box-shadow: none !important;
+                  }
+                ha-markdown:
+                  $: |
+                    h1 {
+                      font-size: 20px;
+                      font-weight: bold;
+                      text-align: center;
+                      letter-spacing: '-0.01em';
+                    }
+              type: markdown
+            - entities:
+                - entity: sensor.ombi_movie_requests
+                  name: Movie Requests
+                - entity: sensor.ombi_tv_show_requests
+                  name: TV Requests
+                - entity: sensor.ombi_pending_requests
+                  name: Pending Requests
+              style: |
+                ha-card {
+                  text-align: center;
+
+                      }
+              title: false
+              type: glance
+          type: vertical-stack

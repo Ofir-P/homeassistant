@@ -332,8 +332,7 @@ views:
                       type: custom:button-card
                       entity: sensor.recently_added_movies
                       name: Last added
-                      tap_action:
-                        action: none
+                      tap_action: !include popup/plex.yaml
                       template:
                         - conditional_media
                         - icon_plex
@@ -406,6 +405,7 @@ views:
                   - type: custom:button-card
                     entity: media_player.spotify_elian_sarfaty
                     name: Spotify
+                    tap_action: !include popup/spotify.yaml
                     template:
                       - media
                       - icon_spotify
@@ -451,8 +451,7 @@ views:
             entity: input_select.washing_machine_status
             template:
               - base
-              - icon_aquarium
-              - loader
+              - icon_laundry_machine
 
           - type: custom:button-card
             entity: script.shower_music
