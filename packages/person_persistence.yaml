@@ -1,6 +1,6 @@
 homeassistant:
   customize:
-    device_tracker.iphone:
+    device_tracker.elians_iphone:
       entity_picture: /local/device_tracker.svg
 
 mqtt:

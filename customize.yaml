@@ -1,9 +1,6 @@
 # Plex
 sensor.plex_online:
   entity_picture: /local/Logos/plex-removebg.png
-# Lightbulb
-sensor.lightscounter:
-  entity_picture: /local/Logos/lightbulb-removebg-preview.png
 # Ubuntu
 sensor.ubuntu_online:
   entity_picture: /local/Logos/obuntu.png

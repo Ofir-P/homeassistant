@@ -126,7 +126,6 @@ lovelace:
       { url: "/hacsfiles/apexcharts-card/apexcharts-card.js", type: module },
       { url: "/hacsfiles/bar-card/bar-card.js", type: module },
       { url: "/hacsfiles/button-card/button-card.js", type: module },
-      { url: "/hacsfiles/custom-icons/custom-icons.js", type: module },
       { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
       { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
       { url: "/hacsfiles/room-card/room-card.js", type: module },

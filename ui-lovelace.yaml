@@ -210,7 +210,7 @@ views:
           - type: custom:button-card
             entity: switch.gosund_monitors_switch
             name: Monitorer
-            double_tap_action: !include popup/studio_monitorer.yaml
+            double_tap_action: !include popup/spotify.yaml
             template:
               - base
               - icon_monitors
@@ -331,7 +331,7 @@ views:
                     card:
                       type: custom:button-card
                       entity: sensor.recently_added_movies
-                      name: Last added
+                      name: Recently Added
                       tap_action: !include popup/plex.yaml
                       template:
                         - conditional_media
