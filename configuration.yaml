@@ -121,14 +121,17 @@ frontend: !include themes.yaml
 
 lovelace:
   mode: yaml
-  resources:
-    [
+  resources: [
       { url: "/hacsfiles/apexcharts-card/apexcharts-card.js", type: module },
       { url: "/hacsfiles/bar-card/bar-card.js", type: module },
       { url: "/hacsfiles/button-card/button-card.js", type: module },
       { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
       { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
-      { url: "/hacsfiles/room-card/room-card.js", type: module },
+      { url: "/hacsfiles/room-card/room-card.js", type: module }, # Mobile Dashboard Cards
+      {
+        url: "/hacsfiles/mini-climate-card/mini-climate-card-bundle.js",
+        type: module,
+      }, # Mobile Cards
       { url: "/hacsfiles/lovelace-layout-card/layout-card.js", type: module },
       {
         url: "/hacsfiles/lovelace-more-info-card/more-info-card.js",
@@ -158,10 +161,10 @@ lovelace:
         url: "/hacsfiles/mini-graph-card/mini-graph-card-bundle.js",
         type: module,
       },
-      { url: "/local/marked.min.js?v=4.2.1", type: module },
-      { url: "/local/vanilla-tilt.min.js?v=1.7.3", type: module },
-      { url: "/local/browser_mod_icon.js?v=0.5", type: module },
-      { url: "/local/fonts.css?v=2.1", type: css },
+      { url: "/local/marked.min.js?v=4.2.1", type: module }, #Tablet Dashboard
+      { url: "/local/vanilla-tilt.min.js?v=1.7.3", type: module }, #Tablet Dashboard
+      { url: "/local/browser_mod_icon.js?v=0.5", type: module }, #Tablet Dashboard
+      { url: "/local/fonts.css?v=2.1", type: css }, #Tablet Dashboard
     ]
 # [=========================]Themes[=========================]
 

@@ -213,7 +213,7 @@ views:
             double_tap_action: !include popup/spotify.yaml
             template:
               - base
-              - icon_monitors
+              - icon_speaker
               - circle
               - loader
             variables:
@@ -343,11 +343,17 @@ views:
                         state: LR
                     card:
                       type: custom:button-card
-                      entity: media_player.mecool_ofir
-                      triggers_update: media_player.plex_plex_for_android_tv_km2_plus
+                      entity: media_player.everywhere
+                      triggers_update:
+                        - media_player.everywhere
+                        - media_player.bedroom_echo_dot
+                        - media_player.everywhere_ys
+                        - media_player.living_room_echo_dot
+                        - media_player.office_echo_show5
+                        - media_player.shower_echo_dot
                       template:
                         - conditional_media
-                        - icon_apple_tv
+                        - icon_speaker
 
                   - type: conditional
                     conditions:
@@ -388,11 +394,19 @@ views:
                 cards:
                   - type: custom:button-card
                     entity: media_player.mecool_ofir
-                    triggers_update: media_player.plex_plex_for_android_tv_km2_plus
-                    name: Living Room
+                    tap_action: !include popup/alexa_speakers.yaml
+                    icon: mdi:speaker
+                    triggers_update:
+                      - media_player.everywhere
+                      - media_player.bedroom_echo_dot
+                      - media_player.everywhere_ys
+                      - media_player.living_room_echo_dot
+                      - media_player.office_echo_show5
+                      - media_player.shower_echo_dot
+                    name: Speakers
                     template:
                       - media
-                      - icon_apple_tv
+                      - icon_speaker
 
                   - type: custom:button-card
                     entity: media_player.mibox4_2
@@ -521,7 +535,6 @@ views:
           grid-area: footer
         cards:
           - type: custom:button-card
-            entity: sensor.template_updates
             name: >
               <ha-icon icon="mdi:cart"></ha-icon> Shopping
             tap_action: !include popup/footer_shopping.yaml
@@ -541,19 +554,8 @@ views:
           - type: custom:button-card
             name: >
               <ha-icon icon="mdi:cctv"></ha-icon> Cams
+            double_tap_action: !include popup/cast_cams.yaml
             tap_action: !include popup/footer_cams.yaml
-            triggers_update:
-              - update.unifi_dream_machine
-              - binary_sensor.template_udm_internet
-            variables:
-              notify: >
-                [[[
-                  let id = this._config.triggers_update;
-                  if (id.every(e => states[e]))
-                      return states[id[0]].state === 'on'
-                          ? 1
-                          : states[id[1]].state === 'off';
-                ]]]
             template: footer
           - type: custom:button-card
             name: >
@@ -584,7 +586,7 @@ views:
               - update.nas_dsm_update
               - sensor.nas_volume_1_status
               - binary_sensor.nas_security_status
-              - sensor.disk_use_percent
+              - sensor.disk_use_percent_config
             variables:
               notify: >
                 [[[

@@ -87,7 +87,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
             'oven', 'microwave_oven', 'health_pot', 'coffee_machine', 'multifunction_cooking_pot',
             'cooker', 'induction_cooker', 'pressure_cooker', 'air_fryer', 'juicer',
             'water_purifier', 'dishwasher', 'fruit_vegetable_purifier',
-            'pet_feeder', 'fridge_chamber', 'plant_monitor', 'germicidal_lamp', 'vital_signs',
+            'pet_feeder', 'cat_toilet', 'fridge_chamber', 'plant_monitor', 'germicidal_lamp', 'vital_signs',
             'sterilizer', 'steriliser', 'table', 'chair', 'dryer', 'clothes_dryer',
         ):
             if srv.name in ['lock']:
@@ -171,11 +171,12 @@ class MiotSensorEntity(MiotEntity, SensorEntity):
             self._prop_state = miot_service.get_property('occupancy_status') or self._prop_state
 
         self._attr_icon = self._miot_service.entity_icon
+        self._attr_state_class = None
+        self._attr_native_unit_of_measurement = None
         if self._prop_state:
             self._name = f'{self.device_name} {self._prop_state.friendly_desc}'
             self._attr_icon = self._prop_state.entity_icon or self._attr_icon
-        self._attr_state_class = None
-        self._attr_native_unit_of_measurement = None
+            self._attr_state_class = self._prop_state.state_class
 
     async def async_added_to_hass(self):
         await super().async_added_to_hass()
@@ -305,7 +306,7 @@ class MiotSensorEntity(MiotEntity, SensorEntity):
         key = f'{self._prop_state.full_name}_desc'
         if key in self._state_attrs:
             return f'{self._state_attrs[key]}'.lower()
-        return self._prop_state.from_dict(self._state_attrs, STATE_UNKNOWN)
+        return self._prop_state.from_dict(self._state_attrs)
 
     def before_select_modes(self, prop, option, **kwargs):
         if prop := self._miot_service.get_property('on'):

@@ -22,6 +22,22 @@ tablet:
   paper-toast-background-color: "#1b1b1bf2"
   vertical-stack-card-margin: 0
 
+  #Colors for room-card
+  google-red: "#F54436"
+  google-green: "#01C852"
+  google-yellow: "#FF9101"
+  google-blue: "#3D5AFE"
+  google-violet: "#661FFF"
+  google-grey: "#BBBBBB"
+  color-red: "245, 68, 54"
+  color-green: "1, 200, 82"
+  color-yellow: "255, 145, 1"
+  color-blue: "61, 90, 254"
+  color-purple: "102, 31, 255"
+  color-grey: "187, 187, 187"
+  color-pink: "233, 30, 99"
+  color-theme: "51,51,51"
+
   #temporarily revert 2022.12 icon colors
   state-active-color: "#3182b7"
   rgb-state-default-color: 49, 130, 183

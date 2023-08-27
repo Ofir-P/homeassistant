@@ -1,7 +1,7 @@
 DEVICE_CUSTOMIZES = {
 
     '090615.aircondition.ktf': {
-        'miot_type': 'urn:miot-spec-v2:device:air-conditioner:0000A004:090615-ktf:2',
+        'current_temp_property': 'setmode.roomtemp',
     },
     '090615.curtain.wsdml1': {
         'switch_properties': 'on,wake_up_mode',
@@ -379,8 +379,16 @@ DEVICE_CUSTOMIZES = {
     'dmaker.fan.p15': {
         'percentage_property': 'prop.2.6',
     },
+    'dmaker.fan.p28': {
+        'percentage_property': 'prop.3.1',
+        'button_properties': 'swing_updown_manual,swing_lr_manual',
+    },
     'dmaker.fan.p33': {
         'percentage_property': 'prop.2.6',
+    },
+    'dmaker.fan.p45': {
+        'percentage_property': 'speed_level',
+        'button_actions': 'turn_left,turn_right',
     },
     'dmaker.fan.*': {
         'switch_properties': 'alarm,horizontal_swing,vertical_swing',
@@ -455,13 +463,24 @@ DEVICE_CUSTOMIZES = {
     },
     'hfjh.fishbowl.m100': {
         'light_services': 'light',
-        'sensor_properties': 'water_pump_status,filter_life_level,alarm.alarm',
+        'sensor_properties': 'temperature,water_pump_status,filter_life_level,alarm.alarm',
         'switch_properties': 'water_pump,feed_protect_on,no_disturb,light_status_on,pump_status_on,temperature_warn_on',
         'select_properties': 'pump_flux,light_status_mode,light_status_flow,pump_status_flux,flow_speed_level',
-        'number_properties': 'temperature,repeat_cycle,light_status_bright,temperature_warn_min,temperature_warn_max',
+        'number_properties': 'repeat_cycle,light_status_bright,temperature_warn_min,temperature_warn_max',
     },
     'hmpace.bracelet.*': {
         'sensor_properties': 'current_step_count,current_distance',
+    },
+    'htcx.alarm.dt210': {
+        'state_property': 'comm_fault',
+        'button_actions': 'reset,clear_e_quantity',
+        'binary_sensor_properties': 'over_voltage_alarm,under_voltage_alarm,over_current_alarm,leakage_alarm,'
+                                    'live_line_ot_alarm,null_line_ot_alarm',
+        'sensor_properties': 'active_power,electric_quantity,voltage,electricity,residual_current,'
+                             'live_line_temp,null_line_temp,line_frequency,phase_angle',
+        'number_properties': 'overvolt_threshold,undervol_threshold,over_current_thresh,overcurrent_delay,'
+                             'residual_current_thr,temp_threshold,data_cycle',
+        'switch_properties': 'alarm_shielding,silent_mode,line_exchange',
     },
     'hyd.airer.lyjpro': {
         'cover_position_mapping': {},
@@ -740,6 +759,18 @@ DEVICE_CUSTOMIZES = {
         'sensor_properties': 'feed_today,desiccant_left_time,cleantime',
         'switch_properties': 'feedstatus',
     },
+    'mmgg.litter_box.lbc1': {
+        'binary_sensor_properties': 'warehouse_uninstall,cover_open,roller_uninstall,device_dump,'
+                                    'cat_enter_state,cat_near_state,enter_time_too_long',
+        'sensor_properties': 'usage_count,trash_can_status,cat_weight,toilet_time,cat_id,cleaning_times,'
+                             'cat_litter_left_stat,cat_litter_left_level,warehouse_overweight,cat_toilet_flag,'
+                             'deodorant_left_time,roller_overload_flag',
+        'switch_properties': 'auto_cleanup,stool_mode,auto_screen_off,no_disturb',
+        'select_properties': 'cat_litter_type',
+        'number_properties': 'auto_clean_interval',
+        'button_actions': 'start_clean,weight_calibrate,start_smooth_litter,start_dump_litter,cancer_clean,'
+                          'reset_deodorant_life',
+    },
     'mmgg.pet_waterer.wi11': {
         'binary_sensor_properties': 'no_water_flag,pump_block_flag,lid_up_flag',
         'button_actions': 'reset_filter_life,reset_clean_time',
@@ -811,9 +842,45 @@ DEVICE_CUSTOMIZES = {
         'cloud_delay_update': 8,
         'miot_type': 'urn:miot-spec-v2:device:air-conditioner:0000A004:qdhkl-b23:2',
     },
+    'qmi.plug.tw02': {
+        'main_miot_services': 'switch-2',
+        'sensor_attributes': 'power_cost_today,power_cost_month',
+        'sensor_properties': 'switch.temperature',
+        'stat_power_cost_key': '4.1',
+    },
+    'qmi.plug.tw02:electric_power': {
+        'unit_of_measurement': 'W',
+    },
+    'qmi.plug.tw02:electric_current': {
+        'value_ratio': 0.001,
+        'unit_of_measurement': 'A',
+    },
+    'qmi.plug.tw02:voltage': {
+        'value_ratio': 1,
+        'unit_of_measurement': 'V',
+    },
+    'qmi.plug.tw02:power_consumption': {
+        'value_ratio': 1,
+        'state_class': "total_increasing",
+        'device_class': "energy",
+        'unit_of_measurement': "kWh",
+    },
+    'qmi.plug.tw02:power_cost_today': {
+        'value_ratio': 1,
+        'state_class': 'total_increasing',
+        'device_class': 'energy',
+        'unit_of_measurement': 'kWh',
+    },
+    'qmi.plug.tw02:power_cost_month': {
+        'value_ratio': 1,
+        'state_class': 'total_increasing',
+        'device_class': 'energy',
+        'unit_of_measurement': 'kWh',
+    },    
     'qmi.plug.2a1c1': {
         'main_miot_services': 'switch-2',
         'sensor_attributes': 'power_cost_today,power_cost_month',
+        'sensor_properties': 'switch.temperature',
         'stat_power_cost_key': '3.1',
     },
     'qmi.plug.2a1c1:electric_power': {
@@ -1032,6 +1099,10 @@ DEVICE_CUSTOMIZES = {
     },
     'yeelink.bhf_light.v6': {
         'select_properties': 'heat_mode,cold_mode,vent_mode',
+    },
+    'yeelink.bhf_light.v10': {
+        'chunk_properties': 1,
+        'exclude_miot_services': 'yl_bath_heater',
     },
     'yeelink.bhf_light.v11': {
         'exclude_miot_services': 'yl_bath_heater',
@@ -1353,6 +1424,11 @@ DEVICE_CUSTOMIZES = {
     '*.light.*': {
         'number_properties': 'off_delay_time',
         'switch_properties': 'init_power_opt,fan_init_power_opt',
+    },
+    '*.litter_box.*': {
+        'sensor_properties': 'usage_count,trash_can_status',
+        'switch_properties': 'auto_cleanup',
+        'button_actions': 'start_clean',
     },
     '*.lock.*': {
         'sensor_attributes': 'door_state,lock_action,lock_key_id,timestamp',

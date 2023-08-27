@@ -1,0 +1,76 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Alexa Speakers
+    card_mod:
+      style:
+        #popup header
+        .:
+    content:
+      type: vertical-stack
+      cards:
+        - content: >
+            # <img width="30" height="30" src='/local/Logos/alexa.png'
+            style='vertical-align:middle' /> Speakers
+          style:
+            .: |
+              ha-card {
+                background-color: transparent !important;
+                box-shadow: none !important;
+              }
+            ha-markdown:
+              $: |
+                h1 {
+                  font-size: 25px;
+                # font-weight: bold;
+                  text-align: center;
+                  letter-spacing: '-0.01em';
+                }
+          type: markdown
+        - cards:
+            - artwork: cover
+              entity: media_player.living_room_echo_dot
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:soundbar
+              tts:
+                platform: alexa
+                entity_id: media_player.living_room_echo_dot
+              type: custom:mini-media-player
+            - artwork: cover
+              entity: media_player.shower_echo_dot
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:soundbar
+              tts:
+                platform: alexa
+                entity_id: media_player.living_room_echo_dot
+              type: custom:mini-media-player
+            - artwork: cover
+              entity: media_player.bedroom_echo_dot
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:soundbar
+              tts:
+                platform: alexa
+                entity_id: media_player.bedroom_echo_dot
+              type: custom:mini-media-player
+            - artwork: cover
+              entity: media_player.office_echo_show5
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:monitor-speaker
+              tts:
+                platform: alexa
+                entity_id: media_player.office_echo_show5
+              type: custom:mini-media-player
+          type: vertical-stack

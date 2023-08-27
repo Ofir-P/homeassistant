@@ -2,7 +2,7 @@ action: fire-dom-event
 browser_mod:
   service: browser_mod.popup
   data:
-    title: Spotify
+    title: Cast Cameras
     card_mod:
       style:
         #popup header
@@ -17,8 +17,8 @@ browser_mod:
             - type: vertical-stack
               cards:
                 - content: >
-                    # <img width="30" height="30" src='/local/Logos/spotify.png'
-                    style='vertical-align:middle' /> Spotify
+                    # <img width="30" height="30" src='/local/Logos/securitycam.png'
+                    style='vertical-align:middle' /> Cast Cameras
                   style:
                     .: |
                       ha-card {
@@ -34,15 +34,14 @@ browser_mod:
                           letter-spacing: '-0.01em';
                         }
                   type: markdown
-                - account: default
-                  device: media_player.shower_echo_dot
-                  grid_covers_per_row: "5"
-                  hide_warning: true
-                  limit: 15
-                  playlist_type: default
-                  spotify_entity: media_player.spotify_elian_sarfaty
-                  type: custom:spotify-card
-                  grid_center_covers: true
-                  display_style: grid
-                  always_play_random_song: true
-                  hide_top_header: true
+                - entities:
+                    - entity: input_select.camera_display
+                      icon: mdi:cast-connected
+                    - entity: input_select.camera_select
+                      icon: mdi:cctv
+                    - action_name: Stream
+                      entity: script.camera_play
+                      icon: mdi:play
+                      name: Start Casting
+                  title: false
+                  type: entities

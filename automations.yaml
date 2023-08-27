@@ -569,7 +569,16 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.dining_table_person
+    - binary_sensor.living_room_person
+    to: 'on'
+    from: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
     to: 'on'
     from: 'off'
   condition:
