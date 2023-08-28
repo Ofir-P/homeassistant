@@ -9,45 +9,14 @@ browser_mod:
       --primary-color: transparent; /* hide timeout progress */
     card_mod:
       style:
-        # card divider border
-        layout-card$grid-layout$: |
-          #root {
-            margin: -24px 0 !important;
-          }
-          hui-vertical-stack-card {
-            border-right: 1.5px solid rgba(0, 0, 0, 0.2);
-            border-radius: 0;
-            transition: none;
-          }
-          /* phone */
-          @media screen and (max-width: 800px) {
-            hui-vertical-stack-card {
-              border-right: none;
-              border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
-            }
-          }
+        #popup header
+        .:
     content:
-      type: custom:layout-card
-      layout_type: custom:grid-layout
-      layout:
-        margin: 0
-        grid-template-columns: 385px 495px
-        grid-template-rows: 1fr
-        grid-template-areas: |
-          "info map"
-        mediaquery:
-          #phone
-          "(max-width: 800px)":
-            grid-template-columns: 1fr
-            grid-template-rows: repeat(2, 1fr)
-            grid-template-areas: |
-              "info"
-              "map"
+      type: vertical-stack
       cards:
-        ### Overview
-        - type: vertical-stack
-          view_layout:
-            grid-area: info
+        - square: false
+          columns: 1
+          type: grid
           cards:
             - type: custom:mod-card
               card_mod:

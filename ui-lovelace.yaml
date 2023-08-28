@@ -80,6 +80,9 @@ views:
         cards:
           - type: custom:button-card
             entity: sensor.template_sidebar
+            tap_action:
+              action: navigate
+              navigation_path: /config/dashboard
             template: sidebar
 
       #################################################
@@ -343,7 +346,6 @@ views:
                         state: LR
                     card:
                       type: custom:button-card
-                      entity: media_player.everywhere
                       triggers_update:
                         - media_player.everywhere
                         - media_player.bedroom_echo_dot
@@ -351,6 +353,7 @@ views:
                         - media_player.living_room_echo_dot
                         - media_player.office_echo_show5
                         - media_player.shower_echo_dot
+                        - media_player.spotify_ofir_peled
                       template:
                         - conditional_media
                         - icon_speaker
@@ -393,9 +396,7 @@ views:
                 columns: 2
                 cards:
                   - type: custom:button-card
-                    entity: media_player.mecool_ofir
                     tap_action: !include popup/alexa_speakers.yaml
-                    icon: mdi:speaker
                     triggers_update:
                       - media_player.everywhere
                       - media_player.bedroom_echo_dot
@@ -403,6 +404,7 @@ views:
                       - media_player.living_room_echo_dot
                       - media_player.office_echo_show5
                       - media_player.shower_echo_dot
+                      - media_player.spotify_ofir_peled
                     name: Speakers
                     template:
                       - media
