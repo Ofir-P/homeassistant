@@ -407,12 +407,53 @@
     for:
       hours: 0
       minutes: 0
-      seconds: 15
+      seconds: 12
+    id: elian_left_home
+  - platform: device
+    device_id: 611a494457823cb15ab854ae5b741ef0
+    domain: device_tracker
+    entity_id: 4d605a96e7d9ad764a8f357609e42ebd
+    type: enters
+    zone: zone.mofit
+    id: elian_enter_mofit
+  - platform: device
+    device_id: 611a494457823cb15ab854ae5b741ef0
+    domain: device_tracker
+    entity_id: 4d605a96e7d9ad764a8f357609e42ebd
+    type: leaves
+    zone: zone.mofit
+    id: elian_leaving_mofit
   condition: []
   action:
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Elian has left the house."
+    enabled: false
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - elian_enter_mofit
+      sequence:
+      - service: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Elian has entered Mofit."
+    - conditions:
+      - condition: trigger
+        id:
+        - elian_leaving_mofit
+      sequence:
+      - service: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Elian has left Mofit."
+    - conditions:
+      - condition: trigger
+        id:
+        - elian_left_home
+      sequence:
+      - service: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Elian has left the house."
   mode: single
 - id: '1675577604748'
   alias: Supervisor - qBitTorrent is Offline
