@@ -1,7 +1,5 @@
 settings:
   variables:
-    entity_browser_mod: media_player.88b28897_06c0391e
-
     translate_unknown: Unknown
     translate_idle: Idle
     translate_home: Home

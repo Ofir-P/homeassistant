@@ -176,11 +176,9 @@ tts:
 automation: !include automations.yaml
 script: !include scripts.yaml
 input_select: !include input_select.yaml
-scene: !include scenes.yaml
 sensor: !include sensors.yaml
 binary_sensor: !include binary_sensor.yaml
 template: !include templates.yaml
-command_line: !include command_line.yaml
 
 homeassistant:
   customize: !include customize.yaml

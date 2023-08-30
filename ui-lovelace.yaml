@@ -173,6 +173,20 @@ views:
           - type: custom:button-card
             entity: light.office_desk_led_strip
             name: LED Strip
+            show_state: true
+            state_display: >
+              [[[
+                if (variables.state.toLowerCase() === 'on') {
+                    return 'On';
+                }
+                else if (variables.state.toLowerCase() === 'off') {
+                    return 'Off';
+                }                
+                else if (variables.state.toLowerCase() === 'unknown') {
+                    return variables.translate_unknown;
+                } 
+                else { return 'Error'; }
+              ]]]
             template:
               - light
               - icon_hue
@@ -211,21 +225,30 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: switch.gosund_monitors_switch
-            name: Monitorer
-            double_tap_action: !include popup/spotify.yaml
+            entity: input_select.office_tv_status
+            name: TV
+            state_display: >
+              [[[
+                if (variables.state === 'On') {
+                    return 'On';
+                }
+                if (variables.state === 'Off') {
+                    return 'Off';
+                }                
+                if (variables.state === true) {
+                    return variables.translate_unknown;
+                }
+              ]]]
+            tap_action:
+              action: call-service
+              service: switch.toggle
+              service_data:
+                entity_id: switch.tv_office
+
             template:
               - base
-              - icon_speaker
-              - circle
+              - icon_tv
               - loader
-            variables:
-              circle_input: >
-                [[[
-                  let volume = states['sensor.monitors_volume'];
-                  if (volume) return parseInt(volume.state);
-                ]]]
-              circle_input_unit: "%"
 
       #################################################
       #                                               #
@@ -290,7 +313,7 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: switch.ps5_635_power
+            entity: switch.bot_b296
             name: Playstation
             double_tap_action: !include popup/sovrum_playstation.yaml
             template:
@@ -319,18 +342,36 @@ views:
               - type: horizontal-stack
                 cards:
                   - type: conditional
+                    view_layout:
+                      grid-area: media
                     conditions:
-                      - entity: select.conditional_media
-                        state_not: LR
-
-                      - entity: select.conditional_media
-                        state_not: Bedroom
-
-                      - entity: select.conditional_media
-                        state_not: Spotify
-
-                      - entity: select.conditional_media
-                        state_not: Shower
+                      - entity: >-
+                          media_player.plex_plex_for_android_tv_km2_plus
+                        state: playing
+                    card:
+                      type: custom:mushroom-media-player-card
+                      entity: media_player.plex_plex_for_android_tv_km2_plus
+                      collapsible_controls: false
+                      volume_controls: []
+                      show_volume_level: false
+                      use_media_info: true
+                      fill_container: true
+                      icon_type: entity-picture
+                      tap_action:
+                        action: none
+                      card_mod:
+                        style: |
+                          ha-card {
+                            border: solid 1px var(--primary-text-color);
+                            background-color: rgba(0, 0, 0, 0)
+                          }
+                  - type: custom:mod-card
+                    card_mod:
+                      style: |
+                        ha-card {
+                          border: solid 1px var(--primary-text-color);;
+                          background: transparent;
+                        }
                     card:
                       type: custom:button-card
                       entity: sensor.recently_added_movies
@@ -390,7 +431,7 @@ views:
                       entity: media_player.shower_echo_dot
                       template:
                         - conditional_media
-                        - icon_nest_mini
+                        - icon_alexa
 
               - type: grid
                 columns: 2
@@ -408,7 +449,7 @@ views:
                     name: Speakers
                     template:
                       - media
-                      - icon_speaker
+                      - icon_alexa
 
                   - type: custom:button-card
                     entity: media_player.mibox4_2
@@ -431,7 +472,7 @@ views:
                     name: Office Echo Show 5
                     template:
                       - media
-                      - icon_nest_mini
+                      - icon_alexa
 
       #################################################
       #                                               #
@@ -514,17 +555,32 @@ views:
 
           - type: custom:button-card
             entity: script.home_leave
-            name: Close everything
+            name: Home Leave
             template:
               - base
               - icon_away
 
           - type: custom:button-card
-            entity: script.shower_music
-            name: Shower Music
+            entity: switch.hfjh_v2_eadb_fish_tank_2
+            show_state: true
+            state_display: >
+              [[[
+                if (variables.state.toLowerCase() === 'on') {
+                    return 'On';
+                }
+                else if (variables.state.toLowerCase() === 'off') {
+                    return 'Off';
+                }                
+                else if (variables.state.toLowerCase() === 'unknown') {
+                    return variables.translate_unknown;
+                } 
+                else { return 'Error'; }
+              ]]]
+            tap_action: !include popup/aquarium.yaml
+            name: Aquarium
             template:
               - base
-              - icon_spotify
+              - icon_aquarium
 
       #################################################
       #                                               #

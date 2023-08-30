@@ -144,3 +144,40 @@ browser_mod:
             - entity: update.nas_dsm_update
               icon: mdi:package-up
               name: Update
+            - type: custom:hui-horizontal-stack-card
+              cards:
+                - type: custom:button-card
+                  name: Restart NAS
+                  icon: mdi:restart-alert
+                  confirmation:
+                    text: Are you sure you want to reboot NAS?
+                  tap_action:
+                    action: call-service
+                    service: browser_mod.sequence
+                    service_data:
+                      sequence:
+                        - service: browser_mod.notification
+                          data:
+                            message: Restarting NAS...
+                        - service: button.press
+                          data:
+                            entity_id: button.nas_reboot
+                  template: icon_name
+
+                - type: custom:button-card
+                  name: Shutdown
+                  icon: mdi:alert
+                  confirmation:
+                    text: Are you sure you want to shutdown NAS?
+                  tap_action:
+                    action: call-service
+                    service: browser_mod.sequence
+                    service_data:
+                      sequence:
+                        - service: browser_mod.notification
+                          data:
+                            message: Shutting down NAS...
+                        - service: button.press
+                          data:
+                            entity_id: button.nas_shutdown
+                  template: icon_name

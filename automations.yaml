@@ -1160,6 +1160,14 @@
       - 121a0c6ddafe33985ea0806ad01fb779
       - afb33500a8d79e33ccc9290dae617155
       - 16df7102b63d09b6fcc378186c583972
+    enabled: false
+  - service: light.turn_off
+    data: {}
+    target:
+      area_id:
+      - hallway
+      - living_room
+      - bedroom
   - repeat:
       while:
       - condition: template
