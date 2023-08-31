@@ -565,14 +565,14 @@
       hours: 0
       minutes: 1
       seconds: 40
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    to: 'on'
   condition:
   - condition: time
     after: 00:00:00
     before: 06:36:00
-  - condition: state
-    state: 'off'
-    enabled: false
-    entity_id: light.yeelink_color5_6079_light_2
   action:
   - if:
     - condition: trigger

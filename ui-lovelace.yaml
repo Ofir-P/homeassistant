@@ -349,22 +349,22 @@ views:
                           media_player.plex_plex_for_android_tv_km2_plus
                         state: playing
                     card:
-                      type: custom:mushroom-media-player-card
-                      entity: media_player.plex_plex_for_android_tv_km2_plus
-                      collapsible_controls: false
-                      volume_controls: []
-                      show_volume_level: false
-                      use_media_info: true
-                      fill_container: true
-                      icon_type: entity-picture
-                      tap_action:
-                        action: none
-                      card_mod:
-                        style: |
-                          ha-card {
-                            border: solid 1px var(--primary-text-color);
-                            background-color: rgba(0, 0, 0, 0)
-                          }
+                      - type: custom:mushroom-media-player-card
+                        entity: media_player.plex_plex_for_android_tv_km2_plus
+                        collapsible_controls: false
+                        volume_controls: []
+                        show_volume_level: false
+                        use_media_info: true
+                        fill_container: true
+                        icon_type: entity-picture
+                        tap_action:
+                          action: none
+                        card_mod:
+                          style: |
+                            ha-card {
+                              border: solid 1px var(--primary-text-color);
+                              background-color: rgba(0, 0, 0, 0)
+                            }
                   - type: custom:mod-card
                     card_mod:
                       style: |
