@@ -357,6 +357,7 @@
     - binary_sensor.main_door_sensor_contact
     from: 'off'
     to: 'on'
+    id: door_open
   condition: []
   action:
   - delay:
@@ -374,6 +375,28 @@
       authentication: digest
       file: /config/www/tmp/snapshot_living_room_sub.jpg
       caption: "\U0001F916 Automation - Main Door is open now!"
+  - choose:
+    - conditions:
+      - condition: time
+        after: 00:00:00
+        before: 06:00:00
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'Off'
+      sequence:
+      - service: light.turn_on
+        data: {}
+        target:
+          area_id: hallway
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 25
+          milliseconds: 0
+      - service: light.turn_off
+        data: {}
+        target:
+          area_id: hallway
   mode: single
 - id: '1675577121363'
   alias: Supervisor - Main Door Closed
@@ -565,10 +588,6 @@
       hours: 0
       minutes: 1
       seconds: 40
-  - platform: state
-    entity_id:
-    - binary_sensor.main_door_sensor_contact
-    to: 'on'
   condition:
   - condition: time
     after: 00:00:00

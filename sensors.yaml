@@ -80,6 +80,12 @@
   port: 32400
   section_types:
     - show
+
+- platform: plex_recently_added
+  name: Recently Added TV # will create sensor.recently_added
+  token: !secret plex_token
+  host: !secret plex_host
+  port: 32400
 # [=========================]Plex[=========================]
 # [=========================]qBitTorrent[=========================]
 - platform: template
