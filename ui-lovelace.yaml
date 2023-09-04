@@ -313,12 +313,27 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: switch.bot_b296
-            name: Playstation
-            double_tap_action: !include popup/sovrum_playstation.yaml
+            entity: input_select.bedroom_tv_status
+            name: TV
+            state_display: >
+              [[[
+                if (variables.state === 'On') {
+                    return 'On';
+                }
+                if (variables.state === 'Off') {
+                    return 'Off';
+                }                
+                if (variables.state === true) {
+                    return variables.translate_unknown;
+                }
+              ]]]
+            tap_action:
+              action: call-service
+              service: script.ir_turn_on_off_bedroom_tv
+
             template:
               - base
-              - icon_ps5
+              - icon_tv
               - loader
 
       #################################################
@@ -393,7 +408,6 @@ views:
                     card:
                       type: custom:button-card
                       entity: media_player.plex_plex_for_android_tv_km2_plus
-                      triggers_update: sensor.youtube_watching
                       template:
                         - conditional_media
                         - icon_apple_tv
@@ -405,7 +419,6 @@ views:
                     card:
                       type: custom:button-card
                       entity: media_player.mibox4_2
-                      triggers_update: sensor.youtube_watching
                       template:
                         - conditional_media
                         - icon_apple_tv

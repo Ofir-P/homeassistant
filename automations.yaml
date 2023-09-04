@@ -580,10 +580,25 @@
     - binary_sensor.dining_table_person
     to: 'on'
     id: Motion Detected on Dining Table by Person
+    enabled: false
   - platform: state
     entity_id:
     - binary_sensor.dining_table_person
     to: 'off'
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 40
+    enabled: false
+  - platform: state
+    entity_id:
+    - sensor.tablet_browser_visibility
+    id: tablet_on
+    to: visible
+  - platform: state
+    entity_id:
+    - sensor.tablet_browser_visibility
+    id: tablet_off
     for:
       hours: 0
       minutes: 1
@@ -596,6 +611,36 @@
   - if:
     - condition: trigger
       id: Motion Detected on Dining Table by Person
+    - condition: time
+      after: 00:01:00
+      before: 06:35:00
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'Off'
+    then:
+    - condition: state
+      entity_id: light.yeelink_color5_6079_light_2
+      state: 'off'
+    - service: light.turn_on
+      data: {}
+      target:
+        device_id:
+        - 16df7102b63d09b6fcc378186c583972
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Hallway Motion Light"
+    else:
+    - service: light.turn_off
+      data:
+        transition: 20
+      target:
+        device_id:
+        - 16df7102b63d09b6fcc378186c583972
+    enabled: false
+  - if:
+    - condition: trigger
+      id:
+      - tablet_on
     - condition: time
       after: 00:01:00
       before: 06:35:00
