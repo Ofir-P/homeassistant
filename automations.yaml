@@ -725,6 +725,7 @@
     - device_tracker.elians_iphone
     from: not_home
     to: home
+    id: elian_home_area
   condition:
   - condition: device
     device_id: 3991a8dcff5132448a99a281daf3577d
@@ -739,12 +740,6 @@
       < 180 }}'
     alias: Has Ofir PC was active in the last 3 minutes ?
   action:
-  - service: media_player.play_media
-    data:
-      entity_id: media_player.office_echo_show5
-      media_content_id: show living room camera
-      media_content_type: custom
-    enabled: false
   - service: scene.create
     data:
       scene_id: thebeforetimes
@@ -766,20 +761,21 @@
     target:
       entity_id: scene.thebeforetimes
     metadata: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 4
-      milliseconds: 0
-    enabled: false
+  - if:
+    - condition: trigger
+      id:
+      - elian_home_area
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Elian enters Home Zone - Red Color LED"
+    else:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Door Open Flash Red Color"
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Door Open Light Strip Office Flash Red Color"
-  - service: media_player.play_media
-    data:
-      entity_id: media_player.office_echo_show5
-      media_content_id: go home
-      media_content_type: custom
     enabled: false
   mode: single
 - id: '1678080669448'
