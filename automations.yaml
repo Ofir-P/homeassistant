@@ -735,10 +735,10 @@
   - condition: time
     after: '18:15:00'
     before: 03:30:00
-  - condition: template
-    value_template: '{{ now().timestamp() - as_timestamp(states(''sensor.ofir_pc_lastactive''))
-      < 180 }}'
-    alias: Has Ofir PC was active in the last 3 minutes ?
+  - condition: state
+    entity_id: binary_sensor.presence_sensor_presence
+    state: 'on'
+    alias: Confirm someone is Presence at Office
   action:
   - service: scene.create
     data:

@@ -69,3 +69,6 @@ devices:
   '0x00158d00076b15f3':
     friendly_name: Bedroom Sticker Switch button
     description: Under the table next to the bed
+  '0xa4c1383a2646aef0':
+    friendly_name: Presence Sensor
+    description: Office
