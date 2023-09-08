@@ -1370,3 +1370,33 @@
       message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
     enabled: true
   mode: single
+- id: '1694084772132'
+  alias: No Presence Office - Turn Off TV
+  description: If no presence for 50 minutes+ in Office Room, will turn off the TV.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.presence_sensor_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 50
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: input_select.office_tv_status
+    state: 'On'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  action:
+  - service: switch.turn_off
+    data: {}
+    target:
+      device_id: 799eb02d81c1f035a1e438ec9ccf17bd
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office TV \U0001F4FA turned off due Inactivity
+        on Office room!"
+  mode: single

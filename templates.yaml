@@ -133,8 +133,7 @@
           {% set devices = [
             states.switch.switcher_v4_yair_stern,
             states.input_select.washing_machine_status,
-            states.vacuum.mijia_v2_202f_robot_cleaner,
-            states.sensor.ofir_pc_lastactive
+            states.vacuum.mijia_v2_202f_robot_cleaner
           ] %}
 
           {% set lights_on = lights | selectattr('state','eq','on') | list %}
