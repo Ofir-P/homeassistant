@@ -1391,7 +1391,7 @@
       minutes: 5
       seconds: 0
   action:
-  - service: switch.turn_off
+  - service: switch.toggle
     data: {}
     target:
       device_id: 799eb02d81c1f035a1e438ec9ccf17bd
