@@ -1394,7 +1394,7 @@
   - service: switch.toggle
     data: {}
     target:
-      device_id: 799eb02d81c1f035a1e438ec9ccf17bd
+      entity_id: switch.tv_office
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Office TV \U0001F4FA turned off due Inactivity
