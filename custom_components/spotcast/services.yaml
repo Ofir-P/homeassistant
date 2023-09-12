@@ -1,4 +1,5 @@
 start:
+  name: Start Spotcast
   description: Starts spotify playback on chromecast devices
   fields:
     device_name:
@@ -18,7 +19,7 @@ start:
     entity_id:
       name: "Entity ID"
       description: "The entity_id of the chromecast mediaplayer. Friendly name MUST match the spotify connect device name (not used together with device_name and spotify_device_id)."
-      example: "media_player.mibox4"
+      example: "media_player.vardagsrum"
       required: false
       selector:
         entity:
