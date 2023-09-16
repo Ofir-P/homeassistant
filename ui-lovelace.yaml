@@ -570,6 +570,7 @@ views:
             name: Home Leave
             template:
               - base
+              - loader
               - icon_away
 
           - type: custom:button-card
