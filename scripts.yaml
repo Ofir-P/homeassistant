@@ -273,28 +273,6 @@ home_leave:
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Home Leave activated!"
-  - service: switch.turn_off
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - 8b0b37e639c674161245a6a30534f8e5
-      - 974fe480eea5ad9851e2b94d16cb3baa
-      entity_id: switch.office_light
-  - service: switch.turn_on
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - ab9d9e64727b36fa67f4e85f6ce47c37
-  - service: light.turn_off
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - 121a0c6ddafe33985ea0806ad01fb779
-      - afb33500a8d79e33ccc9290dae617155
-      - 16df7102b63d09b6fcc378186c583972
   - repeat:
       while:
       - condition: template
@@ -367,6 +345,31 @@ home_leave:
           minutes: 5
           seconds: 35
           milliseconds: 0
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Home Leave electric devices are OFF!"
+  - service: light.turn_off
+    continue_on_error: true
+    data: {}
+    target:
+      device_id:
+      - 121a0c6ddafe33985ea0806ad01fb779
+      - afb33500a8d79e33ccc9290dae617155
+      - 16df7102b63d09b6fcc378186c583972
+  - service: switch.turn_off
+    continue_on_error: true
+    data: {}
+    target:
+      device_id:
+      - 8b0b37e639c674161245a6a30534f8e5
+      - 974fe480eea5ad9851e2b94d16cb3baa
+      entity_id: switch.office_light
+  - service: switch.turn_on
+    continue_on_error: true
+    data: {}
+    target:
+      device_id:
+      - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - House devices are OFF!"
