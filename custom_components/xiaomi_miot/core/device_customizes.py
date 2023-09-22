@@ -20,6 +20,11 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'on',
         'button_properties': 'motor_control',
     },
+    'aimore.light.cw3201': {
+        'switch_properties': 'flex_switch',
+        'select_properties': 'default_power_on_state',
+        'number_properties': 'jianbian,countdown',
+    },
     'ainice.motion.bt': {
         'miot_type': 'urn:miot-spec-v2:device:motion-sensor:0000A014:ainice-bt:2',
         'state_property': 'motion_sensor.motion_status',
@@ -75,6 +80,11 @@ DEVICE_CUSTOMIZES = {
         'state_class': 'measurement',
         'device_class': 'voltage',
         'unit_of_measurement': 'V',
+    },
+    'chuangmi.camera.051a01': {
+        'switch_properties': 'on,time_watermark,motion_tracking,motion_detection,wdr_mode,glimmer_full_color,'
+                             'face_switch,babycry_switch,pet_switch,gesture_switch,cruise_switch,smart_care_switch,'
+                             'key_call_switch',
     },
     'chuangmi.camera.v6': {
         'use_alarm_playlist': True,
@@ -248,7 +258,9 @@ DEVICE_CUSTOMIZES = {
     },
     'cuco.plug.cp5prd': {
         'main_miot_services': 'switch-2',
-        'exclude_miot_services': 'power_consumption,device_setting,use_ele_alert',
+        'exclude_miot_services': 'device_setting,use_ele_alert',
+        'exclude_miot_properties': 'power_consumption,electric_current,voltage,temperature_high_ai,temperature_high_ci,'
+                                   'indicator_light.mode,start_time,end_time,data_values',
         'sensor_attributes': 'power_cost_today,power_cost_month',
         'stat_power_cost_key': '10.1',
     },
@@ -294,6 +306,27 @@ DEVICE_CUSTOMIZES = {
         'device_class': 'energy',
         'unit_of_measurement': 'kWh',
     },
+    'cuco.plug.wp5m': {
+        'main_miot_services': 'switch-2',
+        'sensor_attributes': 'power_cost_today,power_cost_month',
+        'stat_power_cost_key': '3.1',
+        'chunk_properties': 1,
+    },
+    'cuco.plug.wp5m:electric_power': {
+        'unit_of_measurement': 'W',
+    },
+    'cuco.plug.wp5m:power_cost_today': {
+        'value_ratio': 0.01,
+        'state_class': 'total_increasing',
+        'device_class': 'energy',
+        'unit_of_measurement': 'kWh',
+    },
+    'cuco.plug.wp5m:power_cost_month': {
+        'value_ratio': 0.01,
+        'state_class': 'total_increasing',
+        'device_class': 'energy',
+        'unit_of_measurement': 'kWh',
+    },    
     'cuco.plug.*': {
         'main_miot_services': 'switch-2',
     },
@@ -380,8 +413,8 @@ DEVICE_CUSTOMIZES = {
         'percentage_property': 'prop.2.6',
     },
     'dmaker.fan.p28': {
-        'percentage_property': 'prop.3.1',
-        'button_properties': 'swing_updown_manual,swing_lr_manual',
+        'percentage_property': 'speed_level',
+        'button_properties': 'swing_updown_manual,swing_lr_manual,back_to_center',
     },
     'dmaker.fan.p33': {
         'percentage_property': 'prop.2.6',
@@ -553,6 +586,12 @@ DEVICE_CUSTOMIZES = {
         'number_properties': 'no_one_determine_time',
     },
     'izq.sensor_occupy.solo': {
+        'sensor_properties': 'occupancy_status,illumination',
+        'number_properties': 'bio_sensitive',
+        'switch_properties': 'indicator_light,shadow_tracking',
+        'button_actions': 'led_toggle,find_device'
+    },
+    'izq.sensor_occupy.trio': {
         'sensor_properties': 'occupancy_status,illumination',
         'number_properties': 'bio_sensitive',
         'switch_properties': 'indicator_light,shadow_tracking',
@@ -802,6 +841,13 @@ DEVICE_CUSTOMIZES = {
         'miio_event_human_visit_details_template': 'mxiang_cateye_human_visit_details',
     },
 
+    'nineam.desk.hoo01': {
+        'state_property': 'standing_desk.moving_status',
+        'sensor_properties': 'current_height,fault',
+        'switch_properties': 'on,lock_status',
+        'select_properties': 'mode,desk_control',
+        'number_properties': 'target_height,stand_height,sit_height,interval',
+    },
     'novo.curtain.n21': {
         'chunk_properties': 1,
         'exclude_miot_properties': 'fault',
@@ -847,6 +893,7 @@ DEVICE_CUSTOMIZES = {
         'sensor_attributes': 'power_cost_today,power_cost_month',
         'sensor_properties': 'switch.temperature',
         'stat_power_cost_key': '4.1',
+        'exclude_miot_services': 'simulation',
     },
     'qmi.plug.tw02:electric_power': {
         'unit_of_measurement': 'W',
@@ -1050,6 +1097,14 @@ DEVICE_CUSTOMIZES = {
                              'key_ten,key_eleven,key_twelve,key_thirteen,key_fourteen,key_fifteen,key_sixteen',
     },
 
+    'xiaomi.aircondition.m9': {
+        'exclude_miot_services': 'machine_state,flag_bit,single_smart_scene',
+        'exclude_miot_properties': 'enhance.timer,humidity_range',
+    },
+    'xiaomi.aircondition.mc9': {
+        'exclude_miot_services': 'machine_state,flag_bit',
+        'exclude_miot_properties': 'enhance.timer',
+    },
     'xiaomi.aircondition.mt0': {
         'exclude_miot_services': 'iot_linkage,machine_state,screen_show',
         'exclude_miot_properties': 'enhance.timer,humidity_range,filter_core_rest,sleep_diy_sign',
@@ -1058,9 +1113,9 @@ DEVICE_CUSTOMIZES = {
         'exclude_miot_services': 'iot_linkage,machine_state,screen_show',
         'exclude_miot_properties': 'enhance.timer,humidity_range,filter_core_rest,sleep_diy_sign',
     },
-    'xiaomi.aircondition.m9': {
-        'exclude_miot_services': 'iot_linkage,machine_state,screen_show',
-        'exclude_miot_properties': 'enhance.timer,humidity_range,filter_core_rest,sleep_diy_sign',
+    'xiaomi.aircondition.*': {
+        'exclude_miot_services': 'iot_linkage,machine_state,flag_bit',
+        'exclude_miot_properties': 'enhance.timer',
     },
     'xiaomi.tv.*': {
         'auto_cloud': True,
@@ -1103,6 +1158,7 @@ DEVICE_CUSTOMIZES = {
     'yeelink.bhf_light.v10': {
         'chunk_properties': 1,
         'exclude_miot_services': 'yl_bath_heater',
+        'exclude_miot_properties': 'ptc_bath_heater.mode',
     },
     'yeelink.bhf_light.v11': {
         'exclude_miot_services': 'yl_bath_heater',
@@ -1326,6 +1382,11 @@ DEVICE_CUSTOMIZES = {
         'select_properties': 'link',
         'light_services': 'light',
     },
+    'cuco.plug.p8amd': {
+        'main_miot_services': 'switch-2',
+        'switch_properties': 'usb_switch.on,light,light.mode',
+        'select_properties': 'default_power_on_state',
+    },
 
     '*.aircondition.*': {
         'sensor_properties': 'electricity.electricity',
@@ -1357,6 +1418,10 @@ DEVICE_CUSTOMIZES = {
     },
     '*.camera.*': {
         'miot_cloud_action': True,
+        'sensor_properties': 'memory_card_management.status,storage_free_space,storage_used_space',
+        'select_properties': 'night_shot,recording_mode,detection_sensitivity',
+        'switch_properties': 'on,time_watermark,motion_tracking,motion_detection,wdr_mode,glimmer_full_color',
+        'number_properties': 'image_rollover,alarm_interval',
     },
     '*.cateye.*': {
         'use_motion_stream': True,
