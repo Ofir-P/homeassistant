@@ -865,91 +865,6 @@
       message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
     enabled: true
   mode: single
-- id: '1679512193063'
-  alias: Wireless Remote - Button 4
-  description: Will trigger script to notify office led strip to green color
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.wireless_remote_switch_action
-    to: 4_single
-  condition:
-  - condition: state
-    entity_id: input_select.living_room_tv_status
-    state: 'On'
-  action:
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id:
-      - switch.bot_b296
-      - switch.bot_5b1c
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Remote Control button 4 - Turn off bathroom
-        lights!"
-  mode: single
-- id: '1679512412588'
-  alias: Wireless Remote - Button 1
-  description: Will toggle kitchen light when button 1 is pressed.
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.wireless_remote_switch_action
-    to: 1_single
-  condition: []
-  action:
-  - service: script.turn_off_on_kitchen_light
-    data: {}
-  mode: single
-- id: '1679512495607'
-  alias: Wireless Remote - Button 2
-  description: Will toggle living room AC when button 2 is pressed.
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.wireless_remote_switch_action
-    to: 2_single
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: cool
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: heat
-      sequence:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.ofir_a_c
-    - conditions:
-      - condition: state
-        entity_id: climate.ofir_a_c
-        state: 'off'
-      sequence:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.ofir_a_c
-  mode: single
-- id: '1679512554388'
-  alias: Wireless Remote - Button 3
-  description: Will turn on boiler for 60 minutes when button 3 is pressed.
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.wireless_remote_switch_action
-    to: 3_single
-  condition: []
-  action:
-  - service: script.turn_on_switcher_for_60mins
-    data: {}
-  mode: single
 - id: '1680267194597'
   alias: 'Helper: Set Office TV Status to On'
   description: ''
@@ -1400,4 +1315,94 @@
     data:
       message: "\U0001F916 Automation - Office TV \U0001F4FA turned off due Inactivity
         on Office room!"
+  mode: single
+- id: '1695660239489'
+  alias: Wireless Remote Living Room
+  description: 1 - Kitchen Light, 2 - Toggle A/C in Living Room, 3 - Boiler for 60
+    minutes, 4 - Close bathroom lights
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 1_single
+    id: button1_singlePress
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 2_single
+    id: button2_singlePress
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 3_single
+    id: button3_singlePress
+  - platform: state
+    entity_id:
+    - sensor.wireless_remote_switch_action
+    to: 4_single
+    id: button4_singlePress
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - button1_singlePress
+      sequence:
+      - service: script.turn_off_on_kitchen_light
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - button2_singlePress
+      sequence:
+      - choose:
+        - conditions:
+          - condition: or
+            conditions:
+            - condition: state
+              entity_id: climate.ofir_a_c
+              state: cool
+            - condition: state
+              entity_id: climate.ofir_a_c
+              state: heat
+          sequence:
+          - service: climate.turn_off
+            data: {}
+            target:
+              device_id: 5747456c3abcc55ad57e3875baf58ba2
+        - conditions:
+          - condition: state
+            entity_id: climate.ofir_a_c
+            state: 'off'
+          sequence:
+          - service: climate.turn_on
+            data: {}
+            target:
+              device_id: 5747456c3abcc55ad57e3875baf58ba2
+    - conditions:
+      - condition: trigger
+        id:
+        - button3_singlePress
+      sequence:
+      - service: script.turn_on_switcher_for_60mins
+        data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - button4_singlePress
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'On'
+      sequence:
+      - service: switch.turn_off
+        data: {}
+        target:
+          device_id:
+          - 974fe480eea5ad9851e2b94d16cb3baa
+          - 8b0b37e639c674161245a6a30534f8e5
+      - service: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Remote Control button 4 - Turn off bathroom
+            lights!"
   mode: single
