@@ -573,7 +573,7 @@
   mode: single
 - id: '1676503252475'
   alias: Hallway Motion Light
-  description: between 00:01 to 6:35 light will turn on for 2 minutes in the hallway
+  description: between 00:01 to 6:55 light will turn on for 2 minutes in the hallway
   trigger:
   - platform: state
     entity_id:
@@ -606,7 +606,7 @@
   condition:
   - condition: time
     after: 00:00:00
-    before: 06:36:00
+    before: 06:55:00
   action:
   - if:
     - condition: trigger
