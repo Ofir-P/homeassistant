@@ -1406,3 +1406,25 @@
           message: "\U0001F916 Automation - Remote Control button 4 - Turn off bathroom
             lights!"
   mode: single
+- id: '1697368945970'
+  alias: Red Alert
+  description: Hod HaSharon Red Alert
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.redalert_hodhasharon
+    to: 'on'
+    from: 'off'
+  condition: []
+  action:
+  - service: notify.mobile_app_ofir_honor_magic_5_pro
+    data:
+      message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
+      title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
+        ''title'') }}'
+  - service: notify.home_assistant_group
+    data:
+      message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
+      title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
+        ''title'') }}'
+  mode: single

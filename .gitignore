@@ -52,6 +52,7 @@ www/community
 www/tmp
 www/image
 /image
+/appdaemon
 www/upcoming-media-card-images
 custom_components/hacs
 downloads
