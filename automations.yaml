@@ -1422,9 +1422,26 @@
       message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
       title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
         ''title'') }}'
+  - service: light.turn_on
+    data: {}
+    target:
+      device_id:
+      - 121a0c6ddafe33985ea0806ad01fb779
+      - 16df7102b63d09b6fcc378186c583972
   - service: notify.home_assistant_group
     data:
       message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
       title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
         ''title'') }}'
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 30
+      milliseconds: 0
+  - service: light.turn_off
+    data: {}
+    target:
+      device_id:
+      - 121a0c6ddafe33985ea0806ad01fb779
+      - 16df7102b63d09b6fcc378186c583972
   mode: single
