@@ -773,10 +773,6 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - Door Open Flash Red Color"
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Door Open Light Strip Office Flash Red Color"
-    enabled: false
   mode: single
 - id: '1678080669448'
   alias: 'Helper: Set Bedroom TV Status to On'
@@ -1422,6 +1418,27 @@
       message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
       title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
         ''title'') }}'
+  - service: scene.create
+    data:
+      scene_id: thebeforetimes
+      snapshot_entities: light.office_desk_led_strip
+  - repeat:
+      count: 60
+      sequence:
+      - service: light.toggle
+        data:
+          color_name: orangered
+        target:
+          device_id: 2b218245c8be8b065f4b50b22f37c9e8
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 0
+          milliseconds: 250
+  - service: scene.turn_on
+    target:
+      entity_id: scene.thebeforetimes
+    metadata: {}
   - service: light.turn_on
     data: {}
     target:
