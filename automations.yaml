@@ -699,6 +699,9 @@
       domain: device_tracker
       entity_id: device_tracker.elians_iphone
       type: is_not_home
+  - condition: state
+    entity_id: input_select.living_room_tv_status
+    state: 'Off'
   action:
   - service: camera.snapshot
     data:
@@ -1413,11 +1416,6 @@
     from: 'off'
   condition: []
   action:
-  - service: notify.mobile_app_ofir_honor_magic_5_pro
-    data:
-      message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
-      title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
-        ''title'') }}'
   - service: scene.create
     data:
       scene_id: thebeforetimes
@@ -1461,4 +1459,8 @@
       device_id:
       - 121a0c6ddafe33985ea0806ad01fb779
       - 16df7102b63d09b6fcc378186c583972
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Red Alert \U0001F680"
+    enabled: true
   mode: single
