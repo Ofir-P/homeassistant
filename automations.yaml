@@ -1407,60 +1407,79 @@
   mode: single
 - id: '1697368945970'
   alias: Red Alert
-  description: Hod HaSharon Red Alert
+  description: Hod HaSharon & Ramla Red Alert
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.redalert_hodhasharon
+    - binary_sensor.oref_alert_home
     to: 'on'
     from: 'off'
+    id: home_alert
+  - platform: state
+    entity_id:
+    - binary_sensor.oref_alert_ramla
+    from: 'off'
+    to: 'on'
+    id: ramla_alert
   condition: []
   action:
-  - service: scene.create
-    data:
-      scene_id: thebeforetimes
-      snapshot_entities: light.office_desk_led_strip
-  - repeat:
-      count: 60
-      sequence:
-      - service: light.toggle
-        data:
-          color_name: orangered
-        target:
-          device_id: 2b218245c8be8b065f4b50b22f37c9e8
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 0
-          milliseconds: 250
-  - service: scene.turn_on
-    target:
-      entity_id: scene.thebeforetimes
-    metadata: {}
-  - service: light.turn_on
-    data: {}
-    target:
-      device_id:
-      - 121a0c6ddafe33985ea0806ad01fb779
-      - 16df7102b63d09b6fcc378186c583972
-  - service: notify.home_assistant_group
-    data:
-      message: '{{ state_attr(''binary_sensor.oref_alert'', ''data'') }}'
-      title: '{{ state_attr(''binary_sensor.oref_alert'', ''emoji'') }} {{ state_attr(''binary_sensor.oref_alert'',
-        ''title'') }}'
-  - delay:
-      hours: 0
-      minutes: 3
-      seconds: 30
-      milliseconds: 0
-  - service: light.turn_off
-    data: {}
-    target:
-      device_id:
-      - 121a0c6ddafe33985ea0806ad01fb779
-      - 16df7102b63d09b6fcc378186c583972
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Red Alert \U0001F680"
     enabled: true
+  - if:
+    - condition: trigger
+      id:
+      - ramla_alert
+    then:
+    - service: notify.mobile_app_elians_iphone
+      data:
+        message: "\U0001F680 אזעקות ברמלה \U0001F680"
+    else:
+    - service: climate.turn_on
+      data: {}
+      target:
+        device_id: 4018257e961bc48fa5b1c539c9efc5ee
+    - service: light.turn_on
+      data: {}
+      target:
+        device_id:
+        - 121a0c6ddafe33985ea0806ad01fb779
+        - 16df7102b63d09b6fcc378186c583972
+    - service: scene.create
+      data:
+        scene_id: thebeforetimes
+        snapshot_entities: light.office_desk_led_strip
+    - repeat:
+        count: 60
+        sequence:
+        - service: light.toggle
+          data:
+            color_name: orangered
+          target:
+            device_id: 2b218245c8be8b065f4b50b22f37c9e8
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 0
+            milliseconds: 250
+    - service: scene.turn_on
+      target:
+        entity_id: scene.thebeforetimes
+      metadata: {}
+    - delay:
+        hours: 0
+        minutes: 3
+        seconds: 30
+        milliseconds: 0
+    - service: light.turn_off
+      data: {}
+      target:
+        device_id:
+        - 121a0c6ddafe33985ea0806ad01fb779
+        - 16df7102b63d09b6fcc378186c583972
+    - service: climate.turn_off
+      data: {}
+      target:
+        device_id: 4018257e961bc48fa5b1c539c9efc5ee
   mode: single
