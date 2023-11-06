@@ -28,4 +28,6 @@ browser_mod:
         columns: 1
         square: false
         cards:
-          - type: shopping-list
+          - type: todo-list
+            entity: todo.shopping_list
+            
