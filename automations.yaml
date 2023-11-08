@@ -608,14 +608,14 @@
   condition:
   - condition: time
     after: 00:00:00
-    before: 06:45:00
+    before: 06:52:00
   action:
   - if:
     - condition: trigger
       id: Motion Detected on Dining Table by Person
     - condition: time
       after: 00:01:00
-      before: 06:45:00
+      before: 06:52:00
     - condition: state
       entity_id: input_select.living_room_tv_status
       state: 'Off'
