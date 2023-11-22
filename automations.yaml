@@ -1435,6 +1435,17 @@
     data:
       message: "\U0001F916 Automation - Red Alert \U0001F680"
     enabled: true
+  - if:
+    - condition: state
+      entity_id: binary_sensor.any_phone_at_home
+      state: 'on'
+    - condition: time
+      after: '16:00:00'
+      before: '22:40:00'
+    then:
+    - service: notify.alexa_media_shower_echo_dot
+      data:
+        message: AZAKAA
   - service: climate.turn_on
     data: {}
     target:
