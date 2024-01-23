@@ -1,13 +1,3 @@
-# [=========================]System Monitor[=========================]
-- platform: systemmonitor
-  resources:
-    - type: disk_use_percent
-      arg: /config
-    - type: memory_free
-    - type: processor_use
-    - type: memory_use_percent
-- platform: authenticated
-
 # Time
 - platform: time_date
   display_options:

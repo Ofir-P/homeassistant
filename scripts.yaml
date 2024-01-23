@@ -166,14 +166,23 @@ turn_off_on_bedroom_light:
 turn_on_switcher_for_60mins:
   alias: Turn ON Switcher for 60mins
   sequence:
-  - service: switcher_kis.turn_on_with_timer
-    data:
-      timer_minutes: 60
+  - service: switch.turn_on
     target:
-      device_id: 3d9226e0d372160b7307053c6332e5be
+      device_id: 928250a9ace44dda8bbe162fc9440d6d
+    data: {}
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered! "
+  - delay:
+      hours: 1
+      minutes: 0
+      seconds: 0
+      milliseconds: 0
+  - service: switch.turn_off
+    target:
+      device_id:
+      - 928250a9ace44dda8bbe162fc9440d6d
+    data: {}
   mode: single
   icon: mdi:water-boiler-auto
 shower_music:

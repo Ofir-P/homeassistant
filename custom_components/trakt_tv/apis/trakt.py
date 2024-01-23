@@ -1,6 +1,5 @@
 """API for TraktTV bound to Home Assistant OAuth."""
 import logging
-import time
 from asyncio import gather, sleep
 from datetime import datetime
 from typing import Any, Dict
@@ -16,7 +15,7 @@ from custom_components.trakt_tv.utils import compute_calendar_args
 from ..configuration import Configuration
 from ..const import API_HOST, DOMAIN
 from ..exception import TraktException
-from ..models.kind import BASIC_KINDS, NEXT_TO_WATCH_KINDS, TraktKind
+from ..models.kind import BASIC_KINDS, UPCOMING_KINDS, TraktKind
 from ..models.media import Medias
 from ..utils import cache_insert, cache_retrieve, deserialize_json
 
@@ -129,7 +128,9 @@ class TraktApi:
         except KeyError:
             return False
 
-    async def fetch_watched(self, excluded_shows: list):
+    async def fetch_watched(
+        self, excluded_shows: list, excluded_finished: bool = False
+    ):
         """First, let's retrieve hidden items from user as a workaround for a potential bug in show progress_watch API"""
         cache_key = f"user_hidden_shows"
 
@@ -176,7 +177,8 @@ class TraktApi:
                 raw_show_progress = await self.fetch_show_progress(ids["trakt"])
                 is_finished = self.is_show_finished(raw_show_progress)
 
-                if is_finished:
+                """aired date and completed date will always be the same for next to watch tvshows if you're up-to-date"""
+                if excluded_finished and is_finished:
                     continue
 
                 raw_next_episode = await self.fetch_show_informations(
@@ -262,7 +264,7 @@ class TraktApi:
 
         if next_to_watch:
             excluded_shows = configuration.get_exclude_shows(identifier)
-            raw_medias = await self.fetch_watched(excluded_shows)
+            raw_medias = await self.fetch_watched(excluded_shows, not only_upcoming)
         else:
             days_to_fetch = configuration.get_upcoming_days_to_fetch(
                 identifier, all_medias
@@ -305,22 +307,41 @@ class TraktApi:
         return trakt_kind, Medias(new_medias)
 
     async def fetch_next_to_watch(
-        self, only_aired: bool = False, only_upcoming: bool = False
+        self,
+        configured_kind: TraktKind,
+        only_aired: bool = False,
+        only_upcoming: bool = False,
     ):
-        data = await gather(
-            *[
-                self.fetch_upcoming(kind, False, True, only_aired, only_upcoming)
-                for kind in NEXT_TO_WATCH_KINDS
-            ]
+        data = await self.fetch_upcoming(
+            configured_kind,
+            False,
+            True,
+            only_aired,
+            only_upcoming,
         )
-        data = filter(lambda x: x is not None, data)
-        return {trakt_kind: medias for trakt_kind, medias in data}
 
-    async def fetch_upcomings(self, all_medias: bool):
+        if data is None:
+            return {}
+
+        return dict([data])
+
+    async def fetch_upcomings(
+        self, configured_kinds: list[TraktKind], all_medias: bool
+    ):
+        kinds = []
+
+        for kind in configured_kinds:
+            if kind in UPCOMING_KINDS:
+                kinds.append(kind)
+            else:
+                LOGGER.warn(
+                    f"Upcomings doesn't support {kind}, you should remove it from the configuration."
+                )
+
         data = await gather(
             *[
                 self.fetch_upcoming(kind, all_medias, False, False, False)
-                for kind in TraktKind
+                for kind in kinds
             ]
         )
         data = filter(lambda x: x is not None, data)
@@ -331,7 +352,17 @@ class TraktApi:
             "get", f"recommendations/{path}?limit={max_items}&ignore_collected=false"
         )
 
-    async def fetch_recommendations(self):
+    async def fetch_recommendations(self, configured_kinds: list[TraktKind]):
+        kinds = []
+
+        for kind in configured_kinds:
+            if kind in BASIC_KINDS:
+                kinds.append(kind)
+            else:
+                LOGGER.warn(
+                    f"Recommendation doesn't support {kind}, you should remove it from the configuration."
+                )
+
         configuration = Configuration(data=self.hass.data)
         language = configuration.get_language()
         data = await gather(
@@ -340,11 +371,13 @@ class TraktApi:
                     kind.value.path,
                     configuration.get_recommendation_max_medias(kind.value.identifier),
                 )
-                for kind in BASIC_KINDS
+                for kind in kinds
             ]
         )
+
         res = {}
-        for trakt_kind, raw_medias in zip(BASIC_KINDS, data):
+
+        for trakt_kind, raw_medias in zip(kinds, data):
             if raw_medias is not None:
                 medias = [
                     trakt_kind.value.model.from_trakt(media) for media in raw_medias
@@ -353,26 +386,65 @@ class TraktApi:
                     *[media.get_more_information(language) for media in medias]
                 )
                 res[trakt_kind] = Medias(medias)
+
         return res
 
     async def retrieve_data(self):
         async with timeout(1800):
-            titles = [
+            configuration = Configuration(data=self.hass.data)
+
+            sources = []
+            coroutine_sources_data = []
+
+            source_function = {
+                "upcoming": lambda kinds: self.fetch_upcomings(
+                    configured_kinds=kinds,
+                    all_medias=False,
+                ),
+                "all_upcoming": lambda kinds: self.fetch_upcomings(
+                    configured_kinds=kinds,
+                    all_medias=True,
+                ),
+                "recommendation": lambda kinds: self.fetch_recommendations(
+                    configured_kinds=kinds,
+                ),
+                "all": lambda: self.fetch_next_to_watch(
+                    configured_kind=TraktKind.NEXT_TO_WATCH_ALL,
+                ),
+                "only_aired": lambda: self.fetch_next_to_watch(
+                    configured_kind=TraktKind.NEXT_TO_WATCH_AIRED,
+                    only_aired=True,
+                ),
+                "only_upcoming": lambda: self.fetch_next_to_watch(
+                    configured_kind=TraktKind.NEXT_TO_WATCH_UPCOMING,
+                    only_upcoming=True,
+                ),
+            }
+
+            """First, let's configure which sensors we need depending on configuration"""
+            for source in [
                 "upcoming",
                 "all_upcoming",
                 "recommendation",
+            ]:
+                if configuration.source_exists(source):
+                    sources.append(source)
+                    kinds = configuration.get_kinds(source)
+                    coroutine_sources_data.append(source_function.get(source)(kinds))
+
+            """Then, let's add the next to watch sensors if needed"""
+            for sub_source in [
                 "all",
                 "only_aired",
                 "only_upcoming",
-            ]
-            data = await gather(
-                *[
-                    self.fetch_upcomings(all_medias=False),
-                    self.fetch_upcomings(all_medias=True),
-                    self.fetch_recommendations(),
-                    self.fetch_next_to_watch(),
-                    self.fetch_next_to_watch(only_aired=True),
-                    self.fetch_next_to_watch(only_upcoming=True),
-                ]
-            )
-            return {title: medias for title, medias in zip(titles, data)}
+            ]:
+                if configuration.next_to_watch_identifier_exists(sub_source):
+                    sources.append(sub_source)
+                    coroutine_sources_data.append(source_function.get(sub_source)())
+
+            sources_data = await gather(*coroutine_sources_data)
+
+            return {
+                source: source_data
+                for source, source_data in zip(sources, sources_data)
+            }

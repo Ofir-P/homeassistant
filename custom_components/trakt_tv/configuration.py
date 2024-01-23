@@ -5,6 +5,7 @@ from typing import Any, Dict
 from dateutil.tz import tzlocal
 
 from custom_components.trakt_tv.const import DOMAIN
+from custom_components.trakt_tv.models.kind import TraktKind
 
 
 @dataclass
@@ -76,3 +77,16 @@ class Configuration:
 
     def get_recommendation_max_medias(self, identifier: str) -> int:
         return self.get_max_medias(identifier, "recommendation")
+
+    def source_exists(self, source: str) -> bool:
+        try:
+            self.conf["sensors"][source]
+            return True
+        except KeyError:
+            return False
+
+    def get_kinds(self, source: str) -> list[TraktKind]:
+        return [
+            TraktKind.from_string(identifier)
+            for identifier in self.conf["sensors"][source].keys()
+        ]

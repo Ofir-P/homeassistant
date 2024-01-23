@@ -23,6 +23,7 @@ devices:
     friendly_name: Smart IR Remote Control
   '0xa4c1383422d28f86':
     friendly_name: Bedroom Temperature Sensor
+    description: Temp - located next to the plugs, behind the TV.
   '0x00158d0008e0195a':
     friendly_name: Water Leak Sensor Bathroom Sink
     description: Bathroom
@@ -31,16 +32,15 @@ devices:
     description: Smart Switch EU
   '0xa4c1387bf0a99185':
     friendly_name: Office Temperature Sensor
-    description: Next to the camera on top of the wall
+    description: Temp - On top of the 'Game On' photo frame.
   '0xa4c13838ba9b0045':
-    friendly_name: Hallway Temperature Sensor
+    friendly_name: Wardrobe Temperature Sensor
+    description: Temp - located on top of the closet.
   '0xa4c13852cfb738a6':
     friendly_name: Bathroom Temperature Sensor
+    description: Temp - located on top of fan.
   '0x943469fffef84a59':
     friendly_name: Bedroom Smart IR Remote Control
-  '0xa4c138211ff1b449':
-    friendly_name: Living Room Light Module
-    description: Inside the wall - living room switch
   '0x00158d0006f84b67':
     friendly_name: Hallway Sticker Switch button
     description: Hallway above switches
@@ -55,7 +55,8 @@ devices:
   '0xa4c13825cb23672c':
     friendly_name: 'TV Bedroom '
   '0xa4c138c861145739':
-    friendly_name: Heater Bathroom
+    friendly_name: Heater Shower
+    description: Heater - located above the power plugs.
   '0xa4c138e832f03f77':
     friendly_name: Bedroom Door Sensor
   '0xa4c1389c053df036':
@@ -70,3 +71,9 @@ devices:
     description: Office
   '0x00158d0006c8f369':
     friendly_name: '0x00158d0006c8f369'
+  '0xa4c13822c402f4e9':
+    friendly_name: Boiler
+    description: Boiler - located next to shower door, in the wall.
+  '0xa4c138a84422458a':
+    friendly_name: Office Wall Light
+    description: Light - located next to shower/bathroom door in office, on the wall.
