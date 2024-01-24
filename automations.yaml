@@ -721,8 +721,8 @@
         detected"
   mode: single
 - id: '1677017796757'
-  alias: When Ofir Home and Door is open Blink Red Light Strip RGB
-  description: ''
+  alias: Blink Red Light Office
+  description: When Ofir is home and Main Door open or Elian enters Home area.
   trigger:
   - platform: state
     entity_id:
@@ -741,17 +741,20 @@
     entity_id: ee5300687733e0be5478ba30e2f369e0
     type: is_home
   - condition: time
-    after: '18:15:00'
-    before: 03:30:00
+    after: '16:15:00'
+    before: 01:30:00
   - condition: state
     entity_id: binary_sensor.presence_sensor_presence
     state: 'on'
     alias: Confirm someone is Presence at Office
+    enabled: false
   action:
   - service: scene.create
     data:
       scene_id: thebeforetimes
-      snapshot_entities: light.office_desk_led_strip
+      snapshot_entities:
+      - light.office_desk_led_strip
+      - light.office_wall_light
   - repeat:
       count: '70'
       sequence:
@@ -760,6 +763,7 @@
           color_name: red
         target:
           entity_id: light.office_desk_led_strip
+          device_id: fda8e5d95506b514038003c8f369a4df
       - delay:
           hours: 0
           minutes: 0
@@ -776,11 +780,11 @@
     then:
     - service: notify.supervisor_telegram
       data:
-        message: "\U0001F916 Automation - Elian enters Home Zone - Red Color LED"
+        message: "\U0001F916 Automation - Elian enters Home Zone - Flash Red Color"
     else:
     - service: notify.supervisor_telegram
       data:
-        message: "\U0001F916 Automation - Door Open Flash Red Color"
+        message: "\U0001F916 Automation - Main Door Open Flash Red Color"
   mode: single
 - id: '1678080669448'
   alias: 'Helper: Set Bedroom TV Status to On'
@@ -1135,29 +1139,6 @@
       message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
         to Off!"
   mode: single
-- id: '1688592685175'
-  alias: Kitchen & Office Lights Switch Button OFF
-  description: Hold press will turn off the lights in Kitchen & Office.
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.kitchen_sticker_switch_button_action
-    to: hold
-  condition: []
-  action:
-  - service: switch.turn_on
-    data: {}
-    target:
-      entity_id: switch.kitchen_light_switch
-  - service: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.office_light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Kitchen & Office Light Switch Button"
-    enabled: true
-  mode: single
 - id: '1694084772132'
   alias: No Presence Office - Turn Off TV
   description: If no presence for 50 minutes+ in Office Room, will turn off the TV.
@@ -1189,30 +1170,38 @@
         on Office room!"
   mode: single
 - id: '1695660239489'
-  alias: Wireless Remote Living Room
-  description: 1 - Kitchen Light, 2 - Toggle A/C in Living Room, 3 - Boiler for 60
-    minutes, 4 - Close bathroom lights
+  alias: Bedroom Wireless Remote AC
+  description: '1 - Power button
+
+    2 - + Tempature
+
+    3 - - Tempature
+
+    4 - Mode'
   trigger:
   - platform: state
     entity_id:
-    - sensor.wireless_remote_switch_action
+    - sensor.bedroom_wireless_remote_switch_action
     to: 1_single
     id: button1_singlePress
   - platform: state
     entity_id:
-    - sensor.wireless_remote_switch_action
+    - sensor.bedroom_wireless_remote_switch_action
     to: 2_single
     id: button2_singlePress
+    enabled: false
   - platform: state
     entity_id:
-    - sensor.wireless_remote_switch_action
+    - sensor.bedroom_wireless_remote_switch_action
     to: 3_single
     id: button3_singlePress
+    enabled: false
   - platform: state
     entity_id:
-    - sensor.wireless_remote_switch_action
+    - sensor.bedroom_wireless_remote_switch_action
     to: 4_single
     id: button4_singlePress
+    enabled: false
   condition: []
   action:
   - choose:
@@ -1221,37 +1210,38 @@
         id:
         - button1_singlePress
       sequence:
-      - service: script.turn_off_on_kitchen_light
-        data: {}
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: climate.bedroom_ac
+            state: cool
+          - condition: state
+            entity_id: climate.bedroom_ac
+            state: heat
+        then:
+        - service: climate.turn_off
+          metadata: {}
+          data: {}
+          target:
+            device_id: 4018257e961bc48fa5b1c539c9efc5ee
+        else:
+        - service: climate.turn_on
+          metadata: {}
+          data: {}
+          target:
+            device_id: 4018257e961bc48fa5b1c539c9efc5ee
     - conditions:
       - condition: trigger
         id:
         - button2_singlePress
       sequence:
-      - choose:
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: climate.ofir_a_c
-              state: cool
-            - condition: state
-              entity_id: climate.ofir_a_c
-              state: heat
-          sequence:
-          - service: climate.turn_off
-            data: {}
-            target:
-              device_id: 5747456c3abcc55ad57e3875baf58ba2
-        - conditions:
-          - condition: state
-            entity_id: climate.ofir_a_c
-            state: 'off'
-          sequence:
-          - service: climate.turn_on
-            data: {}
-            target:
-              device_id: 5747456c3abcc55ad57e3875baf58ba2
+      - service: climate.set_temperature
+        metadata: {}
+        data: {}
+        target:
+          device_id: 4018257e961bc48fa5b1c539c9efc5ee
+        enabled: false
     - conditions:
       - condition: trigger
         id:
@@ -1280,7 +1270,7 @@
   mode: single
 - id: '1697368945970'
   alias: Red Alert
-  description: Hod HaSharon & Ramla Red Alert
+  description: Hod HaSharon Red Alert
   trigger:
   - platform: state
     entity_id:
@@ -1305,10 +1295,6 @@
     - service: notify.alexa_media_shower_echo_dot
       data:
         message: AZAKAA
-  - service: climate.turn_on
-    data: {}
-    target:
-      device_id: 4018257e961bc48fa5b1c539c9efc5ee
   - service: notify.mobile_app_elians_iphone
     data:
       message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
@@ -1321,7 +1307,9 @@
   - service: scene.create
     data:
       scene_id: thebeforetimes
-      snapshot_entities: light.office_desk_led_strip
+      snapshot_entities:
+      - light.office_desk_led_strip
+      - light.office_wall_light
   - repeat:
       count: 60
       sequence:
@@ -1329,7 +1317,9 @@
         data:
           color_name: orangered
         target:
-          device_id: 2b218245c8be8b065f4b50b22f37c9e8
+          device_id:
+          - 2b218245c8be8b065f4b50b22f37c9e8
+          - fda8e5d95506b514038003c8f369a4df
       - delay:
           hours: 0
           minutes: 0
@@ -1348,12 +1338,7 @@
     data: {}
     target:
       device_id:
-      - 121a0c6ddafe33985ea0806ad01fb779
       - 16df7102b63d09b6fcc378186c583972
-  - service: climate.turn_off
-    data: {}
-    target:
-      device_id: 4018257e961bc48fa5b1c539c9efc5ee
   mode: single
 - id: '1700497206763'
   alias: Red Alert Ramla
@@ -1380,4 +1365,68 @@
       data:
         message: "\U0001F680 אזעקות ברמלה \U0001F680"
     else: []
+  mode: single
+- id: '1705996645975'
+  alias: Shower Automations
+  description: '1. Turn heater off after 35 minutes
+
+    2. Turn Boiler off after 1 hour and 40 minutes'
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.heater_shower_power
+    for:
+      hours: 0
+      minutes: 35
+      seconds: 0
+    above: 250
+    id: heater
+  - platform: state
+    entity_id:
+    - input_select.switcher_boiler_status
+    to: 'On'
+    for:
+      hours: 1
+      minutes: 40
+      seconds: 0
+    id: boiler_on_for_1_hour_40_minutes
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - heater
+    - condition: state
+      entity_id: switch.heater_shower
+      state: 'on'
+    then:
+    - service: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        device_id: 699c416a4aefdc84921eb1f8e72b4cad
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - ♨️ Someone forgot the Heater on! Turned
+          it OFF. ♨️"
+  - if:
+    - condition: trigger
+      id:
+      - boiler_on_for_1_hour_40_minutes
+    - condition: state
+      entity_id: switch.boiler
+      state: 'on'
+    then:
+    - service: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        device_id: 928250a9ace44dda8bbe162fc9440d6d
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Turn Boiler off after 1 hour and 40 minutes
+          \U0001F6BF"
+    - service: notify.mobile_app_elians_iphone
+      data:
+        message: השארת את הדוד דולק לשעתיים, סוגר את הדוד!
   mode: single

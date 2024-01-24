@@ -121,17 +121,17 @@
         active: >
           <b>
           {% set lights = [
-            states.light.living_room_light_module,
             states.light.office_desk_led_strip,
             states.light.switchbot_bedroom_light_switch,
             states.light.yeelink_color5_6079_light_2,
             states.switch.bot_5b1c,
             states.switch.kitchen_light_switch,
+            states.light.office_wall_light,
             states.switch.office_light
           ] %}
 
           {% set devices = [
-            states.switch.switcher_v4_yair_stern,
+            states.switch.boiler,
             states.input_select.washing_machine_status,
             states.vacuum.mijia_v2_202f_robot_cleaner
           ] %}

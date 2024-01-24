@@ -15,7 +15,7 @@ device_options:
   legacy: false
 devices:
   '0xa4c138058812e73e':
-    friendly_name: Wireless Remote Switch
+    friendly_name: Bedroom Wireless Remote Switch
   '0xa4c13870da020238':
     friendly_name: Laundry Machine
     description: Smart Switch EU
@@ -69,8 +69,6 @@ devices:
   '0xa4c1383a2646aef0':
     friendly_name: Presence Sensor
     description: Office
-  '0x00158d0006c8f369':
-    friendly_name: '0x00158d0006c8f369'
   '0xa4c13822c402f4e9':
     friendly_name: Boiler
     description: Boiler - located next to shower door, in the wall.

@@ -20,16 +20,16 @@ browser_mod:
                 }}
               secondary: >-
                 Current:
-                {{states("sensor.switcher_v4_yair_stern_electric_current")}}{{state_attr("sensor.switcher_v4_yair_stern_electric_current","unit_of_measurement")}}
+                {{states("sensor.boiler_power")}}{{state_attr("sensor.boiler_power","unit_of_measurement")}}
               icon: mdi:water-boiler
-              entity: switch.switcher_v4_yair_stern
+              entity: switch.boiler
               tap_action:
                 action: call-service
                 service: switch.toggle
                 target:
-                  entity_id: switch.switcher_v4_yair_stern
+                  entity_id: switch.boiler
               icon_color: |
-                {% if states('switch.switcher_v4_yair_stern') == 'off' %}
+                {% if states('switch.boiler') == 'off' %}
                   blue
                 {% else %}
                   red
@@ -49,7 +49,7 @@ browser_mod:
                     data:
                       timer_minutes: 35
                     target:
-                      entity_id: switch.switcher_v4_yair_stern
+                      entity_id: switch.boiler
                 - type: template
                   icon: mdi:clock-time-eight-outline
                   icon_color: blue
@@ -60,7 +60,7 @@ browser_mod:
                     data:
                       timer_minutes: 45
                     target:
-                      entity_id: switch.switcher_v4_yair_stern
+                      entity_id: switch.boiler
                 - type: template
                   icon: mdi:clock-time-twelve-outline
                   icon_color: blue
@@ -71,4 +71,4 @@ browser_mod:
                     data:
                       timer_minutes: 60
                     target:
-                      entity_id: switch.switcher_v4_yair_stern
+                      entity_id: switch.boiler
