@@ -541,7 +541,7 @@ icon_climate:
         - width: 78%
         - margin-left: -10%
         - fill: >
-            [[[ return variables.state === 'cool' || variables.state === 'fan_only' ? '#5daeea' : '#9da0a2'; ]]]
+            [[[ return variables.state === 'cool' || variables.state === 'fan_only' ? '#5daeea' : variables.state ==='heat' ? '#a34841' : '#9da0a2'; ]]]
   custom_fields:
     icon: >
       <svg viewBox="0 0 50 50">

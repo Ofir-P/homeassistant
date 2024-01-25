@@ -78,42 +78,6 @@
     data:
       message: "\U0001F456 Laundry machine has finished!"
   mode: single
-- id: '1672597703705'
-  alias: Water Leakage Kitchen Notification
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.water_leak_sensor_kitchen_sink_water_leak
-    from: 'off'
-    to: 'on'
-  condition: []
-  action:
-  - service: notify.notify
-    data:
-      message: ⚠️ Water Leak has been detected in Kitchen ⚠️
-  - service: notify.home_assistant_group
-    data:
-      message: ⚠️ Water Leak has been detected in Kitchen ⚠️
-  mode: single
-- id: '1672688044345'
-  alias: Water Leakage Bathroom Notification
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.water_leak_sensor_bathroom_sink_water_leak
-    from: 'off'
-    to: 'on'
-  condition: []
-  action:
-  - service: notify.notify
-    data:
-      message: ⚠️ Water Leak has been detected in Bathroom ⚠️
-  - service: notify.home_assistant_group
-    data:
-      message: ⚠️ Water Leak has been detected in Bathroom ⚠️
-  mode: single
 - id: '1672692110951'
   alias: Switcher Boiler On Notification
   description: ''
@@ -311,25 +275,6 @@
         data:
           message: "\U0001F916 Automation - Bedroom A/C automation has closed the
             A/C!"
-  mode: single
-- id: '1674400177066'
-  alias: Hallway Light Switch Button
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.hallway_sticker_switch_button_action
-    to: single
-  condition: []
-  action:
-  - service: light.toggle
-    data: {}
-    target:
-      device_id:
-      - 16df7102b63d09b6fcc378186c583972
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Hallway Light Switch Button"
   mode: single
 - id: '1675145318623'
   alias: New Item Added to Shopping List
@@ -743,11 +688,11 @@
   - condition: time
     after: '16:15:00'
     before: 01:30:00
-  - condition: state
-    entity_id: binary_sensor.presence_sensor_presence
+  - alias: Confirm someone is Presence at Office
+    condition: state
+    entity_id: binary_sensor.office_presence_sensor_presence
     state: 'on'
-    alias: Confirm someone is Presence at Office
-    enabled: false
+    enabled: true
   action:
   - service: scene.create
     data:
@@ -1140,34 +1085,49 @@
         to Off!"
   mode: single
 - id: '1694084772132'
-  alias: No Presence Office - Turn Off TV
-  description: If no presence for 50 minutes+ in Office Room, will turn off the TV.
+  alias: No Presence Office
+  description: If no presence for 35 minutes+ in Office Room, will turn off the TV/AC.
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.presence_sensor_presence
+    - binary_sensor.office_presence_sensor_presence
     to: 'off'
     for:
       hours: 0
-      minutes: 50
+      minutes: 35
       seconds: 0
-  condition:
-  - condition: state
-    entity_id: input_select.office_tv_status
-    state: 'On'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
+  condition: []
   action:
-  - service: switch.toggle
-    data: {}
-    target:
-      entity_id: switch.tv_office
+  - if:
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: climate.office
+        state: cool
+      - condition: state
+        entity_id: climate.office
+        state: heat
+    then:
+    - service: climate.turn_off
+      metadata: {}
+      data: {}
+      target:
+        device_id: ba06295a88107289bcfb16d5f6f459b2
+  - if:
+    - condition: state
+      entity_id: input_select.office_tv_status
+      state: 'On'
+      for:
+        hours: 0
+        minutes: 5
+        seconds: 0
+    then:
+    - service: script.tv_power_office
+      metadata: {}
+      data: {}
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Office TV \U0001F4FA turned off due Inactivity
-        on Office room!"
+      message: "\U0001F916 Automation - No Presence at Office room!"
   mode: single
 - id: '1695660239489'
   alias: Bedroom Wireless Remote AC
@@ -1189,13 +1149,13 @@
     - sensor.bedroom_wireless_remote_switch_action
     to: 2_single
     id: button2_singlePress
-    enabled: false
+    enabled: true
   - platform: state
     entity_id:
     - sensor.bedroom_wireless_remote_switch_action
     to: 3_single
     id: button3_singlePress
-    enabled: false
+    enabled: true
   - platform: state
     entity_id:
     - sensor.bedroom_wireless_remote_switch_action
@@ -1237,36 +1197,27 @@
         - button2_singlePress
       sequence:
       - service: climate.set_temperature
-        metadata: {}
-        data: {}
+        data:
+          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
+            + 1 }}'
         target:
-          device_id: 4018257e961bc48fa5b1c539c9efc5ee
-        enabled: false
+          entity_id: climate.bedroom_ac
     - conditions:
       - condition: trigger
         id:
         - button3_singlePress
       sequence:
-      - service: script.turn_on_switcher_for_60mins
-        data: {}
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
+            - 1 }}'
+        target:
+          entity_id: climate.bedroom_ac
     - conditions:
       - condition: trigger
         id:
         - button4_singlePress
-      - condition: state
-        entity_id: input_select.living_room_tv_status
-        state: 'On'
-      sequence:
-      - service: switch.turn_off
-        data: {}
-        target:
-          device_id:
-          - 974fe480eea5ad9851e2b94d16cb3baa
-          - 8b0b37e639c674161245a6a30534f8e5
-      - service: notify.supervisor_telegram
-        data:
-          message: "\U0001F916 Automation - Remote Control button 4 - Turn off bathroom
-            lights!"
+      sequence: []
   mode: single
 - id: '1697368945970'
   alias: Red Alert
@@ -1429,4 +1380,304 @@
     - service: notify.mobile_app_elians_iphone
       data:
         message: השארת את הדוד דולק לשעתיים, סוגר את הדוד!
+  mode: single
+- id: '1706093864988'
+  alias: Water Leakage Notification
+  description: Will notify if there is a leakage anywhere in the house.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.water_leak_shower_sink_water_leak
+    from: 'off'
+    to: 'on'
+    id: shower_sink
+  - platform: state
+    entity_id:
+    - binary_sensor.water_leak_office_sink_water_leak
+    from: 'off'
+    to: 'on'
+    id: office_sink
+  - platform: state
+    entity_id:
+    - binary_sensor.water_leak_sensor_kitchen_sink_water_leak
+    from: 'off'
+    to: 'on'
+    id: kitchen_sink
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - kitchen_sink
+      sequence:
+      - service: notify.notify
+        metadata: {}
+        data:
+          message: ⚠️ Water Leak has been detected in Kitchen ⚠️
+      - service: notify.home_assistant_group
+        metadata: {}
+        data:
+          message: ⚠️ Water Leak has been detected in Kitchen ⚠️
+    - conditions:
+      - condition: trigger
+        id:
+        - shower_sink
+      sequence:
+      - service: notify.notify
+        metadata: {}
+        data:
+          message: ⚠️ Water Leak has been detected in Shower Room⚠️
+      - service: notify.home_assistant_group
+        metadata: {}
+        data:
+          message: ⚠️ Water Leak has been detected in Shower Room⚠️
+    - conditions:
+      - condition: trigger
+        id:
+        - office_sink
+      sequence:
+      - service: notify.notify
+        metadata: {}
+        data:
+          message: ⚠️ Water Leak has been detected in Office Bathroom/Shower Room⚠️
+      - service: notify.home_assistant_group
+        metadata: {}
+        data:
+          message: ⚠️ Water Leak has been detected in Office Bathroom/Shower Room⚠️
+  mode: single
+- id: '1706102094343'
+  alias: Office Sticker Button
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.office_desk_button_action
+    to: single
+    id: single_press
+  - platform: state
+    entity_id:
+    - sensor.office_desk_button_action
+    to: hold
+    id: hold_press
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - single_press
+      sequence:
+      - service: script.turn_on
+        metadata: {}
+        data: {}
+        target:
+          entity_id: script.tv_power_office
+    - conditions:
+      - condition: trigger
+        id:
+        - hold_press
+      sequence:
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: climate.office
+            state: cool
+          - condition: state
+            entity_id: climate.office
+            state: heat
+        then:
+        - service: climate.turn_off
+          target:
+            device_id: ba06295a88107289bcfb16d5f6f459b2
+          data: {}
+        else:
+        - service: climate.turn_on
+          target:
+            device_id: ba06295a88107289bcfb16d5f6f459b2
+          data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office Switch Sticker Button"
+  mode: single
+- id: '1706112151664'
+  alias: Living Room Wireless Remote Switch
+  description: '1 - Power button
+
+    2 - + Tempature
+
+    3 - - Tempature
+
+    4 - Mode'
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 1_single
+    id: button1_singlePress
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 2_single
+    id: button2_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 3_single
+    id: button3_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 4_single
+    id: button4_singlePress
+    enabled: false
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - button1_singlePress
+      sequence:
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: climate.ofir_a_c
+            state: cool
+          - condition: state
+            entity_id: climate.ofir_a_c
+            state: heat
+        then:
+        - service: climate.turn_off
+          metadata: {}
+          data: {}
+          target:
+            device_id: 5747456c3abcc55ad57e3875baf58ba2
+        else:
+        - service: climate.turn_on
+          metadata: {}
+          data: {}
+          target:
+            device_id: 5747456c3abcc55ad57e3875baf58ba2
+    - conditions:
+      - condition: trigger
+        id:
+        - button2_singlePress
+      sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
+            + 1 }}'
+        target:
+          entity_id: climate.ofir_a_c
+    - conditions:
+      - condition: trigger
+        id:
+        - button3_singlePress
+      sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
+            - 1 }}'
+        target:
+          entity_id: climate.ofir_a_c
+    - conditions:
+      - condition: trigger
+        id:
+        - button4_singlePress
+      sequence: []
+  mode: single
+- id: '1706113074480'
+  alias: Wardrobe Wireless Remote Switch
+  description: '1 - Power button
+
+    2 - + Tempature
+
+    3 - - Tempature
+
+    4 - '
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_wireless_remote_switch_action
+    to: 1_single
+    id: button1_singlePress
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_wireless_remote_switch_action
+    to: 2_single
+    id: button2_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_wireless_remote_switch_action
+    to: 3_single
+    id: button3_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 4_single
+    id: button4_singlePress
+    enabled: false
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - button1_singlePress
+      sequence:
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: climate.wardrobe
+            state: cool
+          - condition: state
+            entity_id: climate.wardrobe
+            state: heat
+        then:
+        - service: climate.turn_off
+          metadata: {}
+          data: {}
+          target:
+            device_id: e2751f5fc46e28c792195795f124989d
+        else:
+        - service: climate.turn_on
+          metadata: {}
+          data: {}
+          target:
+            device_id: e2751f5fc46e28c792195795f124989d
+    - conditions:
+      - condition: trigger
+        id:
+        - button2_singlePress
+      sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.wardrobe'', ''temperature'')|int(7)
+            + 1 }}'
+        target:
+          entity_id: climate.wardrobe
+    - conditions:
+      - condition: trigger
+        id:
+        - button3_singlePress
+      sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.wardrobe'', ''temperature'')|int(7)
+            - 1 }}'
+        target:
+          entity_id: climate.wardrobe
+    - conditions:
+      - condition: trigger
+        id:
+        - button4_singlePress
+      sequence: []
   mode: single

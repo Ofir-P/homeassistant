@@ -1,16 +1,3 @@
-# Sensibo
-- sensor:
-    - name: Sensibo Humidity
-      state: "{{ state_attr('climate.ofir_a_c', 'current_humidity') }}"
-      unit_of_measurement: "%"
-      icon: mdi:water-percent
-
-- sensor:
-    - name: Sensibo Tempature
-      state: "{{ state_attr('climate.ofir_a_c', 'current_temperature') }}"
-      unit_of_measurement: "°C"
-      icon: mdi:thermometer
-
 # Online States
 - sensor:
     - name: Zigbee Online
@@ -121,7 +108,6 @@
         active: >
           <b>
           {% set lights = [
-            states.light.office_desk_led_strip,
             states.light.switchbot_bedroom_light_switch,
             states.light.yeelink_color5_6079_light_2,
             states.switch.bot_5b1c,

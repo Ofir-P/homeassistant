@@ -5,7 +5,7 @@ base:
     - extra_styles
   variables:
     state_on: >
-      [[[ return ['on', 'On', 'home', 'cool', 'fan_only', 'playing', 'unlocked'].indexOf(!entity || entity.state) !== -1; ]]]
+      [[[ return ['on', 'On', 'home', 'cool', 'heat', 'fan_only', 'playing', 'unlocked'].indexOf(!entity || entity.state) !== -1; ]]]
     state: >
       [[[ return !entity || entity.state; ]]]
     entity_id: >
@@ -23,6 +23,7 @@ base:
         'on': variables.translate_on,
         'off': variables.translate_off,
         'cool': variables.translate_cool,
+        'heat': variables.translate_heat,
         'fan_only': variables.translate_fan_only,
       };
       if (variables.state === true) return variables.translate_unknown;

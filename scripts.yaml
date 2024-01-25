@@ -384,3 +384,15 @@ home_leave:
       message: "\U0001F916 Automation - House devices are OFF!"
   mode: single
   icon: mdi:hand-wave
+tv_power_office:
+  alias: TV Power Office
+  sequence:
+  - service: remote.send_command
+    metadata: {}
+    data:
+      device: TV
+      command: Power
+    target:
+      device_id: 213c1e28be789af24d278bfa20f54941
+  mode: single
+  icon: mdi:television

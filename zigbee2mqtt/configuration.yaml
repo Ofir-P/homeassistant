@@ -25,8 +25,8 @@ devices:
     friendly_name: Bedroom Temperature Sensor
     description: Temp - located next to the plugs, behind the TV.
   '0x00158d0008e0195a':
-    friendly_name: Water Leak Sensor Bathroom Sink
-    description: Bathroom
+    friendly_name: Water Leak Shower Sink
+    description: Sensor - Water Leak Shower Sink under the shower sink
   '0xa4c138cf6f460fd1':
     friendly_name: AC Bedroom
     description: Smart Switch EU
@@ -42,8 +42,8 @@ devices:
   '0x943469fffef84a59':
     friendly_name: Bedroom Smart IR Remote Control
   '0x00158d0006f84b67':
-    friendly_name: Hallway Sticker Switch button
-    description: Hallway above switches
+    friendly_name: Office desk button
+    description: Under the gaming table, right side
     legacy: false
   '0xa4c138dc96ec297c':
     friendly_name: Main Door Sensor
@@ -67,11 +67,24 @@ devices:
     friendly_name: Bedroom Sticker Switch button
     description: Under the table next to the bed
   '0xa4c1383a2646aef0':
-    friendly_name: Presence Sensor
-    description: Office
+    friendly_name: Office Presence Sensor
+    description: Presence Sensor - located in Office room, next to the side window.
   '0xa4c13822c402f4e9':
     friendly_name: Boiler
     description: Boiler - located next to shower door, in the wall.
   '0xa4c138a84422458a':
     friendly_name: Office Wall Light
     description: Light - located next to shower/bathroom door in office, on the wall.
+  '0x00158d000a9c73de':
+    friendly_name: Water Leak Office Sink
+    description: Sensor - Water Leak Office Shower Sink under the sink.
+  '0xa4c1384fd1d8ba32':
+    friendly_name: Living Room Wireless Remote Switch
+  '0xa4c13811ce44a42b':
+    friendly_name: Wardrobe Wireless Remote Switch
+  '0x54ef4410007588b8':
+    friendly_name: Kitchen Presence Sensor
+    description: Presence - located above the kitchen cabinet, next to the reolink camera
+  '0x70ac08fffe5aa806':
+    friendly_name: Kitchen Smoke Detector
+    description: Smoke Detector - located above the gas, on the celling.
