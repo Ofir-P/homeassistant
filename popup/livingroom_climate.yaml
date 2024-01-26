@@ -123,7 +123,7 @@ browser_mod:
                         template:
                           - climate_swing_mode
 
-                  - entity: sensor.sensibo_tempature
+                  - entity: climate.
                     name: Room temperature
                   - entity: sensor.sensibo_humidity
                     name: Humidity

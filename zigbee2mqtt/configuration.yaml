@@ -88,3 +88,9 @@ devices:
   '0x70ac08fffe5aa806':
     friendly_name: Kitchen Smoke Detector
     description: Smoke Detector - located above the gas, on the celling.
+  '0x00158d000a9747d1':
+    friendly_name: Living Room Left Window
+    description: on the left window blinds
+  '0x00158d000a95e833':
+    friendly_name: Living Room Right Window
+    description: on the right window blinds

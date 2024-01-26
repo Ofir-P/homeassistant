@@ -537,21 +537,6 @@
       minutes: 1
       seconds: 40
     enabled: true
-  - platform: state
-    entity_id:
-    - sensor.tablet_browser_visibility
-    id: tablet_on
-    to: visible
-    enabled: false
-  - platform: state
-    entity_id:
-    - sensor.tablet_browser_visibility
-    id: tablet_off
-    for:
-      hours: 0
-      minutes: 1
-      seconds: 40
-    enabled: false
   condition:
   - condition: time
     after: 00:00:00
@@ -586,36 +571,6 @@
         device_id:
         - 16df7102b63d09b6fcc378186c583972
     enabled: true
-  - if:
-    - condition: trigger
-      id:
-      - tablet_on
-    - condition: time
-      after: 00:01:00
-      before: 06:35:00
-    - condition: state
-      entity_id: input_select.living_room_tv_status
-      state: 'Off'
-    then:
-    - condition: state
-      entity_id: light.yeelink_color5_6079_light_2
-      state: 'off'
-    - service: light.turn_on
-      data: {}
-      target:
-        device_id:
-        - 16df7102b63d09b6fcc378186c583972
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - Hallway Motion Light"
-    else:
-    - service: light.turn_off
-      data:
-        transition: 20
-      target:
-        device_id:
-        - 16df7102b63d09b6fcc378186c583972
-    enabled: false
   mode: single
 - id: '1676677991115'
   alias: Notify with camera snapshot when motion is detected and both of you are not
@@ -951,12 +906,6 @@
       - 8b0b37e639c674161245a6a30534f8e5
       - 974fe480eea5ad9851e2b94d16cb3baa
       - e42ad30ecad8a8a8efdbd7e8c1f1b37f
-  - service: switch.turn_on
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: light.turn_off
     continue_on_error: true
     data: {}
@@ -1015,10 +964,8 @@
             entity_id: input_select.office_tv_status
             state: 'On'
           sequence:
-          - service: rest_command.switchbot_device_command
-            data:
-              deviceId: 01-202301072012-55513632
-              command: turnOff
+          - service: script.tv_power_office
+            data: {}
       - delay:
           hours: 0
           minutes: 5
@@ -1113,6 +1060,9 @@
       data: {}
       target:
         device_id: ba06295a88107289bcfb16d5f6f459b2
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - No Presence at Office Room - Turn Off AC!"
   - if:
     - condition: state
       entity_id: input_select.office_tv_status
@@ -1125,9 +1075,9 @@
     - service: script.tv_power_office
       metadata: {}
       data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - No Presence at Office room!"
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - No Presence at Office Room - Turn Off TV!"
   mode: single
 - id: '1695660239489'
   alias: Bedroom Wireless Remote AC
@@ -1221,7 +1171,7 @@
   mode: single
 - id: '1697368945970'
   alias: Red Alert
-  description: Hod HaSharon Red Alert
+  description: Hod HaSharon & Ramla Red Alert
   trigger:
   - platform: state
     entity_id:
@@ -1229,72 +1179,6 @@
     to: 'on'
     from: 'off'
     id: home_alert
-  condition: []
-  action:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Red Alert \U0001F680"
-    enabled: true
-  - if:
-    - condition: state
-      entity_id: binary_sensor.any_phone_at_home
-      state: 'on'
-    - condition: time
-      after: '16:00:00'
-      before: '22:40:00'
-    then:
-    - service: notify.alexa_media_shower_echo_dot
-      data:
-        message: AZAKAA
-  - service: notify.mobile_app_elians_iphone
-    data:
-      message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
-  - service: light.turn_on
-    data: {}
-    target:
-      device_id:
-      - 121a0c6ddafe33985ea0806ad01fb779
-      - 16df7102b63d09b6fcc378186c583972
-  - service: scene.create
-    data:
-      scene_id: thebeforetimes
-      snapshot_entities:
-      - light.office_desk_led_strip
-      - light.office_wall_light
-  - repeat:
-      count: 60
-      sequence:
-      - service: light.toggle
-        data:
-          color_name: orangered
-        target:
-          device_id:
-          - 2b218245c8be8b065f4b50b22f37c9e8
-          - fda8e5d95506b514038003c8f369a4df
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 0
-          milliseconds: 250
-  - service: scene.turn_on
-    target:
-      entity_id: scene.thebeforetimes
-    metadata: {}
-  - delay:
-      hours: 0
-      minutes: 3
-      seconds: 30
-      milliseconds: 0
-  - service: light.turn_off
-    data: {}
-    target:
-      device_id:
-      - 16df7102b63d09b6fcc378186c583972
-  mode: single
-- id: '1700497206763'
-  alias: Red Alert Ramla
-  description: Ramla Red Alert
-  trigger:
   - platform: state
     entity_id:
     - binary_sensor.oref_alert_ramla
@@ -1303,25 +1187,58 @@
     id: ramla_alert
   condition: []
   action:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Red Alert Ramla \U0001F680"
-    enabled: true
+  - if:
+    - condition: trigger
+      id:
+      - home_alert
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Red Alert \U0001F680"
+      enabled: true
+    - if:
+      - condition: state
+        entity_id: binary_sensor.any_phone_at_home
+        state: 'on'
+      - condition: time
+        after: '16:00:00'
+        before: '22:40:00'
+      then:
+      - service: notify.alexa_media_shower_echo_dot
+        data:
+          message: AZAKAA
+    - service: notify.mobile_app_elians_iphone
+      data:
+        message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
+    - service: light.turn_on
+      data: {}
+      target:
+        device_id:
+        - 121a0c6ddafe33985ea0806ad01fb779
+        - 16df7102b63d09b6fcc378186c583972
   - if:
     - condition: trigger
       id:
       - ramla_alert
     then:
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - Red Alert Ramla \U0001F680"
     - service: notify.mobile_app_elians_iphone
+      metadata: {}
       data:
         message: "\U0001F680 אזעקות ברמלה \U0001F680"
-    else: []
   mode: single
 - id: '1705996645975'
   alias: Shower Automations
   description: '1. Turn heater off after 35 minutes
 
-    2. Turn Boiler off after 1 hour and 40 minutes'
+    2. Turn Boiler off after 1 hour and 40 minutes
+
+    3. Input select Shower Heater to on
+
+    4. Input select Shower Heater to off'
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1341,6 +1258,24 @@
       minutes: 40
       seconds: 0
     id: boiler_on_for_1_hour_40_minutes
+  - platform: numeric_state
+    entity_id:
+    - sensor.heater_shower_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 10
+    above: 250
+    id: heater_power_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.heater_shower_power
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+    id: heater_power_off
+    below: 15
   condition: []
   action:
   - if:
@@ -1360,6 +1295,7 @@
       data:
         message: "\U0001F916 Automation - ♨️ Someone forgot the Heater on! Turned
           it OFF. ♨️"
+    alias: '1'
   - if:
     - condition: trigger
       id:
@@ -1380,6 +1316,59 @@
     - service: notify.mobile_app_elians_iphone
       data:
         message: השארת את הדוד דולק לשעתיים, סוגר את הדוד!
+    alias: '2'
+  - alias: '3'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - heater_power_on
+      - condition: state
+        entity_id: input_select.shower_heater_status
+        state: 'off'
+    then:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.shower_heater_status
+      data:
+        option: 'on'
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - ♨️ Shower Heater Status has been changed
+          to On!"
+    - service: timer.start
+      metadata: {}
+      data: {}
+      target:
+        entity_id: timer.boiler_time_on
+  - alias: '4'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - heater_power_off
+      - condition: state
+        entity_id: input_select.shower_heater_status
+        state: 'on'
+    then:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.shower_heater_status
+      data:
+        option: 'off'
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - ♨️ Shower Heater Status has been changed
+          to Off!"
+    - service: timer.finish
+      target:
+        entity_id:
+        - timer.boiler_time_on
+      data: {}
   mode: single
 - id: '1706093864988'
   alias: Water Leakage Notification

@@ -73,9 +73,6 @@ browser_mod:
               name: Version
               icon: mdi:home-assistant
 
-            - entity: sensor.last_successful_authentication
-              name: Last Login
-
             - entity: update.home_assistant_supervisor_update
               icon: mdi:download-network
             - entity: sensor.count_binary_sensor
