@@ -123,9 +123,9 @@ browser_mod:
                         template:
                           - climate_swing_mode
 
-                  - entity: climate.
+                  - entity: state_attr('climate.ofir_a_c', 'current_temperature')
                     name: Room temperature
-                  - entity: sensor.sensibo_humidity
+                  - entity: state_attr('climate.ofir_a_c', 'current_humidity')
                     name: Humidity
 
               - type: custom:apexcharts-card

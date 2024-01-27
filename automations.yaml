@@ -78,58 +78,6 @@
     data:
       message: "\U0001F456 Laundry machine has finished!"
   mode: single
-- id: '1672692110951'
-  alias: Switcher Boiler On Notification
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.boiler_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 3
-    above: 5
-  condition:
-  - condition: state
-    entity_id: input_select.switcher_boiler_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id: input_select.switcher_boiler_status
-  - service: notify.home_assistant_group
-    data:
-      message: "\U0001F6BF Switcher device has been turned ON "
-  mode: single
-- id: '1672692174596'
-  alias: Switcher Boiler Off Notification
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.boiler_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 15
-    below: 5
-  condition:
-  - condition: state
-    entity_id: input_select.switcher_boiler_status
-    state: 'On'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id: input_select.switcher_boiler_status
-  - service: notify.home_assistant_group
-    data:
-      message: "\U0001F6BF Switcher device has been turned OFF"
-  mode: single
 - id: '1673469552878'
   alias: 'Helper: Set Bedroom AC Status to On'
   description: ''
@@ -579,7 +527,7 @@
   trigger:
   - platform: state
     entity_id:
-    - binary_sensor.living_room_person
+    - binary_sensor.kitchen_presence_sensor_presence
     to: 'on'
     from: 'off'
     for:
@@ -588,9 +536,11 @@
       seconds: 3
   - platform: state
     entity_id:
+    - binary_sensor.living_room_right_window_contact
+    - binary_sensor.living_room_left_window_contact
     - binary_sensor.main_door_sensor_contact
-    to: 'on'
     from: 'off'
+    to: 'on'
   condition:
   - condition: and
     conditions:
@@ -618,7 +568,7 @@
       authentication: digest
       file: /config/www/tmp/snapshot_living_room_sub.jpg
       caption: "\U0001F916 Automation - Notify with camera snapshot when motion is
-        detected"
+        detected!"
   mode: single
 - id: '1677017796757'
   alias: Blink Red Light Office
@@ -1238,7 +1188,11 @@
 
     3. Input select Shower Heater to on
 
-    4. Input select Shower Heater to off'
+    4. Input select Shower Heater to off
+
+    5. Boiler On Notification
+
+    6. Boiler Off Notification'
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1272,10 +1226,28 @@
     - sensor.heater_shower_power
     for:
       hours: 0
-      minutes: 1
+      minutes: 30
       seconds: 0
     id: heater_power_off
     below: 15
+  - platform: numeric_state
+    entity_id:
+    - sensor.boiler_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
+    above: 5
+    id: Boiler_On_Notification
+  - platform: numeric_state
+    entity_id:
+    - sensor.boiler_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 15
+    id: Boiler_Off_Notification
+    below: 5
   condition: []
   action:
   - if:
@@ -1338,11 +1310,6 @@
       data:
         message: "\U0001F916 Automation - ♨️ Shower Heater Status has been changed
           to On!"
-    - service: timer.start
-      metadata: {}
-      data: {}
-      target:
-        entity_id: timer.boiler_time_on
   - alias: '4'
     if:
     - condition: and
@@ -1364,11 +1331,46 @@
       data:
         message: "\U0001F916 Automation - ♨️ Shower Heater Status has been changed
           to Off!"
-    - service: timer.finish
+  - alias: '5'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - Boiler_On_Notification
+      - condition: state
+        entity_id: input_select.switcher_boiler_status
+        state: 'Off'
+    then:
+    - service: input_select.select_option
       target:
         entity_id:
-        - timer.boiler_time_on
-      data: {}
+        - input_select.switcher_boiler_status
+      data:
+        option: 'On'
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F6BF Switcher device has been turned ON!"
+  - alias: '6'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - Boiler_Off_Notification
+      - condition: state
+        entity_id: input_select.switcher_boiler_status
+        state: 'On'
+    then:
+    - service: input_select.select_option
+      target:
+        entity_id:
+        - input_select.switcher_boiler_status
+      data:
+        option: 'Off'
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F6BF Switcher device has been turned OFF!"
   mode: single
 - id: '1706093864988'
   alias: Water Leakage Notification
@@ -1669,4 +1671,32 @@
         id:
         - button4_singlePress
       sequence: []
+  mode: single
+- id: '1706286005645'
+  alias: Kitchen Automations
+  description: '1. Smoke Detector
+
+    '
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_smoke_detector_smoke
+    from: 'off'
+    to: 'on'
+    id: smoke_detected
+  condition: []
+  action:
+  - alias: '1'
+    if:
+    - condition: trigger
+      id:
+      - smoke_detected
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6A8 Smoke Detected in Kitchen!"
+    - service: notify.notify
+      metadata: {}
+      data:
+        message: "\U0001F6A8SMOKE DETECTED IN KITCHEN \U0001F6A8"
   mode: single

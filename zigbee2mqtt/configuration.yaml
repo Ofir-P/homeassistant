@@ -51,7 +51,8 @@ devices:
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
   '0x84fd27fffe600604':
-    friendly_name: Office Desk LED Strip
+    friendly_name: Office Elian Desk RGB Strip
+    description: all over Elian's desk
   '0xa4c13825cb23672c':
     friendly_name: 'TV Bedroom '
   '0xa4c138c861145739':
@@ -94,3 +95,12 @@ devices:
   '0x00158d000a95e833':
     friendly_name: Living Room Right Window
     description: on the right window blinds
+  '0xa4c138621f5ece9d':
+    friendly_name: Office Ofir Desk RGB Strip
+    description: all over Ofir Desk.
+  '0xf082c0fffe89fdaf':
+    friendly_name: Wardrobe Zigbee Extender
+    description: Extender - located under the AC
+  '0x040d84fffebdf9a6':
+    friendly_name: Living Room Zigbee Extender
+    description: Extender - located under the AC

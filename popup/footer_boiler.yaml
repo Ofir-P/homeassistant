@@ -16,7 +16,7 @@ browser_mod:
           cards:
             - type: custom:mushroom-template-card
               primary: >-
-                Remaining time: {{ states("sensor.switcher_v4_yair_stern_remaining_time")
+                Boiler is on for: {{ states("timer.boiler_time_on")
                 }}
               secondary: >-
                 Current:
@@ -45,30 +45,18 @@ browser_mod:
                   content: 35 Min
                   tap_action:
                     action: call-service
-                    service: switcher_kis.turn_on_with_timer
-                    data:
-                      timer_minutes: 35
-                    target:
-                      entity_id: switch.boiler
+                    service: script.turn_on_boiler_for_35_minutes
                 - type: template
                   icon: mdi:clock-time-eight-outline
                   icon_color: blue
                   content: 45 Min
                   tap_action:
                     action: call-service
-                    service: switcher_kis.turn_on_with_timer
-                    data:
-                      timer_minutes: 45
-                    target:
-                      entity_id: switch.boiler
+                    service: script.turn_on_boiler_for_45_minutes
                 - type: template
                   icon: mdi:clock-time-twelve-outline
                   icon_color: blue
                   content: 60 Min
                   tap_action:
                     action: call-service
-                    service: switcher_kis.turn_on_with_timer
-                    data:
-                      timer_minutes: 60
-                    target:
-                      entity_id: switch.boiler
+                    service: script.turn_on_switcher_for_60mins

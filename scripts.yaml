@@ -164,7 +164,7 @@ turn_off_on_bedroom_light:
   mode: single
   icon: hue:bulb-br30
 turn_on_switcher_for_60mins:
-  alias: Turn ON Switcher for 60mins
+  alias: Turn ON Boiler for 60 minutes
   sequence:
   - service: switch.turn_on
     target:
@@ -345,10 +345,8 @@ home_leave:
             entity_id: input_select.office_tv_status
             state: 'On'
           sequence:
-          - service: rest_command.switchbot_device_command
-            data:
-              deviceId: 01-202301072012-55513632
-              command: turnOff
+          - service: script.tv_power_office
+            data: {}
       - delay:
           hours: 0
           minutes: 5
@@ -362,23 +360,7 @@ home_leave:
     data: {}
     target:
       device_id:
-      - 121a0c6ddafe33985ea0806ad01fb779
-      - afb33500a8d79e33ccc9290dae617155
       - 16df7102b63d09b6fcc378186c583972
-  - service: switch.turn_off
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - 8b0b37e639c674161245a6a30534f8e5
-      - 974fe480eea5ad9851e2b94d16cb3baa
-      entity_id: switch.office_light
-  - service: switch.turn_on
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - ab9d9e64727b36fa67f4e85f6ce47c37
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - House devices are OFF!"
@@ -396,3 +378,47 @@ tv_power_office:
       device_id: 213c1e28be789af24d278bfa20f54941
   mode: single
   icon: mdi:television
+turn_on_boiler_for_35_minutes:
+  alias: Turn ON Boiler for 35 minutes
+  sequence:
+  - service: switch.turn_on
+    target:
+      device_id: 928250a9ace44dda8bbe162fc9440d6d
+    data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script -  Turn On Switcher for 35 minutes has been triggered! "
+  - delay:
+      hours: 0
+      minutes: 35
+      seconds: 0
+      milliseconds: 0
+  - service: switch.turn_off
+    target:
+      device_id:
+      - 928250a9ace44dda8bbe162fc9440d6d
+    data: {}
+  mode: single
+  icon: mdi:water-boiler-auto
+turn_on_boiler_for_45_minutes:
+  alias: Turn ON Boiler for 45 minutes
+  sequence:
+  - service: switch.turn_on
+    target:
+      device_id: 928250a9ace44dda8bbe162fc9440d6d
+    data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F4DC Script -  Turn On Switcher for 45 minutes has been triggered! "
+  - delay:
+      hours: 0
+      minutes: 45
+      seconds: 0
+      milliseconds: 0
+  - service: switch.turn_off
+    target:
+      device_id:
+      - 928250a9ace44dda8bbe162fc9440d6d
+    data: {}
+  mode: single
+  icon: mdi:water-boiler-auto
