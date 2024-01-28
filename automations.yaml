@@ -1226,8 +1226,8 @@
     - sensor.heater_shower_power
     for:
       hours: 0
-      minutes: 30
-      seconds: 0
+      minutes: 0
+      seconds: 10
     id: heater_power_off
     below: 15
   - platform: numeric_state

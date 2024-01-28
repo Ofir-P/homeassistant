@@ -53,7 +53,13 @@
       value_template: >-
         {{ states.switch | list | count }}
 
-# [=========================]System Monitor[=========================]
+- platform: history_stats
+  name: Boiler On
+  entity_id: input_select.switcher_boiler_status
+  state: "On"
+  type: time
+  start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+  end: "{{ now() }}"
 # [=========================]Plex[=========================]
 - platform: plex_recently_added
   name: Recently Added Movies # will create sensor.recently_added_movies
