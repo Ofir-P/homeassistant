@@ -343,10 +343,6 @@
     id: elian_leaving_mofit
   condition: []
   action:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Elian has left the house."
-    enabled: false
   - choose:
     - conditions:
       - condition: trigger
