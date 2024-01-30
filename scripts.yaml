@@ -1,424 +1,427 @@
 camera_play:
   alias: Play Video on Chromecast
   sequence:
-  - service: camera.play_stream
-    data_template:
-      media_player: '{% if is_state("input_select.camera_display", "Bedroom display")
-        %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
-        Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
-        "Office display") %} media_player.mibox4 {% endif %}
+    - service: camera.play_stream
+      data_template:
+        media_player:
+          '{% if is_state("input_select.camera_display", "Bedroom display")
+          %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
+          Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
+          "Office display") %} media_player.mibox4 {% endif %}
 
-        '
-      entity_id: '{% if is_state("input_select.camera_select", "Living Room") %} camera.living_room_sub
-        {% elif is_state("input_select.camera_select", "Dining Table") %} camera.dining_table_sub
-        {% endif %} '
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Play Video on Chromecast script has been triggered!"
+          '
+        entity_id:
+          '{% if is_state("input_select.camera_select", "Living Room") %} camera.living_room_sub
+          {% elif is_state("input_select.camera_select", "Dining Table") %} camera.dining_table_sub
+          {% endif %} '
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Play Video on Chromecast script has been triggered!"
   mode: single
 ir_learn_mode_on:
   alias: IR Learn Mode On
   sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"learn_ir_code":"ON"}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living Room IR device is now on Learn Mode"
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Smart IR Remote Control/set
+        payload: '{"learn_ir_code":"ON"}'
+        qos: 0
+        retain: false
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Living Room IR device is now on Learn Mode"
   mode: single
   icon: mdi:remote
 ir_turn_on_off_living_room_tv:
   alias: IR Toggle Living Room TV
   sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living room IR has turned ON/OFF Living room TV!"
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+        qos: 0
+        retain: false
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Living room IR has turned ON/OFF Living room TV!"
   mode: single
   icon: mdi:remote-tv
 ir_learn_mode_on_bedroom:
   alias: IR Learn Mode On (Bedroom)
   sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-      payload: '{"learn_ir_code":"ON"}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom IR device is now on Learn Mode"
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+        payload: '{"learn_ir_code":"ON"}'
+        qos: 0
+        retain: false
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Bedroom IR device is now on Learn Mode"
   mode: single
   icon: mdi:remote
 ir_turn_on_off_bedroom_tv:
   alias: IR Toggle Bedroom TV
   sequence:
-  - service: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
-      qos: 0
-      retain: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered!"
+    - service: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+        qos: 0
+        retain: false
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered!"
   mode: single
   icon: mdi:remote-tv
 turn_off_on_living_room_light:
-  alias: 'Toggle Living Room Light '
+  alias: "Toggle Living Room Light "
   sequence:
-  - type: toggle
-    device_id: 121a0c6ddafe33985ea0806ad01fb779
-    entity_id: light.living_room_light_module
-    domain: light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living room light has been triggered!"
+    - type: toggle
+      device_id: 121a0c6ddafe33985ea0806ad01fb779
+      entity_id: light.living_room_light_module
+      domain: light
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Living room light has been triggered!"
   mode: single
   icon: hue:ceiling-round
 feed_the_fish:
   alias: Feed the Fish
   sequence:
-  - service: button.press
-    data:
-      entity_id: button.hfjh_v2_eadb_set_feed_single
-  - delay: 60
-  - choose:
-    - alias: Feed log record has an error --> no feeding happened
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.feed_record_result
-        state: 'on'
-      sequence:
-      - service: notify.mobile_app_ofir_honor_magic_5_pro
-        data:
-          message: "\U0001F41F❌ Error while feeding fish"
-    - alias: Feed log record has NO error --> feeding OK
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.feed_record_result
-        state: 'off'
-      sequence:
-      - service: notify.mobile_app_ofir_honor_magic_5_pro
-        data:
-          message: "\U0001F41F✔️ Fish feed time"
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Feed the Fish has been triggered!"
+    - service: button.press
+      data:
+        entity_id: button.hfjh_v2_eadb_set_feed_single
+    - delay: 60
+    - choose:
+        - alias: Feed log record has an error --> no feeding happened
+          conditions:
+            - condition: state
+              entity_id: binary_sensor.feed_record_result
+              state: "on"
+          sequence:
+            - service: notify.mobile_app_ofir_honor_magic_5_pro
+              data:
+                message: "\U0001F41F❌ Error while feeding fish"
+        - alias: Feed log record has NO error --> feeding OK
+          conditions:
+            - condition: state
+              entity_id: binary_sensor.feed_record_result
+              state: "off"
+          sequence:
+            - service: notify.mobile_app_ofir_honor_magic_5_pro
+              data:
+                message: "\U0001F41F✔️ Fish feed time"
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Feed the Fish has been triggered!"
   mode: single
 turn_off_on_hallway_light:
   alias: Toggle Hallway Light
   sequence:
-  - service: light.toggle
-    data: {}
-    target:
-      device_id:
-      - 16df7102b63d09b6fcc378186c583972
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Hallway light has been triggered!"
+    - service: light.toggle
+      data: {}
+      target:
+        device_id:
+          - 16df7102b63d09b6fcc378186c583972
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Hallway light has been triggered!"
   mode: single
   icon: hue:ceiling-round
 turn_off_on_kitchen_light:
   alias: Toggle Kitchen Light
   sequence:
-  - service: switch.toggle
-    data: {}
-    target:
-      device_id: ab9d9e64727b36fa67f4e85f6ce47c37
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Kitchen light has been triggered!"
+    - service: switch.toggle
+      data: {}
+      target:
+        device_id: ab9d9e64727b36fa67f4e85f6ce47c37
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Kitchen light has been triggered!"
   mode: single
   icon: hue:ceiling-round
 turn_off_on_office_light:
   alias: Toggle Office Light
   sequence:
-  - service: switch.toggle
-    data: {}
-    target:
-      entity_id: switch.office_light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Office light has been triggered!"
+    - service: light.toggle
+      data: {}
+      target:
+        entity_id: light.office_wall_light
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Office light has been triggered!"
   mode: single
   icon: hue:ceiling-round
 turn_off_on_bedroom_light:
   alias: Toggle Bedroom Light
   sequence:
-  - type: toggle
-    device_id: afb33500a8d79e33ccc9290dae617155
-    entity_id: light.switchbot_bedroom_light_switch
-    domain: light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom Light Turned OFF/ON"
+    - type: toggle
+      device_id: afb33500a8d79e33ccc9290dae617155
+      entity_id: light.switchbot_bedroom_light_switch
+      domain: light
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Bedroom Light Turned OFF/ON"
   mode: single
   icon: hue:bulb-br30
 turn_on_switcher_for_60mins:
   alias: Turn ON Boiler for 60 minutes
   sequence:
-  - service: switch.turn_on
-    target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered! "
-  - delay:
-      hours: 1
-      minutes: 0
-      seconds: 0
-      milliseconds: 0
-  - service: switch.turn_off
-    target:
-      device_id:
-      - 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
+    - service: switch.turn_on
+      target:
+        device_id: 928250a9ace44dda8bbe162fc9440d6d
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered! "
+    - delay:
+        hours: 1
+        minutes: 0
+        seconds: 0
+        milliseconds: 0
+    - service: switch.turn_off
+      target:
+        device_id:
+          - 928250a9ace44dda8bbe162fc9440d6d
+      data: {}
   mode: single
   icon: mdi:water-boiler-auto
 shower_music:
   alias: Shower Music
   sequence:
-  - service: spotcast.start
-    data:
-      device_name: Shower Echo Dot
-      uri: spotify:playlist:3OrzpgkRM3gHd4xAhy86Zr
-      random_song: true
-      shuffle: true
-      force_playback: true
-      start_volume: 86
+    - service: spotcast.start
+      data:
+        device_name: Shower Echo Dot
+        uri: spotify:playlist:3OrzpgkRM3gHd4xAhy86Zr
+        random_song: true
+        shuffle: true
+        force_playback: true
+        start_volume: 86
   mode: single
   icon: mdi:account-music
 turn_off_bathroom_light:
   alias: Turn OFF Bathroom Light
   sequence:
-  - service: switch.turn_off
-    data: {}
-    target:
-      device_id:
-      - 974fe480eea5ad9851e2b94d16cb3baa
-      - 8b0b37e639c674161245a6a30534f8e5
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bathroom Lights Turned OFF"
+    - service: switch.turn_off
+      data: {}
+      target:
+        device_id:
+          - 974fe480eea5ad9851e2b94d16cb3baa
+          - 8b0b37e639c674161245a6a30534f8e5
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script - Bathroom Lights Turned OFF"
   mode: single
   icon: hue:bulb-br30
 toggle_living_room_ac:
   alias: Toggle Living Room AC
   sequence:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: cool
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: heat
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: heat_cool
-      sequence:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.ofir_a_c
-    - conditions:
-      - condition: state
-        entity_id: climate.ofir_a_c
-        state: 'off'
-      sequence:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.ofir_a_c
+    - choose:
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: climate.ofir_a_c
+                  state: cool
+                - condition: state
+                  entity_id: climate.ofir_a_c
+                  state: heat
+                - condition: state
+                  entity_id: climate.ofir_a_c
+                  state: heat_cool
+          sequence:
+            - service: climate.turn_off
+              data: {}
+              target:
+                entity_id: climate.ofir_a_c
+        - conditions:
+            - condition: state
+              entity_id: climate.ofir_a_c
+              state: "off"
+          sequence:
+            - service: climate.turn_on
+              data: {}
+              target:
+                entity_id: climate.ofir_a_c
   mode: single
   icon: mdi:air-conditioner
 toggle_bedroom_ac:
   alias: Toggle Bedroom AC
   sequence:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.bedroom_ac
-          state: cool
-        - condition: state
-          entity_id: climate.bedroom_ac
-          state: heat
-        - condition: state
-          entity_id: climate.bedroom_ac
-          state: heat_cool
-      sequence:
-      - service: climate.turn_off
-        data: {}
-        target:
-          entity_id: climate.bedroom_ac
-    - conditions:
-      - condition: state
-        entity_id: climate.bedroom_ac
-        state: 'off'
-      sequence:
-      - service: climate.turn_on
-        data: {}
-        target:
-          entity_id: climate.bedroom_ac
+    - choose:
+        - conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity_id: climate.bedroom_ac
+                  state: cool
+                - condition: state
+                  entity_id: climate.bedroom_ac
+                  state: heat
+                - condition: state
+                  entity_id: climate.bedroom_ac
+                  state: heat_cool
+          sequence:
+            - service: climate.turn_off
+              data: {}
+              target:
+                entity_id: climate.bedroom_ac
+        - conditions:
+            - condition: state
+              entity_id: climate.bedroom_ac
+              state: "off"
+          sequence:
+            - service: climate.turn_on
+              data: {}
+              target:
+                entity_id: climate.bedroom_ac
   mode: single
   icon: mdi:air-conditioner
 home_leave:
   alias: Home Leave
   sequence:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Home Leave activated!"
-  - repeat:
-      while:
-      - condition: template
-        value_template: '{{ is_state(''input_select.bedroom_tv_status'', ''On'') or
-          is_state(''input_select.bedroom_ac_status'', ''On'') or is_state(''input_select.living_room_tv_status'',
-          ''On'') or is_state(''input_select.office_tv_status'', ''On'') }}'
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.bedroom_tv_status
-            state: 'On'
-          sequence:
-          - service: mqtt.publish
-            data:
-              topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-              payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
-              qos: 0
-              retain: false
-        enabled: true
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.bedroom_ac_status
-            state: 'On'
-          sequence:
-          - service: climate.turn_off
-            data: {}
-            target:
-              entity_id: climate.bedroom_ac
-      - choose:
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: climate.ofir_a_c
-              state: cool
-            - condition: state
-              entity_id: climate.ofir_a_c
-              state: heat
-          sequence:
-          - service: climate.turn_off
-            data: {}
-            target:
-              entity_id: climate.ofir_a_c
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.living_room_tv_status
-            state: 'On'
-          sequence:
-          - service: mqtt.publish
-            data:
-              topic: zigbee2mqtt/Smart IR Remote Control/set
-              payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
-              qos: 0
-              retain: false
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.office_tv_status
-            state: 'On'
-          sequence:
-          - service: script.tv_power_office
-            data: {}
-      - delay:
-          hours: 0
-          minutes: 5
-          seconds: 35
-          milliseconds: 0
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Home Leave electric devices are OFF!"
-  - service: light.turn_off
-    continue_on_error: true
-    data: {}
-    target:
-      device_id:
-      - 16df7102b63d09b6fcc378186c583972
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - House devices are OFF!"
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Home Leave activated!"
+    - repeat:
+        while:
+          - condition: template
+            value_template:
+              "{{ is_state('input_select.bedroom_tv_status', 'On') or
+              is_state('input_select.bedroom_ac_status', 'On') or is_state('input_select.living_room_tv_status',
+              'On') or is_state('input_select.office_tv_status', 'On') }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_select.bedroom_tv_status
+                    state: "On"
+                sequence:
+                  - service: mqtt.publish
+                    data:
+                      topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+                      payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+                      qos: 0
+                      retain: false
+            enabled: true
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_select.bedroom_ac_status
+                    state: "On"
+                sequence:
+                  - service: climate.turn_off
+                    data: {}
+                    target:
+                      entity_id: climate.bedroom_ac
+          - choose:
+              - conditions:
+                  - condition: or
+                    conditions:
+                      - condition: state
+                        entity_id: climate.ofir_a_c
+                        state: cool
+                      - condition: state
+                        entity_id: climate.ofir_a_c
+                        state: heat
+                sequence:
+                  - service: climate.turn_off
+                    data: {}
+                    target:
+                      entity_id: climate.ofir_a_c
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_select.living_room_tv_status
+                    state: "On"
+                sequence:
+                  - service: mqtt.publish
+                    data:
+                      topic: zigbee2mqtt/Smart IR Remote Control/set
+                      payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+                      qos: 0
+                      retain: false
+          - choose:
+              - conditions:
+                  - condition: state
+                    entity_id: input_select.office_tv_status
+                    state: "On"
+                sequence:
+                  - service: script.tv_power_office
+                    data: {}
+          - delay:
+              hours: 0
+              minutes: 5
+              seconds: 35
+              milliseconds: 0
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Home Leave electric devices are OFF!"
+    - service: light.turn_off
+      continue_on_error: true
+      data: {}
+      target:
+        device_id:
+          - 16df7102b63d09b6fcc378186c583972
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - House devices are OFF!"
   mode: single
   icon: mdi:hand-wave
 tv_power_office:
   alias: TV Power Office
   sequence:
-  - service: remote.send_command
-    metadata: {}
-    data:
-      device: TV
-      command: Power
-    target:
-      device_id: 213c1e28be789af24d278bfa20f54941
+    - service: remote.send_command
+      metadata: {}
+      data:
+        device: TV
+        command: Power
+      target:
+        device_id: 213c1e28be789af24d278bfa20f54941
   mode: single
   icon: mdi:television
 turn_on_boiler_for_35_minutes:
   alias: Turn ON Boiler for 35 minutes
   sequence:
-  - service: switch.turn_on
-    target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 35 minutes has been triggered! "
-  - delay:
-      hours: 0
-      minutes: 35
-      seconds: 0
-      milliseconds: 0
-  - service: switch.turn_off
-    target:
-      device_id:
-      - 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
+    - service: switch.turn_on
+      target:
+        device_id: 928250a9ace44dda8bbe162fc9440d6d
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script -  Turn On Switcher for 35 minutes has been triggered! "
+    - delay:
+        hours: 0
+        minutes: 35
+        seconds: 0
+        milliseconds: 0
+    - service: switch.turn_off
+      target:
+        device_id:
+          - 928250a9ace44dda8bbe162fc9440d6d
+      data: {}
   mode: single
   icon: mdi:water-boiler-auto
 turn_on_boiler_for_45_minutes:
   alias: Turn ON Boiler for 45 minutes
   sequence:
-  - service: switch.turn_on
-    target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 45 minutes has been triggered! "
-  - delay:
-      hours: 0
-      minutes: 45
-      seconds: 0
-      milliseconds: 0
-  - service: switch.turn_off
-    target:
-      device_id:
-      - 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
+    - service: switch.turn_on
+      target:
+        device_id: 928250a9ace44dda8bbe162fc9440d6d
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F4DC Script -  Turn On Switcher for 45 minutes has been triggered! "
+    - delay:
+        hours: 0
+        minutes: 45
+        seconds: 0
+        milliseconds: 0
+    - service: switch.turn_off
+      target:
+        device_id:
+          - 928250a9ace44dda8bbe162fc9440d6d
+      data: {}
   mode: single
   icon: mdi:water-boiler-auto

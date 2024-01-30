@@ -171,8 +171,8 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.office_desk_led_strip
-            name: LED Strip
+            entity: light.office_ofir_desk_rgb_strip
+            name: Ofir Table LED
             show_state: true
             state_display: >
               [[[
