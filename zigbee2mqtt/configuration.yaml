@@ -28,7 +28,7 @@ devices:
     friendly_name: Water Leak Shower Sink
     description: Sensor - Water Leak Shower Sink under the shower sink
   '0xa4c138cf6f460fd1':
-    friendly_name: AC Bedroom
+    friendly_name: Bedroom AC
     description: Smart Switch EU
   '0xa4c1387bf0a99185':
     friendly_name: Office Temperature Sensor
@@ -54,7 +54,7 @@ devices:
     friendly_name: Office Elian Desk RGB Strip
     description: all over Elian's desk
   '0xa4c13825cb23672c':
-    friendly_name: 'TV Bedroom '
+    friendly_name: Bedroom TV
   '0xa4c138c861145739':
     friendly_name: Heater Shower
     description: Heater - located above the power plugs.
@@ -104,3 +104,11 @@ devices:
   '0x040d84fffebdf9a6':
     friendly_name: Living Room Zigbee Extender
     description: Extender - located under the AC
+  '0xa4c1380973dca97e':
+    friendly_name: Bathroom Presence Sensor
+    description: Presence - located on the fan [top of the celling]
+  '0xa4c1385f2de174b5':
+    friendly_name: Bedroom Motion Sensor
+    description: Motion Sensor - located next to Ofir bed side.
+  '0xf4b3b1fffea0bae7':
+    friendly_name: Bathroom Motion Sensor
