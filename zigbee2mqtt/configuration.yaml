@@ -112,3 +112,11 @@ devices:
     description: Motion Sensor - located next to Ofir bed side.
   '0xf4b3b1fffea0bae7':
     friendly_name: Bathroom Motion Sensor
+    occupancy_timeout: 90
+    illuminance_below_threshold_check: false
+  '0xbc026efffe8e9bf2':
+    friendly_name: Kitchen LED Strip
+    description: behind the ninja
+  '0xbc026efffe8436d2':
+    friendly_name: Wardrobe AC
+    description: next to the AC plug

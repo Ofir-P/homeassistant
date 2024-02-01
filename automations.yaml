@@ -90,16 +90,6 @@
       minutes: 0
       seconds: 20
     above: 5
-  - platform: state
-    entity_id:
-    - climate.bedroom_ac
-    from: 'off'
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.bedroom_ac
-    from: 'off'
-    to: heat
   condition:
   - condition: state
     entity_id: input_select.bedroom_ac_status
@@ -126,11 +116,6 @@
       minutes: 4
       seconds: 47
     below: 4
-  - platform: state
-    entity_id:
-    - climate.bedroom_ac
-    to: 'off'
-    from:
   condition:
   - condition: state
     entity_id: input_select.bedroom_ac_status
@@ -266,7 +251,8 @@
     data:
       filename: /config/www/tmp/snapshot_living_room_sub.jpg
     target:
-      entity_id: camera.living_room_sub
+      entity_id:
+      - camera.dining_table_sub
   - service: telegram_bot.send_photo
     data:
       authentication: digest
@@ -294,6 +280,7 @@
         data: {}
         target:
           area_id: hallway
+    enabled: false
   mode: single
 - id: '1675577121363'
   alias: Supervisor - Main Door Closed
@@ -481,7 +468,7 @@
     for:
       hours: 0
       minutes: 1
-      seconds: 40
+      seconds: 20
     enabled: true
   condition:
   - condition: time
@@ -503,7 +490,7 @@
       state: 'off'
     - service: light.turn_on
       data:
-        brightness_pct: 15
+        brightness_pct: 10
       target:
         device_id: 5972c49b7f01f8fde1fe7d5f02db377d
     - service: notify.supervisor_telegram
@@ -512,7 +499,7 @@
     else:
     - service: light.turn_off
       data:
-        transition: 20
+        transition: 15
       target:
         device_id: 5972c49b7f01f8fde1fe7d5f02db377d
     enabled: true
@@ -1674,7 +1661,9 @@
   alias: Kitchen Automations
   description: '1. Smoke Detector
 
-    '
+    2. Turn ON Kitchen LED Switch
+
+    3. Turn OFF Kitchen LED Switch'
   trigger:
   - platform: state
     entity_id:
@@ -1682,6 +1671,13 @@
     from: 'off'
     to: 'on'
     id: smoke_detected
+  - platform: sun
+    event: sunset
+    offset: 0
+    id: sun_set
+  - platform: time
+    at: 00:00:00
+    id: midnight
   condition: []
   action:
   - alias: '1'
@@ -1697,6 +1693,40 @@
       metadata: {}
       data:
         message: "\U0001F6A8SMOKE DETECTED IN KITCHEN \U0001F6A8"
+  - alias: '2'
+    if:
+    - condition: trigger
+      id:
+      - sun_set
+    - condition: state
+      entity_id: switch.kitchen_led_strip
+      state: 'off'
+    then:
+    - service: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        device_id: 92fdadf222970875f82e2d221e4612e4
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now on in the Kitchen!"
+  - alias: '3'
+    if:
+    - condition: trigger
+      id:
+      - midnight
+    - condition: state
+      entity_id: switch.kitchen_led_strip
+      state: 'on'
+    then:
+    - service: switch.turn_off
+      target:
+        device_id:
+        - 92fdadf222970875f82e2d221e4612e4
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now off in the Kitchen!"
   mode: single
 - id: '1706649475796'
   alias: 'Helper: Set Wardrobe AC Status to Off'
@@ -1710,11 +1740,6 @@
       minutes: 4
       seconds: 47
     below: 4
-  - platform: state
-    entity_id:
-    - climate.wardrobe
-    to: 'off'
-    from:
   condition:
   - condition: state
     entity_id: input_select.wardrobe_ac_status
@@ -1743,16 +1768,6 @@
       minutes: 0
       seconds: 20
     above: 5
-  - platform: state
-    entity_id:
-    - climate.wardrobe
-    from: 'off'
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.wardrobe
-    from: 'off'
-    to: heat
   condition:
   - condition: state
     entity_id: input_select.wardrobe_ac_status
