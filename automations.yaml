@@ -1169,7 +1169,7 @@
   alias: Shower Automations
   description: '1. Turn heater off after 35 minutes
 
-    2. Turn Boiler off after 1 hour and 40 minutes
+    2. Turn Boiler off after 1 hour and 15 minutes
 
     3. Input select Shower Heater to on
 
@@ -1194,7 +1194,7 @@
     to: 'On'
     for:
       hours: 1
-      minutes: 40
+      minutes: 15
       seconds: 0
     id: boiler_on_for_1_hour_40_minutes
   - platform: numeric_state
