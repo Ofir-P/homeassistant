@@ -108,12 +108,10 @@
         active: >
           <b>
           {% set lights = [
-            states.light.switchbot_bedroom_light_switch,
-            states.light.yeelink_color5_6079_light_2,
-            states.switch.bot_5b1c,
-            states.switch.kitchen_light_switch,
+            states.switch.kitchen_led_strip,
+            states.light.office_elian_desk_rgb_strip,
             states.light.office_wall_light,
-            states.switch.office_light
+            states.light.office_ofir_desk_rgb_strip
           ] %}
 
           {% set devices = [

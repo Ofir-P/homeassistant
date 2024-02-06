@@ -251,9 +251,9 @@ views:
               ]]]
             tap_action:
               action: call-service
-              service: switch.toggle
+              service: script.toggle
               service_data:
-                entity_id: switch.tv_office
+                entity_id: script.tv_power_office
 
             template:
               - base
@@ -463,7 +463,6 @@ views:
                     triggers_update:
                       - media_player.everywhere
                       - media_player.bedroom_echo_dot
-                      - media_player.everywhere_ys
                       - media_player.living_room_echo_dot
                       - media_player.office_echo_show5
                       - media_player.shower_echo_dot

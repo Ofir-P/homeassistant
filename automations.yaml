@@ -453,7 +453,8 @@
   mode: single
 - id: '1676503252475'
   alias: Hallway Motion Light
-  description: between 00:01 to 6:55 light will turn on for 2 minutes in the hallway
+  description: between 00:01 to 6:55 light will turn on for 1 minute and 20 seconds
+    in the hallway
   trigger:
   - platform: state
     entity_id:
@@ -468,7 +469,7 @@
     for:
       hours: 0
       minutes: 1
-      seconds: 20
+      seconds: 0
     enabled: true
   condition:
   - condition: time
@@ -490,7 +491,7 @@
       state: 'off'
     - service: light.turn_on
       data:
-        brightness_pct: 10
+        brightness_pct: 6
       target:
         device_id: 5972c49b7f01f8fde1fe7d5f02db377d
     - service: notify.supervisor_telegram
@@ -587,7 +588,8 @@
     data:
       scene_id: thebeforetimes
       snapshot_entities:
-      - light.office_desk_led_strip
+      - light.office_elian_desk_rgb_strip
+      - light.office_ofir_desk_rgb_strip
       - light.office_wall_light
   - repeat:
       count: '70'
@@ -596,7 +598,9 @@
         data:
           color_name: red
         target:
-          entity_id: light.office_desk_led_strip
+          entity_id:
+          - light.office_elian_desk_rgb_strip
+          - light.office_ofir_desk_rgb_strip
           device_id: fda8e5d95506b514038003c8f369a4df
       - delay:
           hours: 0
@@ -1789,7 +1793,7 @@
   description: ''
   trigger:
   - platform: numeric_state
-    entity_id: sensor.ac_bedroom_power
+    entity_id: sensor.bedroom_ac_power
     for:
       hours: 0
       minutes: 4
