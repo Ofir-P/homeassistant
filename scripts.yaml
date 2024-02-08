@@ -72,18 +72,6 @@ ir_turn_on_off_bedroom_tv:
       message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered!"
   mode: single
   icon: mdi:remote-tv
-turn_off_on_living_room_light:
-  alias: 'Toggle Living Room Light '
-  sequence:
-  - type: toggle
-    device_id: 121a0c6ddafe33985ea0806ad01fb779
-    entity_id: light.living_room_light_module
-    domain: light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Living room light has been triggered!"
-  mode: single
-  icon: hue:ceiling-round
 feed_the_fish:
   alias: Feed the Fish
   sequence:
@@ -138,18 +126,6 @@ turn_off_on_office_light:
       message: "\U0001F4DC Script - Office light has been triggered!"
   mode: single
   icon: hue:ceiling-round
-turn_off_on_bedroom_light:
-  alias: Toggle Bedroom Light
-  sequence:
-  - type: toggle
-    device_id: afb33500a8d79e33ccc9290dae617155
-    entity_id: light.switchbot_bedroom_light_switch
-    domain: light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bedroom Light Turned OFF/ON"
-  mode: single
-  icon: hue:bulb-br30
 turn_on_switcher_for_60mins:
   alias: Turn ON Boiler for 60 minutes
   sequence:
@@ -409,3 +385,37 @@ turn_on_boiler_for_45_minutes:
     data: {}
   mode: single
   icon: mdi:water-boiler-auto
+toggle_office_ac:
+  alias: Toggle Office AC
+  sequence:
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: climate.office
+          state: cool
+        - condition: state
+          entity_id: climate.office
+          state: heat
+        - condition: state
+          entity_id: climate.office
+          state: heat_cool
+      sequence:
+      - service: climate.turn_off
+        data: {}
+        target:
+          entity_id:
+          - climate.office
+    - conditions:
+      - condition: state
+        entity_id: climate.office
+        state: 'off'
+      sequence:
+      - service: climate.turn_on
+        data: {}
+        target:
+          entity_id:
+          - climate.office
+  mode: single
+  icon: mdi:air-conditioner
