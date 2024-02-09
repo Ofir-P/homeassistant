@@ -1155,6 +1155,14 @@
         color_name: red
       target:
         entity_id: light.yeelink_color5_6079_light
+    - if:
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'On'
+      then:
+      - service: notify.living_room_lg_webos_smart_tv
+        data:
+          message: צבע אדום - הוד השרון
   - if:
     - condition: trigger
       id:
@@ -1168,6 +1176,14 @@
       metadata: {}
       data:
         message: "\U0001F680 אזעקות ברמלה \U0001F680"
+    - if:
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'On'
+      then:
+      - service: notify.living_room_lg_webos_smart_tv
+        data:
+          message: צבע אדום - רמלה
   mode: single
 - id: '1705996645975'
   alias: Shower Automations
