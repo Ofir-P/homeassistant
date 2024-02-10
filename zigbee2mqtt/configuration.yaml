@@ -120,3 +120,9 @@ devices:
   '0xbc026efffe8436d2':
     friendly_name: Wardrobe AC
     description: next to the AC plug
+  '0xa4c138a3afc34202':
+    friendly_name: Kitchen Temperature Sensor
+    description: Above the water machine on top of the cabinet
+  '0xa4c1386c61626446':
+    friendly_name: Living Room Temperature Sensor
+    description: on top of the AC, right side.
