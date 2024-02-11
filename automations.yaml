@@ -1873,3 +1873,34 @@
     data:
       message: "\U0001F916 Automation - Office AC ❄️ Status has been changed to On!"
   mode: single
+- id: '1707598067921'
+  alias: Living Room Automations
+  description: 1. No Presence for 35 minutes will turn off TV.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.living_room_presence_sensor_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 35
+      seconds: 0
+    id: noPresence_tvOff
+  condition: []
+  action:
+  - alias: '1'
+    if:
+    - condition: trigger
+      id:
+      - noPresence_tvOff
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'on'
+    then:
+    - service: script.ir_turn_on_off_living_room_tv
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4FA No Presence on LR, Turned off
+          TV!"
+  mode: single

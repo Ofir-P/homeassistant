@@ -12,7 +12,7 @@ views:
       grid-template-rows: 0 repeat(2, fit-content(100%)) 0fr
       grid-template-areas: |
         "sidebar  .           .       .       ."
-        "sidebar  LR  Office  Bedroom  ."
+        "sidebar  LR       Office  Bedroom   ."
         "sidebar  media       Shower  Home   ."
         "sidebar  footer      footer  footer  ."
       mediaquery:
@@ -24,9 +24,9 @@ views:
           grid-template-areas: |
             ".  .           .        ."
             ".  sidebar     sidebar  ."
-            ".  LR  Bedroom   ."
+            ".  LR         Bedroom   ."
             ".  Office      Shower   ."
-            ".  media       Home    ."
+            ".  media        Home    ."
             ".  footer      footer   ."
             ".  .           .        ."
         #portrait
@@ -36,9 +36,9 @@ views:
           grid-template-rows: 0 repeat(3, fit-content(100%)) 0fr
           grid-template-areas: |
             "sidebar  .           .       ."
-            "sidebar  LR  Bedroom  ."
+            "sidebar  LR         Bedroom  ."
             "sidebar  Office      Shower  ."
-            "sidebar  media       Home   ."
+            "sidebar  media        Home   ."
             "sidebar  footer      footer  ."
             "sidebar  .           .       ."
     cards:
@@ -172,7 +172,7 @@ views:
         cards:
           - type: custom:button-card
             entity: light.office_ofir_desk_rgb_strip
-            name: Ofir Table LED
+            name: Ofir LED
             show_state: true
             state_display: >
               [[[
