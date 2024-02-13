@@ -165,7 +165,7 @@ browser_mod:
                     crosshairs:
                       show: false
                 series:
-                  - entity: sensor.sensibo_tempature
+                  - entity: sensor.living_room_temperature_sensor_temperature
                     name: Temp
                     color: "#385581"
                     type: area
