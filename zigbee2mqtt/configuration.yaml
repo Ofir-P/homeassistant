@@ -126,3 +126,5 @@ devices:
   '0xa4c1386c61626446':
     friendly_name: Living Room Temperature Sensor
     description: on top of the AC, right side.
+  '0xa4c1381dac33f60b':
+    friendly_name: Bedroom Second Wireless Remote AC

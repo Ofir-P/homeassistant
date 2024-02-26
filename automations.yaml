@@ -1027,7 +1027,7 @@
 
     3 - - Tempature
 
-    4 - Mode'
+    4 - Toggle TV'
   trigger:
   - platform: state
     entity_id:
@@ -1049,9 +1049,9 @@
   - platform: state
     entity_id:
     - sensor.bedroom_wireless_remote_switch_action
-    to: 4_single
-    id: button4_singlePress
-    enabled: false
+    to: 4_hold
+    id: button4_longPress
+    enabled: true
   condition: []
   action:
   - choose:
@@ -1106,8 +1106,13 @@
     - conditions:
       - condition: trigger
         id:
-        - button4_singlePress
-      sequence: []
+        - button4_longPress
+      sequence:
+      - service: script.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: script.ir_turn_on_off_bedroom_tv
   mode: single
 - id: '1697368945970'
   alias: Red Alert
@@ -1903,4 +1908,99 @@
       data:
         message: "\U0001F916 Automation - \U0001F4FA No Presence on LR, Turned off
           TV!"
+  mode: single
+- id: '1708896192081'
+  alias: Bedroom Second Wireless Remote
+  description: '1 - Power button
+
+    2 - + Tempature
+
+    3 - - Tempature
+
+    4 - Toggle TV'
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 1_single
+    id: button1_singlePress
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 2_single
+    id: button2_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 3_single
+    id: button3_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 4_hold
+    id: button4_longPress
+    enabled: true
+  condition: []
+  action:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id:
+        - button1_singlePress
+      sequence:
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: climate.bedroom_ac
+            state: cool
+          - condition: state
+            entity_id: climate.bedroom_ac
+            state: heat
+        then:
+        - service: climate.turn_off
+          metadata: {}
+          data: {}
+          target:
+            device_id: 4018257e961bc48fa5b1c539c9efc5ee
+        else:
+        - service: climate.turn_on
+          metadata: {}
+          data: {}
+          target:
+            device_id: 4018257e961bc48fa5b1c539c9efc5ee
+    - conditions:
+      - condition: trigger
+        id:
+        - button2_singlePress
+      sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
+            + 1 }}'
+        target:
+          entity_id: climate.bedroom_ac
+    - conditions:
+      - condition: trigger
+        id:
+        - button3_singlePress
+      sequence:
+      - service: climate.set_temperature
+        data:
+          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
+            - 1 }}'
+        target:
+          entity_id: climate.bedroom_ac
+    - conditions:
+      - condition: trigger
+        id:
+        - button4_longPress
+      sequence:
+      - service: script.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: script.ir_turn_on_off_bedroom_tv
   mode: single
