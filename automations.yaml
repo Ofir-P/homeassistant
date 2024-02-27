@@ -383,8 +383,8 @@
   trigger:
   - platform: state
     entity_id:
-    - vacuum.mijia_v2_202f_robot_cleaner
-    to: cleaning
+    - binary_sensor.roborock_s8_pro_ultra_cleaning
+    to: 'on'
   condition: []
   action:
   - service: notify.home_assistant_group
@@ -441,15 +441,17 @@
   trigger:
   - platform: state
     entity_id:
-    - vacuum.mijia_v2_202f_robot_cleaner
-    to: returning
+    - binary_sensor.roborock_s8_pro_ultra_cleaning
+    to: 'off'
+    from: 'on'
   condition: []
   action:
   - service: notify.home_assistant_group
     data:
-      title: "\U0001F9F9 Vacuum Robot has finished and returning to base!"
-      message: It took {{state_attr('vacuum.mijia_v2_202f_robot_cleaner', 'clean_record.clean_time')}}
-        minutes and covered {{ states('sensor.vacuum_clean_area') }} m².
+      title: "\U0001F9F9 Vacuum Robot has finished and returned to base!"
+      message: It took {{ ( states('sensor.roborock_s8_pro_ultra_cleaning_time') |
+        int / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_cleaning_area')
+        }} m².
   mode: single
 - id: '1676503252475'
   alias: Hallway Motion Light
@@ -1049,8 +1051,8 @@
   - platform: state
     entity_id:
     - sensor.bedroom_wireless_remote_switch_action
-    to: 4_hold
-    id: button4_longPress
+    to: 4_single
+    id: button4_singlePress
     enabled: true
   condition: []
   action:
@@ -1106,13 +1108,10 @@
     - conditions:
       - condition: trigger
         id:
-        - button4_longPress
+        - button4_singlePress
       sequence:
-      - service: script.toggle
-        metadata: {}
+      - service: script.ir_turn_on_off_bedroom_tv
         data: {}
-        target:
-          entity_id: script.ir_turn_on_off_bedroom_tv
   mode: single
 - id: '1697368945970'
   alias: Red Alert
@@ -1939,8 +1938,8 @@
   - platform: state
     entity_id:
     - sensor.bedroom_second_wireless_remote_ac_action
-    to: 4_hold
-    id: button4_longPress
+    to: 4_single
+    id: button4_singlePress
     enabled: true
   condition: []
   action:
@@ -1996,11 +1995,8 @@
     - conditions:
       - condition: trigger
         id:
-        - button4_longPress
+        - button4_singlePress
       sequence:
-      - service: script.toggle
-        metadata: {}
+      - service: script.ir_turn_on_off_bedroom_tv
         data: {}
-        target:
-          entity_id: script.ir_turn_on_off_bedroom_tv
   mode: single
