@@ -95,6 +95,10 @@ lovelace:
       { url: "/hacsfiles/button-card/button-card.js", type: module },
       { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
       { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
+      {
+        url: "/hacsfiles/lovelace-xiaomi-vacuum-map-card/xiaomi-vacuum-map-card.js",
+        type: module,
+      },
       { url: "/hacsfiles/room-card/room-card.js", type: module }, # Mobile Dashboard Cards
       {
         url: "/hacsfiles/mini-climate-card/mini-climate-card-bundle.js",
