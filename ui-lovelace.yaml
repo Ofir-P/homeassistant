@@ -98,7 +98,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.living_room_light_module
+            entity: light.living_room_l1
             name: Light
             template:
               - light
@@ -106,7 +106,7 @@ views:
             action: call-service
             service: light.toggle
             service_data:
-              entity_id: light.living_room_light_module
+              entity_id: light.living_room_l1
 
           - type: custom:button-card
             entity: climate.ofir_a_c
@@ -152,7 +152,7 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: switch.kitchen_light_switch
+            entity: light.kitchen_l1
             name: Kitchen
             template:
               - light
@@ -171,22 +171,8 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.office_ofir_desk_rgb_strip
-            name: Ofir LED
-            show_state: true
-            state_display: >
-              [[[
-                if (variables.state.toLowerCase() === 'on') {
-                    return 'On';
-                }
-                else if (variables.state.toLowerCase() === 'off') {
-                    return 'Off';
-                }                
-                else if (variables.state.toLowerCase() === 'unknown') {
-                    return variables.translate_unknown;
-                } 
-                else { return 'Error'; }
-              ]]]
+            entity: light.office
+            name: Light
             template:
               - light
               - icon_hue
@@ -235,30 +221,11 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: input_select.office_tv_status
-            name: TV
-            state_display: >
-              [[[
-                if (variables.state === 'On') {
-                    return 'On';
-                }
-                if (variables.state === 'Off') {
-                    return 'Off';
-                }                
-                if (variables.state === true) {
-                    return variables.translate_unknown;
-                }
-              ]]]
-            tap_action:
-              action: call-service
-              service: script.toggle
-              service_data:
-                entity_id: script.tv_power_office
-
+            entity: light.office_bathroom
+            name: Bathroom
             template:
-              - base
-              - icon_tv
-              - loader
+              - light
+              - icon_hue
 
       #################################################
       #                                               #
@@ -273,7 +240,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.switchbot_bedroom_light_switch
+            entity: light.bedroom
             name: Light
             template:
               - light
@@ -323,28 +290,11 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: input_select.bedroom_tv_status
-            name: TV
-            state_display: >
-              [[[
-                if (variables.state === 'On') {
-                    return 'On';
-                }
-                if (variables.state === 'Off') {
-                    return 'Off';
-                }                
-                if (variables.state === true) {
-                    return variables.translate_unknown;
-                }
-              ]]]
-            tap_action:
-              action: call-service
-              service: script.ir_turn_on_off_bedroom_tv
-
+            entity: light.shower_l2
+            name: Corridor
             template:
-              - base
-              - icon_tv
-              - loader
+              - light
+              - icon_lamp
 
       #################################################
       #                                               #
@@ -502,20 +452,17 @@ views:
       #################################################
 
       - type: grid
-        title: Shower|Wardrobe
+        title: Shower Wardrobe
         view_layout:
           grid-area: Shower
         columns: 2
         cards:
           - type: custom:button-card
-            entity: switch.bot_b296
-            name: Lights
+            entity: light.shower_l1
+            name: Light
             template:
               - light
               - icon_hue
-            tap_action:
-              action: call-service
-              service: script.turn_off_bathroom_light
 
           - type: custom:button-card
             entity: climate.wardrobe
@@ -544,11 +491,11 @@ views:
               - icon_spotify
 
           - type: custom:button-card
-            name: "Laundry"
-            entity: input_select.washing_machine_status
+            entity: light.wardrobe
+            name: Light
             template:
-              - base
-              - icon_laundry_machine
+              - light
+              - icon_hue
 
       #################################################
       #                                               #

@@ -69,6 +69,11 @@
     entity_id: input_select.washing_machine_status
     state: 'On'
   action:
+  - service: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.laundry_machine_light
   - service: input_select.select_option
     data:
       option: 'Off'
@@ -242,6 +247,11 @@
     id: door_open
   condition: []
   action:
+  - service: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.kitchen_l2
   - delay:
       hours: 0
       minutes: 0
@@ -258,29 +268,16 @@
       authentication: digest
       file: /config/www/tmp/snapshot_living_room_sub.jpg
       caption: "\U0001F916 Automation - Main Door is open now!"
-  - choose:
-    - conditions:
-      - condition: time
-        after: 00:00:00
-        before: 06:00:00
-      - condition: state
-        entity_id: input_select.living_room_tv_status
-        state: 'Off'
-      sequence:
-      - service: light.turn_on
-        data: {}
-        target:
-          area_id: hallway
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 25
-          milliseconds: 0
-      - service: light.turn_off
-        data: {}
-        target:
-          area_id: hallway
-    enabled: false
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 25
+      milliseconds: 0
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.kitchen_l2
   mode: single
 - id: '1675577121363'
   alias: Supervisor - Main Door Closed
@@ -988,14 +985,9 @@
   condition: []
   action:
   - if:
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id: climate.office
-        state: cool
-      - condition: state
-        entity_id: climate.office
-        state: heat
+    - condition: state
+      entity_id: input_select.office_ac_status
+      state: 'On'
     then:
     - service: climate.turn_off
       metadata: {}
@@ -1020,10 +1012,22 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - No Presence at Office Room - Turn Off TV!"
+  - if:
+    - condition: state
+      entity_id: light.office
+      state: 'On'
+    then:
+    - service: light.turn_off
+      target:
+        entity_id: light.office
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - No Presence at Office - Light off"
   mode: single
 - id: '1695660239489'
   alias: Bedroom Wireless Remote AC
-  description: '1 - Power button
+  description: '1 - Power button | Hold - Light toggle
 
     2 - + Tempature
 
@@ -1054,6 +1058,11 @@
     to: 4_single
     id: button4_singlePress
     enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 1_double
+    id: button1_doublePress
   condition: []
   action:
   - choose:
@@ -1112,6 +1121,16 @@
       sequence:
       - service: script.ir_turn_on_off_bedroom_tv
         data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - button1_doublePress
+      sequence:
+      - service: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom
   mode: single
 - id: '1697368945970'
   alias: Red Alert
@@ -1201,7 +1220,11 @@
 
     5. Boiler On Notification
 
-    6. Boiler Off Notification'
+    6. Boiler Off Notification
+
+    7. Light On Notification
+
+    8. Light Off Notification'
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1257,6 +1280,18 @@
       seconds: 15
     id: Boiler_Off_Notification
     below: 5
+  - platform: state
+    entity_id:
+    - light.shower_l1
+    from: 'off'
+    to: 'on'
+    id: light_to_on
+  - platform: state
+    entity_id:
+    - light.shower_l1
+    from: 'on'
+    to: 'off'
+    id: light_to_off
   condition: []
   action:
   - if:
@@ -1380,6 +1415,24 @@
     - service: notify.home_assistant_group
       data:
         message: "\U0001F6BF Switcher device has been turned OFF!"
+  - alias: '7'
+    if:
+    - condition: trigger
+      id:
+      - light_to_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Shower\U0001F6C1"
+  - alias: '8'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Shower\U0001F6C1"
   mode: single
 - id: '1706093864988'
   alias: Water Leakage Notification
@@ -1509,7 +1562,7 @@
 
     3 - - Tempature
 
-    4 - Mode'
+    4 - Light toggle'
   trigger:
   - platform: state
     entity_id:
@@ -1530,10 +1583,10 @@
     enabled: true
   - platform: state
     entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
+    - sensor.living_room_wireless_remote_switch_action
     to: 4_single
     id: button4_singlePress
-    enabled: false
+    enabled: true
   condition: []
   action:
   - choose:
@@ -1589,97 +1642,12 @@
       - condition: trigger
         id:
         - button4_singlePress
-      sequence: []
-  mode: single
-- id: '1706113074480'
-  alias: Wardrobe Wireless Remote Switch
-  description: '1 - Power button
-
-    2 - + Tempature
-
-    3 - - Tempature
-
-    4 - '
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.wardrobe_wireless_remote_switch_action
-    to: 1_single
-    id: button1_singlePress
-  - platform: state
-    entity_id:
-    - sensor.wardrobe_wireless_remote_switch_action
-    to: 2_single
-    id: button2_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.wardrobe_wireless_remote_switch_action
-    to: 3_single
-    id: button3_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
-    to: 4_single
-    id: button4_singlePress
-    enabled: false
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - button1_singlePress
       sequence:
-      - if:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: climate.wardrobe
-            state: cool
-          - condition: state
-            entity_id: climate.wardrobe
-            state: heat
-        then:
-        - service: climate.turn_off
-          metadata: {}
-          data: {}
-          target:
-            device_id: e2751f5fc46e28c792195795f124989d
-        else:
-        - service: climate.turn_on
-          metadata: {}
-          data: {}
-          target:
-            device_id: e2751f5fc46e28c792195795f124989d
-    - conditions:
-      - condition: trigger
-        id:
-        - button2_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.wardrobe'', ''temperature'')|int(7)
-            + 1 }}'
+      - service: light.toggle
+        metadata: {}
+        data: {}
         target:
-          entity_id: climate.wardrobe
-    - conditions:
-      - condition: trigger
-        id:
-        - button3_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.wardrobe'', ''temperature'')|int(7)
-            - 1 }}'
-        target:
-          entity_id: climate.wardrobe
-    - conditions:
-      - condition: trigger
-        id:
-        - button4_singlePress
-      sequence: []
+          entity_id: light.living_room_l1
   mode: single
 - id: '1706286005645'
   alias: Kitchen Automations
@@ -1687,7 +1655,15 @@
 
     2. Turn ON Kitchen LED Switch
 
-    3. Turn OFF Kitchen LED Switch'
+    3. Turn OFF Kitchen LED Switch
+
+    4. Kitchen Light On Notification
+
+    5. Kitchen Light Off Notification
+
+    6. Laundry Machine Light On Notification
+
+    7. Laundry Machine Light Off Notification'
   trigger:
   - platform: state
     entity_id:
@@ -1702,6 +1678,30 @@
   - platform: time
     at: 00:00:00
     id: midnight
+  - platform: state
+    entity_id:
+    - light.kitchen_l1
+    from: 'off'
+    to: 'on'
+    id: light_set_on
+  - platform: state
+    entity_id:
+    - light.kitchen_l1
+    from: 'on'
+    to: 'off'
+    id: light_set_off
+  - platform: state
+    entity_id:
+    - light.laundry_machine_light
+    from: 'off'
+    to: 'on'
+    id: laundry_light_set_on
+  - platform: state
+    entity_id:
+    - light.laundry_machine_light
+    from: 'on'
+    to: 'off'
+    id: laundry_light_set_off
   condition: []
   action:
   - alias: '1'
@@ -1751,80 +1751,58 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now off in the Kitchen!"
-  mode: single
-- id: '1706649475796'
-  alias: 'Helper: Set Wardrobe AC Status to Off'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - input_select.wardrobe_ac_status
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 47
-    below: 4
-  condition:
-  - condition: state
-    entity_id: input_select.wardrobe_ac_status
-    state: 'On'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id:
-      - input_select.wardrobe_ac_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Wardrobe AC ❄️ Status has been changed to
-        Off!"
-  mode: single
-- id: '1706649551701'
-  alias: 'Helper: Set Wardrobe AC Status to On'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - input_select.wardrobe_ac_status
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 20
-    above: 5
-  condition:
-  - condition: state
-    entity_id: input_select.wardrobe_ac_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id:
-      - input_select.wardrobe_ac_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Wardrobe AC ❄️ Status has been changed to
-        On!"
+  - alias: '4'
+    if:
+    - condition: trigger
+      id:
+      - light_set_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Kitchen\U0001F52A"
+  - alias: '5'
+    if:
+    - condition: trigger
+      id:
+      - light_set_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Kitchen\U0001F52A"
+  - alias: '6'
+    if:
+    - condition: trigger
+      id:
+      - laundry_light_set_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Laundry Machine Light is on in
+          Kitchen \U0001F52A"
+  - alias: '7'
+    if:
+    - condition: trigger
+      id:
+      - laundry_light_set_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Laundry Machine Light is off
+          in Kitchen \U0001F52A"
   mode: single
 - id: '1706649715941'
   alias: 'Helper: Set Office AC Status to Off'
   description: ''
   trigger:
   - platform: numeric_state
-    entity_id: sensor.bedroom_ac_power
+    entity_id:
+    - sensor.office_ac_power
     for:
       hours: 0
       minutes: 4
       seconds: 47
     below: 4
-    enabled: false
-  - platform: state
-    entity_id:
-    - climate.office
-    to: 'off'
-    from:
+    enabled: true
   condition:
   - condition: state
     entity_id: input_select.office_ac_status
@@ -1845,23 +1823,14 @@
   description: ''
   trigger:
   - platform: numeric_state
-    entity_id: sensor.ac_bedroom_power
+    entity_id:
+    - sensor.office_ac_power
     for:
       hours: 0
-      minutes: 1
-      seconds: 0
+      minutes: 0
+      seconds: 20
     above: 5
-    enabled: false
-  - platform: state
-    entity_id:
-    - climate.office
-    from: 'off'
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.office
-    from: 'off'
-    to: heat
+    enabled: true
   condition:
   - condition: state
     entity_id: input_select.office_ac_status
@@ -1910,7 +1879,7 @@
   mode: single
 - id: '1708896192081'
   alias: Bedroom Second Wireless Remote
-  description: '1 - Power button
+  description: '1 - Power button | Hold - Light toggle
 
     2 - + Tempature
 
@@ -1941,6 +1910,11 @@
     to: 4_single
     id: button4_singlePress
     enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 1_double
+    id: button1_doublePress
   condition: []
   action:
   - choose:
@@ -1999,4 +1973,248 @@
       sequence:
       - service: script.ir_turn_on_off_bedroom_tv
         data: {}
+    - conditions:
+      - condition: trigger
+        id:
+        - button1_doublePress
+      sequence:
+      - service: light.toggle
+        metadata: {}
+        data: {}
+        target:
+          entity_id: light.bedroom
+  mode: single
+- id: '1709139085917'
+  alias: Bathroom Automations
+  description: '1. Turn lights off after 10 minutes without motion.
+
+    2. Light On Notification
+
+    3. Light Off Notification'
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bathroom_motion_sensor_occupancy
+    to: 'off'
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+    id: no_motion
+  - platform: state
+    entity_id:
+    - light.bathroom
+    from: 'off'
+    to: 'on'
+    id: light_to_on
+  - platform: state
+    entity_id:
+    - light.bathroom
+    from: 'on'
+    to: 'off'
+    id: light_to_off
+  condition: []
+  action:
+  - alias: '1'
+    if:
+    - condition: trigger
+      id:
+      - no_motion
+    - condition: state
+      entity_id: light.bathroom
+      state: 'on'
+    then:
+    - service: light.turn_off
+      target:
+        entity_id: light.bathroom
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6BD Someone forgot the Lights on
+          bathroom! Turned it OFF. \U0001F4A1"
+  - alias: '2'
+    if:
+    - condition: trigger
+      id:
+      - light_to_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Bathroom \U0001F6BD"
+  - alias: '3'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Bathroom \U0001F6BD"
+  mode: single
+- id: '1709151799515'
+  alias: Wardrobe Automations
+  description: '1. AC On Notification
+
+    2. AC Off Notification
+
+    3. Light On Notification
+
+    4. Light Off Notification
+
+    5. Toggle AC - Button 1 Wireless Remote
+
+    6. Add +1 Degree to AC - Button 2 Wireless Remote
+
+    7. -1 Degree to AC - Button 3 Wireless Remote'
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.wardrobe_ac_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 15
+    above: 5
+    id: ac_is_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.wardrobe_ac_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 40
+    id: ac_is_off
+    below: 4
+  - platform: state
+    entity_id:
+    - light.wardrobe
+    from: 'off'
+    to: 'on'
+    id: light_to_on
+  - platform: state
+    entity_id:
+    - light.wardrobe
+    from: 'on'
+    to: 'off'
+    id: light_to_off
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_wireless_remote_switch_action
+    id: button1_singlePress
+    to: 1_single
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_wireless_remote_switch_action
+    id: button2_singlePress
+    to: 2_single
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_wireless_remote_switch_action
+    id: button3_singlePress
+    to: 3_single
+  condition: []
+  action:
+  - alias: '1'
+    if:
+    - condition: trigger
+      id:
+      - ac_is_on
+    - condition: state
+      entity_id: input_select.wardrobe_ac_status
+      state: 'Off'
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Wardrobe AC ❄️ Status has been changed to
+          On!"
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'On'
+      target:
+        entity_id: input_select.wardrobe_ac_status
+  - alias: '2'
+    if:
+    - condition: trigger
+      id:
+      - ac_is_off
+    - condition: state
+      entity_id: input_select.wardrobe_ac_status
+      state: 'On'
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Wardrobe AC ❄️ Status has been changed to
+          Off!"
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.wardrobe_ac_status
+  - alias: '3'
+    if:
+    - condition: trigger
+      id:
+      - light_to_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Wardrobe\U0001F457"
+  - alias: '4'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Wardrobe\U0001F457"
+  - alias: '5'
+    if:
+    - condition: trigger
+      id:
+      - button1_singlePress
+    then:
+    - if:
+      - condition: state
+        entity_id: input_select.wardrobe_ac_status
+        state: 'On'
+      then:
+      - service: climate.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: e2751f5fc46e28c792195795f124989d
+      else:
+      - service: climate.turn_on
+        metadata: {}
+        data: {}
+        target:
+          device_id: e2751f5fc46e28c792195795f124989d
+  - alias: '6'
+    if:
+    - condition: trigger
+      id:
+      - button2_singlePress
+    then:
+    - service: climate.set_temperature
+      data:
+        temperature: '{{ state_attr(''climate.wardrobe'', ''temperature'')|int(7)
+          + 1 }}'
+      target:
+        entity_id: climate.wardrobe
+  - alias: '7'
+    if:
+    - condition: trigger
+      id:
+      - button3_singlePress
+    then:
+    - service: climate.set_temperature
+      data:
+        temperature: '{{ state_attr(''climate.wardrobe'', ''temperature'')|int(7)
+          - 1 }}'
+      target:
+        entity_id: climate.wardrobe
   mode: single

@@ -108,16 +108,25 @@
         active: >
           <b>
           {% set lights = [
-            states.switch.kitchen_led_strip,
-            states.light.office_elian_desk_rgb_strip,
+            states.light.bathroom,
+            states.light.bedroom,
+            states.light.shower_l2,
+            states.light.kitchen_l1,
+            states.light.laundry_machine_light,
+            states.light.living_room_l1,
+            states.light.kitchen_l2,
+            states.light.office,
+            states.light.office_bathroom,
             states.light.office_wall_light,
-            states.light.office_ofir_desk_rgb_strip
+            states.light.shower_l1,
+            states.light.wardrobe,
+            states.light.living_room_l2
           ] %}
 
           {% set devices = [
             states.switch.boiler,
             states.input_select.washing_machine_status,
-            states.vacuum.mijia_v2_202f_robot_cleaner
+            states.vacuum.roborock_s8_pro_ultra
           ] %}
 
           {% set lights_on = lights | selectattr('state','eq','on') | list %}
@@ -152,11 +161,11 @@
           {% endif %}
           </b>
         vacuum: >
-          {% set entity_id = 'vacuum.mijia_v2_202f_robot_cleaner' %}
+          {% set entity_id = 'vacuum.roborock_s8_pro_ultra' %}
           {% if is_state(entity_id, 'cleaning') %}
-            <b>Xiaomi Robot is cleaning</b>
+            <b>S8 Robot is cleaning</b>
           {% elif is_state(entity_id, 'returning') %}
-            <b>Xiaomi Robot is done</b>
+            <b>S8 Robot is done</b>
           {% endif %}
         weather: >
           {% set entity = 'weather.accuweather' %}

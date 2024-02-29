@@ -128,3 +128,30 @@ devices:
     description: on top of the AC, right side.
   '0xa4c1381dac33f60b':
     friendly_name: Bedroom Second Wireless Remote AC
+  '0xa4c13813fa807dac':
+    friendly_name: Office
+    description: office right top box, controls Office and Bathroom lights.
+  '0xa4c13895aac85991':
+    friendly_name: Office Bathroom
+    description: office left top box, controls Office Bathroom and Shower
+  '0xa4c1380cd141e5fa':
+    friendly_name: Bedroom
+    description: bedroom box top of the door
+  '0xa4c138d65347e112':
+    friendly_name: Shower
+    description: box next to boiler, controls Shower and Corridor
+  '0xa4c13887c1e425cb':
+    friendly_name: Office AC
+  '0xa4c1387d201f5691':
+    friendly_name: Wardrobe
+    description: inside the switch box of Wardrobe.
+  '0xa4c138cd3ad3670b':
+    friendly_name: Kitchen Gas Detector
+  '0xa4c138d230136a38':
+    friendly_name: Laundry Machine Light
+  '0xa4c138ec28a26421':
+    friendly_name: Living Room
+    description: located right side of the door.
+  '0xa4c138e6fc18ec4e':
+    friendly_name: Kitchen
+    description: located above the fridge
