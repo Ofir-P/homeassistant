@@ -28,61 +28,6 @@
         data:
           message: "\U0001F916 Automation - {{sensors}} has low on battery, please
             replace it."
-- id: '1672558313040'
-  alias: Laundry Machine has started
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.laundry_machine_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 12
-    above: 10
-  condition:
-  - condition: state
-    entity_id: input_select.washing_machine_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id: input_select.washing_machine_status
-  - service: notify.home_assistant_group
-    data:
-      message: "\U0001F456 Laundry machine has started!"
-  mode: single
-- id: '1672558877974'
-  alias: Laundry machine has finished
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.laundry_machine_power
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-    below: 5
-  condition:
-  - condition: state
-    entity_id: input_select.washing_machine_status
-    state: 'On'
-  action:
-  - service: light.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.laundry_machine_light
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id: input_select.washing_machine_status
-  - service: notify.home_assistant_group
-    data:
-      message: "\U0001F456 Laundry machine has finished!"
-  mode: single
 - id: '1673469552878'
   alias: 'Helper: Set Bedroom AC Status to On'
   description: ''
@@ -235,70 +180,6 @@
         clickAction: /shopping-list
         url: /shopping-list
   mode: single
-- id: '1675577078929'
-  alias: Supervisor - Main Door Open
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.main_door_sensor_contact
-    from: 'off'
-    to: 'on'
-    id: door_open
-  condition: []
-  action:
-  - service: light.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.kitchen_l2
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 45
-  - service: camera.snapshot
-    data:
-      filename: /config/www/tmp/snapshot_living_room_sub.jpg
-    target:
-      entity_id:
-      - camera.dining_table_sub
-  - service: telegram_bot.send_photo
-    data:
-      authentication: digest
-      file: /config/www/tmp/snapshot_living_room_sub.jpg
-      caption: "\U0001F916 Automation - Main Door is open now!"
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 25
-      milliseconds: 0
-  - service: light.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.kitchen_l2
-  mode: single
-- id: '1675577121363'
-  alias: Supervisor - Main Door Closed
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.main_door_sensor_contact
-    from: 'on'
-    to: 'off'
-  condition: []
-  action:
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 3
-      milliseconds: 0
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Main Door is closed now!"
-  mode: single
 - id: '1675577446512'
   alias: Supervisor - Elian is Away
   description: ''
@@ -374,20 +255,6 @@
     data:
       message: "\U0001F916 Automation - qBitTorrent is Offline!"
   mode: single
-- id: '1675954097249'
-  alias: Robot Vacuum Started Notification Telegram
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.roborock_s8_pro_ultra_cleaning
-    to: 'on'
-  condition: []
-  action:
-  - service: notify.home_assistant_group
-    data:
-      message: "\U0001F9F9 Vacuum Robot has started!"
-  mode: single
 - id: '1675955302558'
   alias: Fish Fed Telegram Notification
   trigger:
@@ -431,24 +298,6 @@
       | default() | timestamp_custom('%H:%M %A', default='unknown') %} {% set value
       = (value | default())[6] | default('unknown') %} {% set error = (value | default())[5]
       | default() == 0 %} {{ dict(timestamp=timestamp,value=value,error=error) }}\n"
-  mode: single
-- id: '1675957403629'
-  alias: Robot Vacuum Finished Notification Telegram
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.roborock_s8_pro_ultra_cleaning
-    to: 'off'
-    from: 'on'
-  condition: []
-  action:
-  - service: notify.home_assistant_group
-    data:
-      title: "\U0001F9F9 Vacuum Robot has finished and returned to base!"
-      message: It took {{ ( states('sensor.roborock_s8_pro_ultra_cleaning_time') |
-        int / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_cleaning_area')
-        }} m².
   mode: single
 - id: '1676503252475'
   alias: Hallway Motion Light
@@ -539,8 +388,8 @@
       entity_id: device_tracker.elians_iphone
       type: is_not_home
   - condition: state
-    entity_id: input_select.living_room_tv_status
-    state: 'Off'
+    entity_id: vacuum.roborock_s8_pro_ultra
+    state: docked
   action:
   - service: camera.snapshot
     data:
@@ -689,110 +538,6 @@
     data:
       message: "\U0001F41F ❌ The fishes have not been fed for more than 2 days!"
   mode: single
-- id: '1680267194597'
-  alias: 'Helper: Set Office TV Status to On'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.office_tv_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 9
-    above: 12
-  condition:
-  - condition: state
-    entity_id: input_select.office_tv_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id: input_select.office_tv_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
-        to On!"
-  mode: single
-- id: '1680267264459'
-  alias: 'Helper: Set Office TV Status to Off'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.office_tv_power
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 39
-    below: 11
-  condition:
-  - condition: state
-    entity_id: input_select.office_tv_status
-    state: 'On'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id: input_select.office_tv_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
-        to Off!"
-  mode: single
-- id: '1680274781889'
-  alias: 'Helper: Set Living Room TV Status to On'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.living_room_tv_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 9
-    above: 5
-  condition:
-  - condition: state
-    state: 'Off'
-    entity_id: input_select.living_room_tv_status
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id: input_select.living_room_tv_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
-        changed to On!"
-  mode: single
-- id: '1680274832575'
-  alias: 'Helper: Set Living Room TV Status to Off'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id: sensor.living_room_tv_power
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 45
-    below: 4
-  condition:
-  - condition: state
-    state: 'On'
-    entity_id: input_select.living_room_tv_status
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id: input_select.living_room_tv_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
-        changed to Off!"
-  mode: single
 - id: '1683641424442'
   alias: Bedroom Sticker Button
   description: ''
@@ -928,47 +673,6 @@
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - \U0001F6D1 Backup failed!  \U0001F6D1 "
-  mode: single
-- id: '1687353252073'
-  alias: 'Helper: Set Living Room AC Status to On'
-  description: Notification to Supervisor group when Living Room AC changed to On
-    status.
-  trigger:
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: 'on'
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: cool
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: heat
-  condition: []
-  action:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
-        to On!"
-  mode: single
-- id: '1687353338494'
-  alias: 'Helper: Set Living Room AC Status to Off'
-  description: Notification to Supervisor group when Living Room AC changed to Off
-    status.
-  trigger:
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: 'off'
-    from:
-  condition: []
-  action:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
-        to Off!"
   mode: single
 - id: '1694084772132'
   alias: No Presence Office
@@ -1212,7 +916,7 @@
   alias: Shower Automations
   description: '1. Turn heater off after 35 minutes
 
-    2. Turn Boiler off after 1 hour and 15 minutes
+    2. Turn Boiler off after 1 hour and 20 minutes
 
     3. Input select Shower Heater to on
 
@@ -1224,7 +928,9 @@
 
     7. Light On Notification
 
-    8. Light Off Notification'
+    8. Light Off Notification
+
+    9. Clean Room'
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1237,13 +943,13 @@
     id: heater
   - platform: state
     entity_id:
-    - input_select.switcher_boiler_status
+    - switch.boiler
     to: 'On'
     for:
       hours: 1
-      minutes: 15
+      minutes: 20
       seconds: 0
-    id: boiler_on_for_1_hour_40_minutes
+    id: boiler_on_for_1_hour_20_minutes
   - platform: numeric_state
     entity_id:
     - sensor.heater_shower_power
@@ -1312,13 +1018,14 @@
         message: "\U0001F916 Automation - ♨️ Someone forgot the Heater on! Turned
           it OFF. ♨️"
     alias: '1'
-  - if:
+  - alias: '2'
+    if:
     - condition: trigger
       id:
-      - boiler_on_for_1_hour_40_minutes
+      - boiler_on_for_1_hour_20_minutes
     - condition: state
-      entity_id: switch.boiler
-      state: 'on'
+      entity_id: input_select.switcher_boiler_status
+      state: 'On'
     then:
     - service: switch.turn_off
       metadata: {}
@@ -1327,12 +1034,8 @@
         device_id: 928250a9ace44dda8bbe162fc9440d6d
     - service: notify.supervisor_telegram
       data:
-        message: "\U0001F916 Automation - Turn Boiler off after 1 hour and 40 minutes
+        message: "\U0001F916 Automation - Turn Boiler off after 1 hour and 20 minutes
           \U0001F6BF"
-    - service: notify.mobile_app_elians_iphone
-      data:
-        message: השארת את הדוד דולק לשעתיים, סוגר את הדוד!
-    alias: '2'
   - alias: '3'
     if:
     - condition: and
@@ -1433,6 +1136,28 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Light is off in Shower\U0001F6C1"
+  - alias: '9'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+      enabled: false
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 22
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Shower
+          room!"
+    enabled: false
   mode: single
 - id: '1706093864988'
   alias: Water Leakage Notification
@@ -1554,101 +1279,6 @@
     data:
       message: "\U0001F916 Automation - Office Switch Sticker Button"
   mode: single
-- id: '1706112151664'
-  alias: Living Room Wireless Remote Switch
-  description: '1 - Power button
-
-    2 - + Tempature
-
-    3 - - Tempature
-
-    4 - Light toggle'
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.living_room_wireless_remote_switch_action
-    to: 1_single
-    id: button1_singlePress
-  - platform: state
-    entity_id:
-    - sensor.living_room_wireless_remote_switch_action
-    to: 2_single
-    id: button2_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.living_room_wireless_remote_switch_action
-    to: 3_single
-    id: button3_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.living_room_wireless_remote_switch_action
-    to: 4_single
-    id: button4_singlePress
-    enabled: true
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - button1_singlePress
-      sequence:
-      - if:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: climate.ofir_a_c
-            state: cool
-          - condition: state
-            entity_id: climate.ofir_a_c
-            state: heat
-        then:
-        - service: climate.turn_off
-          metadata: {}
-          data: {}
-          target:
-            device_id: 5747456c3abcc55ad57e3875baf58ba2
-        else:
-        - service: climate.turn_on
-          metadata: {}
-          data: {}
-          target:
-            device_id: 5747456c3abcc55ad57e3875baf58ba2
-    - conditions:
-      - condition: trigger
-        id:
-        - button2_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
-            + 1 }}'
-        target:
-          entity_id: climate.ofir_a_c
-    - conditions:
-      - condition: trigger
-        id:
-        - button3_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
-            - 1 }}'
-        target:
-          entity_id: climate.ofir_a_c
-    - conditions:
-      - condition: trigger
-        id:
-        - button4_singlePress
-      sequence:
-      - service: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.living_room_l1
-  mode: single
 - id: '1706286005645'
   alias: Kitchen Automations
   description: '1. Smoke Detector
@@ -1663,7 +1293,21 @@
 
     6. Laundry Machine Light On Notification
 
-    7. Laundry Machine Light Off Notification'
+    7. Laundry Machine Light Off Notification
+
+    8. Laundry machine has started Notification
+
+    9. Laundry machine has finished Notification
+
+    10. Light will turn on if light is off, presence in Kitchen detected.
+
+    11. No Presence for 30 minutes will turn off the light.
+
+    12. Robot Vacuum Started Notification
+
+    13. Robot Vacuum Finished Notification
+
+    14. Clean Room'
   trigger:
   - platform: state
     entity_id:
@@ -1702,6 +1346,51 @@
     from: 'on'
     to: 'off'
     id: laundry_light_set_off
+  - platform: numeric_state
+    entity_id:
+    - sensor.laundry_machine_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
+    above: 25
+    id: laundry_machine_set_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.laundry_machine_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 30
+    id: laundry_machine_set_off
+    below: 2
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_presence_sensor_presence
+    from: 'off'
+    to: 'on'
+    id: yes_presence
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_presence_sensor_presence
+    from: 'on'
+    to: 'off'
+    id: no_presence_30mins
+    for:
+      hours: 0
+      minutes: 30
+      seconds: 0
+  - platform: state
+    entity_id:
+    - binary_sensor.roborock_s8_pro_ultra_cleaning
+    to: 'on'
+    id: vacuum_robot_cleaning
+  - platform: state
+    entity_id:
+    - binary_sensor.roborock_s8_pro_ultra_cleaning
+    to: 'off'
+    id: vacuum_robot_finished
+    from: 'on'
   condition: []
   action:
   - alias: '1'
@@ -1789,66 +1478,162 @@
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Laundry Machine Light is off
           in Kitchen \U0001F52A"
-  mode: single
-- id: '1706649715941'
-  alias: 'Helper: Set Office AC Status to Off'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.office_ac_power
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 47
-    below: 4
-    enabled: true
-  condition:
-  - condition: state
-    entity_id: input_select.office_ac_status
-    state: 'On'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id:
-      - input_select.office_ac_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Office AC ❄️ Status has been changed to Off!"
-  mode: single
-- id: '1706649761429'
-  alias: 'Helper: Set Office AC Status to On'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.office_ac_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 20
-    above: 5
-    enabled: true
-  condition:
-  - condition: state
-    entity_id: input_select.office_ac_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id:
-      - input_select.office_ac_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Office AC ❄️ Status has been changed to On!"
+  - alias: '8'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - laundry_machine_set_on
+      - condition: state
+        entity_id: input_select.washing_machine_status
+        state: 'Off'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'On'
+      target:
+        entity_id: input_select.washing_machine_status
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F456 Laundry machine has started!"
+  - alias: '9'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - laundry_machine_set_off
+      - condition: state
+        entity_id: input_select.washing_machine_status
+        state: 'On'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.washing_machine_status
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F456 Laundry machine has finished!"
+    - service: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.laundry_machine_light
+  - alias: '10'
+    if:
+    - condition: trigger
+      id:
+      - yes_presence
+    - condition: state
+      entity_id: light.kitchen_l1
+      state: 'off'
+    - condition: time
+      after: '15:00:00'
+      before: '23:59:00'
+    then:
+    - service: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.kitchen_l1
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation -  \U0001F4A1Presence in Kitchen, turned the
+          light on!"
+  - alias: '11'
+    if:
+    - condition: trigger
+      id:
+      - no_presence_30mins
+    - condition: state
+      entity_id: light.kitchen_l1
+      state: 'on'
+    then:
+    - service: light.turn_off
+      target:
+        entity_id:
+        - light.kitchen_l1
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation -  \U0001F4A1No Presence in Kitchen, turned
+          the light off!"
+  - alias: '12'
+    if:
+    - condition: trigger
+      id:
+      - vacuum_robot_cleaning
+    then:
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F9F9 Vacuum Robot has started!"
+  - alias: '13'
+    if:
+    - condition: trigger
+      id:
+      - vacuum_robot_finished
+    then:
+    - service: notify.home_assistant_group
+      data:
+        title: "\U0001F9F9 Vacuum Robot has finished and returned to base!"
+        message: It took {{ ( states('sensor.roborock_s8_pro_ultra_cleaning_time')
+          | int / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_cleaning_area')
+          }} m².
+  - alias: '14'
+    if:
+    - condition: trigger
+      id:
+      - vacuum_robot_finished
+      enabled: false
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 24
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Kitchen
+          room!"
+    enabled: false
   mode: single
 - id: '1707598067921'
   alias: Living Room Automations
-  description: 1. No Presence for 35 minutes will turn off TV.
+  description: '1. No Presence for 35 minutes will turn off TV.
+
+    2. TV Off Notification
+
+    3. TV On Notification
+
+    4. AC On Notification
+
+    5. AC Off Notification
+
+    6. Main Door Open Notification
+
+    7. Main Door Closed Notification
+
+    8. TV Power button - 1_single
+
+    9. +Tempature - 2_single
+
+    10. -Tempature - 3_single
+
+    11. Light toggle - 4_single
+
+    12. Clean Room'
   trigger:
   - platform: state
     entity_id:
@@ -1859,6 +1644,75 @@
       minutes: 35
       seconds: 0
     id: noPresence_tvOff
+  - platform: numeric_state
+    entity_id:
+    - sensor.living_room_tv_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 45
+    below: 4
+    id: tv_is_off
+  - platform: numeric_state
+    entity_id:
+    - sensor.living_room_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 9
+    id: tv_is_on
+    above: 5
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: cool
+    id: ac_set_cool
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: heat
+    id: ac_set_heat
+  - platform: state
+    entity_id:
+    - climate.ofir_a_c
+    to: 'off'
+    id: ac_set_to_off
+    from:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    from: 'off'
+    to: 'on'
+    id: door_open
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    from: 'on'
+    to: 'off'
+    id: door_close
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 1_single
+    id: button1_singlePress
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 2_single
+    id: button2_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 3_single
+    id: button3_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.living_room_wireless_remote_switch_action
+    to: 4_single
+    id: button4_singlePress
+    enabled: true
   condition: []
   action:
   - alias: '1'
@@ -1868,7 +1722,7 @@
       - noPresence_tvOff
     - condition: state
       entity_id: input_select.living_room_tv_status
-      state: 'on'
+      state: 'On'
     then:
     - service: script.ir_turn_on_off_living_room_tv
       data: {}
@@ -1876,6 +1730,201 @@
       data:
         message: "\U0001F916 Automation - \U0001F4FA No Presence on LR, Turned off
           TV!"
+  - alias: '2'
+    if:
+    - condition: trigger
+      id:
+      - tv_is_off
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.living_room_tv_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
+          changed to Off!"
+  - alias: '3'
+    if:
+    - condition: trigger
+      id:
+      - tv_is_on
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'Off'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'On'
+      target:
+        entity_id: input_select.living_room_tv_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
+          changed to On!"
+  - alias: '4'
+    if:
+    - condition: trigger
+      id:
+      - ac_set_cool
+      - ac_set_heat
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
+          to On!"
+  - alias: '5'
+    if:
+    - condition: trigger
+      id:
+      - ac_set_to_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
+          to Off!"
+  - alias: '6'
+    if:
+    - condition: trigger
+      id:
+      - door_open
+    then:
+    - service: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.kitchen_l2
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+    - service: camera.snapshot
+      metadata: {}
+      data:
+        filename: /config/www/tmp/snapshot_living_room_sub.jpg
+      target:
+        entity_id: camera.dining_table_sub
+    - service: telegram_bot.send_photo
+      metadata: {}
+      data:
+        authentication: digest
+        file: /config/www/tmp/snapshot_living_room_sub.jpg
+        caption: "\U0001F916 Automation - \U0001F6AAMain Door is open now!"
+  - alias: '7'
+    if:
+    - condition: trigger
+      id:
+      - door_close
+    then:
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 3
+        milliseconds: 0
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6AA Main Door is closed now!"
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 17
+        milliseconds: 0
+    - service: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.kitchen_l2
+  - alias: '8'
+    if:
+    - condition: trigger
+      id:
+      - button1_singlePress
+    then:
+    - if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: cool
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: heat
+      then:
+      - service: climate.turn_off
+        metadata: {}
+        data: {}
+        target:
+          device_id: 5747456c3abcc55ad57e3875baf58ba2
+      else:
+      - service: climate.turn_on
+        metadata: {}
+        data: {}
+        target:
+          device_id: 5747456c3abcc55ad57e3875baf58ba2
+  - alias: '9'
+    if:
+    - condition: trigger
+      id:
+      - button2_singlePress
+    then:
+    - service: climate.set_temperature
+      data:
+        temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
+          + 1 }}'
+      target:
+        entity_id: climate.ofir_a_c
+  - alias: '10'
+    if:
+    - condition: trigger
+      id:
+      - button3_singlePress
+    then:
+    - service: climate.set_temperature
+      data:
+        temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
+          - 1 }}'
+      target:
+        entity_id: climate.ofir_a_c
+  - alias: '11'
+    if:
+    - condition: trigger
+      id:
+      - button4_singlePress
+    then:
+    - service: light.toggle
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.living_room_l1
+  - alias: '12'
+    if:
+    - condition: trigger
+      id:
+      - button4_singlePress
+      enabled: false
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 23
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Living
+          room!"
+    enabled: false
   mode: single
 - id: '1708896192081'
   alias: Bedroom Second Wireless Remote
@@ -1990,7 +2039,9 @@
 
     2. Light On Notification
 
-    3. Light Off Notification'
+    3. Light Off Notification
+
+    4. Clean Room'
   trigger:
   - platform: state
     entity_id:
@@ -2051,6 +2102,27 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Light is off in Bathroom \U0001F6BD"
+  - alias: '4'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+      enabled: false
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 20
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Bathroom!"
+    enabled: false
   mode: single
 - id: '1709151799515'
   alias: Wardrobe Automations
@@ -2066,7 +2138,9 @@
 
     6. Add +1 Degree to AC - Button 2 Wireless Remote
 
-    7. -1 Degree to AC - Button 3 Wireless Remote'
+    7. -1 Degree to AC - Button 3 Wireless Remote
+
+    8. Clean Room'
   trigger:
   - platform: numeric_state
     entity_id:
@@ -2113,6 +2187,11 @@
     - sensor.wardrobe_wireless_remote_switch_action
     id: button3_singlePress
     to: 3_single
+  - platform: state
+    entity_id:
+    - sensor.wardrobe_sticker_switch_button_action
+    to: hold
+    id: sticker_hold_press
   condition: []
   action:
   - alias: '1'
@@ -2217,4 +2296,177 @@
           - 1 }}'
       target:
         entity_id: climate.wardrobe
+  - alias: '8'
+    if:
+    - condition: trigger
+      id:
+      - sticker_hold_press
+      enabled: true
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 16
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Wardrobe
+          room!"
+    enabled: true
+  mode: single
+- id: '1709211665820'
+  alias: Office Automations
+  description: '1. AC On Notification
+
+    2. AC Off Notification
+
+    3. TV On Notification
+
+    4. TV Off Notification
+
+    9. Clean Room'
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.office_ac_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 15
+    above: 5
+    id: ac_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.office_ac_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 40
+    id: ac_off
+    below: 4
+  - platform: numeric_state
+    entity_id:
+    - sensor.office_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 8
+    above: 12
+    id: tv_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.office_tv_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 30
+    id: tv_off
+    below: 11
+  condition: []
+  action:
+  - alias: '1'
+    if:
+    - condition: trigger
+      id:
+      - ac_on
+    - condition: state
+      entity_id: input_select.office_ac_status
+      state: 'Off'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'On'
+      target:
+        entity_id: input_select.office_ac_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Office AC ❄️ Status has been changed to
+          On!"
+  - alias: '2'
+    if:
+    - condition: trigger
+      id:
+      - ac_off
+    - condition: state
+      entity_id: input_select.office_ac_status
+      state: 'On'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.office_ac_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Office AC ❄️ Status has been changed to
+          Off!"
+  - alias: '3'
+    if:
+    - condition: trigger
+      id:
+      - tv_on
+    - condition: state
+      entity_id: input_select.office_tv_status
+      state: 'Off'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'On'
+      target:
+        entity_id:
+        - input_select.office_tv_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
+          to On!"
+  - alias: '4'
+    if:
+    - condition: trigger
+      id:
+      - tv_off
+    - condition: state
+      entity_id: input_select.office_tv_status
+      state: 'On'
+    then:
+    - service: input_select.select_option
+      metadata: {}
+      data:
+        option: 'Off'
+      target:
+        entity_id:
+        - input_select.office_tv_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
+          to Off!"
+  - alias: '9'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+      enabled: false
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 22
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Shower
+          room!"
+    enabled: false
   mode: single

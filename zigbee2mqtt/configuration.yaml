@@ -11,6 +11,7 @@ advanced:
   homeassistant_legacy_entity_attributes: false
   legacy_api: false
   legacy_availability_payload: false
+  log_level: info
 device_options:
   legacy: false
 devices:
@@ -155,3 +156,5 @@ devices:
   '0xa4c138e6fc18ec4e':
     friendly_name: Kitchen
     description: located above the fridge
+  '0x00158d0009cf58d1':
+    friendly_name: Wardrobe Sticker Switch button
