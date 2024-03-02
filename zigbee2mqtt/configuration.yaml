@@ -158,3 +158,9 @@ devices:
     description: located above the fridge
   '0x00158d0009cf58d1':
     friendly_name: Wardrobe Sticker Switch button
+  '0x00158d000970764f':
+    friendly_name: Kitchen Sticker Switch button
+    description: in the drawer
+  '0x00158d000adbfa23':
+    friendly_name: Water Leak Laundry Machine
+    description: located on the floor, under the boiler, behind the laundry machine

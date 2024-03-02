@@ -114,18 +114,6 @@ turn_off_on_kitchen_light:
       message: "\U0001F4DC Script - Kitchen light has been triggered!"
   mode: single
   icon: hue:ceiling-round
-turn_off_on_office_light:
-  alias: Toggle Office Light
-  sequence:
-  - service: light.toggle
-    data: {}
-    target:
-      entity_id: light.office_wall_light
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Office light has been triggered!"
-  mode: single
-  icon: hue:ceiling-round
 turn_on_switcher_for_60mins:
   alias: Turn ON Boiler for 60 minutes
   sequence:
@@ -161,20 +149,6 @@ shower_music:
       start_volume: 86
   mode: single
   icon: mdi:account-music
-turn_off_bathroom_light:
-  alias: Turn OFF Bathroom Light
-  sequence:
-  - service: switch.turn_off
-    data: {}
-    target:
-      device_id:
-      - 974fe480eea5ad9851e2b94d16cb3baa
-      - 8b0b37e639c674161245a6a30534f8e5
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Bathroom Lights Turned OFF"
-  mode: single
-  icon: hue:bulb-br30
 toggle_living_room_ac:
   alias: Toggle Living Room AC
   sequence:
@@ -250,7 +224,9 @@ home_leave:
       - condition: template
         value_template: '{{ is_state(''input_select.bedroom_tv_status'', ''On'') or
           is_state(''input_select.bedroom_ac_status'', ''On'') or is_state(''input_select.living_room_tv_status'',
-          ''On'') or is_state(''input_select.office_tv_status'', ''On'') }}'
+          ''On'') or is_state(''input_select.office_tv_status'', ''On'') or is_state(''input_select.office_ac_status'',
+          ''On'') or is_state(''input_select.wardrobe_ac_status'', ''On'') or is_state(''input_select.shower_heater_status'',
+          ''On'')}}'
       sequence:
       - choose:
         - conditions:
@@ -310,6 +286,37 @@ home_leave:
           sequence:
           - service: script.tv_power_office
             data: {}
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.office_ac_status
+            state: 'On'
+          sequence:
+          - service: climate.turn_off
+            data: {}
+            target:
+              entity_id: climate.office
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.wardrobe_ac_status
+            state: 'On'
+          sequence:
+          - service: climate.turn_off
+            data: {}
+            target:
+              entity_id:
+              - climate.wardrobe
+      - choose:
+        - conditions:
+          - condition: state
+            entity_id: input_select.shower_heater_status
+            state: 'On'
+          sequence:
+          - service: switch.turn_off
+            target:
+              entity_id: switch.heater_shower
+            data: {}
       - delay:
           hours: 0
           minutes: 5
@@ -322,8 +329,12 @@ home_leave:
     continue_on_error: true
     data: {}
     target:
-      device_id:
-      - 16df7102b63d09b6fcc378186c583972
+      area_id:
+      - office_room
+      - living_room
+      - kitchen
+      - wardrobe
+      - shower
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - House devices are OFF!"
