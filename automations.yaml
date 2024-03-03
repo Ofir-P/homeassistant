@@ -390,6 +390,9 @@
   - condition: state
     entity_id: vacuum.roborock_s8_pro_ultra
     state: docked
+  - condition: state
+    entity_id: binary_sensor.living_room_person
+    state: 'on'
   action:
   - service: camera.snapshot
     data:
@@ -582,11 +585,15 @@
     to: hold
   condition: []
   action:
+  - service: script.home_leave
+    metadata: {}
+    data: {}
   - service: switch.turn_off
     continue_on_error: true
     data: {}
     target:
       entity_id: switch.boiler
+    enabled: false
   - service: light.turn_off
     continue_on_error: true
     data: {}
@@ -597,6 +604,7 @@
       - kitchen
       - wardrobe
       - shower
+    enabled: false
   - service: climate.turn_off
     metadata: {}
     data: {}
@@ -605,6 +613,7 @@
       - climate.wardrobe
       - climate.office
       - climate.ofir_a_c
+    enabled: false
   - repeat:
       while:
       - condition: template
@@ -636,9 +645,11 @@
           minutes: 5
           seconds: 35
           milliseconds: 0
+    enabled: false
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Turn off devices except Bedroom TV & AC"
+    enabled: false
   mode: single
 - id: '1687258354025'
   alias: Backup failed notification
@@ -657,7 +668,7 @@
   mode: single
 - id: '1694084772132'
   alias: Presence Office
-  description: 'If no presence for 35 minutes+ in Office Room, will turn off the TV/AC
+  description: 'If no presence for 25 minutes+ in Office Room, will turn off the TV/AC
     and lights.
 
     If yes presence will turn on lights.'
@@ -668,7 +679,7 @@
     to: 'off'
     for:
       hours: 0
-      minutes: 35
+      minutes: 25
       seconds: 0
     id: no_presence
   - platform: state
@@ -736,6 +747,9 @@
       - condition: state
         entity_id: light.office
         state: 'off'
+      - condition: time
+        after: '13:00:00'
+        before: '23:00:00'
     then:
     - service: light.turn_on
       data: {}
@@ -962,13 +976,14 @@
     id: heater
   - platform: state
     entity_id:
-    - switch.boiler
+    - input_select.switcher_boiler_status
     to: 'On'
     for:
       hours: 1
       minutes: 20
       seconds: 0
     id: boiler_on_for_1_hour_20_minutes
+    from: 'Off'
   - platform: numeric_state
     entity_id:
     - sensor.heater_shower_power
@@ -1042,9 +1057,6 @@
     - condition: trigger
       id:
       - boiler_on_for_1_hour_20_minutes
-    - condition: state
-      entity_id: input_select.switcher_boiler_status
-      state: 'On'
     then:
     - service: switch.turn_off
       metadata: {}

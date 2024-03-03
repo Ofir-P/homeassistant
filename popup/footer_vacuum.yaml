@@ -29,28 +29,17 @@ browser_mod:
                     }
               card:
                 type: custom:vacuum-card
-                entity: vacuum.mijia_v2_202f_robot_cleaner
+                entity: vacuum.roborock_s8_pro_ultra
                 actions:
                   start:
                     service: vacuum.start
                     service_data:
-                      entity_id: vacuum.mijia_v2_202f_robot_cleaner
-                stats:
-                  default:
-                    - entity_id: sensor.mijia_v2_202f_filter_life_level
-                      unit: "%"
-                      subtitle: Filter
-                    - entity_id: sensor.mijia_v2_202f_brush_life_level_2
-                      unit: "%"
-                      subtitle: Side brush
-                    - entity_id: sensor.mijia_v2_202f_brush_life_level
-                      unit: "%"
-                      subtitle: Main brush
+                      entity_id: vacuum.roborock_s8_pro_ultra
                   cleaning:
-                    - entity_id: sensor.vacuum_clean_area
+                    - entity_id: sensor.roborock_s8_pro_ultra_cleaning_area
                       unit: m²
                       subtitle: Cleaning area
-                    - attribute: clean_record.clean_time
+                    - attribute: sensor.roborock_s8_pro_ultra_cleaning_time
                       unit: minutes
                       subtitle: Cleaning time
                 shortcuts:

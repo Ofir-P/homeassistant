@@ -278,6 +278,10 @@ home_leave:
               payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
               qos: 0
               retain: false
+            enabled: false
+          - service: script.ir_turn_on_off_living_room_tv
+            metadata: {}
+            data: {}
       - choose:
         - conditions:
           - condition: state
@@ -330,11 +334,16 @@ home_leave:
     data: {}
     target:
       area_id:
-      - office_room
       - living_room
       - kitchen
       - wardrobe
       - shower
+      entity_id:
+      - light.office
+      - light.office_bathroom
+      - light.office_elian_desk_rgb_strip
+      - light.office_ofir_desk_rgb_strip
+      - light.office_wall_light
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - House devices are OFF!"
