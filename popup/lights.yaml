@@ -1,0 +1,50 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Spotify
+    card_mod:
+      style:
+        #popup header
+        .:
+    content:
+      type: vertical-stack
+      cards:
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.bathroom
+            - type: custom:mushroom-light-card
+              entity: light.bedroom
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.shower_l2
+            - type: custom:mushroom-light-card
+              entity: light.kitchen_l1
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.laundry_machine_light
+              name: Laundry Machine
+            - type: custom:mushroom-light-card
+              entity: light.living_room_l1
+              fill_container: false
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.kitchen_l2
+            - type: custom:mushroom-light-card
+              entity: light.living_room_l2
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.office
+            - type: custom:mushroom-light-card
+              entity: light.office_bathroom
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.shower_l1
+            - type: custom:mushroom-light-card
+              entity: light.wardrobe

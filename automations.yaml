@@ -28,58 +28,6 @@
         data:
           message: "\U0001F916 Automation - {{sensors}} has low on battery, please
             replace it."
-- id: '1673469552878'
-  alias: 'Helper: Set Bedroom AC Status to On'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.bedroom_ac_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 20
-    above: 5
-  condition:
-  - condition: state
-    entity_id: input_select.bedroom_ac_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id: input_select.bedroom_ac_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Bedroom AC ❄️ Status has been changed to On!"
-  mode: single
-- id: '1673469610479'
-  alias: 'Helper: Set Bedroom AC Status to Off'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.bedroom_ac_power
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 47
-    below: 4
-  condition:
-  - condition: state
-    entity_id: input_select.bedroom_ac_status
-    state: 'On'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id: input_select.bedroom_ac_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Bedroom AC ❄️ Status has been changed to Off!"
-  mode: single
 - id: '1673808016982'
   alias: Bedroom A/C Bedroom OFF
   description: ''
@@ -406,129 +354,6 @@
       caption: "\U0001F916 Automation - Notify with camera snapshot when motion is
         detected!"
   mode: single
-- id: '1677017796757'
-  alias: Blink Red Light Office
-  description: When Ofir is home and Main Door open or Elian enters Home area.
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.main_door_sensor_contact
-    to: 'on'
-  - platform: state
-    entity_id:
-    - device_tracker.elians_iphone
-    from: not_home
-    to: home
-    id: elian_home_area
-  condition:
-  - condition: device
-    device_id: 3991a8dcff5132448a99a281daf3577d
-    domain: device_tracker
-    entity_id: ee5300687733e0be5478ba30e2f369e0
-    type: is_home
-  - condition: time
-    after: '16:15:00'
-    before: 01:30:00
-  - alias: Confirm someone is Presence at Office
-    condition: state
-    entity_id: binary_sensor.office_presence_sensor_presence
-    state: 'on'
-    enabled: true
-  action:
-  - service: scene.create
-    data:
-      scene_id: thebeforetimes
-      snapshot_entities:
-      - light.office_elian_desk_rgb_strip
-      - light.office_ofir_desk_rgb_strip
-      - light.office_wall_light
-  - repeat:
-      count: '70'
-      sequence:
-      - service: light.toggle
-        data:
-          color_name: red
-        target:
-          entity_id:
-          - light.office_elian_desk_rgb_strip
-          - light.office_ofir_desk_rgb_strip
-          device_id: fda8e5d95506b514038003c8f369a4df
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 0
-          milliseconds: 250
-  - service: scene.turn_on
-    target:
-      entity_id: scene.thebeforetimes
-    metadata: {}
-  - if:
-    - condition: trigger
-      id:
-      - elian_home_area
-    then:
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - Elian enters Home Zone - Flash Red Color"
-    else:
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - Main Door Open Flash Red Color"
-  mode: single
-- id: '1678080669448'
-  alias: 'Helper: Set Bedroom TV Status to On'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.bedroom_tv_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 9
-    above: 5
-  condition:
-  - condition: state
-    entity_id: input_select.bedroom_tv_status
-    state: 'Off'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'On'
-    target:
-      entity_id: input_select.bedroom_tv_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Bedroom TV \U0001F4FA Status has been changed
-        to On!"
-  mode: single
-- id: '1678080898486'
-  alias: 'Helper: Set Bedroom TV Status to Off'
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.bedroom_tv_power
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 45
-    below: 4
-  condition:
-  - condition: state
-    entity_id: input_select.bedroom_tv_status
-    state: 'On'
-  action:
-  - service: input_select.select_option
-    data:
-      option: 'Off'
-    target:
-      entity_id: input_select.bedroom_tv_status
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Bedroom TV \U0001F4FA Status has been changed
-        to Off!"
-  mode: single
 - id: '1678624466464'
   alias: Feeding is Required
   description: ''
@@ -605,51 +430,6 @@
       - wardrobe
       - shower
     enabled: false
-  - service: climate.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - climate.wardrobe
-      - climate.office
-      - climate.ofir_a_c
-    enabled: false
-  - repeat:
-      while:
-      - condition: template
-        value_template: '{{ is_state(''input_select.living_room_tv_status'', ''On'')
-          or is_state(''input_select.office_tv_status'', ''On'') }}'
-      sequence:
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.living_room_tv_status
-            state: 'On'
-          sequence:
-          - service: mqtt.publish
-            data:
-              topic: zigbee2mqtt/Smart IR Remote Control/set
-              payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
-              qos: 0
-              retain: false
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.office_tv_status
-            state: 'On'
-          sequence:
-          - service: script.tv_power_office
-            data: {}
-      - delay:
-          hours: 0
-          minutes: 5
-          seconds: 35
-          milliseconds: 0
-    enabled: false
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Turn off devices except Bedroom TV & AC"
-    enabled: false
   mode: single
 - id: '1687258354025'
   alias: Backup failed notification
@@ -665,209 +445,6 @@
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - \U0001F6D1 Backup failed!  \U0001F6D1 "
-  mode: single
-- id: '1694084772132'
-  alias: Presence Office
-  description: 'If no presence for 25 minutes+ in Office Room, will turn off the TV/AC
-    and lights.
-
-    If yes presence will turn on lights.'
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.office_presence_sensor_presence
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 25
-      seconds: 0
-    id: no_presence
-  - platform: state
-    entity_id:
-    - binary_sensor.office_presence_sensor_presence
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-    id: yes_presence
-  condition: []
-  action:
-  - if:
-    - condition: state
-      entity_id: input_select.office_ac_status
-      state: 'On'
-    then:
-    - service: climate.turn_off
-      metadata: {}
-      data: {}
-      target:
-        device_id: ba06295a88107289bcfb16d5f6f459b2
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - No Presence at Office Room - Turn Off AC!"
-  - if:
-    - condition: state
-      entity_id: input_select.office_tv_status
-      state: 'On'
-      for:
-        hours: 0
-        minutes: 5
-        seconds: 0
-    then:
-    - service: script.tv_power_office
-      metadata: {}
-      data: {}
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - No Presence at Office Room - Turn Off TV!"
-  - if:
-    - condition: trigger
-      id:
-      - no_presence
-    then:
-    - service: light.turn_off
-      data: {}
-      target:
-        entity_id:
-        - light.office
-        - light.office_elian_desk_rgb_strip
-        - light.office_ofir_desk_rgb_strip
-        - light.office_wall_light
-        - light.office_bathroom
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - No Presence at Office - Lights off"
-  - if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id:
-        - yes_presence
-      - condition: state
-        entity_id: light.office
-        state: 'off'
-      - condition: time
-        after: '13:00:00'
-        before: '23:00:00'
-    then:
-    - service: light.turn_on
-      data: {}
-      target:
-        entity_id:
-        - light.office
-        - light.office_elian_desk_rgb_strip
-        - light.office_ofir_desk_rgb_strip
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - Presence at Office - Lights on"
-  mode: single
-- id: '1695660239489'
-  alias: Bedroom Wireless Remote AC
-  description: '1 - Power button | Hold - Light toggle
-
-    2 - + Tempature
-
-    3 - - Tempature
-
-    4 - Toggle TV'
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
-    to: 1_single
-    id: button1_singlePress
-  - platform: state
-    entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
-    to: 2_single
-    id: button2_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
-    to: 3_single
-    id: button3_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
-    to: 4_single
-    id: button4_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_wireless_remote_switch_action
-    to: 1_double
-    id: button1_doublePress
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - button1_singlePress
-      sequence:
-      - if:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: climate.bedroom_ac
-            state: cool
-          - condition: state
-            entity_id: climate.bedroom_ac
-            state: heat
-        then:
-        - service: climate.turn_off
-          metadata: {}
-          data: {}
-          target:
-            device_id: 4018257e961bc48fa5b1c539c9efc5ee
-        else:
-        - service: climate.turn_on
-          metadata: {}
-          data: {}
-          target:
-            device_id: 4018257e961bc48fa5b1c539c9efc5ee
-    - conditions:
-      - condition: trigger
-        id:
-        - button2_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
-            + 1 }}'
-        target:
-          entity_id: climate.bedroom_ac
-    - conditions:
-      - condition: trigger
-        id:
-        - button3_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
-            - 1 }}'
-        target:
-          entity_id: climate.bedroom_ac
-    - conditions:
-      - condition: trigger
-        id:
-        - button4_singlePress
-      sequence:
-      - service: script.ir_turn_on_off_bedroom_tv
-        data: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - button1_doublePress
-      sequence:
-      - service: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.bedroom
   mode: single
 - id: '1697368945970'
   alias: Red Alert
@@ -1157,7 +734,7 @@
     then:
     - service: notify.supervisor_telegram
       data:
-        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Shower\U0001F6C1"
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Shower \U0001F6C1"
   - alias: '8'
     if:
     - condition: trigger
@@ -1166,7 +743,7 @@
     then:
     - service: notify.supervisor_telegram
       data:
-        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Shower\U0001F6C1"
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Shower \U0001F6C1"
   - alias: '9'
     if:
     - condition: trigger
@@ -1273,61 +850,6 @@
         metadata: {}
         data:
           message: ⚠️ Water Leak has been detected in Boiler / Laundry Machine area⚠️
-  mode: single
-- id: '1706102094343'
-  alias: Office Sticker Button
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.office_desk_button_action
-    to: single
-    id: single_press
-  - platform: state
-    entity_id:
-    - sensor.office_desk_button_action
-    to: hold
-    id: hold_press
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - single_press
-      sequence:
-      - service: script.turn_on
-        metadata: {}
-        data: {}
-        target:
-          entity_id: script.tv_power_office
-    - conditions:
-      - condition: trigger
-        id:
-        - hold_press
-      sequence:
-      - if:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: climate.office
-            state: cool
-          - condition: state
-            entity_id: climate.office
-            state: heat
-        then:
-        - service: climate.turn_off
-          target:
-            device_id: ba06295a88107289bcfb16d5f6f459b2
-          data: {}
-        else:
-        - service: climate.turn_on
-          target:
-            device_id: ba06295a88107289bcfb16d5f6f459b2
-          data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Office Switch Sticker Button"
   mode: single
 - id: '1706286005645'
   alias: Kitchen Automations
@@ -2001,113 +1523,6 @@
           room!"
     enabled: false
   mode: single
-- id: '1708896192081'
-  alias: Bedroom Second Wireless Remote
-  description: '1 - Power button | Hold - Light toggle
-
-    2 - + Tempature
-
-    3 - - Tempature
-
-    4 - Toggle TV'
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.bedroom_second_wireless_remote_ac_action
-    to: 1_single
-    id: button1_singlePress
-  - platform: state
-    entity_id:
-    - sensor.bedroom_second_wireless_remote_ac_action
-    to: 2_single
-    id: button2_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_second_wireless_remote_ac_action
-    to: 3_single
-    id: button3_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_second_wireless_remote_ac_action
-    to: 4_single
-    id: button4_singlePress
-    enabled: true
-  - platform: state
-    entity_id:
-    - sensor.bedroom_second_wireless_remote_ac_action
-    to: 1_double
-    id: button1_doublePress
-  condition: []
-  action:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id:
-        - button1_singlePress
-      sequence:
-      - if:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: climate.bedroom_ac
-            state: cool
-          - condition: state
-            entity_id: climate.bedroom_ac
-            state: heat
-        then:
-        - service: climate.turn_off
-          metadata: {}
-          data: {}
-          target:
-            device_id: 4018257e961bc48fa5b1c539c9efc5ee
-        else:
-        - service: climate.turn_on
-          metadata: {}
-          data: {}
-          target:
-            device_id: 4018257e961bc48fa5b1c539c9efc5ee
-    - conditions:
-      - condition: trigger
-        id:
-        - button2_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
-            + 1 }}'
-        target:
-          entity_id: climate.bedroom_ac
-    - conditions:
-      - condition: trigger
-        id:
-        - button3_singlePress
-      sequence:
-      - service: climate.set_temperature
-        data:
-          temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
-            - 1 }}'
-        target:
-          entity_id: climate.bedroom_ac
-    - conditions:
-      - condition: trigger
-        id:
-        - button4_singlePress
-      sequence:
-      - service: script.ir_turn_on_off_bedroom_tv
-        data: {}
-    - conditions:
-      - condition: trigger
-        id:
-        - button1_doublePress
-      sequence:
-      - service: light.toggle
-        metadata: {}
-        data: {}
-        target:
-          entity_id: light.bedroom
-  mode: single
 - id: '1709139085917'
   alias: Bathroom Automations
   description: '1. Turn lights off after 10 minutes without motion.
@@ -2404,6 +1819,34 @@
 
     4. TV Off Notification
 
+    5. Motion detected in Office Bathroom - Turn on Light
+
+    6. Desk Button Single Press - TV Toggle
+
+    7. Desk Button Hold Press - AC Toggle
+
+    8. Blink Red Lights
+
+    9. No Presence 25 minutes - Turn off AC if on
+
+    10. No Presence 25 minutes - Turn off TV if on
+
+    11. No Presence 25 minutes - Turn off lights if on
+
+    12. Presence - Turn on lights if off
+
+    13. Fish Fed Telegram Notification
+
+    14. Feeding Required Notification
+
+    15. Light On Office Notification
+
+    16. Light Off Office Notification
+
+    17. Light On Office Bathroom Notification
+
+    18. Light Off Office Bathroom Notification
+
     9. Clean Room'
   trigger:
   - platform: numeric_state
@@ -2442,6 +1885,73 @@
       seconds: 30
     id: tv_off
     below: 11
+  - platform: state
+    entity_id:
+    - binary_sensor.office_bathroom_motion_sensor_occupancy
+    to: 'on'
+    id: motion_in_bathroom
+  - platform: state
+    entity_id:
+    - sensor.office_desk_button_action
+    to: single
+    id: office_desk_button_1singlePress
+  - platform: state
+    entity_id:
+    - sensor.office_desk_button_action
+    to: hold
+    id: office_desk_button_1holdPress
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    to: 'on'
+    id: main_door_open
+  - platform: state
+    entity_id:
+    - device_tracker.elians_iphone
+    from: not_home
+    to: home
+    id: elian_iphone_away_to_home
+  - platform: state
+    entity_id:
+    - binary_sensor.office_presence_sensor_presence
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 25
+      seconds: 0
+    id: presence_away_25_mins
+  - platform: state
+    entity_id:
+    - binary_sensor.office_presence_sensor_presence
+    to: 'on'
+    id: yes_presence
+  - platform: state
+    entity_id: switch.hfjh_v2_eadb_fish_tank_2
+    attribute: event.4.1
+    id: if_feeding
+  - platform: time
+    at: sensor.feed_is_missing_timestamp
+    id: feeding_required
+  - platform: state
+    entity_id:
+    - light.office
+    to: 'on'
+    id: office_light_on
+  - platform: state
+    entity_id:
+    - light.office
+    to: 'off'
+    id: office_light_off
+  - platform: state
+    entity_id:
+    - light.office_bathroom
+    to: 'on'
+    id: office_bathroom_light_on
+  - platform: state
+    entity_id:
+    - light.office_bathroom
+    to: 'off'
+    id: office_bathroom_light_off
   condition: []
   action:
   - alias: '1'
@@ -2522,6 +2032,287 @@
       data:
         message: "\U0001F916 Automation - Office TV \U0001F4FA Status has been changed
           to Off!"
+  - alias: '5'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - motion_in_bathroom
+      - condition: state
+        entity_id: light.office_bathroom
+        state: 'off'
+    then:
+    - service: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.office_bathroom
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Office Bathroom Motion Light"
+  - alias: '6'
+    if:
+    - condition: trigger
+      id:
+      - office_desk_button_1singlePress
+    then:
+    - service: script.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: script.tv_power_office
+  - alias: '7'
+    if:
+    - condition: trigger
+      id:
+      - office_desk_button_1holdPress
+    then:
+    - service: script.toggle_office_ac
+      metadata: {}
+      data: {}
+  - alias: '8'
+    if:
+    - condition: and
+      conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id:
+          - main_door_open
+        - condition: trigger
+          id:
+          - elian_iphone_away_to_home
+      - condition: time
+        after: '16:15:00'
+        before: 01:30:00
+      - condition: state
+        entity_id: binary_sensor.office_presence_sensor_presence
+        state: 'on'
+      - condition: device
+        device_id: 3991a8dcff5132448a99a281daf3577d
+        domain: device_tracker
+        entity_id: ee5300687733e0be5478ba30e2f369e0
+        type: is_home
+        enabled: false
+    then:
+    - service: scene.create
+      data:
+        scene_id: thebeforetimes
+        snapshot_entities:
+        - light.office_elian_desk_rgb_strip
+        - light.office_ofir_desk_rgb_strip
+        - light.office_wall_light
+    - repeat:
+        count: '70'
+        sequence:
+        - service: light.toggle
+          data:
+            color_name: red
+          target:
+            entity_id:
+            - light.office_elian_desk_rgb_strip
+            - light.office_ofir_desk_rgb_strip
+            device_id: fda8e5d95506b514038003c8f369a4df
+        - delay:
+            hours: 0
+            minutes: 0
+            seconds: 0
+            milliseconds: 250
+    - service: scene.turn_on
+      target:
+        entity_id: scene.thebeforetimes
+      metadata: {}
+    - service: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.office_wall_light
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - Blink Red Lights Office"
+  - alias: '9'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - presence_away_25_mins
+      - condition: state
+        entity_id: input_select.office_ac_status
+        state: 'On'
+    then:
+    - service: climate.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: climate.office
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - No Presence at Office Room - Turn Off AC!"
+  - alias: '10'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - presence_away_25_mins
+      - condition: state
+        entity_id: input_select.office_tv_status
+        state: 'On'
+        for:
+          hours: 0
+          minutes: 5
+          seconds: 0
+    then:
+    - service: script.tv_power_office
+      metadata: {}
+      data: {}
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - No Presence at Office Room - Turn Off TV!"
+  - alias: '11'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - presence_away_25_mins
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: light.office
+          state: 'on'
+        - condition: state
+          entity_id: light.office_elian_desk_rgb_strip
+          state: 'on'
+        - condition: state
+          entity_id: light.office_ofir_desk_rgb_strip
+          state: 'on'
+        - condition: state
+          entity_id: light.office_wall_light
+          state: 'on'
+        - condition: state
+          entity_id: light.office_bathroom
+          state: 'on'
+    then:
+    - service: light.turn_off
+      data: {}
+      target:
+        entity_id:
+        - light.office
+        - light.office_elian_desk_rgb_strip
+        - light.office_ofir_desk_rgb_strip
+        - light.office_wall_light
+        - light.office_bathroom
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - No Presence at Office - Lights off"
+  - alias: '12'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - yes_presence
+      - condition: state
+        entity_id: light.office
+        state: 'off'
+      - condition: time
+        after: '13:00:00'
+        before: '23:00:00'
+    then:
+    - service: light.turn_on
+      data: {}
+      target:
+        entity_id:
+        - light.office
+        - light.office_elian_desk_rgb_strip
+        - light.office_ofir_desk_rgb_strip
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - Presence at Office - Lights on"
+  - alias: '13'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - if_feeding
+      - alias: Check if the switch didn't go from or to unavailable
+        condition: template
+        value_template: '{{ not ''unavailable'' in [trigger.from_state.state, trigger.to_state.state]
+          }}'
+      - alias: Check if the values are correct
+        condition: template
+        value_template: '{{ not (values.value == ''unknown'' and values.timestamp
+          == ''unknown'') }}'
+    then:
+    - service: camera.snapshot
+      data:
+        filename: /config/www/tmp/snapshot_aquarium_sub.jpg
+      target:
+        entity_id: camera.aquarium_sub
+    - service: telegram_bot.send_photo
+      data:
+        authentication: digest
+        file: /config/www/tmp/snapshot_aquarium_sub.jpg
+        caption: "    {% if values.error %} \U0001F41F ❌ The fishes have not been
+          fed at {{ values.timestamp }} ❌ {% else %} \U0001F41F The fishes have been
+          fed {{ values.value }} portions at {{ values.timestamp }}. {% endif %}"
+    enabled: false
+  - alias: '14'
+    if:
+    - condition: trigger
+      id:
+      - feeding_required
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F41F ❌ The fishes have not been fed for more than 2 days!"
+  - alias: '15'
+    if:
+    - condition: trigger
+      id:
+      - office_light_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Office \U0001F4DD"
+  - alias: '16'
+    if:
+    - condition: trigger
+      id:
+      - office_light_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Office \U0001F4DD"
+  - alias: '17'
+    if:
+    - condition: trigger
+      id:
+      - office_bathroom_light_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Office Bathroom
+          \U0001F4DD\U0001F9FB"
+  - alias: '18'
+    if:
+    - condition: trigger
+      id:
+      - office_bathroom_light_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Office Bathroom
+          \U0001F4DD\U0001F9FB"
   - alias: '9'
     if:
     - condition: trigger
@@ -2544,4 +2335,342 @@
         message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Shower
           room!"
     enabled: false
+  mode: single
+- id: '1709548823407'
+  alias: Bedroom Automations
+  description: '1. Light On Notification
+
+    2. Light Off Notification
+
+    3. AC On Notification
+
+    4. AC Off Notification
+
+    5. TV On Notification
+
+    6. TV Off Notification
+
+    7. Wireless Remote - 1st button AC Power toggle
+
+    8. Wireless Remote - 2nd button AC + Tempature
+
+    9. Wireless Remote - 3rd button AC  - Tempature
+
+    10. Wireless Remote - 4th button Toggle TV
+
+    11. Wireless Remote - 1st button Hold - Light toggle
+
+    4. Clean Room'
+  trigger:
+  - platform: state
+    entity_id:
+    - light.bedroom
+    from: 'off'
+    to: 'on'
+    id: light_to_on
+  - platform: state
+    entity_id:
+    - light.bedroom
+    from: 'on'
+    to: 'off'
+    id: light_to_off
+  - platform: numeric_state
+    entity_id:
+    - sensor.bedroom_ac_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 20
+    above: 5
+    id: ac_is_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.bedroom_ac_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 47
+    below: 4
+    id: ac_is_off
+  - platform: numeric_state
+    entity_id:
+    - sensor.bedroom_tv_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 9
+    above: 5
+    id: tv_is_on
+  - platform: numeric_state
+    entity_id:
+    - sensor.bedroom_tv_power
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 45
+    id: tv_is_off
+    below: 4
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 1_single
+    id: button1_elianRemote_singlePress
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 1_single
+    id: button1_ofirRemote_singlePress
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 2_single
+    id: button2_elianRemote_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 2_single
+    id: button2_ofirRemote_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 3_single
+    id: button3_elianRemote_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 3_single
+    id: button3_ofirRemote_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 4_single
+    id: button4_elianRemote_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 4_single
+    id: button4_ofirRemote_singlePress
+    enabled: true
+  - platform: state
+    entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 1_double
+    id: button1_elianRemote_doublePress
+  - platform: state
+    entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 1_double
+    id: button1_ofirRemote_doublePress
+  condition: []
+  action:
+  - alias: '1'
+    if:
+    - condition: trigger
+      id:
+      - light_to_on
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is on in Bedroom \U0001F6CF️"
+  - alias: '2'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 Light is off in Bedroom \U0001F6CF️"
+  - alias: '3'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - ac_is_on
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'Off'
+    then:
+    - service: input_select.select_option
+      data:
+        option: 'On'
+      target:
+        entity_id: input_select.bedroom_ac_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Bedroom AC ❄️ Status has been changed to
+          On!"
+  - alias: '4'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - ac_is_off
+      - condition: state
+        entity_id: input_select.bedroom_ac_status
+        state: 'On'
+    then:
+    - service: input_select.select_option
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.bedroom_ac_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Bedroom AC ❄️ Status has been changed to
+          Off!"
+  - alias: '5'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - tv_is_on
+      - condition: state
+        entity_id: input_select.bedroom_tv_status
+        state: 'Off'
+    then:
+    - service: input_select.select_option
+      data:
+        option: 'On'
+      target:
+        entity_id: input_select.bedroom_tv_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Bedroom TV \U0001F4FA Status has been changed
+          to On!"
+  - alias: '6'
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - tv_is_off
+      - condition: state
+        entity_id: input_select.bedroom_tv_status
+        state: 'On'
+    then:
+    - service: input_select.select_option
+      data:
+        option: 'Off'
+      target:
+        entity_id: input_select.bedroom_tv_status
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - Bedroom TV \U0001F4FA Status has been changed
+          to Off!"
+  - alias: '7'
+    if:
+    - condition: trigger
+      id:
+      - button1_elianRemote_singlePress
+      - button1_ofirRemote_singlePress
+    then:
+    - service: script.toggle_bedroom_ac
+      metadata: {}
+      data: {}
+  - alias: '8'
+    if:
+    - condition: trigger
+      id:
+      - button2_elianRemote_singlePress
+      - button2_ofirRemote_singlePress
+    then:
+    - service: climate.set_temperature
+      data:
+        temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
+          + 1 }}'
+      target:
+        entity_id: climate.bedroom_ac
+  - alias: '9'
+    if:
+    - condition: trigger
+      id:
+      - button3_elianRemote_singlePress
+      - button3_ofirRemote_singlePress
+    then:
+    - service: climate.set_temperature
+      data:
+        temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
+          - 1 }}'
+      target:
+        entity_id: climate.bedroom_ac
+  - alias: '10'
+    if:
+    - condition: trigger
+      id:
+      - button4_elianRemote_singlePress
+      - button4_ofirRemote_singlePress
+    then:
+    - service: script.ir_turn_on_off_bedroom_tv
+      data: {}
+  - alias: '11'
+    if:
+    - condition: trigger
+      id:
+      - button1_ofirRemote_doublePress
+      - button1_elianRemote_doublePress
+    then:
+    - service: light.toggle
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.bedroom
+  - alias: '4'
+    if:
+    - condition: trigger
+      id:
+      - light_to_off
+      enabled: false
+    then:
+    - service: vacuum.send_command
+      data:
+        command: app_segment_clean
+        params:
+        - segments:
+          - 20
+          repeat: 2
+      target:
+        entity_id: vacuum.roborock_s8_pro_ultra
+    - service: notify.home_assistant_group
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Bathroom!"
+    enabled: false
+  mode: single
+- id: '1709561304330'
+  alias: Robot Vacuum Daily Routine
+  description: 'Will start to vacuum house if zone.house is empty for more than 45
+    minutes.
+
+    Will run only once a day'
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - zone.home
+    for:
+      hours: 0
+      minutes: 45
+      seconds: 0
+    below: 1
+  condition:
+  - condition: template
+    value_template: '{{ (this.attributes.last_triggered | default(0 | as_datetime,
+      true) | as_local).date() != now().date() }}'
+  action:
+  - service: vacuum.start
+    target:
+      entity_id: vacuum.roborock_s8_pro_ultra
+    data: {}
+  - service: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
   mode: single

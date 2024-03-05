@@ -586,6 +586,12 @@ views:
 
           - type: custom:button-card
             name: >
+              <ha-icon icon="mdi:lightbulb-multiple-outline"></ha-icon> Lights
+            tap_action: !include popup/lights.yaml
+            template: footer
+
+          - type: custom:button-card
+            name: >
               <ha-icon icon="mdi:calendar-account"></ha-icon> Calendar
             tap_action: !include popup/footer_calendar.yaml
             template: footer
