@@ -540,6 +540,8 @@
 
     8. Light Off Notification
 
+    9. Turn on Boiler 6:25AM on Sunday,Monday,Tuesday,Thursday for 15 minutes.
+
     9. Clean Room'
   trigger:
   - platform: numeric_state
@@ -609,6 +611,9 @@
     from: 'on'
     to: 'off'
     id: light_to_off
+  - platform: time
+    at: 06:25:00
+    id: 6_25_am
   condition: []
   action:
   - if:
@@ -744,6 +749,36 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Light is off in Shower \U0001F6C1"
+  - alias: '9'
+    if:
+    - condition: trigger
+      id:
+      - 6_25_am
+    - condition: time
+      weekday:
+      - sun
+      - mon
+      - tue
+      - thu
+    then:
+    - service: switch.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.boiler
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - ♨️ Hot Water before Work!"
+    - delay:
+        hours: 0
+        minutes: 15
+        seconds: 0
+        milliseconds: 0
+    - service: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.boiler
   - alias: '9'
     if:
     - condition: trigger
@@ -1572,8 +1607,8 @@
       data: {}
     - service: notify.supervisor_telegram
       data:
-        message: "\U0001F916 Automation - \U0001F6BD Someone forgot the Lights on
-          bathroom! Turned it OFF. \U0001F4A1"
+        message: "\U0001F916 Automation - \U0001F6BD No Presence at Bathroom - Light
+          off \U0001F4A1"
   - alias: '2'
     if:
     - condition: trigger
@@ -1811,43 +1846,16 @@
   mode: single
 - id: '1709211665820'
   alias: Office Automations
-  description: '1. AC On Notification
-
-    2. AC Off Notification
-
-    3. TV On Notification
-
-    4. TV Off Notification
-
-    5. Motion detected in Office Bathroom - Turn on Light
-
-    6. Desk Button Single Press - TV Toggle
-
-    7. Desk Button Hold Press - AC Toggle
-
-    8. Blink Red Lights
-
-    9. No Presence 25 minutes - Turn off AC if on
-
-    10. No Presence 25 minutes - Turn off TV if on
-
-    11. No Presence 25 minutes - Turn off lights if on
-
-    12. Presence - Turn on lights if off
-
-    13. Fish Fed Telegram Notification
-
-    14. Feeding Required Notification
-
-    15. Light On Office Notification
-
-    16. Light Off Office Notification
-
-    17. Light On Office Bathroom Notification
-
-    18. Light Off Office Bathroom Notification
-
-    9. Clean Room'
+  description: "1. AC On Notification\n2. AC Off Notification\n3. TV On Notification\n4.
+    TV Off Notification\n5. Motion detected in Office Bathroom - Turn on Light\n6.
+    Desk Button Single Press - TV Toggle\n7. Desk Button Hold Press - AC Toggle\n8.
+    Blink Red Lights\n9. No Presence 25 minutes - Turn off AC if on\n10. No Presence
+    25 minutes - Turn off TV if on\n11. No Presence 25 minutes - Turn off lights if
+    on\n12. Presence - Turn on lights if off\n13. Fish Fed Telegram Notification\n14.
+    Feeding Required Notification\n15. Light On Office Notification\n16. Light Off
+    Office Notification\n17. Light On Office Bathroom Notification\n18. Light Off
+    Office Bathroom Notification\n19. No Motion 10 minutes - Light off Office Bathroom
+    \n9. Clean Room"
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1952,6 +1960,16 @@
     - light.office_bathroom
     to: 'off'
     id: office_bathroom_light_off
+  - platform: state
+    entity_id:
+    - binary_sensor.office_bathroom_motion_sensor_occupancy
+    to: 'off'
+    id: no_motion_in_bathroom
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
   condition: []
   action:
   - alias: '1'
@@ -2042,6 +2060,9 @@
       - condition: state
         entity_id: light.office_bathroom
         state: 'off'
+      - condition: state
+        entity_id: vacuum.roborock_s8_pro_ultra
+        state: docked
     then:
     - service: light.turn_on
       metadata: {}
@@ -2225,6 +2246,9 @@
       - condition: time
         after: '13:00:00'
         before: '23:00:00'
+      - condition: state
+        entity_id: vacuum.roborock_s8_pro_ultra
+        state: docked
     then:
     - service: light.turn_on
       data: {}
@@ -2313,6 +2337,24 @@
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Light is off in Office Bathroom
           \U0001F4DD\U0001F9FB"
+  - alias: '19'
+    if:
+    - condition: trigger
+      id:
+      - no_motion_in_bathroom
+    - condition: state
+      entity_id: light.office_bathroom
+      state: 'on'
+    then:
+    - service: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.office_bathroom
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4A1 No Presence at Office Bathroom
+          - Lights off \U0001F4DD\U0001F9FB"
   - alias: '9'
     if:
     - condition: trigger
@@ -2647,8 +2689,7 @@
   mode: single
 - id: '1709561304330'
   alias: Robot Vacuum Daily Routine
-  description: 'Will start to vacuum house if zone.house is empty for more than 45
-    minutes.
+  description: 'Will start to vacuum home if zone.home is empty for more than 45 minutes.
 
     Will run only once a day'
   trigger:
@@ -2662,8 +2703,8 @@
     below: 1
   condition:
   - condition: template
-    value_template: '{{ (this.attributes.last_triggered | default(0 | as_datetime,
-      true) | as_local).date() != now().date() }}'
+    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
+      | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
   action:
   - service: vacuum.start
     target:
