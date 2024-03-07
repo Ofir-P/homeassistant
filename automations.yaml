@@ -2125,7 +2125,7 @@
         - light.office_ofir_desk_rgb_strip
         - light.office_wall_light
     - repeat:
-        count: '70'
+        count: 60
         sequence:
         - service: light.toggle
           data:
@@ -2705,6 +2705,8 @@
   - condition: template
     value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
       | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
+  - condition: time
+    after: '10:30:00'
   action:
   - service: vacuum.start
     target:
