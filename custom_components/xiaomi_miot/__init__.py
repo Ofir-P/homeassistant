@@ -14,7 +14,19 @@ from homeassistant import (
     core as hass_core,
     config_entries,
 )
-from homeassistant.const import *
+from homeassistant.const import (
+    ATTR_ENTITY_ID,
+    CONF_HOST,
+    CONF_NAME,
+    CONF_PASSWORD,
+    CONF_SCAN_INTERVAL,
+    CONF_TOKEN,
+    CONF_USERNAME,
+    STATE_OFF,
+    STATE_ON,
+    STATE_UNKNOWN,
+    SERVICE_RELOAD,
+)
 from homeassistant.config import DATA_CUSTOMIZE
 from homeassistant.exceptions import PlatformNotReady
 from homeassistant.helpers.entity import (
@@ -47,6 +59,7 @@ from .core.miot_spec import (
     MiotService,
     MiotProperty,
     MiotAction,
+    MiotResult,
     MiotResults,
 )
 from .core.xiaomi_cloud import (
@@ -422,6 +435,8 @@ def bind_services_to_entries(hass, services):
             update_tasks.append(ent.async_update_ha_state(True))
         if update_tasks:
             await asyncio.gather(*update_tasks)
+        if isinstance(result, (MiotResult, MiotResults)):
+            result = result.to_json()
         if not isinstance(result, dict):
             result = {'result': result}
         return result
@@ -1550,14 +1565,14 @@ class MiotEntity(MiioEntity):
             )
             self._update_sub_entities(
                 [
-                    'battery_level', 'ble_battery_level', 'charging_state', 'voltage', 'power_consumption',
-                    'electric_current', 'leakage_current', 'surge_power', 'electric_power', 'elec_count',
+                    'battery_level', 'ble_battery_level', 'charging_state', 'voltage', 'electric_power',
+                    'electric_current', 'leakage_current', 'surge_power', 'elec_count',
                 ],
                 ['battery', 'power_consumption', 'electricity'],
                 domain='sensor',
             )
             self._update_sub_entities(
-                ['tds_in', 'tds_out'],
+                ['tds_in'],
                 ['tds_sensor'],
                 domain='sensor',
             )
@@ -2118,7 +2133,7 @@ class MiotEntity(MiioEntity):
                 elif add_switches and domain == 'switch' and (p.format in ['bool'] or p.value_list) and p.writeable:
                     self._subs[fnm] = MiotSwitchSubEntity(self, p, option=opt)
                     add_switches([self._subs[fnm]], update_before_add=True)
-                elif add_binary_sensors and domain == 'binary_sensor' and p.is_bool:
+                elif add_binary_sensors and domain == 'binary_sensor' and (p.is_bool or p.is_integer):
                     self._subs[fnm] = MiotBinarySensorSubEntity(self, p, option=opt)
                     add_binary_sensors([self._subs[fnm]], update_before_add=True)
                 elif add_sensors and domain == 'sensor':
@@ -2529,6 +2544,21 @@ class MiotPropertySubEntity(BaseSubEntity):
             'service_description': miot_property.service.description or miot_property.service.name,
             'property_description': miot_property.description or miot_property.name,
         })
+
+    def update_with_properties(self):
+        pls = self.custom_config_list('with_properties', [])
+        for p in pls:
+            prop = self._miot_service.get_property(p) or self._miot_service.spec.get_property(p)
+            if not prop:
+                continue
+            val = prop.from_dict(self.parent_attributes)
+            self._extra_attrs[prop.name] = val
+
+    def update(self, data=None):
+        super().update(data)
+        if not self._available:
+            return
+        self.update_with_properties()
 
     def set_parent_property(self, val, prop=None):
         if prop is None:
