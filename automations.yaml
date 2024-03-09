@@ -1247,8 +1247,8 @@
     - sensor.living_room_tv_power
     for:
       hours: 0
-      minutes: 4
-      seconds: 45
+      minutes: 3
+      seconds: 40
     below: 4
     id: tv_is_off
   - platform: numeric_state
@@ -1923,6 +1923,11 @@
         is defined\n  and not (values.value == 'unknown' and values.timestamp == 'unknown')\n}}\n"
       enabled: true
     then:
+    - service: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.office
     - service: camera.snapshot
       data:
         filename: /config/www/tmp/snapshot_aquarium_sub.jpg
