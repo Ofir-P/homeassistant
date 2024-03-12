@@ -453,7 +453,7 @@ toggle_living_room_light:
     data:
       message: "\U0001F4DC Script - Living Room Light has been triggered!"
   mode: single
-  icon: hue:ceiling-round
+  icon: mdi:ceiling-light
 toggle_bedroom_light:
   alias: Toggle Bedroom Light
   sequence:
@@ -466,7 +466,7 @@ toggle_bedroom_light:
     data:
       message: "\U0001F4DC Script - Bedroom Light has been triggered!"
   mode: single
-  icon: hue:ceiling-round
+  icon: mdi:ceiling-fan-light
 shower_hot_water_before_work:
   alias: Shower Hot Water before Work
   sequence:

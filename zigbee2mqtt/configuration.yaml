@@ -115,6 +115,7 @@ devices:
     friendly_name: Bathroom Motion Sensor
     occupancy_timeout: 90
     illuminance_below_threshold_check: false
+    description: Under Ofir Drawers
   '0xbc026efffe8e9bf2':
     friendly_name: Kitchen LED Strip
     description: behind the ninja
@@ -166,3 +167,6 @@ devices:
     description: located on the floor, under the boiler, behind the laundry machine
   '0xa4c138641cb105b1':
     friendly_name: Office Bathroom Motion Sensor
+  '0x00158d0008d0bf86':
+    friendly_name: Bedroom Vibration
+    description: Inside Ofir Top drawer

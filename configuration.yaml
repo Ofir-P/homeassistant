@@ -84,6 +84,10 @@ logger:
   logs:
     custom_components.authenticated: debug
 # [=========================]Authenticated[=========================]
+advanced:
+  log_level: debug
+external_converters:
+  - TS0601.js
 # [=========================]Themes[=========================]
 frontend: !include themes.yaml
 
@@ -175,7 +179,7 @@ zone:
   - name: Home
     latitude: !secret latitude_home
     longitude: !secret longitude_home
-    radius: 40
+    radius: 42
     icon: mdi:account-multiple
 # [=========================]Home Zone[=========================]
 # [=========================]Telegram[=========================]

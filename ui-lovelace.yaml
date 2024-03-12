@@ -513,7 +513,8 @@ views:
             entity: person.ofir
             name: Ofir
             triggers_update:
-              - sensor.ofir_last_changed
+              - 
+                
             double_tap_action: !include popup/home_ofir.yaml
             variables:
               retain: sensor.ofir_last_changed

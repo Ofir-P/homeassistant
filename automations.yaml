@@ -570,6 +570,7 @@
   - platform: time
     at: 06:25:00
     id: 6_25_am
+    enabled: false
   condition: []
   action:
   - if:
@@ -742,6 +743,7 @@
       target:
         entity_id: switch.boiler
       enabled: false
+    enabled: false
   - alias: '9'
     if:
     - condition: trigger
@@ -1782,7 +1784,7 @@
 - id: '1709211665820'
   alias: Office Automations
   description: "1. AC On Notification\n2. AC Off Notification\n3. TV On Notification\n4.
-    TV Off Notification\n5. Motion detected in Office Bathroom - Turn on Light\n6.
+    TV Off Notification\n5. Motion detected in Office Bathroom - Turn on the Light\n6.
     Desk Button Single Press - TV Toggle\n7. Desk Button Hold Press - AC Toggle\n8.
     Blink Red Lights\n9. No Presence 25 minutes - Turn off AC if on\n10. No Presence
     25 minutes - Turn off TV if on\n11. No Presence 25 minutes - Turn off lights if
@@ -1796,6 +1798,7 @@
     entity_id: switch.hfjh_v2_eadb_fish_tank_2
     attribute: event.4.1
     id: if_feeding
+    enabled: false
   - platform: numeric_state
     entity_id:
     - sensor.office_ac_power
@@ -1940,7 +1943,7 @@
         caption: "    {% if values.error %} \U0001F41F ❌ The fishes have not been
           fed at {{ values.timestamp }} ❌ {% else %} \U0001F41F The fishes have been
           fed {{ values.value }} portions at {{ values.timestamp }}. {% endif %}"
-    enabled: true
+    enabled: false
   - alias: '1'
     if:
     - condition: trigger
@@ -2350,6 +2353,8 @@
 
     11. Wireless Remote - 1st button Hold - Light toggle
 
+    12. Vibration Drawer will toggle room light
+
     4. Clean Room'
   trigger:
   - platform: state
@@ -2456,6 +2461,11 @@
     - sensor.bedroom_second_wireless_remote_ac_action
     to: 1_double
     id: button1_ofirRemote_doublePress
+  - platform: state
+    entity_id:
+    - sensor.bedroom_vibration_action
+    to: vibration
+    id: vibration
   condition: []
   action:
   - alias: '1'
@@ -2613,6 +2623,17 @@
       data: {}
       target:
         entity_id: light.bedroom
+  - alias: '12'
+    if:
+    - condition: trigger
+      id:
+      - vibration
+    then:
+    - service: light.toggle
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.bedroom
   - alias: '4'
     if:
     - condition: trigger
@@ -2637,7 +2658,7 @@
   mode: single
 - id: '1709561304330'
   alias: Robot Vacuum Daily Routine
-  description: 'Will start to vacuum home if zone.home is empty for more than 45 minutes.
+  description: 'Will start to vacuum home if zone.home is empty for more than 90 minutes.
 
     Will run only once a day'
   trigger:
@@ -2645,8 +2666,8 @@
     entity_id:
     - zone.home
     for:
-      hours: 0
-      minutes: 45
+      hours: 1
+      minutes: 30
       seconds: 0
     below: 1
   condition:
@@ -2654,7 +2675,7 @@
     value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
       | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
   - condition: time
-    after: '10:30:00'
+    after: 08:00:00
   action:
   - service: vacuum.start
     target:
@@ -2718,3 +2739,101 @@
         data:
           message: You chose to keep cleaning the house, well done!
   mode: single
+- id: '1710137176517'
+  alias: Hot Water before Work
+  description: Turn on the Boiler at 6:25 AM on Sunday, Monday, Tuesday, Wednesday,
+    and Thursday for 15 minutes.
+  trigger:
+  - platform: time
+    at: 06:25:00
+    id: Morning
+  - platform: time
+    at: '15:30:00'
+    id: AfterWork
+  condition:
+  - condition: time
+    weekday:
+    - sun
+    - mon
+    - tue
+    - wed
+    - thu
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - AfterWork
+    - condition: zone
+      entity_id: person.ofir
+      zone: zone.ofir_work
+    then:
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - ♨️ Shower Water after Work has been activated!"
+    - service: script.turn_on_switcher_for_60mins
+      metadata: {}
+      data: {}
+  - if:
+    - condition: trigger
+      id:
+      - Morning
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - ♨️ Hot Water before Work has been activated!"
+    - service: script.turn_on_boiler_for_35_minutes
+      data: {}
+  mode: single
+- id: '1710137624869'
+  alias: Fish Fed Telegram Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: switch.hfjh_v2_eadb_fish_tank_2
+    attribute: event.4.1
+  condition:
+  - alias: Check if the switch didn't go from or to unavailable
+    condition: template
+    value_template: '{{ not ''unavailable'' in [trigger.from_state.state, trigger.to_state.state]
+      }}'
+  - alias: Check if the values are correct
+    condition: template
+    value_template: "{{ \n  values is defined and values.value is defined and values.timestamp
+      is defined\n  and not (values.value == 'unknown' and values.timestamp == 'unknown')\n}}\n"
+  action:
+  - if:
+    - condition: state
+      entity_id: light.office
+      state: 'off'
+    then:
+    - service: light.turn_on
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.office
+  - service: camera.snapshot
+    data:
+      filename: /config/www/tmp/snapshot_aquarium_sub.jpg
+    target:
+      entity_id: camera.aquarium_sub
+  - service: telegram_bot.send_photo
+    data:
+      authentication: digest
+      file: /config/www/tmp/snapshot_aquarium_sub.jpg
+      caption: "    {% if values.error %} \U0001F41F ❌ The fishes have not been fed
+        at {{ values.timestamp }} ❌ {% else %} \U0001F41F The fishes have been fed
+        {{ values.value }} portions at {{ values.timestamp }}. {% endif %}"
+  mode: single
+  variables:
+    values: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not
+      none %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1')
+      | from_json).value[0].value.split(',') %}\n  {% set timestamp = (state_attr('switch.hfjh_v2_eadb_fish_tank_2',
+      'event.4.1') | from_json).timestamp %}\n{% endif %} {% set timestamp =  timestamp
+      | default() | timestamp_custom('%H:%M %A', default='unknown') %} {% set value
+      = (value | default())[6] | default('unknown') %} {% set error = (value | default())[5]
+      | default() == 0 %} {{ dict(timestamp=timestamp,value=value,error=error) }}\n"
