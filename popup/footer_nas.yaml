@@ -75,24 +75,6 @@ browser_mod:
 
             - entity: update.home_assistant_supervisor_update
               icon: mdi:download-network
-            - entity: sensor.count_binary_sensor
-              name: Binary Sensors
-              icon: mdi:motion-sensor
-            - entity: sensor.count_sensor
-              name: Sensors
-              icon: mdi:home-thermometer
-            - entity: sensor.count_automations
-              name: Automations
-              icon: mdi:robot
-            - entity: sensor.count_device_trackers
-              name: Device Trackers
-              icon: mdi:radar
-            - entity: sensor.count_switches
-              name: Switches
-              icon: mdi:light-switch
-            - entity: sensor.count_scripts
-              name: Scripts
-              icon: mdi:script-text
 
             - type: custom:hui-horizontal-stack-card
               cards:

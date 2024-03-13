@@ -467,26 +467,6 @@ toggle_bedroom_light:
       message: "\U0001F4DC Script - Bedroom Light has been triggered!"
   mode: single
   icon: mdi:ceiling-fan-light
-shower_hot_water_before_work:
-  alias: Shower Hot Water before Work
-  sequence:
-  - service: switch.turn_on
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.boiler
-  - delay:
-      hours: 0
-      minutes: 15
-      seconds: 0
-      milliseconds: 0
-  - service: switch.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: switch.boiler
-  mode: single
-  icon: mdi:fire
 door_open_notification_to_telegram:
   alias: Door Open Notification to Telegram
   sequence:

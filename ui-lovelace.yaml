@@ -386,12 +386,13 @@ views:
                   - type: conditional
                     conditions:
                       - entity: select.conditional_media
-                        state: Spotify
+                        state: Shower
                     card:
                       type: custom:button-card
-                      entity: media_player.spotify_elian_sarfaty
+                      entity: script.shower_music
+                      name: Shower Music
                       template:
-                        - conditional_media
+                        - base
                         - icon_spotify
 
                   - type: conditional
@@ -513,8 +514,8 @@ views:
             entity: person.ofir
             name: Ofir
             triggers_update:
-              - 
-                
+              -
+
             double_tap_action: !include popup/home_ofir.yaml
             variables:
               retain: sensor.ofir_last_changed
@@ -615,15 +616,20 @@ views:
             tap_action: !include popup/footer_vacuum.yaml
             triggers_update:
               - sensor.date
-              - clean_record.clean_time
+              - sensor.roborock_s8_pro_ultra_cleaning_time
             variables:
               notify: >
                 [[[
-                  let id = states['clean_record.clean_time'];
+                  let id = states['sensor.roborock_s8_pro_ultra_cleaning_time'];
                   if (id) return (Date.now() - Date.parse(id.state)) > 6048e5;
                 ]]]
             template: footer
 
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:home-lightning-bolt-outline"></ha-icon>
+            tap_action: !include popup/IEC.yaml
+            template: footer
           - type: custom:button-card
             name: >
               <ha-icon icon="mdi:nas"></ha-icon> NAS

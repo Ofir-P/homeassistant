@@ -1,0 +1,51 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    card_mod:
+      style:
+        #popup header
+        .:
+    content:
+      type: vertical-stack
+      cards:
+        - square: false
+          columns: 1
+          type: grid
+          cards:        
+            - type: horizontal-stack
+              cards:
+                - chart_type: bar
+                  period: month
+                  type: statistics-graph
+                  entities:
+                    - sensor.last_iec_bill_electric_usage_to_date
+                  title: Energy IEC
+                  stat_types:
+                    - sum
+                    - state
+                    - change
+            - type: horizontal-stack
+              cards:
+                - type: custom:mushroom-entity-card
+                  entity: sensor.iec_kwh_tariff
+                  name: תעריף
+                - type: custom:mushroom-entity-card
+                  entity: sensor.last_iec_bill_length_in_days
+                  name: תשלום אחרון
+            - type: horizontal-stack
+              cards:
+                - type: custom:mushroom-entity-card
+                  entity: sensor.last_iec_bill_electric_usage_to_date
+                  name: צריכה חודשית
+                - type: custom:mushroom-entity-card
+                  entity: sensor.last_iec_bill_meter_reading
+                  name: ק. מונה אחרונה
+            - type: horizontal-stack
+              cards:
+                - type: custom:mushroom-entity-card
+                  entity: sensor.last_iec_bill_electric_cost
+                  name: סכום לתשלום
+                - type: custom:mushroom-entity-card
+                  entity: sensor.last_iec_bill_date
+                  name: תאריך תשלום

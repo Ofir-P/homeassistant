@@ -3,62 +3,12 @@
   display_options:
     - time
     - date
-# Count Number Of Automations
-- platform: template
-  sensors:
-    count_automations:
-      friendly_name: "Count Of Automations"
-      value_template: >-
-        {{ states.automation | list | count }}
-# Count Number Of Binary Sensors
-- platform: template
-  sensors:
-    count_binary_sensor:
-      friendly_name: "Count Of Binary Sensors"
-      value_template: >-
-        {{ states.binary_sensor | list | count }}
-# Count Number Of Device Trackers
-- platform: template
-  sensors:
-    count_device_trackers:
-      friendly_name: "Count Of Device Trackers"
-      value_template: >-
-        {{ states.device_tracker | list | count }}
-# Count Number Of Lights
-- platform: template
-  sensors:
-    count_lights:
-      friendly_name: "Count Of Lights"
-      value_template: >-
-        {{ states.light | list | count }}
-# Count Number Of Scripts
-- platform: template
-  sensors:
-    count_scripts:
-      friendly_name: "Count Of Scripts"
-      value_template: >-
-        {{ states.script | list | count }}
-# Count Number Of Sensors
-- platform: template
-  sensors:
-    count_sensor:
-      friendly_name: "Count Of Sensors"
-      value_template: >-
-        {{ states.sensor | list | count }}
-# Count Number Of Switches
-- platform: template
-  sensors:
-    count_switches:
-      friendly_name: "Count Of Switches"
-      value_template: >-
-        {{ states.switch | list | count }}
-
 - platform: history_stats
   name: Boiler On
   entity_id: input_select.switcher_boiler_status
   state: "On"
   type: time
-  start: "{{ now().replace(hour=0, minute=0, second=0) }}"
+  start: "{{ states.input_select.switcher_boiler_status.last_changed }}"
   end: "{{ now() }}"
 # [=========================]Plex[=========================]
 - platform: plex_recently_added
@@ -108,7 +58,7 @@
       availability_template: "{{ state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not none }}"
     feed_is_missing_timestamp:
       value_template: >-
-        {{ states('sensor.feed_record_timestamp') | as_datetime | as_local + timedelta(days=2, hours=3) }}
+        {{ states('sensor.feed_record_timestamp') | as_datetime | as_local + timedelta(days=2, hours=2) }}
       friendly_name: "Feeding is required"
       icon_template: "{{ 'mdi:fish' }}"
       device_class: timestamp
