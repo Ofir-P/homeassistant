@@ -432,12 +432,15 @@ views:
                       - icon_apple_tv
 
                   - type: custom:button-card
-                    entity: media_player.spotify_elian_sarfaty
-                    name: Spotify
-                    tap_action: !include popup/spotify.yaml
+                    entity: script.shower_music
+                    name: Shower
                     template:
+                      #                      - base
                       - media
                       - icon_spotify
+                    tap_action:
+                      action: toggle
+                    double_tap_action: !include popup/spotify.yaml
 
                   - type: custom:button-card
                     entity: media_player.office_echo_show5
