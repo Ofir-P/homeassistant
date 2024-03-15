@@ -375,17 +375,6 @@
     target:
       entity_id: switch.boiler
     enabled: false
-  - service: light.turn_off
-    continue_on_error: true
-    data: {}
-    target:
-      area_id:
-      - office_room
-      - living_room
-      - kitchen
-      - wardrobe
-      - shower
-    enabled: false
   mode: single
 - id: '1687258354025'
   alias: Backup failed notification
@@ -1173,13 +1162,6 @@
 
     3. TV On Notification
 
-    4. AC On Notification
-
-    5. AC Off Notification
-
-    6. Main Door Open Notification
-
-    7. Main Door Closed Notification
 
     8. TV Power button - 1_single
 
@@ -1200,6 +1182,7 @@
       minutes: 35
       seconds: 0
     id: noPresence_tvOff
+    from:
   - platform: numeric_state
     entity_id:
     - sensor.living_room_tv_power
@@ -1218,37 +1201,6 @@
       seconds: 9
     id: tv_is_on
     above: 5
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: cool
-    id: ac_set_cool
-    enabled: false
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: heat
-    id: ac_set_heat
-    enabled: false
-  - platform: state
-    entity_id:
-    - climate.ofir_a_c
-    to: 'off'
-    id: ac_set_to_off
-    from:
-    enabled: false
-  - platform: state
-    entity_id:
-    - binary_sensor.main_door_sensor_contact
-    from: 'off'
-    to: 'on'
-    id: door_open
-  - platform: state
-    entity_id:
-    - binary_sensor.main_door_sensor_contact
-    from: 'on'
-    to: 'off'
-    id: door_close
   - platform: state
     entity_id:
     - sensor.living_room_wireless_remote_switch_action
@@ -1327,50 +1279,6 @@
       data:
         message: "\U0001F916 Automation - Living Room TV \U0001F4FA Status has been
           changed to On!"
-  - alias: '4'
-    if:
-    - condition: trigger
-      id:
-      - ac_set_cool
-      - ac_set_heat
-    then:
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
-          to On!"
-    enabled: false
-  - alias: '5'
-    if:
-    - condition: trigger
-      id:
-      - ac_set_to_off
-    then:
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
-          to Off!"
-    enabled: false
-  - alias: '6'
-    if:
-    - condition: trigger
-      id:
-      - door_open
-    then:
-    - service: script.door_open_notification_to_telegram
-      metadata: {}
-      data: {}
-  - alias: '7'
-    if:
-    - condition: trigger
-      id:
-      - door_close
-    then:
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - \U0001F6AA Main Door is closed now!"
-    - service: script.turn_off_main_door_light_when_door_closed
-      metadata: {}
-      data: {}
   - alias: '8'
     if:
     - condition: trigger
@@ -1563,7 +1471,9 @@
 
     7. -1 Degree to AC - Button 3 Wireless Remote
 
-    8. Clean Room'
+    8. Clean Room
+
+    9. If corridor light is on for 5 minutes - turn it off'
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1615,6 +1525,15 @@
     - sensor.wardrobe_sticker_switch_button_action
     to: hold
     id: sticker_hold_press
+  - platform: state
+    entity_id:
+    - light.yeelink_color5_6079_light
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: corridor_light_on_5mins
   condition: []
   action:
   - alias: '1'
@@ -1741,6 +1660,19 @@
         message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Wardrobe
           room!"
     enabled: true
+  - alias: '9'
+    if:
+    - condition: trigger
+      id:
+      - corridor_light_on_5mins
+      enabled: true
+    then:
+    - service: light.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: light.yeelink_color5_6079_light
+    enabled: true
   mode: single
 - id: '1709211665820'
   alias: Office Automations
@@ -1749,10 +1681,10 @@
     Desk Button Single Press - TV Toggle\n7. Desk Button Hold Press - AC Toggle\n8.
     Blink Red Lights\n9. No Presence 25 minutes - Turn off AC if on\n10. No Presence
     25 minutes - Turn off TV if on\n11. No Presence 25 minutes - Turn off lights if
-    on\n12. Presence - Turn on lights if off\n9. Clean Room\n14. Feeding Required
-    Notification\n15. Light On Office Notification\n16. Light Off Office Notification\n17.
-    Light On Office Bathroom Notification\n18. Light Off Office Bathroom Notification\n19.
-    No Motion 10 minutes - Light off Office Bathroom \n"
+    on\n9. Clean Room\n14. Feeding Required Notification\n15. Light On Office Notification\n16.
+    Light Off Office Notification\n17. Light On Office Bathroom Notification\n18.
+    Light Off Office Bathroom Notification\n19. No Motion 10 minutes - Light off Office
+    Bathroom \n"
   trigger:
   - platform: numeric_state
     entity_id:
@@ -1829,11 +1761,6 @@
       minutes: 25
       seconds: 0
     id: presence_away_25_mins
-  - platform: state
-    entity_id:
-    - binary_sensor.office_presence_sensor_presence
-    to: 'on'
-    id: yes_presence
   - platform: time
     at: sensor.feed_is_missing_timestamp
     id: feeding_required
@@ -2118,34 +2045,6 @@
       metadata: {}
       data:
         message: "\U0001F916 Automation - No Presence at Office - Lights off"
-  - alias: '12'
-    if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id:
-        - yes_presence
-      - condition: state
-        entity_id: light.office
-        state: 'off'
-      - condition: time
-        after: '13:00:00'
-        before: '23:00:00'
-      - condition: state
-        entity_id: vacuum.roborock_s8_pro_ultra
-        state: docked
-    then:
-    - service: light.turn_on
-      data: {}
-      target:
-        entity_id:
-        - light.office
-        - light.office_elian_desk_rgb_strip
-        - light.office_ofir_desk_rgb_strip
-    - service: notify.supervisor_telegram
-      metadata: {}
-      data:
-        message: "\U0001F916 Automation - Presence at Office - Lights on"
   - alias: '14'
     if:
     - condition: trigger
@@ -2671,6 +2570,9 @@
     - tue
     - wed
     - thu
+  - condition: state
+    entity_id: switch.boiler
+    state: 'off'
   action:
   - if:
     - condition: trigger
@@ -2795,4 +2697,104 @@
       data:
         message: "\U0001F916 Automation - Living Room AC ❄️ Status has been changed
           to Off!"
+  mode: single
+- id: '1710393879091'
+  alias: Door Open Notification to Telegram
+  description: If state changed to `Open` send photo of Main Door Camera and Telegram
+    Message of Door being Open.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    to: 'on'
+  condition: []
+  action:
+  - service: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.kitchen_l2
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - service: camera.snapshot
+    metadata: {}
+    data:
+      filename: /config/www/tmp/snapshot_living_room_sub.jpg
+    target:
+      entity_id: camera.dining_table_sub
+  - service: telegram_bot.send_photo
+    metadata: {}
+    data:
+      authentication: digest
+      file: /config/www/tmp/snapshot_living_room_sub.jpg
+      caption: "\U0001F916 Automation - \U0001F6AAMain Door is open now!"
+  mode: single
+- id: '1710394310075'
+  alias: Door Closed Notification to Telegram
+  description: If state changed to `Closed` send  Telegram Message of Door being Closed
+    and turn off the light after 25 seconds.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.main_door_sensor_contact
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6AA Main Door is closed now!"
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 25
+      milliseconds: 0
+  - service: light.turn_off
+    target:
+      entity_id:
+      - light.kitchen_l2
+    data: {}
+  mode: single
+- id: '1710448585060'
+  alias: Office - Presence Turn On Lights
+  description: When Presence detected in Office, if lights off and Roborock is docked
+    then turn on the lights in the room.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.office_presence_sensor_presence
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: light.office
+    state: 'off'
+  - condition: time
+    after: '13:00:00'
+    before: '23:00:00'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: vacuum.roborock_s8_pro_ultra
+      state: docked
+    - condition: state
+      entity_id: vacuum.roborock_s8_pro_ultra
+      state: unavailable
+  action:
+  - service: light.turn_on
+    data: {}
+    target:
+      entity_id:
+      - light.office
+      - light.office_elian_desk_rgb_strip
+      - light.office_ofir_desk_rgb_strip
+  - service: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - Presence Turn On Lights"
   mode: single
