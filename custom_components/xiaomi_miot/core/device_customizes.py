@@ -41,7 +41,7 @@ DEVICE_CUSTOMIZES = {
         'state_property': 'occupancy_sensor.current_occupied',
         'interval_seconds': 10,
         'binary_sensor_properties': 'current_occupied,a_occupied,b_occupied,c_occupied,d_occupied,e_occupied',
-        'sensor_properties': 'total_occupied',
+        'sensor_properties': 'total_occupied,illumination',
         'switch_properties': 'radar_switch,count_switch',
         'select_properties': 'map_index,traction',
         'button_actions': 'reboot',
@@ -156,6 +156,12 @@ DEVICE_CUSTOMIZES = {
         'chunk_properties': 7,
         'sensor_attributes': 'power_cost_today,power_cost_month',
         'stat_power_cost_key': 'prop.5.1',
+    },
+    'chuangmi.plug.212a01:electric-current': {
+        'unit_of_measurement': 'mA',
+    },
+    'chuangmi.plug.212a01:voltage': {
+        'unit_of_measurement': 'V',
     },
     'chuangmi.plug.v1': {
         'miot_type': 'urn:miot-spec-v2:device:outlet:0000A002:chuangmi-v1:1',
@@ -692,6 +698,29 @@ DEVICE_CUSTOMIZES = {
         'device_class': 'energy',
         'unit_of_measurement': 'kWh',
     },
+    'iot.switch.padwb1': {
+        'sensor_properties': 'a_electric_current,a_power,a_voltage,a_temp,a_fault,'
+                             'b_electric_current,b_power,b_voltage,b_temp,b_fault,'
+                             'c_electric_current,c_power,c_voltage,c_temp,c_fault',
+        'select_properties': 'default_power_on_state',
+        'switch_properties': 'self_check,leak_switch,voice_switch',
+        'number_properties': 'over_electric_set,lack_voltage_set,delay_set,close_temp_set,over_voltage_set,alert_temp_set',
+        'stat_power_cost_type': 'stat_day_v3',
+        'stat_power_cost_key': '3.1',
+        'sensor_attributes': 'power_cost_today,power_cost_month',
+    },
+    'iot.switch.padwb1:power_cost_today': {
+        'value_ratio': 1,
+        'state_class': 'total_increasing',
+        'device_class': 'energy',
+        'unit_of_measurement': 'kWh',
+    },
+    'iot.switch.padwb1:power_cost_month': {
+        'value_ratio': 1,
+        'state_class': 'total_increasing',
+        'device_class': 'energy',
+        'unit_of_measurement': 'kWh',
+    },
     'isa.camera.hlc7': {
         'select_properties': 'night_shot,recording_mode,detection_sensitivity',
         'switch_properties': 'on,time_watermark,motion_detection',
@@ -903,6 +932,10 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'sleep_mode,steam_sterilization,detergent_self_delivery',
         'select_properties': 'soak_time,reservation_wash_status,reservation_left_time,detergent_self_delivery_level',
     },
+    'midjd8.washer.*': {
+        'select_properties': 'shake_time,soak_time',
+        'switch_properties': 'high_water_switch,steam_sterilization,sleep_mode'
+    },
     'mijia.light.*': {
         'cloud_delay_update': 7,
     },
@@ -968,6 +1001,15 @@ DEVICE_CUSTOMIZES = {
     'msj.f_washer.m2': {
         'chunk_properties': 1,
         'button_actions': 'start_wash,pause,drain,pause_drain',
+    },
+    'mxiang.camera.mwc11': {
+        'sensor_properties': 'battery',
+        'switch_properties': 'on,time-watermark,wdr-mode,status-light,distortion-correct,'
+                             'moved-push,human-detect,motion-detection',
+        'select_properties': 'night-shot,video-auto-stop-time,resolution,power-freq-switch,'
+                             'delay-recording,recording-time,alarm-interval,detection-sensitivity',
+        'number_properties': 'image-rollover,rssi',
+        'button_actions': 'restart',
     },
     'mxiang.cateye.*': {
         'miio_cloud_props': 'battery_level,is_can_open_video',
@@ -1292,6 +1334,13 @@ DEVICE_CUSTOMIZES = {
         'exclude_miot_services': 'iot_linkage,machine_state,flag_bit',
         'exclude_miot_properties': 'enhance.timer',
     },
+    'xiaomi.airp.mp4': {
+        'switch_properties': 'anion,alarm',
+        'light_services': 'screen',
+        'brightness_for_on': 0,
+        'brightness_for_off': 2,
+        'exclude_miot_services': 'rfid',
+    },
     'xiaomi.airp.*': {
         'exclude_miot_services': 'custom_service',
     },
@@ -1501,6 +1550,9 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'alarm',
         'number_properties': 'favorite_speed,aqi_updata_heartbeat,brightness',
     },
+    'zhimi.airpurifier.vb2:temperature': {
+        'unit_of_measurement': '°C',
+    },
     'zhimi.airpurifier.za1': {
         'brightness_for_on': 0,
         'brightness_for_off': 2,
@@ -1683,7 +1735,7 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'fan_init_power_opt',
     },
     '*.fishbowl.*': {
-        'sensor_properties': 'temperature',
+        'sensor_properties': 'temperature,tds_in,tds_out',
         'switch_properties': 'water_pump,automatic_feeding,heating',
         'number_properties': 'target_temperature,pump_flux,target_feeding_measure,'
                              'ambient_light_custom.stream,ambient_light_custom.speed',
@@ -1786,11 +1838,11 @@ DEVICE_CUSTOMIZES = {
         'button_actions': 'start_wash,pause',
     },
     '*.waterheater.*': {
-        'sensor_properties': 'water_velocity',
+        'sensor_properties': 'water_velocity,tds_in,tds_out',
         'switch_properties': 'water_heater.on,preheating,cruise_press',
     },
     '*.waterpuri.*': {
-        'sensor_properties': 'water_purifier.temperature',
+        'sensor_properties': 'water_purifier.temperature,tds_in,tds_out',
     },
 
 }

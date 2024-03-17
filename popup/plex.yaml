@@ -157,15 +157,6 @@ browser_mod:
               type: markdown
             - columns: 2
               entities:
-                - entity: sensor.plex_online
-                  name: Plex Media Server
-                  show_entity_picture: true
-                - entity: sensor.ubuntu_online
-                  name: Ubuntu OS
-                  show_entity_picture: true
-              show_icon: true
-              show_name: true
-              show_state: true
               style: |
                 ha-card {
                   text-align: center;
@@ -215,24 +206,6 @@ browser_mod:
                     fill: false
                   type: custom:mini-graph-card
               type: horizontal-stack
-            - entities:
-                - entity: sensor.sonarr_online
-                  name: Sonarr
-                - entity: sensor.radarr_online
-                  name: Radarr
-                - entity: sensor.ombi_online
-                  name: Ombi
-                - entity: sensor.tautulli_online
-                  name: Tautulli
-              type: glance
-            - entities:
-                - entity: sensor.qbittorrent_online
-                  name: qBitTorrent
-                - entity: sensor.prowlarr_online
-                  name: Prowlarr
-                - entity: sensor.trakt_online
-                  name: Trakt
-              type: glance
             - content: >
                 # <img width="30" height="30" src='/local/Logos/qbittorrent.png'
                 style='vertical-align:middle' /> qBitTorrent

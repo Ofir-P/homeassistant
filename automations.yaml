@@ -184,25 +184,6 @@
         data:
           message: "\U0001F916 Automation - Elian has left the house."
   mode: single
-- id: '1675577604748'
-  alias: Supervisor - qBitTorrent is Offline
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.uptimekuma_qbittorrent
-    from: 'on'
-    to: 'off'
-    for:
-      hours: 0
-      minutes: 2
-      seconds: 0
-  condition: []
-  action:
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - qBitTorrent is Offline!"
-  mode: single
 - id: '1676503252475'
   alias: Hallway Motion Light
   description: between 00:01 to 6:55 light will turn on for 1 minute and 20 seconds
@@ -1185,22 +1166,22 @@
     from:
   - platform: numeric_state
     entity_id:
-    - sensor.living_room_tv_power
+    - sensor.living_room_tv_current
     for:
       hours: 0
       minutes: 3
       seconds: 40
-    below: 4
+    below: 0.1
     id: tv_is_off
   - platform: numeric_state
     entity_id:
-    - sensor.living_room_tv_power
+    - sensor.living_room_tv_current
     for:
       hours: 0
       minutes: 0
       seconds: 9
     id: tv_is_on
-    above: 5
+    above: 0.3
   - platform: state
     entity_id:
     - sensor.living_room_wireless_remote_switch_action
@@ -1769,21 +1750,25 @@
     - light.office
     to: 'on'
     id: office_light_on
+    from: 'off'
   - platform: state
     entity_id:
     - light.office
     to: 'off'
     id: office_light_off
+    from: 'on'
   - platform: state
     entity_id:
     - light.office_bathroom
     to: 'on'
     id: office_bathroom_light_on
+    from: 'off'
   - platform: state
     entity_id:
     - light.office_bathroom
     to: 'off'
     id: office_bathroom_light_off
+    from: 'on'
   - platform: state
     entity_id:
     - binary_sensor.office_bathroom_motion_sensor_occupancy

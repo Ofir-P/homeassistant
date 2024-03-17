@@ -157,7 +157,6 @@ binary_sensor: !include binary_sensor.yaml
 template: !include templates.yaml
 
 homeassistant:
-  customize: !include customize.yaml
   packages: !include_dir_named packages
 shell_command:
   pushupdates_to_github: /bin/bash pushupdates.sh
