@@ -8,7 +8,7 @@
   entity_id: input_select.switcher_boiler_status
   state: "On"
   type: time
-  start: "{{ states.input_select.switcher_boiler_status.last_changed }}"
+  start: "{{ states.input_select.switcher_boiler_status.last_changed | default(now(), true) }}"
   end: "{{ now() }}"
 # [=========================]Plex[=========================]
 - platform: plex_recently_added
