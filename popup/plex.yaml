@@ -155,15 +155,6 @@ browser_mod:
                       letter-spacing: '-0.01em';
                     }
               type: markdown
-            - columns: 2
-              entities:
-              style: |
-                ha-card {
-                  text-align: center;
-                  
-                      }
-              title: false
-              type: glance
             - cards:
                 - align_icon: left
                   align_state: center

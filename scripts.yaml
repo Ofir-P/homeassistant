@@ -324,7 +324,7 @@ home_leave:
             data: {}
       - delay:
           hours: 0
-          minutes: 5
+          minutes: 9
           seconds: 55
           milliseconds: 0
   - service: notify.supervisor_telegram

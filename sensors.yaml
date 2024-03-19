@@ -3,13 +3,6 @@
   display_options:
     - time
     - date
-- platform: history_stats
-  name: Boiler On
-  entity_id: input_select.switcher_boiler_status
-  state: "On"
-  type: time
-  start: "{{ states.input_select.switcher_boiler_status.last_changed | default(now(), true) }}"
-  end: "{{ now() }}"
 # [=========================]Plex[=========================]
 - platform: plex_recently_added
   name: Recently Added Movies # will create sensor.recently_added_movies
