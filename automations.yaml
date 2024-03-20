@@ -2872,3 +2872,101 @@
     data:
       message: "\U0001F916 Automation - Blink Red Lights Office"
   mode: single
+- id: '1710843500416'
+  alias: Robot Vacuum Dock Error Notifications
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_error
+    to: water_empty
+    id: water_empty
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_error
+    to: waste_water_tank_full
+    id: waste_water_tank_full
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_error
+    to: duct_blockage
+    id: duct_blockage
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_error
+    to: dirty_tank_latch_open
+    id: dirty_tank_latch_open
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_error
+    to: no_dustbin
+    id: no_dustbin
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_error
+    to: cleaning_tank_full_or_blocked
+    id: cleaning_tank_full_or_blocked
+  condition:
+  - condition: state
+    entity_id: vacuum.roborock_s8_pro_ultra
+    state: docked
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Robot Dock Error"
+  - if:
+    - condition: trigger
+      id:
+      - water_empty
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum Water is Empty! ⚠️"
+    alias: Water is empty
+  - alias: Waste Water Tank is Full
+    if:
+    - condition: trigger
+      id:
+      - waste_water_tank_full
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum Waste Water Tank is Full! ⚠️"
+  - alias: Duct Blockage
+    if:
+    - condition: trigger
+      id:
+      - duct_blockage
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum Duct Blockage! ⚠️"
+  - alias: Dirty Tank Latch is Open
+    if:
+    - condition: trigger
+      id:
+      - dirty_tank_latch_open
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum Dirty Tank Latch is Open! ⚠️"
+  - alias: No Dustbin
+    if:
+    - condition: trigger
+      id:
+      - no_dustbin
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum No Dustbin! ⚠️"
+  - alias: Cleaning Tank Full or Blocked
+    if:
+    - condition: trigger
+      id:
+      - cleaning_tank_full_or_blocked
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum Cleaning Tank Full or Blocked!
+          ⚠️"
+  mode: single
