@@ -2533,7 +2533,7 @@
     at: 06:15:00
     id: Morning
   - platform: time
-    at: '15:30:00'
+    at: '15:07:00'
     id: AfterWork
   condition:
   - condition: time
