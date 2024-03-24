@@ -16,7 +16,7 @@ browser_mod:
           cards:
             - type: custom:mushroom-template-card
               primary: >-
-                Boiler is on for: {{ states("sensor.boiler_on")
+                Boiler is on for: {{ states("sensor.boiler_is_on")
                 }}
               secondary: >-
                 Current:

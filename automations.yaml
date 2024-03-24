@@ -2076,7 +2076,7 @@
     - zone.home
     for:
       hours: 1
-      minutes: 30
+      minutes: 0
       seconds: 0
     below: 1
   condition:
@@ -2519,6 +2519,16 @@
       - light.office
       - light.office_elian_desk_rgb_strip
       - light.office_ofir_desk_rgb_strip
+  - service: remote.send_command
+    metadata: {}
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: Corner_RGB_Lamp
+      command: Power
+    target:
+      device_id: 213c1e28be789af24d278bfa20f54941
   - service: notify.supervisor_telegram
     metadata: {}
     data:
@@ -2710,6 +2720,16 @@
     data: {}
     target:
       entity_id: light.office_bathroom
+  - service: remote.send_command
+    metadata: {}
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: Corner_RGB_Lamp
+      command: Power
+    target:
+      device_id: 213c1e28be789af24d278bfa20f54941
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - \U0001F4A1 No Presence at Office Bathroom
