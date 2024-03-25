@@ -2076,7 +2076,7 @@
     - zone.home
     for:
       hours: 1
-      minutes: 0
+      minutes: 20
       seconds: 0
     below: 1
   condition:

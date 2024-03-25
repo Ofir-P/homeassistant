@@ -33,10 +33,12 @@
       friendly_name: "MB Sent"
       unit_of_measurement: "MB/s"
       value_template: "{{ (states('sensor.qbittorrent_down_speed') | int / 1000) | round(1) }}"
+      availability_template: "{{ states('sensor.qbittorrent_down_speed')|is_number }}"
     bytes_upload:
       friendly_name: "MB Sent"
       unit_of_measurement: "MB/s"
       value_template: "{{ (states('sensor.qbittorrent_up_speed') | int / 1000) | round(1) }}"
+      availability_template: "{{ states('sensor.qbittorrent_down_speed')|is_number }}"
 # [=========================]qBitTorrent[=========================]
 # [=========================]Xiaomi[=========================]
 - platform: template
