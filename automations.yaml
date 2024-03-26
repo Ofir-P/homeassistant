@@ -592,7 +592,11 @@
         option: 'On'
     - service: notify.home_assistant_group
       data:
-        message: "\U0001F6BF Switcher device has been turned ON!"
+        message: "\U0001F6BF Boiler has been turned ON!"
+    - service: notify.mobile_app_elians_iphone
+      metadata: {}
+      data:
+        message: "\U0001F6BF Boiler has been turned ON!"
   - alias: '6'
     if:
     - condition: and
@@ -612,7 +616,11 @@
         option: 'Off'
     - service: notify.home_assistant_group
       data:
-        message: "\U0001F6BF Switcher device has been turned OFF!"
+        message: "\U0001F6BF Boiler has been turned OFF!"
+    - service: notify.mobile_app_elians_iphone
+      metadata: {}
+      data:
+        message: "\U0001F6BF Boiler has been turned OFF!"
   - alias: '7'
     if:
     - condition: trigger
@@ -976,6 +984,10 @@
       data: {}
       target:
         entity_id: light.laundry_machine_light
+    - service: notify.mobile_app_elians_iphone
+      metadata: {}
+      data:
+        message: "\U0001F456 Laundry machine has finished!"
   - alias: '10'
     if:
     - condition: trigger
@@ -2091,6 +2103,10 @@
       entity_id: vacuum.roborock_s8_pro_ultra
     data: {}
   - service: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
+  - service: notify.mobile_app_elians_iphone
     metadata: {}
     data:
       message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
