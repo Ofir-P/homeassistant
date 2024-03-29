@@ -18,6 +18,201 @@ browser_mod:
           columns: 1
           type: grid
           cards:
+            - type: logbook
+              entities:
+                - vacuum.roborock_s8_pro_ultra
+                - sensor.roborock_s8_pro_ultra_current_room
+              card_mod:
+                style: |
+                  ha-logbook {
+                    max-height: 265px !important;
+                  }
+
+            - type: custom:xiaomi-vacuum-map-card
+              map_source:
+                camera: camera.roborock_s8_pro_ultra_map
+              calibration_source:
+                camera: true
+              entity: vacuum.roborock_s8_pro_ultra
+              vacuum_platform: default
+              map_locked: true
+              map_modes:
+                - template: vacuum_clean_zone
+                - template: vacuum_goto
+                - template: vacuum_clean_segment
+                  predefined_selections:
+                    - id: "16"
+                      icon:
+                        name: mdi:broom
+                        x: 17800
+                        "y": 26875
+                      label:
+                        text: Room 16
+                        x: 17800
+                        "y": 26875
+                        offset_y: 35
+                      outline:
+                        - - 14450
+                          - 24000
+                        - - 21150
+                          - 24000
+                        - - 21150
+                          - 29750
+                        - - 14450
+                          - 29750
+                    - id: "17"
+                      icon:
+                        name: mdi:broom
+                        x: 24075
+                        "y": 27925
+                      label:
+                        text: Room 17
+                        x: 24075
+                        "y": 27925
+                        offset_y: 35
+                      outline:
+                        - - 23250
+                          - 27000
+                        - - 24900
+                          - 27000
+                        - - 24900
+                          - 28850
+                        - - 23250
+                          - 28850
+                    - id: "18"
+                      icon:
+                        name: mdi:broom
+                        x: 19225
+                        "y": 28975
+                      label:
+                        text: Room 18
+                        x: 19225
+                        "y": 28975
+                        offset_y: 35
+                      outline:
+                        - - 17250
+                          - 27600
+                        - - 21200
+                          - 27600
+                        - - 21200
+                          - 30350
+                        - - 17250
+                          - 30350
+                    - id: "19"
+                      icon:
+                        name: mdi:broom
+                        x: 23025
+                        "y": 29925
+                      label:
+                        text: Room 19
+                        x: 23025
+                        "y": 29925
+                        offset_y: 35
+                      outline:
+                        - - 21150
+                          - 28600
+                        - - 24900
+                          - 28600
+                        - - 24900
+                          - 31250
+                        - - 21150
+                          - 31250
+                    - id: "20"
+                      icon:
+                        name: mdi:broom
+                        x: 22900
+                        "y": 27750
+                      label:
+                        text: Room 20
+                        x: 22900
+                        "y": 27750
+                        offset_y: 35
+                      outline:
+                        - - 22450
+                          - 26600
+                        - - 23350
+                          - 26600
+                        - - 23350
+                          - 28900
+                        - - 22450
+                          - 28900
+                    - id: "21"
+                      icon:
+                        name: mdi:broom
+                        x: 21650
+                        "y": 27125
+                      label:
+                        text: Room 21
+                        x: 21650
+                        "y": 27125
+                        offset_y: 35
+                      outline:
+                        - - 20550
+                          - 25100
+                        - - 22750
+                          - 25100
+                        - - 22750
+                          - 29150
+                        - - 20550
+                          - 29150
+                    - id: "22"
+                      icon:
+                        name: mdi:broom
+                        x: 23425
+                        "y": 26025
+                      label:
+                        text: Room 22
+                        x: 23425
+                        "y": 26025
+                        offset_y: 35
+                      outline:
+                        - - 22300
+                          - 24950
+                        - - 24550
+                          - 24950
+                        - - 24550
+                          - 27100
+                        - - 22300
+                          - 27100
+                    - id: "23"
+                      icon:
+                        name: mdi:broom
+                        x: 21375
+                        "y": 22975
+                      label:
+                        text: Room 23
+                        x: 21375
+                        "y": 22975
+                        offset_y: 35
+                      outline:
+                        - - 18500
+                          - 20800
+                        - - 24250
+                          - 20800
+                        - - 24250
+                          - 25150
+                        - - 18500
+                          - 25150
+                    - id: "24"
+                      icon:
+                        name: mdi:broom
+                        x: 26150
+                        "y": 24150
+                      label:
+                        text: Room 24
+                        x: 26150
+                        "y": 24150
+                        offset_y: 35
+                      outline:
+                        - - 23950
+                          - 21550
+                        - - 28350
+                          - 21550
+                        - - 28350
+                          - 26750
+                        - - 23950
+                          - 26750
+
             - type: custom:mod-card
               card_mod:
                 style:
