@@ -831,15 +831,17 @@
     below: 2
   - platform: state
     entity_id:
-    - binary_sensor.roborock_s8_pro_ultra_cleaning
+    - vacuum.roborock_s8_pro_ultra
     to: 'on'
     id: vacuum_robot_cleaning
+    attribute: state
   - platform: state
     entity_id:
-    - binary_sensor.roborock_s8_pro_ultra_cleaning
+    - vacuum.roborock_s8_pro_ultra
     to: 'off'
     id: vacuum_robot_finished
     from: 'on'
+    attribute: state
   - platform: state
     entity_id:
     - sensor.kitchen_sticker_switch_button_action
@@ -1004,12 +1006,36 @@
       id:
       - vacuum_robot_finished
     then:
+    - service: camera.snapshot
+      data:
+        filename: /config/www/tmp/snapshot_vacuum.jpg
+      target:
+        entity_id:
+        - camera.roborock_s8_pro_ultra_map
     - service: notify.home_assistant_group
       data:
         title: "\U0001F9F9 Vacuum Robot has finished and returned to base!"
-        message: It took {{ ( states('sensor.roborock_s8_pro_ultra_cleaning_time')
-          | int / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_cleaning_area')
+        message: It took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration')
+          | int / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
           }} m².
+      enabled: false
+    - service: telegram_bot.send_photo
+      data:
+        authentication: digest
+        file: /config/www/tmp/snapshot_vacuum.jpg
+        caption: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
+          took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
+          / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
+          }} m²."
+    - service: notify.mobile_app_elians_iphone
+      data:
+        title: Vacuum Robot
+        message: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
+          took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
+          / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
+          }} m².\n"
+        data:
+          image: /local/tmp/snapshot_vacuum.jpg
   - alias: '12'
     if:
     - condition: trigger
