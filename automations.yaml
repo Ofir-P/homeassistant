@@ -275,6 +275,7 @@
   - condition: state
     entity_id: vacuum.roborock_s8_pro_ultra
     state: docked
+    attribute: state
   - condition: state
     entity_id: binary_sensor.living_room_person
     state: 'on'
@@ -832,16 +833,17 @@
   - platform: state
     entity_id:
     - vacuum.roborock_s8_pro_ultra
-    to: 'on'
     id: vacuum_robot_cleaning
-    attribute: state
+    attribute: inCleaning
+    from: '0'
+    to: '1'
   - platform: state
     entity_id:
     - vacuum.roborock_s8_pro_ultra
-    to: 'off'
+    to: '0'
     id: vacuum_robot_finished
-    from: 'on'
-    attribute: state
+    from: '1'
+    attribute: inCleaning
   - platform: state
     entity_id:
     - sensor.kitchen_sticker_switch_button_action
@@ -2078,16 +2080,6 @@
     value_template: "{{ \n  values is defined and values.value is defined and values.timestamp
       is defined\n  and not (values.value == 'unknown' and values.timestamp == 'unknown')\n}}\n"
   action:
-  - if:
-    - condition: state
-      entity_id: light.office
-      state: 'off'
-    then:
-    - service: light.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: light.office
   - service: camera.snapshot
     data:
       filename: /config/www/tmp/snapshot_aquarium_sub.jpg
@@ -2421,6 +2413,7 @@
     - condition: state
       entity_id: vacuum.roborock_s8_pro_ultra
       state: docked
+      attribute: state
     - condition: state
       entity_id: vacuum.roborock_s8_pro_ultra
       state: unavailable
@@ -2520,6 +2513,7 @@
   - condition: state
     entity_id: vacuum.roborock_s8_pro_ultra
     state: docked
+    attribute: state
   action:
   - service: light.turn_on
     metadata: {}
