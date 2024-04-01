@@ -78,8 +78,6 @@ devices:
   '0x00158d000a9c73de':
     friendly_name: Water Leak Office Sink
     description: Sensor - Water Leak Office Shower Sink under the sink.
-  '0xa4c1384fd1d8ba32':
-    friendly_name: Living Room Wireless Remote Switch
   '0xa4c13811ce44a42b':
     friendly_name: Wardrobe Wireless Remote Switch
   '0x54ef4410007588b8':
@@ -170,3 +168,5 @@ devices:
     description: Inside Ofir Top drawer
   '0xa4c138e832f03f77':
     friendly_name: Bedroom Door Sensor
+  '0xa4c1384fd1d8ba32':
+    friendly_name: Living Room Wireless Remote Switch
