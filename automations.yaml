@@ -1516,15 +1516,15 @@
 
     4. Desk Button Hold Press - AC Toggle
 
-    9. Clean Room
+    5. Clean Room
 
-    11. Light On Office Notification
+    6. Light On Office Notification
 
-    12. Light Off Office Notification
+    7. Light Off Office Notification
 
-    13. Light On Office Bathroom Notification
+    8. Light On Office Bathroom Notification
 
-    14. Light Off Office Bathroom Notification
+    9. Light Off Office Bathroom Notification
 
     '
   trigger:
@@ -1642,7 +1642,7 @@
     - service: script.toggle_office_ac
       metadata: {}
       data: {}
-  - alias: '10'
+  - alias: '5'
     if:
     - condition: trigger
       id:
@@ -1651,7 +1651,7 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Light is on in Office \U0001F4DD"
-  - alias: '11'
+  - alias: '6'
     if:
     - condition: trigger
       id:
@@ -1660,7 +1660,7 @@
     - service: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F4A1 Light is off in Office \U0001F4DD"
-  - alias: '12'
+  - alias: '7'
     if:
     - condition: trigger
       id:
@@ -1723,9 +1723,9 @@
 
     5. Wireless Remote - 1st button AC Power toggle
 
-    6. Wireless Remote - 2nd button AC + Tempature
+    6. Wireless Remote - 2nd button AC + Temperature
 
-    7. Wireless Remote - 3rd button AC  - Tempature
+    7. Wireless Remote - 3rd button AC  - Temperature
 
     8. Wireless Remote - 4th button Toggle TV
 
@@ -1733,7 +1733,11 @@
 
     10. Vibration Drawer will toggle room light
 
-    11. Clean Room'
+    11. Door is Open
+
+    12. Door is Closed
+
+    13. Clean Room'
   trigger:
   - platform: state
     entity_id:
@@ -1826,6 +1830,18 @@
     - sensor.bedroom_vibration_action
     to: vibration
     id: vibration
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_door_sensor_contact
+    to: 'off'
+    from: 'on'
+    id: door_closed
+  - platform: state
+    entity_id:
+    - binary_sensor.bedroom_door_sensor_contact
+    to: 'on'
+    from: 'off'
+    id: door_open
   condition: []
   action:
   - alias: '1'
@@ -1958,6 +1974,28 @@
     if:
     - condition: trigger
       id:
+      - door_open
+      enabled: true
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6AA Bedroom Door is open now!"
+    enabled: true
+  - alias: '12'
+    if:
+    - condition: trigger
+      id:
+      - door_closed
+      enabled: true
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6AA Bedroom Door is closed now!"
+    enabled: true
+  - alias: '13'
+    if:
+    - condition: trigger
+      id:
       - light_to_off
       enabled: false
     then:
@@ -2025,16 +2063,16 @@
     variables:
       action_keep: '{{ ''OPEN_'' ~ context.id }}'
       action_stop: '{{ ''CLOSE_'' ~ context.id }}'
-  - alias: Ask to stop or keep Roborock S8 Vacuum
+  - alias: Ask to clean or not the House via Roborock S8 Vacuum
     service: notify.mobile_app_ofir_honor_magic_5_pro
     data:
-      message: The robot is running now. Do you want to stop him?
+      message: House is dirty for 3 days. Do you want him to clean now?
       data:
         actions:
         - action: '{{ action_keep }}'
-          title: Keep Vacuum Running
+          title: Clean House
         - action: '{{ action_stop }}'
-          title: Stop Vacuum
+          title: Do not clean
   - alias: Wait for a response
     wait_for_trigger:
     - platform: event
@@ -2051,17 +2089,20 @@
       - condition: template
         value_template: '{{ wait.trigger.event.data.action == action_stop }}'
       sequence:
-      - service: vacuum.return_to_base
-        target:
-          entity_id: vacuum.roborock_s8_pro_ultra
-        data: {}
+      - service: notify.mobile_app_ofir_honor_magic_5_pro
+        data:
+          message: You chose to NOT clean the house, shame on you.
     - conditions:
       - condition: template
         value_template: '{{ wait.trigger.event.data.action == action_keep }}'
       sequence:
+      - service: vacuum.start
+        target:
+          entity_id: vacuum.roborock_s8_pro_ultra
+        data: {}
       - service: notify.mobile_app_ofir_honor_magic_5_pro
         data:
-          message: You chose to keep cleaning the house, well done!
+          message: You chose to clean the house, well done!
   mode: single
 - id: '1710137624869'
   alias: Fish Fed Telegram Notification
@@ -2833,14 +2874,16 @@
     - sensor.roborock_s8_pro_ultra_dock_error
     to: cleaning_tank_full_or_blocked
     id: cleaning_tank_full_or_blocked
-  condition:
-  - condition: state
-    entity_id: vacuum.roborock_s8_pro_ultra
-    state: docked
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_current_error
+    to: robot_trapped
+    id: robot_trapped
+  condition: []
   action:
   - service: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Robot Dock Error"
+      message: "\U0001F916 Automation - Robot Error"
   - if:
     - condition: trigger
       id:
@@ -2896,4 +2939,13 @@
       data:
         message: "\U0001F916 Automation - Robot Vacuum Cleaning Tank Full or Blocked!
           ⚠️"
+  - alias: Robot Trapped
+    if:
+    - condition: trigger
+      id:
+      - robot_trapped
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum is trapped or stuck! ⚠️"
   mode: single
