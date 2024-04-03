@@ -2879,6 +2879,11 @@
     - sensor.roborock_s8_pro_ultra_current_error
     to: robot_trapped
     id: robot_trapped
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_current_error
+    to: main_brush_jammed
+    id: main_brush_jammed
   condition: []
   action:
   - service: notify.supervisor_telegram
@@ -2948,4 +2953,13 @@
     - service: notify.home_assistant_group
       data:
         message: "\U0001F916 Automation - Robot Vacuum is trapped or stuck! ⚠️"
+  - alias: Robot Trapped
+    if:
+    - condition: trigger
+      id:
+      - main_brush_jammed
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum main brush is jammed! ⚠️"
   mode: single
