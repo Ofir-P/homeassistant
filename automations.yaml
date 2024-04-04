@@ -448,7 +448,6 @@
       minutes: 20
       seconds: 0
     id: boiler_on_for_1_hour_20_minutes
-    from: 'Off'
   - platform: numeric_state
     entity_id:
     - sensor.heater_shower_power
