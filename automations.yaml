@@ -785,6 +785,9 @@
     offset: 0
     id: sun_set
   - platform: time
+    at: '17:00:00'
+    id: 5pm
+  - platform: time
     at: 00:00:00
     id: midnight
   - platform: state
@@ -831,18 +834,19 @@
     below: 2
   - platform: state
     entity_id:
-    - vacuum.roborock_s8_pro_ultra
+    - sensor.roborock_s8_pro_ultra_cleaning_progress_2
     id: vacuum_robot_cleaning
-    attribute: inCleaning
-    from: '0'
     to: '1'
   - platform: state
     entity_id:
-    - vacuum.roborock_s8_pro_ultra
+    - sensor.roborock_s8_pro_ultra_cleaning_progress_2
     to: '0'
     id: vacuum_robot_finished
-    from: '1'
-    attribute: inCleaning
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+    from:
   - platform: state
     entity_id:
     - sensor.kitchen_sticker_switch_button_action
@@ -873,6 +877,7 @@
     - condition: trigger
       id:
       - sun_set
+      - 5pm
     - condition: state
       entity_id: switch.kitchen_led_strip
       state: 'off'
@@ -1013,13 +1018,6 @@
       target:
         entity_id:
         - camera.roborock_s8_pro_ultra_map
-    - service: notify.home_assistant_group
-      data:
-        title: "\U0001F9F9 Vacuum Robot has finished and returned to base!"
-        message: It took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration')
-          | int / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
-          }} m².
-      enabled: false
     - service: telegram_bot.send_photo
       data:
         authentication: digest
@@ -2845,36 +2843,6 @@
   trigger:
   - platform: state
     entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_error
-    to: water_empty
-    id: water_empty
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_error
-    to: waste_water_tank_full
-    id: waste_water_tank_full
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_error
-    to: duct_blockage
-    id: duct_blockage
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_error
-    to: dirty_tank_latch_open
-    id: dirty_tank_latch_open
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_error
-    to: no_dustbin
-    id: no_dustbin
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_error
-    to: cleaning_tank_full_or_blocked
-    id: cleaning_tank_full_or_blocked
-  - platform: state
-    entity_id:
     - sensor.roborock_s8_pro_ultra_current_error
     to: robot_trapped
     id: robot_trapped
@@ -2883,66 +2851,16 @@
     - sensor.roborock_s8_pro_ultra_current_error
     to: main_brush_jammed
     id: main_brush_jammed
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_status
+    to: water_empty
+    id: water_empty
   condition: []
   action:
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Robot Error"
-  - if:
-    - condition: trigger
-      id:
-      - water_empty
-    then:
-    - service: notify.home_assistant_group
-      data:
-        message: "\U0001F916 Automation - Robot Vacuum Water is Empty! ⚠️"
-    alias: Water is empty
-  - alias: Waste Water Tank is Full
-    if:
-    - condition: trigger
-      id:
-      - waste_water_tank_full
-    then:
-    - service: notify.home_assistant_group
-      data:
-        message: "\U0001F916 Automation - Robot Vacuum Waste Water Tank is Full! ⚠️"
-  - alias: Duct Blockage
-    if:
-    - condition: trigger
-      id:
-      - duct_blockage
-    then:
-    - service: notify.home_assistant_group
-      data:
-        message: "\U0001F916 Automation - Robot Vacuum Duct Blockage! ⚠️"
-  - alias: Dirty Tank Latch is Open
-    if:
-    - condition: trigger
-      id:
-      - dirty_tank_latch_open
-    then:
-    - service: notify.home_assistant_group
-      data:
-        message: "\U0001F916 Automation - Robot Vacuum Dirty Tank Latch is Open! ⚠️"
-  - alias: No Dustbin
-    if:
-    - condition: trigger
-      id:
-      - no_dustbin
-    then:
-    - service: notify.home_assistant_group
-      data:
-        message: "\U0001F916 Automation - Robot Vacuum No Dustbin! ⚠️"
-  - alias: Cleaning Tank Full or Blocked
-    if:
-    - condition: trigger
-      id:
-      - cleaning_tank_full_or_blocked
-    then:
-    - service: notify.home_assistant_group
-      data:
-        message: "\U0001F916 Automation - Robot Vacuum Cleaning Tank Full or Blocked!
-          ⚠️"
   - alias: Robot Trapped
     if:
     - condition: trigger
@@ -2952,13 +2870,48 @@
     - service: notify.home_assistant_group
       data:
         message: "\U0001F916 Automation - Robot Vacuum is trapped or stuck! ⚠️"
-  - alias: Robot Trapped
+    - service: camera.snapshot
+      data:
+        filename: /config/www/tmp/snapshot_vacuum.jpg
+      target:
+        entity_id:
+        - camera.roborock_s8_pro_ultra_map
+    - service: telegram_bot.send_photo
+      data:
+        authentication: digest
+        target: -804542874
+        file: /config/www/tmp/snapshot_vacuum.jpg
+        caption: "\U0001F9F9 \U0001F916 Automation - Robot Vacuum is trapped or stuck
+          in {{ ( states('sensor.roborock_s8_pro_ultra_current_room')) }} ! ⚠️. "
+  - alias: Main Brush jammed
     if:
     - condition: trigger
       id:
       - main_brush_jammed
     then:
+    - service: camera.snapshot
+      data:
+        filename: /config/www/tmp/snapshot_vacuum.jpg
+      target:
+        entity_id:
+        - camera.roborock_s8_pro_ultra_map
     - service: notify.home_assistant_group
       data:
         message: "\U0001F916 Automation - Robot Vacuum main brush is jammed! ⚠️"
+    - service: telegram_bot.send_photo
+      data:
+        authentication: digest
+        target: -804542874
+        file: /config/www/tmp/snapshot_vacuum.jpg
+        caption: "\U0001F9F9 \U0001F916 Automation - Robot Vacuum is trapped or stuck
+          in {{ ( states('sensor.roborock_s8_pro_ultra_current_room')) }} ! ⚠️."
+  - alias: Water Empty
+    if:
+    - condition: trigger
+      id:
+      - water_empty
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum water tank is empty! ⚠️"
   mode: single
