@@ -836,7 +836,8 @@
     entity_id:
     - sensor.roborock_s8_pro_ultra_cleaning_progress_2
     id: vacuum_robot_cleaning
-    to: '1'
+    to:
+    from: '0'
   - platform: state
     entity_id:
     - sensor.roborock_s8_pro_ultra_cleaning_progress_2
@@ -2856,6 +2857,11 @@
     - sensor.roborock_s8_pro_ultra_dock_status
     to: water_empty
     id: water_empty
+  - platform: state
+    entity_id:
+    - sensor.roborock_s8_pro_ultra_dock_status
+    to: waste_water_tank_full
+    id: waste_water_full
   condition: []
   action:
   - service: notify.supervisor_telegram
@@ -2914,4 +2920,13 @@
     - service: notify.home_assistant_group
       data:
         message: "\U0001F916 Automation - Robot Vacuum water tank is empty! ⚠️"
+  - alias: Waste Water Full
+    if:
+    - condition: trigger
+      id:
+      - waste_water_full
+    then:
+    - service: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - Robot Vacuum waste water tank is full! ⚠️"
   mode: single
