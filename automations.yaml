@@ -836,7 +836,9 @@
     entity_id:
     - sensor.roborock_s8_pro_ultra_cleaning_progress_2
     id: vacuum_robot_cleaning
-    to:
+    not_to:
+    - unknown
+    - unavailable
     from: '0'
   - platform: state
     entity_id:
@@ -847,7 +849,9 @@
       hours: 0
       minutes: 0
       seconds: 0
-    from:
+    not_from:
+    - unknown
+    - unavailable
   - platform: state
     entity_id:
     - sensor.kitchen_sticker_switch_button_action
@@ -2845,11 +2849,17 @@
   - platform: state
     entity_id:
     - sensor.roborock_s8_pro_ultra_current_error
+    not_from:
+    - unknown
+    - unavailable
     to: robot_trapped
     id: robot_trapped
   - platform: state
     entity_id:
     - sensor.roborock_s8_pro_ultra_current_error
+    not_from:
+    - unknown
+    - unavailable
     to: main_brush_jammed
     id: main_brush_jammed
   - platform: state
@@ -2860,6 +2870,9 @@
   - platform: state
     entity_id:
     - sensor.roborock_s8_pro_ultra_dock_status
+    not_from:
+    - unknown
+    - unavailable
     to: waste_water_tank_full
     id: waste_water_full
   condition: []
