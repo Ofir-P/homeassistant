@@ -619,11 +619,11 @@ views:
             tap_action: !include popup/footer_vacuum.yaml
             triggers_update:
               - sensor.date
-              - sensor.roborock_s8_pro_ultra_cleaning_time
+              - sensor.roborock_s8_pro_ultra_last_clean_duration
             variables:
               notify: >
                 [[[
-                  let id = states['sensor.roborock_s8_pro_ultra_cleaning_time'];
+                  let id = states['sensor.roborock_s8_pro_ultra_last_clean_duration'];
                   if (id) return (Date.now() - Date.parse(id.state)) > 6048e5;
                 ]]]
             template: footer

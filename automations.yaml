@@ -2796,3 +2796,24 @@
           room!"
     enabled: true
   mode: single
+- id: '1712676029944'
+  alias: Office - Wall Light off if on for 5 minutes
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.office_wall_light
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+    id: corridor_light_on_5mins
+  condition: []
+  action:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.office_wall_light
+  mode: single

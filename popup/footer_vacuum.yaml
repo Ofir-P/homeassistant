@@ -231,10 +231,10 @@ browser_mod:
                     service_data:
                       entity_id: vacuum.roborock_s8_pro_ultra
                   cleaning:
-                    - entity_id: sensor.roborock_s8_pro_ultra_cleaning_area
+                    - entity_id: sensor.roborock_s8_pro_ultra_current_clean_area
                       unit: m²
                       subtitle: Cleaning area
-                    - attribute: sensor.roborock_s8_pro_ultra_cleaning_time
+                    - attribute: sensor.roborock_s8_pro_ultra_last_clean_duration
                       unit: minutes
                       subtitle: Cleaning time
                 shortcuts:
