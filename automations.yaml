@@ -2536,7 +2536,9 @@
     - climate.ofir_a_c
     to: 'off'
     id: ac_set_to_off
-    from:
+    not_from:
+    - unknown
+    - unavailable
   condition: []
   action:
   - service: notify.supervisor_telegram
