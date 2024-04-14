@@ -427,231 +427,6 @@
         data:
           message: ⚠️ Water Leak has been detected in Boiler / Laundry Machine area⚠️
   mode: single
-- id: '1706286005645'
-  alias: Kitchen Automations
-  description: '1. Smoke Detector
-
-    2. Turn ON Kitchen LED Switch
-
-    3. Turn OFF Kitchen LED Switch
-
-
-    8. Laundry machine has started Notification
-
-    9. Laundry machine has finished Notification
-
-    10. Robot Vacuum Started Notification
-
-    11. Robot Vacuum Finished Notification'
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.kitchen_smoke_detector_smoke
-    from: 'off'
-    to: 'on'
-    id: smoke_detected
-  - platform: sun
-    event: sunset
-    offset: 0
-    id: sun_set
-    enabled: false
-  - platform: time
-    at: '17:00:00'
-    id: 5pm
-    enabled: false
-  - platform: time
-    at: 00:00:00
-    id: midnight
-    enabled: false
-  - platform: numeric_state
-    entity_id:
-    - sensor.laundry_machine_power
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 3
-    above: 25
-    id: laundry_machine_set_on
-    enabled: false
-  - platform: numeric_state
-    entity_id:
-    - sensor.laundry_machine_power
-    for:
-      hours: 0
-      minutes: 4
-      seconds: 30
-    id: laundry_machine_set_off
-    below: 2
-    enabled: false
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_cleaning_progress_2
-    id: vacuum_robot_cleaning
-    not_to:
-    - unknown
-    - unavailable
-    from: '0'
-    enabled: false
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_cleaning_progress_2
-    to: '0'
-    id: vacuum_robot_finished
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-    not_from:
-    - unknown
-    - unavailable
-    enabled: false
-  condition: []
-  action:
-  - alias: '1'
-    if:
-    - condition: trigger
-      id:
-      - smoke_detected
-    then:
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - \U0001F6A8 Smoke Detected in Kitchen!"
-    - service: notify.notify
-      metadata: {}
-      data:
-        message: "\U0001F6A8SMOKE DETECTED IN KITCHEN \U0001F6A8"
-  - alias: '2'
-    if:
-    - condition: trigger
-      id:
-      - sun_set
-      - 5pm
-    - condition: state
-      entity_id: switch.kitchen_led_strip
-      state: 'off'
-    then:
-    - service: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        device_id: 92fdadf222970875f82e2d221e4612e4
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now on in the Kitchen!"
-    enabled: false
-  - alias: '3'
-    if:
-    - condition: trigger
-      id:
-      - midnight
-    - condition: state
-      entity_id: switch.kitchen_led_strip
-      state: 'on'
-    then:
-    - service: switch.turn_off
-      target:
-        device_id:
-        - 92fdadf222970875f82e2d221e4612e4
-      data: {}
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now off in the Kitchen!"
-    enabled: false
-  - alias: '8'
-    if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id:
-        - laundry_machine_set_on
-      - condition: state
-        entity_id: input_select.washing_machine_status
-        state: 'Off'
-    then:
-    - service: input_select.select_option
-      metadata: {}
-      data:
-        option: 'On'
-      target:
-        entity_id: input_select.washing_machine_status
-    - service: notify.home_assistant_group
-      metadata: {}
-      data:
-        message: "\U0001F456 Laundry machine has started!"
-    enabled: false
-  - alias: '9'
-    if:
-    - condition: and
-      conditions:
-      - condition: trigger
-        id:
-        - laundry_machine_set_off
-      - condition: state
-        entity_id: input_select.washing_machine_status
-        state: 'On'
-    then:
-    - service: input_select.select_option
-      metadata: {}
-      data:
-        option: 'Off'
-      target:
-        entity_id: input_select.washing_machine_status
-    - service: notify.home_assistant_group
-      metadata: {}
-      data:
-        message: "\U0001F456 Laundry machine has finished!"
-    - service: light.turn_on
-      metadata: {}
-      data: {}
-      target:
-        entity_id: light.laundry_machine_light
-    - service: notify.mobile_app_elians_iphone
-      metadata: {}
-      data:
-        message: "\U0001F456 Laundry machine has finished!"
-    enabled: false
-  - alias: '10'
-    if:
-    - condition: trigger
-      id:
-      - vacuum_robot_cleaning
-    then:
-    - service: notify.home_assistant_group
-      metadata: {}
-      data:
-        message: "\U0001F9F9 Vacuum Robot has started!"
-    enabled: false
-  - alias: '11'
-    if:
-    - condition: trigger
-      id:
-      - vacuum_robot_finished
-    then:
-    - service: camera.snapshot
-      data:
-        filename: /config/www/tmp/snapshot_vacuum.jpg
-      target:
-        entity_id:
-        - camera.roborock_s8_pro_ultra_map
-    - service: telegram_bot.send_photo
-      data:
-        authentication: digest
-        file: /config/www/tmp/snapshot_vacuum.jpg
-        caption: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
-          took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
-          / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
-          }} m²."
-    - service: notify.mobile_app_elians_iphone
-      data:
-        title: Vacuum Robot
-        message: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
-          took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
-          / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
-          }} m².\n"
-        data:
-          image: /local/tmp/snapshot_vacuum.jpg
-    enabled: false
-  mode: single
 - id: '1709561304330'
   alias: Robot Vacuum Daily Routine
   description: 'Will start to vacuum home if zone.home is empty for more than 90 minutes.
@@ -3054,4 +2829,92 @@
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - \U0001F4A1 LED Strip Light is off in Kitchen\U0001F52A"
+  mode: single
+- id: '1713012892336'
+  alias: Office - LUX RGB Corner Light to On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.office
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.office_lux_illuminance_lux
+    below: 18
+  action:
+  - service: remote.send_command
+    metadata: {}
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: Corner_RGB_Lamp
+      command: Power
+    target:
+      device_id: 213c1e28be789af24d278bfa20f54941
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office Corner RGB Light turned on!"
+  mode: single
+- id: '1713012944424'
+  alias: Office - LUX RGB Corner Light to Off
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.office
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 30
+  condition:
+  - condition: numeric_state
+    entity_id: sensor.office_lux_illuminance_lux
+    above: 35
+  action:
+  - service: remote.send_command
+    metadata: {}
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: Corner_RGB_Lamp
+      command: Power
+    target:
+      device_id: 213c1e28be789af24d278bfa20f54941
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office Corner RGB Light turned off!"
+  mode: single
+- id: '1713013073031'
+  alias: Kitchen - Smoke Detected
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.kitchen_smoke_detector_smoke
+    from: 'off'
+    to: 'on'
+    id: smoke_detected
+  condition: []
+  action:
+  - alias: Smoke alert
+    if:
+    - condition: trigger
+      id:
+      - smoke_detected
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6A8 Smoke Detected in Kitchen!"
+    - service: notify.notify
+      metadata: {}
+      data:
+        message: "\U0001F6A8SMOKE DETECTED IN KITCHEN \U0001F6A8"
   mode: single

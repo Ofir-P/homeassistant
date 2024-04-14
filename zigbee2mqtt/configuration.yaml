@@ -170,3 +170,5 @@ devices:
     friendly_name: Bedroom Door Sensor
   '0xa4c1384fd1d8ba32':
     friendly_name: Living Room Wireless Remote Switch
+  '0x54ef441000c4bc27':
+    friendly_name: Office LUX
