@@ -546,6 +546,10 @@
       caption: "    {% if values.error %} \U0001F41F ❌ The fishes have not been fed
         at {{ values.timestamp }} ❌ {% else %} \U0001F41F The fishes have been fed
         {{ values.value }} portions at {{ values.timestamp }}. {% endif %}"
+  - service: notify.mobile_app_ofir_honor_magic_5_pro
+    metadata: {}
+    data:
+      message: FEED THE FISH
   mode: single
   variables:
     values: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not
@@ -782,11 +786,23 @@
       entity_id:
       - light.kitchen_l1
     data: {}
+  - alias: LED Strip Off if TV is Off
+    if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'on'
+    then:
+    - service: switch.turn_off
+      target:
+        device_id:
+        - 92fdadf222970875f82e2d221e4612e4
+      data: {}
   - service: switch.turn_off
     metadata: {}
     data: {}
     target:
       device_id: 92fdadf222970875f82e2d221e4612e4
+    enabled: false
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation -  \U0001F4A1No Presence in Kitchen, turned
@@ -2527,27 +2543,6 @@
           room!"
     enabled: true
   mode: single
-- id: '1712676029944'
-  alias: Office - Wall Light off if on for 5 minutes
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.office_wall_light
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 5
-      seconds: 0
-    id: corridor_light_on_5mins
-  condition: []
-  action:
-  - service: light.turn_off
-    metadata: {}
-    data: {}
-    target:
-      entity_id: light.office_wall_light
-  mode: single
 - id: '1712835404165'
   alias: Robot Vacuum Status Notification
   description: ''
@@ -2756,58 +2751,6 @@
     data:
       message: "\U0001F916 Automation - \U0001F4A1 Light is off in Kitchen\U0001F52A"
   mode: single
-- id: '1712836484278'
-  alias: Kitchen - LED Strip
-  description: Turn on on sunset / 5PM, Turn off 12AM.
-  trigger:
-  - platform: sun
-    event: sunset
-    offset: 0
-    id: sun_set
-  - platform: time
-    at: '17:00:00'
-    id: 5pm
-  - platform: time
-    at: 00:00:00
-    id: midnight
-  condition: []
-  action:
-  - alias: LED Strip is Off
-    if:
-    - condition: trigger
-      id:
-      - midnight
-    - condition: state
-      entity_id: switch.kitchen_led_strip
-      state: 'on'
-    then:
-    - service: switch.turn_off
-      target:
-        device_id:
-        - 92fdadf222970875f82e2d221e4612e4
-      data: {}
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now off in the Kitchen!"
-  - alias: LED Strip On
-    if:
-    - condition: trigger
-      id:
-      - sun_set
-      - 5pm
-    - condition: state
-      entity_id: switch.kitchen_led_strip
-      state: 'off'
-    then:
-    - service: switch.turn_on
-      metadata: {}
-      data: {}
-      target:
-        device_id: 92fdadf222970875f82e2d221e4612e4
-    - service: notify.supervisor_telegram
-      data:
-        message: "\U0001F916 Automation - \U0001F4A1 LED Strip is now on in the Kitchen!"
-  mode: single
 - id: '1712836579502'
   alias: Kitchen - LED Strip Light On Notification
   description: ''
@@ -2927,4 +2870,129 @@
       metadata: {}
       data:
         message: "\U0001F6A8SMOKE DETECTED IN KITCHEN \U0001F6A8"
+  mode: single
+- id: '1713157342907'
+  alias: Living Room - Light On Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.living_room_l1
+    from: 'off'
+    to: 'on'
+    id: light_set_on
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F4A1 Living Room Light is on in Living
+        Room \U0001F6CB️"
+  mode: single
+- id: '1713157388984'
+  alias: Living Room - Light Off Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.living_room_l1
+    from: 'on'
+    to: 'off'
+    id: light_set_on
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F4A1 Living Room Light is off in Living
+        Room \U0001F6CB️"
+  mode: single
+- id: '1713157489878'
+  alias: Dining Table - Light On Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.living_room_l2
+    from: 'off'
+    to: 'on'
+    id: light_set_on
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F4A1 Dining Table Light is on in Living
+        Room \U0001F37D️"
+  mode: single
+- id: '1713157519579'
+  alias: Dining Table - Light Off Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.living_room_l2
+    from: 'on'
+    to: 'off'
+    id: light_set_on
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F4A1 Dining Table Light is off in Living
+        Room \U0001F37D️"
+  mode: single
+- id: '1713157631342'
+  alias: Main Door - Light On Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.kitchen_l2
+    from: 'off'
+    to: 'on'
+    id: light_set_on
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F4A1 Main Door Light is on \U0001F6AA"
+  mode: single
+- id: '1713157657112'
+  alias: Main Door - Light Off Notification
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.kitchen_l2
+    from: 'on'
+    to: 'off'
+    id: light_set_on
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F4A1 Main Door Light is off \U0001F6AA"
+  mode: single
+- id: '1713203658731'
+  alias: Office - Wall Light off if on for 3 minutes
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - light.office_wall_light
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
+    id: corridor_light_on_3mins
+  condition: []
+  action:
+  - service: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.office_wall_light
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - Office Wall Light off if on for 3 minutes
+        \U0001F4A1"
   mode: single
