@@ -3003,3 +3003,23 @@
       message: "\U0001F916 Automation - Office Wall Light off if on for 3 minutes
         \U0001F4A1"
   mode: single
+- id: '1713363270552'
+  alias: Shower - Vibration Skip Song
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.shower_vibration_action
+    to: vibration
+    id: vibration
+  condition: []
+  action:
+  - service: media_player.media_next_track
+    target:
+      entity_id: media_player.shower_echo_dot
+    data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6BF Shower Vibration - Skipped song
+        \U0001F3B5"
+  mode: single
