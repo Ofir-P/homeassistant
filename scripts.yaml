@@ -345,6 +345,10 @@ home_leave:
       - light.office_elian_desk_rgb_strip
       - light.office_ofir_desk_rgb_strip
       - light.office_wall_light
+  - service: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.kitchen_led_strip
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - House devices are OFF!"
