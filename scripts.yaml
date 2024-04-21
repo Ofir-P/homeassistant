@@ -471,3 +471,18 @@ toggle_bedroom_light:
       message: "\U0001F4DC Script - Bedroom Light has been triggered!"
   mode: single
   icon: mdi:ceiling-fan-light
+office_corner_led_toggle:
+  alias: Office Corner LED Toggle
+  sequence:
+  - service: remote.send_command
+    metadata: {}
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: Corner_RGB_Lamp
+      command: Power
+    target:
+      device_id: 213c1e28be789af24d278bfa20f54941
+  mode: single
+  icon: mdi:led-strip
