@@ -797,12 +797,6 @@
         device_id:
         - 92fdadf222970875f82e2d221e4612e4
       data: {}
-  - service: switch.turn_off
-    metadata: {}
-    data: {}
-    target:
-      device_id: 92fdadf222970875f82e2d221e4612e4
-    enabled: false
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation -  \U0001F4A1No Presence in Kitchen, turned
@@ -3022,4 +3016,24 @@
     data:
       message: "\U0001F916 Automation - \U0001F6BF Shower Vibration - Skipped song
         \U0001F3B5"
+  mode: single
+- id: '1713728943578'
+  alias: Kitchen - Turn Off LED at Midnight
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: state
+    state: 'on'
+    entity_id: switch.kitchen_led_strip
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation -  \U0001F4A1 Turn off Kitchen LED at midnight"
+  - service: switch.turn_off
+    target:
+      device_id:
+      - 92fdadf222970875f82e2d221e4612e4
+    data: {}
   mode: single
