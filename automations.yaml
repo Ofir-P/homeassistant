@@ -685,6 +685,7 @@
   - platform: time
     at: 06:05:00
     id: Morning
+    enabled: false
   - platform: time
     at: '15:01:00'
     id: AfterWork
