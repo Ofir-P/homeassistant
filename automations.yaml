@@ -524,15 +524,23 @@
   - platform: state
     entity_id: switch.hfjh_v2_eadb_fish_tank_2
     attribute: event.4.1
+    enabled: false
+  - platform: state
+    entity_id:
+    - binary_sensor.office_fish_feeder_contact
+    from: 'off'
+    to: 'on'
   condition:
   - alias: Check if the switch didn't go from or to unavailable
     condition: template
     value_template: '{{ not ''unavailable'' in [trigger.from_state.state, trigger.to_state.state]
       }}'
+    enabled: false
   - alias: Check if the values are correct
     condition: template
     value_template: "{{ \n  values is defined and values.value is defined and values.timestamp
       is defined\n  and not (values.value == 'unknown' and values.timestamp == 'unknown')\n}}\n"
+    enabled: false
   action:
   - service: camera.snapshot
     data:
@@ -543,9 +551,7 @@
     data:
       authentication: digest
       file: /config/www/tmp/snapshot_aquarium_sub.jpg
-      caption: "    {% if values.error %} \U0001F41F ❌ The fishes have not been fed
-        at {{ values.timestamp }} ❌ {% else %} \U0001F41F The fishes have been fed
-        {{ values.value }} portions at {{ values.timestamp }}. {% endif %}"
+      caption: "\U0001F41F The fishes have been fed"
   - service: notify.mobile_app_ofir_honor_magic_5_pro
     metadata: {}
     data:
