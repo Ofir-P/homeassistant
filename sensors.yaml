@@ -40,22 +40,3 @@
       value_template: "{{ (states('sensor.qbittorrent_up_speed') | int / 1000) | round(1) }}"
       availability_template: "{{ states('sensor.qbittorrent_down_speed')|is_number }}"
 # [=========================]qBitTorrent[=========================]
-# [=========================]Xiaomi[=========================]
-- platform: template
-  sensors:
-    feed_record_timestamp:
-      value_template: >-
-        {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') | from_json %}
-        {{ as_local(as_datetime(feed_record.timestamp)) }}
-      friendly_name: "Last Fish Feed"
-      icon_template: "{{ 'mdi:fish' }}"
-      device_class: timestamp
-      availability_template: "{{ state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not none }}"
-    feed_is_missing_timestamp:
-      value_template: >-
-        {{ states('sensor.feed_record_timestamp') | as_datetime | as_local + timedelta(days=2, hours=2) }}
-      friendly_name: "Feeding is required"
-      icon_template: "{{ 'mdi:fish' }}"
-      device_class: timestamp
-      availability_template: "{{ 'sensor.feed_record_timestamp' | has_value }}"
-# [=========================]Xiaomi[=========================]

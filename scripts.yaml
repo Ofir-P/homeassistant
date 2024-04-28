@@ -72,36 +72,6 @@ ir_turn_on_off_bedroom_tv:
       message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered!"
   mode: single
   icon: mdi:remote-tv
-feed_the_fish:
-  alias: Feed the Fish
-  sequence:
-  - service: button.press
-    data:
-      entity_id: button.hfjh_v2_eadb_set_feed_single
-  - delay: 60
-  - choose:
-    - alias: Feed log record has an error --> no feeding happened
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.feed_record_result
-        state: 'on'
-      sequence:
-      - service: notify.mobile_app_ofir_honor_magic_5_pro
-        data:
-          message: "\U0001F41F❌ Error while feeding fish"
-    - alias: Feed log record has NO error --> feeding OK
-      conditions:
-      - condition: state
-        entity_id: binary_sensor.feed_record_result
-        state: 'off'
-      sequence:
-      - service: notify.mobile_app_ofir_honor_magic_5_pro
-        data:
-          message: "\U0001F41F✔️ Fish feed time"
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Feed the Fish has been triggered!"
-  mode: single
 turn_off_on_kitchen_light:
   alias: Toggle Kitchen Light
   sequence:
