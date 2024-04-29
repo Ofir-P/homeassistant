@@ -547,7 +547,7 @@ views:
               - icon_away
 
           - type: custom:button-card
-            entity: switch.hfjh_v2_eadb_fish_tank_2
+            entity: binary_sensor.office_fish_feeder_contact
             show_state: true
             state_display: >
               [[[
