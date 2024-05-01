@@ -516,16 +516,16 @@
     to: 'on'
   condition: []
   action:
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 2
-      milliseconds: 0
   - service: camera.snapshot
     data:
       filename: /config/www/tmp/snapshot_aquarium_sub.jpg
     target:
       entity_id: camera.aquarium_sub
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
   - service: telegram_bot.send_photo
     data:
       authentication: digest
