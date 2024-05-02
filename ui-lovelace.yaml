@@ -548,7 +548,7 @@ views:
 
           - type: custom:button-card
             entity: binary_sensor.office_fish_feeder_contact
-            show_state: true
+            show_state: false
             state_display: >
               [[[
                 if (variables.state.toLowerCase() === 'on') {

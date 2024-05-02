@@ -21,10 +21,10 @@ browser_mod:
               aspect_ratio: "20:15"
             - type: custom:mushroom-entity-card
               fill_container: false
-              secondary_info: state
+              secondary_info: last-changed
               tap_action:
                 action: none
-              entity: sensor.feed_record_timestamp
+              entity: automation.fish_fed_telegram_notification
               name: Last Fed
             - type: custom:mushroom-title-card
               title: Last Fed Photo
