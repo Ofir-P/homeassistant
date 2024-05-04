@@ -177,3 +177,8 @@ devices:
     vibration_timeout: 5
   '0x00158d000a95e954':
     friendly_name: Office Fish Feeder
+  '0xa4c1388091f09665':
+    friendly_name: Wardrobe Motion Sensor
+    description: On top of the wardrobe door
+  '0xa4c1380dc6ffc141':
+    friendly_name: Shower Door Sensor

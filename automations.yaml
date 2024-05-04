@@ -620,7 +620,7 @@
     entity_id: light.office
     state: 'off'
   - condition: time
-    after: '13:00:00'
+    after: '11:00:00'
     before: '23:00:00'
   - condition: or
     conditions:
@@ -1954,13 +1954,13 @@
     id: no_motion
   condition:
   - condition: state
-    entity_id: light.bathroom
     state: 'on'
+    entity_id: light.bathroom
   action:
   - service: light.turn_off
+    data: {}
     target:
       entity_id: light.bathroom
-    data: {}
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - \U0001F6BD No Presence at Bathroom - Light
@@ -3056,4 +3056,130 @@
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation - Office Corner RGB Light turned on!"
+  mode: single
+- id: '1714730340666'
+  alias: Wardrobe - Motion Detected Turn On Lights
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.0xa4c1388091f09665_occupancy
+    to: 'on'
+    from: 'off'
+  condition:
+  - condition: state
+    entity_id: light.wardrobe
+    state: 'off'
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: vacuum.roborock_s8_pro_ultra
+      state: docked
+      attribute: state
+    - condition: state
+      entity_id: vacuum.roborock_s8_pro_ultra
+      state: unavailable
+  action:
+  - service: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      area_id: wardrobe
+  - service: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - Wardrobe - Motion Detected Turn On Lights
+        \U0001F4A1"
+  mode: single
+- id: '1714734842819'
+  alias: Shower - Door Open Notification to Telegram
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.0xa4c1380dc6ffc141_contact
+    to: 'on'
+    from: 'off'
+    id: door_open
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6AA Shower Door is open now!"
+  mode: single
+- id: '1714734877897'
+  alias: Shower - Door Closed Notification to Telegram
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.0xa4c1380dc6ffc141_contact
+    to: 'off'
+    from: 'on'
+    id: door_closed
+  condition: []
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6AA Shower Door is closed now!"
+  mode: single
+- id: '1714735104435'
+  alias: Shower - Pause Music if door open
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.0xa4c1380dc6ffc141_contact
+    to: 'on'
+    from: 'off'
+    id: door_open
+  condition:
+  - condition: state
+    entity_id: light.shower_l1
+    state: 'on'
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 30
+  - condition: state
+    entity_id: media_player.spotify_elian_sarfaty
+    state: playing
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F3B6 Shower Music paused because door
+        is open now \U0001F6C1"
+  - service: media_player.media_pause
+    metadata: {}
+    data: {}
+    target:
+      entity_id: media_player.shower_echo_dot
+  mode: single
+- id: '1714760904783'
+  alias: Wardrobe  - No Motion Turn Off Lights
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.0xa4c1388091f09665_occupancy
+    to: 'off'
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 20
+      seconds: 0
+    id: no_motion
+  condition:
+  - condition: state
+    state: 'on'
+    entity_id: light.wardrobe
+  action:
+  - service: light.turn_off
+    target:
+      area_id: wardrobe
+    data: {}
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F3BD No Presence at Wardrobe - Light
+        off \U0001F4A1"
   mode: single
