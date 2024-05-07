@@ -2769,38 +2769,6 @@
     data:
       message: "\U0001F916 Automation - \U0001F4A1 LED Strip Light is off in Kitchen\U0001F52A"
   mode: single
-- id: '1713012892336'
-  alias: Office - LUX RGB Corner Light to On
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - light.office
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-  condition:
-  - condition: state
-    entity_id: input_select.office_corner_led_light_status
-    state: 'off'
-  action:
-  - service: remote.send_command
-    metadata: {}
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      device: Corner_RGB_Lamp
-      command: Power
-    target:
-      device_id: 213c1e28be789af24d278bfa20f54941
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - \U0001F4A1\U0001F308 Office LUX RGB Corner
-        Light to On! \U0001F4DD"
-  mode: single
 - id: '1713012944424'
   alias: Office - LUX RGB Corner Light to Off
   description: ''
