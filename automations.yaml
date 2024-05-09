@@ -2769,38 +2769,6 @@
     data:
       message: "\U0001F916 Automation - \U0001F4A1 LED Strip Light is off in Kitchen\U0001F52A"
   mode: single
-- id: '1713012944424'
-  alias: Office - LUX RGB Corner Light to Off
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - input_select.office_corner_led_light_status
-    to: 'on'
-  condition:
-  - condition: state
-    entity_id: light.office
-    state: 'off'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-  action:
-  - service: remote.send_command
-    metadata: {}
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      device: Corner_RGB_Lamp
-      command: Power
-    target:
-      device_id: 213c1e28be789af24d278bfa20f54941
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - \U0001F4A1\U0001F308 Office LUX RGB Corner
-        Light to Off \U0001F4DD"
-  mode: single
 - id: '1713013073031'
   alias: Kitchen - Smoke Detected
   description: ''
@@ -2991,40 +2959,6 @@
       device_id:
       - 92fdadf222970875f82e2d221e4612e4
     data: {}
-  mode: single
-- id: '1714252181140'
-  alias: Office - Presence sensor turn on Corner LED if off
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - binary_sensor.office_presence_sensor_presence
-    to: 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 30
-  condition:
-  - condition: state
-    entity_id: light.office
-    state: 'on'
-  - condition: state
-    entity_id: input_select.office_corner_led_light_status
-    state: 'off'
-  action:
-  - service: remote.send_command
-    metadata: {}
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      device: Corner_RGB_Lamp
-      command: Power
-    target:
-      device_id: 213c1e28be789af24d278bfa20f54941
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - Office Corner RGB Light turned on!"
   mode: single
 - id: '1714730340666'
   alias: Wardrobe - Motion Detected Turn On Lights
