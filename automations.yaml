@@ -643,16 +643,22 @@
       - light.office
       - light.office_elian_desk_rgb_strip
       - light.office_ofir_desk_rgb_strip
-  - service: remote.send_command
-    metadata: {}
-    data:
-      num_repeats: 1
-      delay_secs: 0.4
-      hold_secs: 0
-      device: Corner_RGB_Lamp
-      command: Power
-    target:
-      device_id: 213c1e28be789af24d278bfa20f54941
+  - if:
+    - condition: state
+      entity_id: input_select.office_corner_led_light_status
+      state: 'off'
+    then:
+    - service: remote.send_command
+      metadata: {}
+      data:
+        num_repeats: 1
+        delay_secs: 0.4
+        hold_secs: 0
+        device: Corner_RGB_Lamp
+        command: Power
+      target:
+        device_id: 213c1e28be789af24d278bfa20f54941
+    alias: if corner light is off, turn on
   - service: notify.supervisor_telegram
     metadata: {}
     data:
