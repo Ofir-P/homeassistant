@@ -182,3 +182,5 @@ devices:
     description: On top of the wardrobe door
   '0xa4c1380dc6ffc141':
     friendly_name: Shower Door Sensor
+  '0x00158d0006c8f369':
+    friendly_name: Dining Table Sticker Switch button

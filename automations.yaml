@@ -986,6 +986,9 @@
     entity_id: binary_sensor.office_presence_sensor_presence
     state: 'on'
     enabled: true
+  - condition: state
+    entity_id: light.office
+    state: 'on'
   action:
   - service: scene.create
     data:
@@ -3149,4 +3152,48 @@
     data:
       message: "\U0001F916 Automation - \U0001F4A1\U0001F308 Corner LED Light is off
         in Office \U0001F4DD"
+  mode: single
+- id: '1715373879371'
+  alias: Dining Table - Sticker Button
+  description: 'Hold - MUTE TV
+
+    Single Press - Toggle light'
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.0x00158d0006c8f369_action
+    to: single
+    id: stickerbutton_single
+  - platform: state
+    entity_id:
+    - sensor.0x00158d0006c8f369_action
+    to: hold
+    id: stickerbutton_hold
+  condition: []
+  action:
+  - alias: Single Press
+    if:
+    - condition: trigger
+      id:
+      - stickerbutton_single
+      enabled: true
+    then:
+    - service: light.toggle
+      target:
+        entity_id: light.living_room_l2
+      data: {}
+    enabled: true
+  - alias: Hold
+    if:
+    - condition: trigger
+      id:
+      - stickerbutton_hold
+      enabled: true
+    then:
+    - service: webostv.command
+      metadata: {}
+      data:
+        entity_id: media_player.living_room_lg_webos_smart_tv
+        command: MUTE
+    enabled: true
   mode: single
