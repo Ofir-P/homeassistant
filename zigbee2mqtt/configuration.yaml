@@ -184,3 +184,5 @@ devices:
     friendly_name: Shower Door Sensor
   '0x00158d0006c8f369':
     friendly_name: Dining Table Sticker Switch button
+  '0x00158d0009cf58c2':
+    friendly_name: Dining Table Sticker Switch button 2nd

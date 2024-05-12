@@ -3162,11 +3162,13 @@
   - platform: state
     entity_id:
     - sensor.0x00158d0006c8f369_action
+    - sensor.dining_table_sticker_switch_button_2nd_action
     to: single
     id: stickerbutton_single
   - platform: state
     entity_id:
     - sensor.0x00158d0006c8f369_action
+    - sensor.dining_table_sticker_switch_button_2nd_action
     to: hold
     id: stickerbutton_hold
   condition: []
@@ -3190,10 +3192,10 @@
       - stickerbutton_hold
       enabled: true
     then:
-    - service: webostv.command
+    - service: webostv.button
       metadata: {}
       data:
         entity_id: media_player.living_room_lg_webos_smart_tv
-        command: MUTE
+        button: MUTE
     enabled: true
   mode: single
