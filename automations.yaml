@@ -778,17 +778,11 @@
       entity_id:
       - light.kitchen_l1
     data: {}
-  - alias: LED Strip Off if TV is Off
-    if:
-    - condition: state
-      entity_id: input_select.living_room_tv_status
-      state: 'Off'
-    then:
-    - service: switch.turn_off
-      target:
-        device_id:
-        - 92fdadf222970875f82e2d221e4612e4
-      data: {}
+  - service: switch.turn_off
+    target:
+      device_id:
+      - 92fdadf222970875f82e2d221e4612e4
+    data: {}
   - service: notify.supervisor_telegram
     data:
       message: "\U0001F916 Automation -  \U0001F4A1No Presence in Kitchen, turned
