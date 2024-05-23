@@ -456,3 +456,16 @@ office_corner_led_toggle:
       device_id: 213c1e28be789af24d278bfa20f54941
   mode: single
   icon: mdi:led-strip
+unlock_main_door:
+  alias: Unlock Main Door
+  sequence:
+  - service: lock.unlock
+    metadata: {}
+    data: {}
+    target:
+      entity_id: lock.front_door_2
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6AA Main Door Unlocked by Script! \U0001F510"
+  mode: single
+  icon: mdi:lock-open

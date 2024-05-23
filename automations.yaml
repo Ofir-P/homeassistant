@@ -3193,3 +3193,89 @@
         button: MUTE
     enabled: true
   mode: single
+- id: '1716359887340'
+  alias: Turn Bedroom AC Off if Wardrobe AC is On
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - input_select.wardrobe_ac_status
+    to: 'On'
+  condition:
+  - condition: state
+    entity_id: input_select.bedroom_ac_status
+    state: 'On'
+  action:
+  - service: climate.turn_off
+    metadata: {}
+    data: {}
+    target:
+      device_id: 4018257e961bc48fa5b1c539c9efc5ee
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - ❄️ Turn Bedroom AC Off if Wardrobe AC is On!"
+  mode: single
+- id: '1716360061601'
+  alias: Low battery level on TicWatch
+  description: ''
+  trigger:
+  - platform: numeric_state
+    entity_id:
+    - sensor.ticwatch_pro_3_ultra_battery_level
+    below: 12
+  condition: []
+  action:
+  - service: notify.mobile_app_ticwatch_pro_3_ultra
+    metadata: {}
+    data:
+      message: BATTERY LOW ON WATCH, CHARGE ME NOW!
+  mode: single
+- id: '1716395060591'
+  alias: Main Door Lock State Notifications
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - lock.front_door_2
+    to: locked
+    id: locked
+  - platform: state
+    entity_id:
+    - lock.front_door_2
+    to: jammed
+    id: jammed
+  - platform: state
+    entity_id:
+    - lock.front_door_2
+    to: unlocked
+    id: unlocked
+  condition: []
+  action:
+  - if:
+    - condition: trigger
+      id:
+      - locked
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6AA Main Door is LOCKED now! \U0001F510"
+    alias: if locked
+  - alias: if unlocked
+    if:
+    - condition: trigger
+      id:
+      - unlocked
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6AA Main Door is UNLOCKED now! \U0001F513"
+  - alias: if jammed
+    if:
+    - condition: trigger
+      id:
+      - jammed
+    then:
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F6AA Main Door is JAMMED now! \U0001F50F"
+  mode: single
