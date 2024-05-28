@@ -169,6 +169,10 @@
     - service: light.turn_on
       data:
         brightness_pct: 6
+        rgb_color:
+        - 213
+        - 226
+        - 40
       target:
         device_id: 5972c49b7f01f8fde1fe7d5f02db377d
     - service: notify.supervisor_telegram
