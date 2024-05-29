@@ -1,52 +1,10 @@
 # Loads default set of integrations. Do not remove.
 default_config:
-
-# [=========================]Xiaomi Miot[=========================]
-xiaomi_miot:
-  ### Ideas/suggestions taken from https://github.com/al-one/hass-xiaomi-miot/issues/326
-  device_customizes:
-    hfjh.fishbowl.v2:
-      ### Generate number entities for pump flux, brightness and led color
-      number_properties: pump_flux,ledboard_color
-      ### Generate a button entity to trigger the action to feed the fish
-      button_actions: set_feed_single
-      ### Add attribute to keep track of latest feed-record event
-      miio_cloud_props: event.4.1
-  exclude_state_attributes:
-    ### Generic attributes to exclude
-    - mac_address
-    ### Aquarium attributes to exclude
-    - function.mcu_type
-    - function.mcu_type_new
-    - function.key_switch
-    - function.feed_time_week
-    - function.feed_num
-    - function.feed_time
-    - function.feed_time_switch
-    - function.ledboard_time_switch
-    - function.ledboard_time_open
-    - function.ledboard_time_close
-    - function.ledboard_model
-    - function.ledboard_sun
-    - function.ledboard_stream
-    - function.ledboard_speed
-    - function.ledboard_time_switch
-    - function.ledboard_time_open
-    - function.ledboard_time_close
-    - function.ledboard_brightness
-# [=========================]Xiaomi Miot[=========================]
 # [=========================]Spotcast[=========================]
 spotcast:
   sp_dc: !secret primary_sp_dc
   sp_key: !secret primary_sp_key
   country: IL #optional, added in 3.6.24
-  accounts:
-    elian:
-      sp_dc: !secret elian_sp_dc
-      sp_key: !secret elian_sp_key
-    ofir:
-      sp_dc: !secret ofir_sp_dc
-      sp_key: !secret ofir_sp_key
 
 # [=========================]Spotcast[=========================]
 logbook:
@@ -95,6 +53,7 @@ lovelace:
       { url: "/hacsfiles/button-card/button-card.js", type: module },
       { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
       { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
+      { url: "/hacsfiles/stack-in-card/stack-in-card.js", type: module }, # Lock button
       {
         url: "/hacsfiles/lovelace-xiaomi-vacuum-map-card/xiaomi-vacuum-map-card.js",
         type: module,
