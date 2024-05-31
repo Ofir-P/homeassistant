@@ -536,14 +536,6 @@
       file: /config/www/tmp/snapshot_aquarium_sub.jpg
       caption: "\U0001F41F The fishes have been fed"
   mode: single
-  variables:
-    values: "{% if state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1') is not
-      none %}\n  {% set value = (state_attr('switch.hfjh_v2_eadb_fish_tank_2', 'event.4.1')
-      | from_json).value[0].value.split(',') %}\n  {% set timestamp = (state_attr('switch.hfjh_v2_eadb_fish_tank_2',
-      'event.4.1') | from_json).timestamp %}\n{% endif %} {% set timestamp =  timestamp
-      | default() | timestamp_custom('%H:%M %A', default='unknown') %} {% set value
-      = (value | default())[6] | default('unknown') %} {% set error = (value | default())[5]
-      | default() == 0 %} {{ dict(timestamp=timestamp,value=value,error=error) }}\n"
 - id: '1710393879091'
   alias: Door Open Notification to Telegram
   description: If state changed to `Open` send photo of Main Door Camera and Telegram
