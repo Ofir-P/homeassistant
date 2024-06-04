@@ -849,7 +849,7 @@
     to: 'off'
     for:
       hours: 0
-      minutes: 25
+      minutes: 15
       seconds: 0
     id: presence_away_25_mins
   condition: []

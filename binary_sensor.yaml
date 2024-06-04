@@ -5,16 +5,3 @@
       value_template: "{{ is_state('device_tracker.elians_iphone', 'home') or is_state('ofir_honor_magic_5_pro', 'home') }}"
       device_class: presence
 # [=========================]Phones at home[=========================]
-# [=========================]Xiaomi Miot - Aquarium[=========================]
-- platform: template
-  sensors:
-    feed_record_result:
-      value_template: >-
-        {%- if state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1') -%}
-            {% set feed_record = state_attr('switch.hfjh_v2_eadb_fish_tank_2','event.4.1')|from_json %}
-            {% set feed_result = feed_record.value[0].value.split(',')[5] %}              {{ feed_result|int != 0 }}
-        {%- endif -%}
-      availability_template: "{{ states('switch.hfjh_v2_eadb_fish_tank_2') in ['on', 'off'] }}"
-      friendly_name: "Automatic Feeder"
-      device_class: problem
-# [=========================]Xiaomi Miot - Aquarium[=========================]
