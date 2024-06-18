@@ -696,8 +696,7 @@
       metadata: {}
       data:
         message: "\U0001F916 Automation - ♨️ Shower Water after Work has been activated!"
-    - service: script.turn_on_switcher_for_60mins
-      metadata: {}
+    - service: script.turn_on_boiler_for_35_minutes
       data: {}
   - if:
     - condition: trigger
