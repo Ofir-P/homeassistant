@@ -3042,13 +3042,6 @@
     id: door_open
   condition:
   - condition: state
-    entity_id: light.shower_l1
-    state: 'on'
-    for:
-      hours: 0
-      minutes: 3
-      seconds: 30
-  - condition: state
     entity_id: media_player.spotify_elian_sarfaty
     state: playing
   action:
