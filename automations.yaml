@@ -2162,7 +2162,7 @@
         entity_id: light.living_room_l1
   mode: single
 - id: '1712578588954'
-  alias: Living Room - No Presence Turn Off TV
+  alias: Living Room - No Presence Turn Off TV/AC
   description: ''
   trigger:
   - platform: state
@@ -2173,17 +2173,45 @@
       hours: 0
       minutes: 35
       seconds: 0
-    from:
-  condition:
-  - condition: state
-    entity_id: input_select.living_room_tv_status
-    state: 'On'
+    id: no_move
+  condition: []
   action:
-  - service: script.ir_turn_on_off_living_room_tv
-    data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - \U0001F4FA No Presence on LR, Turned off TV!"
+  - alias: Turn Off TV
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - no_move
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'On'
+    then:
+    - service: script.ir_turn_on_off_living_room_tv
+      data: {}
+    - service: notify.supervisor_telegram
+      data:
+        message: "\U0001F916 Automation - \U0001F4FA No Presence on LR, Turn off TV!"
+  - alias: Turn Off AC
+    if:
+    - condition: and
+      conditions:
+      - condition: trigger
+        id:
+        - no_move
+      - condition: state
+        entity_id: climate.ofir_a_c
+        state: 'On'
+    then:
+    - service: climate.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: climate.ofir_a_c
+    - service: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - No Presence at LR - Turn Off AC!"
   mode: single
 - id: '1712579458749'
   alias: Office - AC On Notification
