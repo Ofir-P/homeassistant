@@ -3301,3 +3301,72 @@
       data:
         message: "\U0001F916 Automation - \U0001F6AA Main Door is JAMMED now! \U0001F50F"
   mode: single
+- id: '1721549549091'
+  alias: Robot Vacuum if Visiting Grandparents Actionable Notification
+  description: ''
+  trigger:
+  - platform: zone
+    entity_id: device_tracker.ofir_honor_magic_5_pro
+    zone: zone.grandma_grandpa
+    event: enter
+  condition:
+  - condition: numeric_state
+    entity_id: zone.home
+    below: 1
+  - condition: template
+    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
+      | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
+  action:
+  - alias: Set up variables for the actions
+    variables:
+      action_keep: '{{ ''OPEN_'' ~ context.id }}'
+      action_stop: '{{ ''CLOSE_'' ~ context.id }}'
+  - alias: Ask to clean or not the House via Roborock S8 Vacuum
+    service: notify.mobile_app_ofir_honor_magic_5_pro
+    data:
+      message: Do you want to clean the house now?
+      data:
+        actions:
+        - action: '{{ action_keep }}'
+          title: Clean House
+        - action: '{{ action_stop }}'
+          title: Do not clean
+  - alias: Wait for a response
+    wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: '{{ action_keep }}'
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: '{{ action_stop }}'
+  - alias: Perform the action
+    choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ wait.trigger.event.data.action == action_stop }}'
+      sequence:
+      - service: notify.mobile_app_ofir_honor_magic_5_pro
+        data:
+          message: You chose not to clean the house.
+    - conditions:
+      - condition: template
+        value_template: '{{ wait.trigger.event.data.action == action_keep }}'
+      sequence:
+      - service: vacuum.start
+        target:
+          entity_id: vacuum.roborock_s8_pro_ultra
+        data: {}
+      - service: notify.mobile_app_ofir_honor_magic_5_pro
+        data:
+          message: You chose to clean the house, well done!
+      - service: notify.supervisor_telegram
+        metadata: {}
+        data:
+          message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
+      - service: notify.mobile_app_elians_iphone
+        metadata: {}
+        data:
+          message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
+  mode: single
