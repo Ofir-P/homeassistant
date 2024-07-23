@@ -342,25 +342,21 @@
   - platform: state
     entity_id:
     - binary_sensor.water_leak_shower_sink_water_leak
-    from: 'off'
     to: 'on'
     id: shower_sink
   - platform: state
     entity_id:
     - binary_sensor.water_leak_office_sink_water_leak
-    from: 'off'
     to: 'on'
     id: office_sink
   - platform: state
     entity_id:
     - binary_sensor.water_leak_sensor_kitchen_sink_water_leak
-    from: 'off'
     to: 'on'
     id: kitchen_sink
   - platform: state
     entity_id:
     - binary_sensor.water_leak_laundry_machine_water_leak
-    from: 'off'
     to: 'on'
     id: laundry_machine
   condition: []
@@ -627,6 +623,9 @@
     - condition: state
       entity_id: vacuum.roborock_s8_pro_ultra
       state: unavailable
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   action:
   - service: light.turn_on
     data:
@@ -799,6 +798,9 @@
   - condition: state
     entity_id: vacuum.roborock_s8_pro_ultra
     state: docked
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   action:
   - service: light.turn_on
     metadata: {}
@@ -2201,7 +2203,7 @@
         - no_move
       - condition: state
         entity_id: climate.ofir_a_c
-        state: 'On'
+        state: cool
     then:
     - service: climate.turn_off
       metadata: {}
@@ -3014,6 +3016,9 @@
     - condition: state
       entity_id: vacuum.roborock_s8_pro_ultra
       state: unavailable
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   action:
   - service: light.turn_on
     metadata: {}
