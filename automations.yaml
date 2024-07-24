@@ -630,9 +630,9 @@
   - service: light.turn_on
     data:
       rgb_color:
-      - 93
-      - 173
-      - 226
+      - 115
+      - 185
+      - 231
     target:
       entity_id:
       - light.office
@@ -3264,16 +3264,19 @@
   - platform: state
     entity_id:
     - lock.front_door_2
+    - lock.front_door
     to: locked
     id: locked
   - platform: state
     entity_id:
     - lock.front_door_2
+    - lock.front_door
     to: jammed
     id: jammed
   - platform: state
     entity_id:
     - lock.front_door_2
+    - lock.front_door
     to: unlocked
     id: unlocked
   condition: []

@@ -178,8 +178,11 @@ views:
               - icon_hue
 
           - type: custom:button-card
-            entity: climate.office
+            entity: input_select.office_ac_status
             name: Climate
+            tap_action:
+              action: call-service
+              service: script.toggle_office_ac            
             double_tap_action: !include popup/office_climate.yaml
             template:
               - base
@@ -189,7 +192,7 @@ views:
               circle_input: >
                 [[[
                   if (entity) {
-                      return entity.state === 'cool'
+                      return entity.state === 'On'
                           ? Math.round(entity.attributes.temperature).toString()
                           : Math.round(entity.attributes.current_temperature).toString();
                   }
@@ -247,8 +250,11 @@ views:
               - icon_lamp
 
           - type: custom:button-card
-            entity: climate.bedroom_ac
+            entity: input_select.bedroom_ac_status
             name: Climate
+            tap_action:
+              action: call-service
+              service: script.toggle_bedroom_ac      
             double_tap_action: !include popup/bedroom_climate.yaml
             template:
               - base
@@ -258,7 +264,7 @@ views:
               circle_input: >
                 [[[
                   if (entity) {
-                      return entity.state === 'cool'
+                      return entity.state === 'On'
                           ? Math.round(entity.attributes.temperature).toString()
                           : Math.round(entity.attributes.current_temperature).toString();
                   }
