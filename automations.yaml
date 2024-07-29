@@ -3279,6 +3279,12 @@
     - lock.front_door
     to: unlocked
     id: unlocked
+  - platform: state
+    entity_id:
+    - lock.front_door_2
+    - lock.front_door
+    to: unlocking
+    id: unlocked
   condition: []
   action:
   - if:
