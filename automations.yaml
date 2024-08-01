@@ -3384,3 +3384,38 @@
         data:
           message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
   mode: single
+- id: '1722426865298'
+  alias: Main Door Auto Lock after 1 minute
+  description: If door unlocked for 1 minute and door is closed, lock it.
+  trigger:
+  - platform: state
+    entity_id:
+    - lock.front_door_2
+    - lock.front_door
+    to: unlocked
+    id: unlocked
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+  condition:
+  - condition: state
+    entity_id: binary_sensor.main_door_sensor_contact
+    state: 'off'
+  action:
+  - service: notify.supervisor_telegram
+    data:
+      message: "\U0001F916 Automation - \U0001F6AA LOCKED MAIN DOOR AFTER DOOR WAS
+        UNLOCKED FOR 1 MINUTE!!!!"
+  - service: lock.lock
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - lock.front_door_2
+      - lock.front_door
+  - service: notify.mobile_app_ofir_honor_magic_5_pro
+    data:
+      message: "\U0001F916 Automation - \U0001F6AA LOCKED MAIN DOOR AFTER DOOR WAS
+        UNLOCKED FOR 1 MINUTE!!!!"
+  mode: single
