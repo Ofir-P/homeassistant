@@ -51,9 +51,6 @@ devices:
     description: Top of Main Door Entrance
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
-  '0x84fd27fffe600604':
-    friendly_name: Office Elian Desk RGB Strip
-    description: all over Elian's desk
   '0xa4c13825cb23672c':
     friendly_name: Bedroom TV
   '0xa4c138c861145739':
