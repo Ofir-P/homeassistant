@@ -46,9 +46,6 @@ devices:
     friendly_name: Office desk button
     description: Under the gaming table, right side
     legacy: false
-  '0xa4c138dc96ec297c':
-    friendly_name: Main Door Sensor
-    description: Top of Main Door Entrance
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
   '0xa4c13825cb23672c':
@@ -66,9 +63,6 @@ devices:
   '0xa4c1383a2646aef0':
     friendly_name: Office Presence Sensor
     description: Presence Sensor - located in Office room, next to the side window.
-  '0xa4c13822c402f4e9':
-    friendly_name: Boiler
-    description: Boiler - located next to shower door, in the wall.
   '0xa4c138a84422458a':
     friendly_name: Office Wall Light
     description: Light - located next to shower/bathroom door in office, on the wall.
@@ -183,3 +177,9 @@ devices:
     friendly_name: Dining Table Sticker Switch button 2nd
   '0x54ef441000c4bc27':
     friendly_name: Office LUX
+  '0xa4c13822c402f4e9':
+    friendly_name: Boiler
+    description: Boiler - located next to shower door, in the wall.
+  '0xa4c138dc96ec297c':
+    friendly_name: Main Door Sensor
+    description: top of Main Door
