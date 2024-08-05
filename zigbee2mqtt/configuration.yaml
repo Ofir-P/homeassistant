@@ -183,3 +183,5 @@ devices:
   '0xa4c138dc96ec297c':
     friendly_name: Main Door Sensor
     description: top of Main Door
+  '0xa4c1383bed0900d7':
+    friendly_name: Plant Monitor
