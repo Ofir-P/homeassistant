@@ -152,8 +152,6 @@ devices:
   '0x00158d000adbfa23':
     friendly_name: Water Leak Laundry Machine
     description: located on the floor, under the boiler, behind the laundry machine
-  '0xa4c138641cb105b1':
-    friendly_name: Office Bathroom Motion Sensor
   '0x00158d0008d0bf86':
     friendly_name: Bedroom Vibration
     description: Inside Ofir Top drawer
@@ -185,3 +183,5 @@ devices:
     description: top of Main Door
   '0xa4c1383bed0900d7':
     friendly_name: Plant Monitor
+  '0xa4c138641cb105b1':
+    friendly_name: Office Bathroom Motion Sensor
