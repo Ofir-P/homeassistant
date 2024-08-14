@@ -1,6 +1,7 @@
 button_card_templates: !include_dir_merge_named button_card_templates
 kiosk_mode:
   hide_header: true
+
 views:
   - type: custom:grid-layout
     title: Home
@@ -179,24 +180,31 @@ views:
 
           - type: custom:button-card
             entity: input_select.office_ac_status
-            name: Climate
+            name: TestButton
             tap_action:
               action: call-service
-              service: script.toggle_office_ac            
+              service: script.toggle_office_ac
             double_tap_action: !include popup/office_climate.yaml
             template:
               - base
               - icon_climate
               - circle
+            tooltip: |
+              [[[ return 'Climate: ' + variables.climate + 
+                          '  ' + 
+                          'Temp: ' + variables.temperature; ]]]
             variables:
-              circle_input: >
+              climate: >
+                [[[ var obj = entity.entity_id.split('.')[1]; var room=
+                obj.split('_ac_status')[0]; return 'climate.' + room; ]]]
+              temperature: >
                 [[[
-                  if (entity) {
-                      return entity.state === 'On'
-                          ? Math.round(entity.attributes.temperature).toString()
-                          : Math.round(entity.attributes.current_temperature).toString();
+                  if (variables.climate) {
+                      return states[variables.climate].state === 'On'
+                          ? Math.round(states[variables.climate].attributes.temperature).toString()
+                          : Math.round(states[variables.climate].attributes.current_temperature).toString();
                   }
-                ]]]
+                            ]]]
               circle_input_unit: "°C"
 
           - type: custom:button-card
@@ -254,7 +262,7 @@ views:
             name: Climate
             tap_action:
               action: call-service
-              service: script.toggle_bedroom_ac      
+              service: script.toggle_bedroom_ac
             double_tap_action: !include popup/bedroom_climate.yaml
             template:
               - base
