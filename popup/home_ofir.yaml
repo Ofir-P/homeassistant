@@ -37,7 +37,7 @@ browser_mod:
               }
           show_state: true
           entities:
-            - entity: sensor.ofir_honor_magic_5_pro_wifi_connection
+            - entity: sensor.ofir_honor_magic_5_pro_wifi_connection_2
               name: WiFi Name
               icon: mdi:wifi
               card_mod:
@@ -50,7 +50,7 @@ browser_mod:
               icon: mdi:battery
               card_mod:
                 style: *state
-            - entity: sensor.ofir_honor_magic_5_pro_geocoded_location
+            - entity: sensor.ofir_honor_magic_5_pro_geocoded_location_2
               name: Geo Location
               icon: mdi:map-marker-radius
               card_mod:

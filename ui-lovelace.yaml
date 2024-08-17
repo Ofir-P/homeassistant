@@ -439,7 +439,6 @@ views:
 
                   - type: custom:button-card
                     entity: media_player.mibox4_2
-                    triggers_update: media_player.plex_plex_for_android_tv_0
                     name: Bedroom
                     template:
                       - media

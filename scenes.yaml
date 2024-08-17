@@ -52,44 +52,9 @@
       friendly_name: Office Ofir Desk RGB Strip
       supported_features: 40
       state: 'on'
-    light.office_elian_desk_rgb_strip:
-      min_color_temp_kelvin: 2000
-      max_color_temp_kelvin: 6535
-      min_mireds: 153
-      max_mireds: 500
-      effect_list:
-      - blink
-      - breathe
-      - okay
-      - channel_change
-      - finish_effect
-      - stop_effect
-      supported_color_modes:
-      - color_temp
-      - xy
-      effect:
-      color_mode: xy
-      brightness: 89
-      color_temp_kelvin:
-      color_temp:
-      hs_color:
-      - 179.765
-      - 100
-      rgb_color:
-      - 0
-      - 255
-      - 254
-      xy_color:
-      - 0.151
-      - 0.343
-      friendly_name: Office Elian Desk RGB Strip
-      supported_features: 44
-      state: 'on'
   icon: mdi:string-lights
   metadata:
     light.office_wall_light:
       entity_only: true
     light.office_ofir_desk_rgb_strip:
-      entity_only: true
-    light.office_elian_desk_rgb_strip:
       entity_only: true
