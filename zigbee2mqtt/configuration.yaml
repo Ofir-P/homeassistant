@@ -161,7 +161,7 @@ devices:
     friendly_name: Living Room Wireless Remote Switch
   '0x00158d000ab5e179':
     friendly_name: Shower Vibration
-    vibration_timeout: 5
+    vibration_timeout: 4
   '0x00158d000a95e954':
     friendly_name: Office Fish Feeder
   '0xa4c1388091f09665':
