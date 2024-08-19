@@ -435,19 +435,22 @@
       | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
   - condition: time
     after: 08:00:00
+  - condition: state
+    entity_id: vacuum.roborock_s8_pro_ultra
+    state: docked
   action:
-  - service: vacuum.start
-    target:
+  - target:
       entity_id: vacuum.roborock_s8_pro_ultra
     data: {}
-  - service: notify.supervisor_telegram
-    metadata: {}
+    action: vacuum.start
+  - metadata: {}
     data:
       message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
-  - service: notify.mobile_app_elians_iphone
-    metadata: {}
+    action: notify.supervisor_telegram
+  - metadata: {}
     data:
       message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
+    action: notify.mobile_app_elians_iphone
   mode: single
 - id: '1709821554566'
   alias: Robot Vacuum 3 Days Without cleaning Actionable Notification
@@ -3524,25 +3527,25 @@
   description: ''
   trigger:
   - platform: state
-    entity_id:
-    - binary_sensor.oref_alert_all_areas
-    to: 'on'
-    from: 'off'
+    entity_id: binary_sensor.oref_alert_all_areas
+    attribute: country_active_alerts
   condition:
   - condition: state
     entity_id: input_select.living_room_tv_status
     state: 'On'
   action:
+  - variables:
+      current: '{{ state_attr(''binary_sensor.oref_alert_all_areas'', ''country_active_alerts'')
+        | map(attribute=''data'') | list }}'
+      previous: '{{ trigger.from_state.attributes.country_active_alerts | map(attribute=''data'')
+        | list }}'
+      alerts: '{{ current | reject(''in'', previous) | unique | sort | list }}'
+  - condition: template
+    value_template: '{{ alerts | length > 0 }}'
   - action: notify.living_room_lg_webos_smart_tv
     metadata: {}
     data:
-      message: אזעקות ב {{ state_attr('binary_sensor.oref_alert_all_areas', 'country_active_alerts')
-        | map(attribute='data') | unique | list }}
-  - action: notify.mobile_app_ofir_honor_magic_5_pro
-    metadata: {}
-    data:
-      message: אזעקות ב {{ state_attr('binary_sensor.oref_alert_all_areas', 'country_active_alerts')
-        | map(attribute='data') | unique | list }}
+      message: 'אזעקות ב: {{ alerts | join('' | '') }}'
   mode: single
 - id: '1723888393770'
   alias: Elian Mofit - Actionable Notification - Boiler

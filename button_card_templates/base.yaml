@@ -22,6 +22,8 @@ base:
       const stateDict = {
         'on': variables.translate_on,
         'off': variables.translate_off,
+        'On': variables.translate_on,
+        'Off': variables.translate_off,
         'cool': variables.translate_cool,
         'heat': variables.translate_heat,
         'fan_only': variables.translate_fan_only,
