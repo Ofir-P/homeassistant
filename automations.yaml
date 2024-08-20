@@ -731,25 +731,24 @@
   - condition: time
     after: '15:00:00'
     before: '23:59:00'
-  - condition: state
-    entity_id: vacuum.roborock_s8_pro_ultra
-    state: docked
-    attribute: state
+  - condition: numeric_state
+    entity_id: zone.home
+    above: 0
   action:
-  - service: light.turn_on
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
       entity_id: light.kitchen_l1
-  - service: switch.turn_on
-    metadata: {}
+    action: light.turn_on
+  - metadata: {}
     data: {}
     target:
       device_id: 92fdadf222970875f82e2d221e4612e4
-  - service: notify.supervisor_telegram
-    data:
+    action: switch.turn_on
+  - data:
       message: "\U0001F916 Automation -  \U0001F4A1Presence in Kitchen, turned the
         light on!"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1710660367382'
   alias: Kitchen - No Presence Turn Off Lights
@@ -797,21 +796,18 @@
   - condition: state
     entity_id: light.office_bathroom
     state: 'off'
-  - condition: state
-    entity_id: vacuum.roborock_s8_pro_ultra
-    state: docked
   - condition: numeric_state
     entity_id: zone.home
     above: 0
   action:
-  - service: light.turn_on
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
       entity_id: light.office_bathroom
-  - service: notify.supervisor_telegram
-    data:
+    action: light.turn_on
+  - data:
       message: "\U0001F916 Automation - Office Bathroom Motion Light"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1710661192583'
   alias: Office Bathroom - No Presence Turn Off Lights
@@ -3087,29 +3083,20 @@
   - condition: state
     entity_id: light.wardrobe
     state: 'off'
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: vacuum.roborock_s8_pro_ultra
-      state: docked
-      attribute: state
-    - condition: state
-      entity_id: vacuum.roborock_s8_pro_ultra
-      state: unavailable
   - condition: numeric_state
     entity_id: zone.home
     above: 0
   action:
-  - service: light.turn_on
-    metadata: {}
+  - metadata: {}
     data: {}
     target:
       area_id: wardrobe
-  - service: notify.supervisor_telegram
-    metadata: {}
+    action: light.turn_on
+  - metadata: {}
     data:
       message: "\U0001F916 Automation - Wardrobe - Motion Detected Turn On Lights
         \U0001F4A1"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1714734842819'
   alias: Shower - Door Open Notification to Telegram
