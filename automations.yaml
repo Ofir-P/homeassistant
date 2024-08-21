@@ -3640,25 +3640,3 @@
       message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
     action: notify.mobile_app_ofir_honor_magic_5_pro
   mode: queued
-- id: '1723905593806'
-  alias: Red Alert Test - Ofir
-  description: ''
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.oref_alert_all_areas
-    attribute: country_active_alerts
-  condition: []
-  action:
-  - variables:
-      current: '{{ state_attr(''binary_sensor.oref_alert_all_areas'', ''country_active_alerts'')
-        | map(attribute=''data'') | list }}'
-      previous: '{{ trigger.from_state.attributes.country_active_alerts | map(attribute=''data'')
-        | list }}'
-      alerts: '{{ current | reject(''in'', previous) | unique | sort | list }}'
-  - condition: template
-    value_template: '{{ alerts | length > 0 }}'
-  - action: notify.mobile_app_ofir_honor_magic_5_pro
-    metadata: {}
-    data:
-      message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
-  mode: queued
