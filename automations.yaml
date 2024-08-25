@@ -3049,26 +3049,6 @@
       message: "\U0001F916 Automation - Office Wall Light off if on for 3 minutes
         \U0001F4A1"
   mode: single
-- id: '1713363270552'
-  alias: Shower - Vibration Skip Song
-  description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.shower_vibration_action
-    to: vibration
-    id: vibration
-  condition: []
-  action:
-  - service: media_player.media_next_track
-    target:
-      entity_id: media_player.shower_echo_dot
-    data: {}
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F916 Automation - \U0001F6BF Shower Vibration - Skipped song
-        \U0001F3B5"
-  mode: single
 - id: '1713728943578'
   alias: Kitchen - Turn Off LED at Midnight
   description: ''
@@ -3659,3 +3639,22 @@
       message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
     action: notify.mobile_app_ofir_honor_magic_5_pro
   mode: queued
+- id: '1724487600916'
+  alias: Shower - Button Skip Song
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - sensor.shower_ikea_button_action
+    to: 'on'
+  condition: []
+  action:
+  - target:
+      entity_id: media_player.shower_echo_dot
+    data: {}
+    action: media_player.media_next_track
+    enabled: true
+  - data:
+      message: "\U0001F916 Automation - \U0001F6BF Shower Button - Skipped Song \U0001F3B5"
+    action: notify.supervisor_telegram
+  mode: single
