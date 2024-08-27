@@ -630,8 +630,7 @@
     entity_id: zone.home
     above: 0
   action:
-  - service: light.turn_on
-    data:
+  - data:
       rgb_color:
       - 115
       - 185
@@ -639,14 +638,13 @@
     target:
       entity_id:
       - light.office
-      - light.office_ofir_desk_rgb_strip
+    action: light.turn_on
   - if:
     - condition: state
       entity_id: input_select.office_corner_led_light_status
       state: 'off'
     then:
-    - service: remote.send_command
-      metadata: {}
+    - metadata: {}
       data:
         num_repeats: 1
         delay_secs: 0.4
@@ -655,11 +653,12 @@
         command: Power
       target:
         device_id: 213c1e28be789af24d278bfa20f54941
+      action: remote.send_command
     alias: if corner light is off, turn on
-  - service: notify.supervisor_telegram
-    metadata: {}
+  - metadata: {}
     data:
       message: "\U0001F916 Automation - Office - Presence Turn On Lights \U0001F4A1"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1710659124035'
   alias: Shower - Boiler before & after Work
@@ -864,15 +863,15 @@
         entity_id: input_select.office_ac_status
         state: 'On'
     then:
-    - service: climate.turn_off
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         entity_id: climate.office
-    - service: notify.supervisor_telegram
-      metadata: {}
+      action: climate.turn_off
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - No Presence at Office Room - Turn Off AC!"
+      action: notify.supervisor_telegram
   - alias: Turn Off TV
     if:
     - condition: and
@@ -888,13 +887,13 @@
           minutes: 5
           seconds: 0
     then:
-    - service: script.tv_power_office
-      metadata: {}
+    - metadata: {}
       data: {}
-    - service: notify.supervisor_telegram
-      metadata: {}
+      action: script.tv_power_office
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - No Presence at Office Room - Turn Off TV!"
+      action: notify.supervisor_telegram
   - alias: Turn Off Lights
     if:
     - condition: and
@@ -920,21 +919,19 @@
           entity_id: input_select.office_corner_led_light_status
           state: 'on'
     then:
-    - service: light.turn_off
-      data: {}
+    - data: {}
       target:
         entity_id:
         - light.office
-        - light.office_ofir_desk_rgb_strip
         - light.office_wall_light
         - light.office_bathroom
+      action: light.turn_off
     - if:
       - condition: state
         entity_id: input_select.office_corner_led_light_status
         state: 'on'
       then:
-      - service: remote.send_command
-        metadata: {}
+      - metadata: {}
         data:
           num_repeats: 1
           delay_secs: 0.4
@@ -943,11 +940,12 @@
           command: Power
         target:
           device_id: 213c1e28be789af24d278bfa20f54941
+        action: remote.send_command
       alias: If corner light is on, turn off
-    - service: notify.supervisor_telegram
-      metadata: {}
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - No Presence at Office - Lights off"
+      action: notify.supervisor_telegram
   mode: single
 - id: '1710709437729'
   alias: Office - Blink Red Light
