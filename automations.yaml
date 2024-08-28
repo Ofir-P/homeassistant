@@ -907,9 +907,6 @@
           entity_id: light.office
           state: 'on'
         - condition: state
-          entity_id: light.office_ofir_desk_rgb_strip
-          state: 'on'
-        - condition: state
           entity_id: light.office_wall_light
           state: 'on'
         - condition: state
