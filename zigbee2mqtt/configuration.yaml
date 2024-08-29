@@ -98,11 +98,6 @@ devices:
   '0xa4c1385f2de174b5':
     friendly_name: Bedroom Motion Sensor
     description: Motion Sensor - located next to Ofir bed side.
-  '0xf4b3b1fffea0bae7':
-    friendly_name: Bathroom Motion Sensor
-    occupancy_timeout: 90
-    illuminance_below_threshold_check: false
-    description: Under Ofir Drawers
   '0xbc026efffe8e9bf2':
     friendly_name: Kitchen LED Strip
     description: behind the ninja
@@ -184,3 +179,7 @@ devices:
     friendly_name: Office Bathroom Motion Sensor
   '0x60b647fffe57ef24':
     friendly_name: Shower IKEA Button
+  '0x00158d000ad8180f':
+    friendly_name: Bathroom Door Sensor
+  '0xf4b3b1fffea0bae7':
+    friendly_name: Bathroom Motion Sensor

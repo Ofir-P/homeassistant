@@ -3528,93 +3528,6 @@
     data:
       message: 'אזעקות ב: {{ alerts | join('' | '') }}'
   mode: single
-- id: '1723888393770'
-  alias: Elian Mofit - Actionable Notification - Boiler
-  description: ''
-  trigger:
-  - platform: zone
-    entity_id: device_tracker.elians_iphone
-    zone: zone.mofit
-    event: enter
-  condition: []
-  action:
-  - alias: Set up variables for the actions
-    variables:
-      action_keep: '{{ ''OPEN_'' ~ context.id }}'
-      action_stop: '{{ ''CLOSE_'' ~ context.id }}'
-      action_cab: '{{ ''CLEAN_AND_BOILER'' ~ context.id }}'
-  - alias: Ask Elian if to turn on Boiler or not
-    data:
-      data:
-        actions:
-        - action: '{{ action_keep }}'
-          title: להפעיל דוד עכשיו
-        - action: '{{ action_stop }}'
-          title: אל תפעיל כלום
-        - action: '{{ action_cab }}'
-          title: תפעיל דוד עוד 40 דקות
-      message: ?שלום למתעמלת שלי להפעיל לך דוד
-    action: notify.mobile_app_elians_iphone
-  - alias: Wait for a response
-    wait_for_trigger:
-    - platform: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: '{{ action_keep }}'
-    - platform: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: '{{ action_stop }}'
-    - platform: event
-      event_type: mobile_app_notification_action
-      event_data:
-        action: '{{ action_cab }}'
-  - alias: Perform the action
-    choose:
-    - conditions:
-      - condition: template
-        value_template: '{{ wait.trigger.event.data.action == action_stop }}'
-      sequence:
-      - action: notify.mobile_app_elians_iphone
-        data:
-          message: "\U0001F61D לא מפעיל כלום, לא צריך טובות "
-      - action: notify.supervisor_telegram
-        data:
-          message: "\U0001F916 Automation - Elian Mofit Boiler Actionable notification
-            - Don't turn on Boiler!"
-    - conditions:
-      - condition: template
-        value_template: '{{ wait.trigger.event.data.action == action_keep }}'
-      sequence:
-      - action: script.turn_on_boiler_for_45_minutes
-        data: {}
-      - data:
-          message: בחרת להפעיל דוד עכשיו, מדליק דוד
-        action: notify.mobile_app_elians_iphone
-      - action: notify.supervisor_telegram
-        data:
-          message: "\U0001F916 Automation - Elian Mofit Boiler Actionable notification
-            - Turn on Boiler now!"
-    - conditions:
-      - condition: template
-        value_template: '{{ wait.trigger.event.data.action == action_cab }}'
-      sequence:
-      - data:
-          message: בחרת לפתוח את הדוד עוד 40 דקות, התפנקת היום
-        action: notify.mobile_app_elians_iphone
-      - action: notify.supervisor_telegram
-        data:
-          message: "\U0001F916 Automation - Elian Mofit Boiler Actionable notification
-            - Turn on Boiler in 40 minutes!"
-      - delay:
-          hours: 0
-          minutes: 40
-          seconds: 0
-          milliseconds: 0
-      - action: script.turn_on_boiler_for_35_minutes
-        metadata: {}
-        data: {}
-  mode: single
 - id: oref_alert_country_notifications
   alias: Oref Alert Country Notifications
   description: ''
@@ -3651,5 +3564,28 @@
     enabled: true
   - data:
       message: "\U0001F916 Automation - \U0001F6BF Shower Button - Skipped Song \U0001F3B5"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1724859335246'
+  alias: Bathroom - Door Open Notification to Telegram
+  description: If state changed to `Open` turn on light and send notification.
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.bathroom_door_sensor_contact
+    to: 'on'
+  condition:
+  - condition: time
+    before: '23:59:00'
+  - condition: time
+    after: 05:50:00
+  action:
+  - metadata: {}
+    data: {}
+    action: light.turn_on
+    target:
+      entity_id: light.bathroom
+  - data:
+      message: "\U0001F916 Automation - \U0001F6AA Bathroom Door is open now!"
     action: notify.supervisor_telegram
   mode: single
