@@ -83,9 +83,6 @@ devices:
   '0x00158d000a95e833':
     friendly_name: Living Room Right Window
     description: on the right window blinds
-  '0xa4c138621f5ece9d':
-    friendly_name: Office Ofir Desk RGB Strip
-    description: all over Ofir Desk.
   '0xf082c0fffe89fdaf':
     friendly_name: Wardrobe Zigbee Extender
     description: Extender - located under the AC
