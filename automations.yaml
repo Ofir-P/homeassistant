@@ -3362,9 +3362,6 @@
           entity_id: vacuum.roborock_s8_pro_ultra
         data: {}
         action: vacuum.start
-      - action: script.turn_on_boiler_for_35_minutes
-        metadata: {}
-        data: {}
       - data:
           message: You chose to clean the house & open Boiler, well done!
         action: notify.mobile_app_ofir_honor_magic_5_pro
@@ -3376,6 +3373,9 @@
         data:
           message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
         action: notify.mobile_app_elians_iphone
+      - action: script.turn_on_boiler_for_35_minutes
+        metadata: {}
+        data: {}
   mode: single
 - id: '1722426865298'
   alias: Main Door Auto Lock after 1 minute
