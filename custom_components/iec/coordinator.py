@@ -642,7 +642,7 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
                 phase_count = None
                 connection_size = None
 
-        if not is_private_producer or not last_meter_read:
+        if is_private_producer or not last_meter_read:
             last_meter_reading = await self._get_last_meter_reading(self._bp_number, contract_id,
                                                                     device_number)
             last_meter_read = last_meter_reading.reading
@@ -650,13 +650,25 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
 
             account_id = await self._get_account_id()
             connection_size = await self._get_connection_size(account_id)
-            phase_count_str = connection_size.split("X")[0] \
-                if connection_size.find("X") != -1 else "1"
-            phase_count = int(phase_count_str)
+            if connection_size:
+                phase_count_str = connection_size.split("X")[0] \
+                    if connection_size.find("X") != -1 else "1"
+                phase_count = int(phase_count_str)
 
-        distribution_tariff = await self._get_distribution_tariff(phase_count)
-        delivery_tariff = await self._get_delivery_tariff(phase_count)
-        power_size = await self._get_power_size(connection_size)
+        if connection_size:
+            power_size = await self._get_power_size(connection_size)
+        else:
+            power_size = 0.0
+            _LOGGER.warning("Couldn't get Connection Size")
+
+        if phase_count:
+            distribution_tariff = await self._get_distribution_tariff(phase_count)
+            delivery_tariff = await self._get_delivery_tariff(phase_count)
+        else:
+            distribution_tariff = 0.0
+            delivery_tariff = 0.0
+            if connection_size:
+                _LOGGER.warning("Couldn't get Phase Count")
 
         return self._calculate_estimated_bill(device_number, future_consumption,
                                               last_meter_read, last_meter_read_date,
@@ -668,7 +680,12 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
                                   last_meter_read, last_meter_read_date, kwh_tariff,
                                   kva_tariff, distribution_tariff, delivery_tariff, power_size, last_invoice):
         future_consumption_info: FutureConsumptionInfo = future_consumptions[meter_id]
-        future_consumption = future_consumption_info.total_import - last_meter_read
+        future_consumption = 0
+
+        if last_meter_read:
+            future_consumption = future_consumption_info.total_import - last_meter_read
+        else:
+            _LOGGER.warning("Couldn't get Last Meter Read, WILL NOT calculate the usage part in estimated bill.")
 
         kva_price = power_size * kva_tariff / 365
 
