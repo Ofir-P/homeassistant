@@ -2661,16 +2661,16 @@
         entity_id: input_select.washing_machine_status
         state: 'Off'
     then:
-    - service: input_select.select_option
-      metadata: {}
+    - metadata: {}
       data:
         option: 'On'
       target:
         entity_id: input_select.washing_machine_status
-    - service: notify.home_assistant_group
-      metadata: {}
+      action: input_select.select_option
+    - metadata: {}
       data:
         message: "\U0001F456 Laundry machine has started!"
+      action: notify.home_assistant_group
   - alias: Laundry Machine finished
     if:
     - condition: and
@@ -2682,25 +2682,29 @@
         entity_id: input_select.washing_machine_status
         state: 'On'
     then:
-    - service: input_select.select_option
-      metadata: {}
+    - metadata: {}
       data:
         option: 'Off'
       target:
         entity_id: input_select.washing_machine_status
-    - service: notify.home_assistant_group
-      metadata: {}
+      action: input_select.select_option
+    - metadata: {}
       data:
         message: "\U0001F456 Laundry machine has finished!"
-    - service: light.turn_on
-      metadata: {}
+      action: notify.home_assistant_group
+    - metadata: {}
       data: {}
       target:
         entity_id: light.laundry_machine_light
-    - service: notify.mobile_app_elians_iphone
-      metadata: {}
+      action: light.turn_on
+    - metadata: {}
       data:
         message: "\U0001F456 Laundry machine has finished!"
+      action: notify.mobile_app_elians_iphone
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F456 Laundry machine has finished! \U0001F456"
   mode: single
 - id: '1712835629886'
   alias: Laundry Machine - Light On Notification
