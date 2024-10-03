@@ -278,10 +278,10 @@
       id:
       - home_alert
     then:
-    - service: notify.supervisor_telegram
-      data:
+    - data:
         message: "\U0001F916 Automation - Red Alert \U0001F680"
       enabled: true
+      action: notify.supervisor_telegram
     - if:
       - condition: state
         entity_id: binary_sensor.any_phone_at_home
@@ -290,50 +290,91 @@
         after: '16:00:00'
         before: '22:40:00'
       then:
-      - service: notify.alexa_media_shower_echo_dot
-        data:
+      - data:
           message: AZAKAA
-    - service: notify.mobile_app_elians_iphone
-      data:
+        action: notify.alexa_media_shower_echo_dot
+      alias: Alexa Announcement
+    - data:
         message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
-    - service: light.turn_on
-      data:
-        color_name: red
-      target:
-        entity_id:
-        - light.yeelink_color5_6079_light
-        - light.living_room_l1
-        - light.kitchen_l1
-        - light.kitchen_l2
+      action: notify.mobile_app_elians_iphone
+    - if:
+      - condition: state
+        entity_id: binary_sensor.any_phone_at_home
+        state: 'on'
+      then:
+      - data:
+          color_name: red
+        target:
+          entity_id:
+          - light.yeelink_color5_6079_light
+          - light.living_room_l1
+          - light.kitchen_l1
+          - light.kitchen_l2
+        action: light.turn_on
+      alias: Lights if someone home
+    - alias: Office LED Blink if someone in Office
+      if:
+      - alias: Confirm someone is Presence at Office
+        condition: state
+        entity_id: binary_sensor.office_presence_sensor_presence
+        state: 'on'
+        enabled: true
+      then:
+      - data:
+          scene_id: thebeforetimes
+          snapshot_entities:
+          - light.office_wall_light
+          - light.ofir_desk_led
+        action: scene.create
+      - repeat:
+          count: 40
+          sequence:
+          - data:
+              color_name: red
+            target:
+              entity_id:
+              - light.office_wall_light
+              - light.ofir_desk_led
+            action: light.toggle
+          - delay:
+              hours: 0
+              minutes: 0
+              seconds: 0
+              milliseconds: 350
+      - target:
+          entity_id: scene.thebeforetimes
+        metadata: {}
+        action: scene.turn_on
     - if:
       - condition: state
         entity_id: input_select.living_room_tv_status
         state: 'On'
       then:
-      - service: notify.living_room_lg_webos_smart_tv
-        data:
+      - data:
           message: צבע אדום - הוד השרון
+        action: notify.living_room_lg_webos_smart_tv
+      alias: Notification to TV
   - if:
     - condition: trigger
       id:
       - ramla_alert
     then:
-    - service: notify.supervisor_telegram
-      metadata: {}
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - Red Alert Ramla \U0001F680"
-    - service: notify.mobile_app_elians_iphone
-      metadata: {}
+      action: notify.supervisor_telegram
+    - metadata: {}
       data:
         message: "\U0001F680 אזעקות ברמלה \U0001F680"
+      action: notify.mobile_app_elians_iphone
     - if:
       - condition: state
         entity_id: input_select.living_room_tv_status
         state: 'On'
       then:
-      - service: notify.living_room_lg_webos_smart_tv
-        data:
+      - data:
           message: צבע אדום - רמלה
+        action: notify.living_room_lg_webos_smart_tv
   mode: single
 - id: '1706093864988'
   alias: Water Leakage Notification
@@ -655,6 +696,20 @@
         device_id: 213c1e28be789af24d278bfa20f54941
       action: remote.send_command
     alias: if corner light is off, turn on
+  - alias: if desk led light is off, turn on
+    if:
+    - condition: state
+      entity_id: light.ofir_desk_led
+      state: 'off'
+    then:
+    - action: light.turn_on
+      target:
+        entity_id: light.ofir_desk_led
+      data:
+        rgb_color:
+        - 24
+        - 225
+        - 251
   - metadata: {}
     data:
       message: "\U0001F916 Automation - Office - Presence Turn On Lights \U0001F4A1"
@@ -915,6 +970,9 @@
         - condition: state
           entity_id: input_select.office_corner_led_light_status
           state: 'on'
+        - condition: state
+          entity_id: light.ofir_desk_led
+          state: 'on'
     then:
     - data: {}
       target:
@@ -922,6 +980,7 @@
         - light.office
         - light.office_wall_light
         - light.office_bathroom
+        - light.ofir_desk_led
       action: light.turn_off
     - if:
       - condition: state
@@ -976,33 +1035,35 @@
     entity_id: light.office
     state: 'on'
   action:
-  - service: scene.create
-    data:
+  - data:
       scene_id: thebeforetimes
       snapshot_entities:
       - light.office_wall_light
+      - light.ofir_desk_led
+    action: scene.create
   - repeat:
       count: 40
       sequence:
-      - service: light.toggle
-        data:
+      - data:
           color_name: red
         target:
           entity_id:
           - light.office_wall_light
+          - light.ofir_desk_led
+        action: light.toggle
       - delay:
           hours: 0
           minutes: 0
           seconds: 0
           milliseconds: 350
-  - service: scene.turn_on
-    target:
+  - target:
       entity_id: scene.thebeforetimes
     metadata: {}
-  - service: notify.supervisor_telegram
-    metadata: {}
+    action: scene.turn_on
+  - metadata: {}
     data:
       message: "\U0001F916 Automation - Blink Red Lights Office"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1710843500416'
   alias: Robot Vacuum Dock Error Notifications
@@ -3291,6 +3352,11 @@
     entity_id: device_tracker.ofir_honor_magic_5_pro
     zone: zone.grandma_grandpa
     event: enter
+    enabled: false
+  - platform: state
+    entity_id:
+    - sensor.ofir_honor_magic_5_pro_wifi_connection_2
+    to: kerena
   condition:
   - condition: numeric_state
     entity_id: zone.home

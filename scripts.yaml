@@ -187,9 +187,9 @@ toggle_bedroom_ac:
 home_leave:
   alias: Home Leave
   sequence:
-  - service: notify.supervisor_telegram
-    data:
+  - data:
       message: "\U0001F916 Automation - Home Leave activated!"
+    action: notify.supervisor_telegram
   - repeat:
       while:
       - condition: template
@@ -205,12 +205,12 @@ home_leave:
             entity_id: input_select.bedroom_tv_status
             state: 'On'
           sequence:
-          - service: mqtt.publish
-            data:
+          - data:
               topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
               payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
               qos: 0
               retain: false
+            action: mqtt.publish
         enabled: true
       - choose:
         - conditions:
@@ -218,10 +218,10 @@ home_leave:
             entity_id: input_select.bedroom_ac_status
             state: 'On'
           sequence:
-          - service: climate.turn_off
-            data: {}
+          - data: {}
             target:
               entity_id: climate.bedroom_ac
+            action: climate.turn_off
       - choose:
         - conditions:
           - condition: or
@@ -233,75 +233,74 @@ home_leave:
               entity_id: climate.ofir_a_c
               state: heat
           sequence:
-          - service: climate.turn_off
-            data: {}
+          - data: {}
             target:
               entity_id: climate.ofir_a_c
+            action: climate.turn_off
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.living_room_tv_status
             state: 'On'
           sequence:
-          - service: mqtt.publish
-            data:
+          - data:
               topic: zigbee2mqtt/Smart IR Remote Control/set
               payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
               qos: 0
               retain: false
             enabled: false
-          - service: script.ir_turn_on_off_living_room_tv
-            metadata: {}
+            action: mqtt.publish
+          - metadata: {}
             data: {}
+            action: script.ir_turn_on_off_living_room_tv
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.office_tv_status
             state: 'On'
           sequence:
-          - service: script.tv_power_office
-            data: {}
+          - data: {}
+            action: script.tv_power_office
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.office_ac_status
             state: 'On'
           sequence:
-          - service: climate.turn_off
-            data: {}
+          - data: {}
             target:
               entity_id: climate.office
+            action: climate.turn_off
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.wardrobe_ac_status
             state: 'On'
           sequence:
-          - service: climate.turn_off
-            data: {}
+          - data: {}
             target:
               entity_id:
               - climate.wardrobe
+            action: climate.turn_off
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.shower_heater_status
             state: 'On'
           sequence:
-          - service: switch.turn_off
-            target:
+          - target:
               entity_id: switch.heater_shower
             data: {}
+            action: switch.turn_off
       - delay:
           hours: 0
           minutes: 9
           seconds: 55
           milliseconds: 0
-  - service: notify.supervisor_telegram
-    data:
+  - data:
       message: "\U0001F916 Automation - Home Leave electric devices are OFF!"
-  - service: light.turn_off
-    continue_on_error: true
+    action: notify.supervisor_telegram
+  - continue_on_error: true
     data: {}
     target:
       area_id:
@@ -312,15 +311,16 @@ home_leave:
       entity_id:
       - light.office
       - light.office_bathroom
-      - light.office_ofir_desk_rgb_strip
       - light.office_wall_light
-  - service: switch.turn_off
-    data: {}
+      - light.ofir_desk_led
+    action: light.turn_off
+  - data: {}
     target:
       entity_id: switch.kitchen_led_strip
-  - service: notify.supervisor_telegram
-    data:
+    action: switch.turn_off
+  - data:
       message: "\U0001F916 Automation - House devices are OFF!"
+    action: notify.supervisor_telegram
   mode: single
   icon: mdi:hand-wave
 tv_power_office:
