@@ -182,3 +182,5 @@ devices:
     friendly_name: Bathroom Motion Sensor
   '0xa4c138621f5ece9d':
     friendly_name: Ofir Desk LED
+  '0xa4c138b90334a6f4':
+    friendly_name: Shower Motion Sensor

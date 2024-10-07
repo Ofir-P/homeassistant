@@ -3674,4 +3674,59 @@
       - action: script.turn_on_boiler_for_35_minutes
         metadata: {}
         data: {}
+  mode: parallel
+- id: '1728233876960'
+  alias: Shower - No Presence Turn Off Lights
+  description: ''
+  triggers:
+  - platform: state
+    entity_id:
+    - binary_sensor.shower_motion_sensor_occupancy
+    to: 'off'
+    from: 'on'
+    for:
+      hours: 0
+      minutes: 23
+      seconds: 0
+    id: no_motion
+  conditions:
+  - condition: state
+    state: 'on'
+    entity_id: light.shower_l1
+  - condition: state
+    entity_id: binary_sensor.0xa4c1380dc6ffc141_contact
+    state: 'on'
+  actions:
+  - data: {}
+    action: light.turn_off
+    target:
+      entity_id: light.shower_l1
+  - data:
+      message: "\U0001F916 Automation - \U0001F6C1 No Presence at Shower- Light off
+        \U0001F4A1"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1728237759143'
+  alias: Shower Motion Light
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.shower_motion_sensor_occupancy
+    to: 'on'
+    id: Motion Detected on Dining Table by Person
+    enabled: true
+  condition:
+  - condition: state
+    entity_id: light.shower_l1
+    state: 'off'
+  action:
+  - action: light.turn_on
+    metadata: {}
+    data: {}
+    target:
+      entity_id: light.shower_l1
+  - data:
+      message: "\U0001F916 Automation - Shower Motion Light"
+    action: notify.supervisor_telegram
   mode: single

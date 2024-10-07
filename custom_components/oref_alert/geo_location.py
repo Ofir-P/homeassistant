@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import homeassistant.util.dt as dt_util
 from haversine import haversine
@@ -30,8 +30,6 @@ from .const import (
 from .metadata.area_info import AREA_INFO
 
 if TYPE_CHECKING:
-    from datetime import datetime
-
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -66,7 +64,7 @@ class OrefAlertLocationEvent(GeolocationEvent):
         self,
         hass: HomeAssistant,
         area: str,
-        date: datetime | None,
+        attributes: dict,
     ) -> None:
         """Initialize entity."""
         self._hass = hass
@@ -83,16 +81,29 @@ class OrefAlertLocationEvent(GeolocationEvent):
             (hass.config.latitude, hass.config.longitude),
             (self._attr_latitude, self._attr_longitude),
         )
-        self._attr_extra_state_attributes = {ATTR_DATE: date}
+        self._alert_attributes = attributes
 
     @property
     def suggested_object_id(self) -> str | None:
         """Return input for object id."""
         return self._attr_unique_id
 
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return extra state attributes."""
+        return self._alert_attributes
+
+    @callback
     def async_remove_self(self) -> None:
         """Remove this entity."""
         self._hass.async_create_task(self.async_remove(force_remove=True))
+
+    @callback
+    def async_update(self, attributes: dict) -> None:
+        """Update the extra attributes when needed."""
+        if attributes and attributes != self._alert_attributes:
+            self._alert_attributes = attributes
+            self.async_write_ha_state()
 
 
 class OrefAlertLocationEventManager:
@@ -126,16 +137,21 @@ class OrefAlertLocationEventManager:
             if entry.domain == Platform.GEO_LOCATION:
                 entity_registry.async_remove(entry.entity_id)
 
-    def _alert_date(self, area: str) -> datetime | None:
-        """Return the alert time as a datetime object."""
+    def _alert_attributes(self, area: str) -> dict:
+        """Return alert's attributes."""
         for alert in self._coordinator.data.active_alerts:
             if alert["data"] == area:
+                attributes = {
+                    key: value
+                    for key, value in alert.items()
+                    if key not in {"data", "alertDate"}
+                }
                 if (
                     alert_date := dt_util.parse_datetime(alert["alertDate"])
                 ) is not None:
-                    return alert_date.replace(tzinfo=IST)
-                return None
-        return None
+                    attributes[ATTR_DATE] = alert_date.replace(tzinfo=IST)
+                return attributes
+        return {}
 
     @callback
     async def _cleanup_entities(self) -> None:
@@ -155,8 +171,11 @@ class OrefAlertLocationEventManager:
         active = {alert["data"] for alert in self._coordinator.data.active_alerts}
         exists = set(self._location_events.keys())
 
+        for area in exists.intersection(active):
+            self._location_events[area].async_update(self._alert_attributes(area))
+
         to_add = {
-            area: OrefAlertLocationEvent(self._hass, area, self._alert_date(area))
+            area: OrefAlertLocationEvent(self._hass, area, self._alert_attributes(area))
             for area in active - exists
             if area in AREA_INFO
         }
