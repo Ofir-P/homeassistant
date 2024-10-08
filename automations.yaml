@@ -3275,21 +3275,6 @@
     data:
       message: "\U0001F916 Automation - ❄️ Turn Bedroom AC Off if Wardrobe AC is On!"
   mode: single
-- id: '1716360061601'
-  alias: Low battery level on TicWatch
-  description: ''
-  trigger:
-  - platform: numeric_state
-    entity_id:
-    - sensor.ticwatch_pro_3_ultra_battery_level
-    below: 12
-  condition: []
-  action:
-  - service: notify.mobile_app_ticwatch_pro_3_ultra
-    metadata: {}
-    data:
-      message: BATTERY LOW ON WATCH, CHARGE ME NOW!
-  mode: single
 - id: '1716395060591'
   alias: Main Door Lock State Notifications
   description: ''
@@ -3728,5 +3713,43 @@
       entity_id: light.shower_l1
   - data:
       message: "\U0001F916 Automation - Shower Motion Light"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1728310194263'
+  alias: Office - Ofir Desk LED Light On Notification
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.ofir_desk_led
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 9
+  conditions: []
+  actions:
+  - data:
+      message: "\U0001F916 Automation - \U0001F4A1Ofir Desk LED Light is on in Office
+        \U0001F4DD"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1728310216261'
+  alias: Office - Ofir Desk LED Light Off Notification
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - light.ofir_desk_led
+    to: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 9
+  conditions: []
+  actions:
+  - data:
+      message: "\U0001F916 Automation - \U0001F4A1Ofir Desk LED Light is off in Office
+        \U0001F4DD"
     action: notify.supervisor_telegram
   mode: single
