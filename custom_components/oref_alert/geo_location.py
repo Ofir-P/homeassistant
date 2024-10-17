@@ -3,22 +3,18 @@
 from __future__ import annotations
 
 import asyncio
-import time
 from typing import TYPE_CHECKING, Any
 
 import homeassistant.util.dt as dt_util
-from haversine import haversine
 from homeassistant.components.geo_location import ATTR_SOURCE, GeolocationEvent
 from homeassistant.const import (
     ATTR_DATE,
     ATTR_LATITUDE,
     ATTR_LONGITUDE,
-    Platform,
     UnitOfLength,
 )
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers import entity_registry as er
-from homeassistant.util import slugify
+from homeassistant.util.location import vincenty
 
 from .const import (
     DATA_COORDINATOR,
@@ -69,15 +65,10 @@ class OrefAlertLocationEvent(GeolocationEvent):
         """Initialize entity."""
         self._hass = hass
         self._attr_name = area
-        self._attr_unique_id = (
-            f"{OREF_ALERT_UNIQUE_ID}_{LOCATION_ID_SUFFIX}_"
-            + slugify(AREA_INFO[area]["en"])
-            + f"_{int(time.time())}"
-        )
-        self._attr_latitude = AREA_INFO[area]["lat"]
-        self._attr_longitude = AREA_INFO[area]["long"]
+        self._attr_latitude: float = AREA_INFO[area]["lat"]
+        self._attr_longitude: float = AREA_INFO[area]["long"]
         self._attr_unit_of_measurement = UnitOfLength.KILOMETERS
-        self._attr_distance = haversine(
+        self._attr_distance = vincenty(
             (hass.config.latitude, hass.config.longitude),
             (self._attr_latitude, self._attr_longitude),
         )
@@ -86,7 +77,7 @@ class OrefAlertLocationEvent(GeolocationEvent):
     @property
     def suggested_object_id(self) -> str | None:
         """Return input for object id."""
-        return self._attr_unique_id
+        return f"{OREF_ALERT_UNIQUE_ID}_{LOCATION_ID_SUFFIX}"
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -123,19 +114,8 @@ class OrefAlertLocationEventManager:
         self._coordinator: OrefAlertDataUpdateCoordinator = hass.data[DOMAIN][
             config_entry.entry_id
         ][DATA_COORDINATOR]
-        self._async_clean_start()
         self._coordinator.async_add_listener(self._async_update)
         self._async_update()
-
-    def _async_clean_start(self) -> None:
-        """Remove all geo_location entities for a clean start."""
-        entity_registry = er.async_get(self._hass)
-        entries = er.async_entries_for_config_entry(
-            entity_registry, self._config_entry.entry_id
-        )
-        for entry in entries or []:
-            if entry.domain == Platform.GEO_LOCATION:
-                entity_registry.async_remove(entry.entity_id)
 
     def _alert_attributes(self, area: str) -> dict:
         """Return alert's attributes."""
@@ -157,13 +137,11 @@ class OrefAlertLocationEventManager:
     async def _cleanup_entities(self) -> None:
         """Remove entities."""
         await asyncio.sleep(10)  # Wait for a stable state.
-        entity_registry = er.async_get(self._hass)
         active = {alert["data"] for alert in self._coordinator.data.active_alerts}
         areas_to_delete = set(self._location_events.keys()) - active
         for area in areas_to_delete:
             if (entity := self._location_events.pop(area, None)) is not None:
                 entity.async_remove_self()
-                entity_registry.async_remove(entity.entity_id)
 
     @callback
     def _async_update(self) -> None:
