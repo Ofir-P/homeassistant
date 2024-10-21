@@ -7,7 +7,7 @@ from datetime import timedelta
 from pathlib import Path
 
 from roborock import RoborockException
-from roborock.api import RoborockApiClient
+from roborock.web_api import RoborockApiClient
 from roborock.cloud_api import RoborockMqttClient
 from roborock.containers import HomeData, HomeDataProduct, UserData
 from roborock.local_api import RoborockLocalClient
@@ -100,7 +100,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 model=product.model,
             )
 
-            map_client = RoborockMqttClient(user_data, device_info)
+            map_client = await hass.async_add_executor_job(RoborockMqttClient, user_data, device_info)
 
             if not cloud_integration:
                 network = device_network.get(device_id)
@@ -148,10 +148,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # Don't start if no coordinators succeeded.
         raise ConfigEntryNotReady("There are no devices that can currently be reached.")
 
-    for platform in platforms:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, platform)
-        )
+    await hass.config_entries.async_forward_entry_setups(entry, platforms)
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
