@@ -719,15 +719,15 @@
   alias: Shower - Boiler before & after Work
   description: Turn on the Boiler at 6:15 AM on Sunday, Monday, Tuesday, Wednesday,
     and Thursday for 35 minutes.
-  trigger:
-  - platform: time
-    at: 06:05:00
+  triggers:
+  - at: 05:50:00
     id: Morning
-    enabled: false
-  - platform: time
-    at: '15:01:00'
+    enabled: true
+    trigger: time
+  - at: '15:01:00'
     id: AfterWork
-  condition:
+    trigger: time
+  conditions:
   - condition: time
     weekday:
     - sun
@@ -738,7 +738,7 @@
   - condition: state
     entity_id: switch.boiler
     state: 'off'
-  action:
+  actions:
   - if:
     - condition: trigger
       id:
@@ -747,11 +747,11 @@
       entity_id: person.ofir
       zone: zone.ofir_work
     then:
-    - service: notify.supervisor_telegram
-      metadata: {}
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - ♨️ Shower Water after Work has been activated!"
-    - service: script.turn_on_boiler_for_35_minutes
+      action: notify.supervisor_telegram
+    - action: script.turn_on_boiler_for_45_minutes
       data: {}
   - if:
     - condition: trigger
@@ -761,12 +761,12 @@
       entity_id: zone.home
       above: 0
     then:
-    - service: notify.supervisor_telegram
-      metadata: {}
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - ♨️ Hot Water before Work has been activated!"
-    - service: script.turn_on_boiler_for_35_minutes
-      data: {}
+      action: notify.supervisor_telegram
+    - data: {}
+      action: script.turn_on_boiler_for_35_minutes
   mode: single
 - id: '1710659808604'
   alias: Kitchen - Presence Turn On Lights
