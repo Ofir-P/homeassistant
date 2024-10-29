@@ -3727,6 +3727,7 @@
       hours: 0
       minutes: 0
       seconds: 9
+    from: 'off'
   conditions: []
   actions:
   - data:
@@ -3746,6 +3747,7 @@
       hours: 0
       minutes: 0
       seconds: 9
+    from: 'on'
   conditions: []
   actions:
   - data:

@@ -46,8 +46,6 @@ devices:
     friendly_name: Office desk button
     description: Under the gaming table, right side
     legacy: false
-  '0x00158d0008dff275':
-    friendly_name: Water Leak Sensor Kitchen Sink
   '0xa4c13825cb23672c':
     friendly_name: Bedroom TV
   '0xa4c138c861145739':
