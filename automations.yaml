@@ -3332,24 +3332,19 @@
 - id: '1721549549091'
   alias: Robot Vacuum if Visiting Grandparents Actionable Notification
   description: ''
-  trigger:
-  - platform: zone
-    entity_id: device_tracker.ofir_honor_magic_5_pro
-    zone: zone.grandma_grandpa
-    event: enter
-    enabled: false
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sensor.ofir_honor_magic_5_pro_wifi_connection_2
     to: kerena
-  condition:
+    trigger: state
+  conditions:
   - condition: numeric_state
     entity_id: zone.home
     below: 1
   - condition: template
     value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
       | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
-  action:
+  actions:
   - alias: Set up variables for the actions
     variables:
       action_keep: '{{ ''OPEN_'' ~ context.id }}'
@@ -3369,18 +3364,18 @@
     action: notify.mobile_app_ofir_honor_magic_5_pro
   - alias: Wait for a response
     wait_for_trigger:
-    - platform: event
-      event_type: mobile_app_notification_action
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_keep }}'
-    - platform: event
-      event_type: mobile_app_notification_action
+      trigger: event
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_stop }}'
-    - platform: event
-      event_type: mobile_app_notification_action
+      trigger: event
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_cab }}'
+      trigger: event
   - alias: Perform the action
     choose:
     - conditions:
