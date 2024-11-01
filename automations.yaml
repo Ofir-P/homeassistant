@@ -3488,11 +3488,11 @@
 - id: oref_alert_country_notifications
   alias: Oref Alert Country Notifications
   description: ''
-  trigger:
-  - platform: state
-    entity_id: binary_sensor.oref_alert
+  triggers:
+  - entity_id: binary_sensor.oref_alert
     attribute: country_active_alerts
-  action:
+    trigger: state
+  actions:
   - variables:
       current: '{{ state_attr(''binary_sensor.oref_alert'', ''country_active_alerts'')
         | map(attribute=''data'') | list }}'
@@ -3503,6 +3503,14 @@
   - data:
       message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
     action: notify.mobile_app_ofir_honor_magic_5_pro
+  - if:
+    - condition: state
+      entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
+      state: AutoKit8D
+    then:
+    - action: notify.whatsapp
+      data:
+        message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
   mode: queued
 - id: '1724487600916'
   alias: Shower - Button Skip Song

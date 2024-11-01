@@ -151,4 +151,11 @@ notify:
   - platform: telegram
     name: Supervisor Telegram
     chat_id: !secret telegramSupervisor_groupChatId
+  - name: WhatsApp
+    platform: rest
+    resource: https://api.callmebot.com/whatsapp.php
+    data:
+      source: HA
+      phone: !secret whatsapp_PhoneNum
+      apikey: !secret whatsapp_ApiKey
 # [=========================]Telegram[=========================]
