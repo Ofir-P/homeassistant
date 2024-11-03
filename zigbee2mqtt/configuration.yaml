@@ -182,3 +182,5 @@ devices:
     friendly_name: Ofir Desk LED
   '0xa4c138b90334a6f4':
     friendly_name: Shower Motion Sensor
+  '0x00158d0008dff275':
+    friendly_name: Water Leak Sensor Kitchen Sink
