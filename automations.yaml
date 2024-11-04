@@ -3758,3 +3758,41 @@
         \U0001F4DD"
     action: notify.supervisor_telegram
   mode: single
+- id: '1730665894242'
+  alias: Elian Left Work Turn ON Boiler
+  description: After 20 minutes of leaving Compie WiFi, Boiler will turn on for 60
+    minutes.
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
+    from: Compie
+    for:
+      hours: 0
+      minutes: 20
+      seconds: 0
+    to: Not Connected
+  conditions:
+  - condition: not
+    conditions:
+    - condition: zone
+      entity_id: person.elian
+      zone: zone.matrix
+  - condition: time
+    after: '13:00:00'
+    before: '20:30:00'
+    weekday:
+    - thu
+    - wed
+    - tue
+    - mon
+    - sun
+  actions:
+  - action: script.turn_on_switcher_for_60mins
+    metadata: {}
+    data: {}
+  - data:
+      message: "\U0001F916 Automation - Elian left Work a while ago and turned on
+        the Boiler for 60 minutes."
+    action: notify.supervisor_telegram
+  mode: single
