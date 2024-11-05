@@ -3278,37 +3278,37 @@
 - id: '1716395060591'
   alias: Main Door Lock State Notifications
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - lock.front_door_2
+  triggers:
+  - entity_id:
+    - lock.front_door
     to: locked
     id: locked
-  - platform: state
-    entity_id:
-    - lock.front_door_2
+    trigger: state
+  - entity_id:
+    - lock.front_door
     to: jammed
     id: jammed
-  - platform: state
-    entity_id:
-    - lock.front_door_2
+    trigger: state
+  - entity_id:
+    - lock.front_door
     to: unlocked
     id: unlocked
-  - platform: state
-    entity_id:
-    - lock.front_door_2
+    trigger: state
+  - entity_id:
+    - lock.front_door
     to: unlocking
     id: unlocked
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id:
       - locked
     then:
-    - service: notify.supervisor_telegram
-      data:
+    - data:
         message: "\U0001F916 Automation - \U0001F6AA Main Door is LOCKED now! \U0001F510"
+      action: notify.supervisor_telegram
     alias: if locked
   - alias: if unlocked
     if:
@@ -3316,18 +3316,18 @@
       id:
       - unlocked
     then:
-    - service: notify.supervisor_telegram
-      data:
+    - data:
         message: "\U0001F916 Automation - \U0001F6AA Main Door is UNLOCKED now! \U0001F513"
+      action: notify.supervisor_telegram
   - alias: if jammed
     if:
     - condition: trigger
       id:
       - jammed
     then:
-    - service: notify.supervisor_telegram
-      data:
+    - data:
         message: "\U0001F916 Automation - \U0001F6AA Main Door is JAMMED now! \U0001F50F"
+      action: notify.supervisor_telegram
   mode: single
 - id: '1721549549091'
   alias: Robot Vacuum if Visiting Grandparents Actionable Notification
@@ -3430,35 +3430,35 @@
 - id: '1722426865298'
   alias: Main Door Auto Lock after 1 minute
   description: If door unlocked for 1 minute and door is closed, lock it.
-  trigger:
-  - platform: state
-    entity_id:
-    - lock.front_door_2
+  triggers:
+  - entity_id:
+    - lock.front_door
     to: unlocked
     id: unlocked
     for:
       hours: 0
       minutes: 1
       seconds: 0
-  condition:
+    trigger: state
+  conditions:
   - condition: state
     entity_id: binary_sensor.main_door_sensor_contact
     state: 'off'
-  action:
-  - service: notify.supervisor_telegram
-    data:
+  actions:
+  - data:
       message: "\U0001F916 Automation - \U0001F6AA LOCKED MAIN DOOR AFTER DOOR WAS
         UNLOCKED FOR 1 MINUTE!!!!"
-  - service: lock.lock
-    metadata: {}
+    action: notify.supervisor_telegram
+  - metadata: {}
     data: {}
     target:
       entity_id:
-      - lock.front_door_2
-  - service: notify.mobile_app_ofir_honor_magic_5_pro
-    data:
+      - lock.front_door
+    action: lock.lock
+  - data:
       message: "\U0001F916 Automation - \U0001F6AA LOCKED MAIN DOOR AFTER DOOR WAS
         UNLOCKED FOR 1 MINUTE!!!!"
+    action: notify.mobile_app_ofir_honor_magic_5_pro
   mode: single
 - id: '1723800933700'
   alias: Red Alert notifications to LG Living Room TV
@@ -3788,11 +3788,15 @@
     - mon
     - sun
   actions:
-  - action: script.turn_on_switcher_for_60mins
+  - action: notify.mobile_app_elians_iphone
     metadata: {}
-    data: {}
+    data:
+      message: "\U0001F6BF מדליק דוד אחרי יום קשוח למלכה של הבית\U0001F6C1"
   - data:
       message: "\U0001F916 Automation - Elian left Work a while ago and turned on
         the Boiler for 60 minutes."
     action: notify.supervisor_telegram
+  - action: script.turn_on_switcher_for_60mins
+    metadata: {}
+    data: {}
   mode: single
