@@ -48,9 +48,6 @@ devices:
     legacy: false
   '0xa4c13825cb23672c':
     friendly_name: Bedroom TV
-  '0xa4c138c861145739':
-    friendly_name: Heater Shower
-    description: Heater - located above the power plugs.
   '0xa4c1389c053df036':
     friendly_name: Office TV
   '0xa4c13849a2e5e351':
@@ -184,3 +181,6 @@ devices:
     friendly_name: Shower Motion Sensor
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
+  '0xa4c138c861145739':
+    friendly_name: Heater Shower
+    description: Heater - located above the power plugs

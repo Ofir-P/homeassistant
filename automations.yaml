@@ -751,6 +751,10 @@
       data:
         message: "\U0001F916 Automation - ♨️ Shower Water after Work has been activated!"
       action: notify.supervisor_telegram
+    - action: notify.mobile_app_elians_iphone
+      metadata: {}
+      data:
+        message: "\U0001F6BF מדליק דוד למלך של הבית\U0001F6C1"
     - action: script.turn_on_boiler_for_45_minutes
       data: {}
   - if:
@@ -3779,7 +3783,7 @@
       entity_id: person.elian
       zone: zone.matrix
   - condition: time
-    after: '13:00:00'
+    after: '15:00:00'
     before: '20:30:00'
     weekday:
     - thu
@@ -3791,7 +3795,7 @@
   - action: notify.mobile_app_elians_iphone
     metadata: {}
     data:
-      message: "\U0001F6BF מדליק דוד אחרי יום קשוח למלכה של הבית\U0001F6C1"
+      message: "\U0001F6BF מדליק דוד למלכה של הבית\U0001F6C1"
   - data:
       message: "\U0001F916 Automation - Elian left Work a while ago and turned on
         the Boiler for 60 minutes."
