@@ -811,9 +811,8 @@
 - id: '1710660367382'
   alias: Kitchen - No Presence Turn Off Lights
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.kitchen_presence_sensor_presence
     from: 'on'
     to: 'off'
@@ -821,25 +820,31 @@
       hours: 0
       minutes: 30
       seconds: 0
-  condition:
+    trigger: state
+  - trigger: time
+    at: 01:30:00
+  conditions:
   - condition: state
     entity_id: light.kitchen_l1
     state: 'on'
-  action:
-  - service: light.turn_off
-    target:
+  - condition: state
+    entity_id: input_select.living_room_tv_status
+    state: 'Off'
+  actions:
+  - target:
       entity_id:
       - light.kitchen_l1
     data: {}
-  - service: switch.turn_off
-    target:
+    action: light.turn_off
+  - target:
       device_id:
       - 92fdadf222970875f82e2d221e4612e4
     data: {}
-  - service: notify.supervisor_telegram
-    data:
+    action: switch.turn_off
+  - data:
       message: "\U0001F916 Automation -  \U0001F4A1No Presence in Kitchen, turned
         the light off!"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1710661044589'
   alias: Office Bathroom - Presence Turn On Lights
@@ -3668,11 +3673,10 @@
         data: {}
   mode: parallel
 - id: '1728233876960'
-  alias: Shower - No Presence Turn Off Lights
+  alias: Shower - No Presence Turn Off Lights/Heater
   description: ''
   triggers:
-  - platform: state
-    entity_id:
+  - entity_id:
     - binary_sensor.shower_motion_sensor_occupancy
     to: 'off'
     from: 'on'
@@ -3681,6 +3685,7 @@
       minutes: 23
       seconds: 0
     id: no_motion
+    trigger: state
   conditions:
   - condition: state
     state: 'on'
@@ -3693,6 +3698,21 @@
     action: light.turn_off
     target:
       entity_id: light.shower_l1
+  - if:
+    - condition: state
+      entity_id: input_select.shower_heater_status
+      state: 'on'
+    then:
+    - action: switch.turn_off
+      metadata: {}
+      data: {}
+      target:
+        entity_id: switch.heater_shower
+    - data:
+        message: "\U0001F916 Automation - \U0001F6C1 No Presence at Shower- Heater
+          OFF \U0001F975"
+      action: notify.supervisor_telegram
+    alias: IF heater is ON, turn off
   - data:
       message: "\U0001F916 Automation - \U0001F6C1 No Presence at Shower- Light off
         \U0001F4A1"
