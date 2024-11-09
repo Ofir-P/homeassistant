@@ -3519,7 +3519,7 @@
     then:
     - action: notify.whatsapp
       data:
-        message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
+        message: ' {{ alerts | join('' | '') }}'
   mode: queued
 - id: '1724487600916'
   alias: Shower - Button Skip Song
