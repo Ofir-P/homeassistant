@@ -258,21 +258,21 @@
 - id: '1697368945970'
   alias: Red Alert
   description: Hod HaSharon & Ramla Red Alert
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.oref_alert_home
     to: 'on'
     from: 'off'
     id: home_alert
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - binary_sensor.oref_alert_ramla
     from: 'off'
     to: 'on'
     id: ramla_alert
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - if:
     - condition: trigger
       id:
@@ -282,7 +282,8 @@
         message: "\U0001F916 Automation - Red Alert \U0001F680"
       enabled: true
       action: notify.supervisor_telegram
-    - if:
+    - alias: Alexa Announcement
+      if:
       - condition: state
         entity_id: binary_sensor.any_phone_at_home
         state: 'on'
@@ -293,7 +294,9 @@
       - data:
           message: AZAKAA
         action: notify.alexa_media_shower_echo_dot
-      alias: Alexa Announcement
+      - action: notify.alexa_media_kitchen_echo_pop
+        data:
+          message: AZAKAA
     - data:
         message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
       action: notify.mobile_app_elians_iphone
@@ -904,18 +907,18 @@
 - id: '1710708901407'
   alias: Office - No Presence Turn Off Lights/TV/AC
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.office_presence_sensor_presence
     to: 'off'
     for:
       hours: 0
-      minutes: 15
+      minutes: 25
       seconds: 0
     id: presence_away_25_mins
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - alias: Turn Off AC
     if:
     - condition: and
