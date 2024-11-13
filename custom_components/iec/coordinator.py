@@ -21,7 +21,7 @@ from homeassistant.const import UnitOfEnergy, CONF_API_TOKEN
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import aiohttp_client
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from iec_api.iec_client import IecClient
 from iec_api.models.contract import Contract
 from iec_api.models.device import Device, Devices
@@ -341,32 +341,9 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
                 f' is present: {daily_reading.value}'
             )
 
-    async def _async_update_data(
+    async def _update_data(
         self,
     ) -> dict[str, dict[str, Any]]:
-        """Fetch data from API endpoint."""
-        if self._first_load:
-            _LOGGER.debug("Loading API token from config entry")
-            await self.api.load_jwt_token(
-                JWT.from_dict(self._entry_data[CONF_API_TOKEN])
-            )
-
-        self._first_load = False
-        try:
-            _LOGGER.debug("Checking if API token needs to be refreshed")
-            # First thing first, check the token and refresh if needed.
-            old_token = self.api.get_token()
-            await self.api.check_token()
-            new_token = self.api.get_token()
-            if old_token != new_token:
-                _LOGGER.debug("Token refreshed")
-                new_data = {**self._entry_data, CONF_API_TOKEN: new_token.to_dict()}
-                self.hass.config_entries.async_update_entry(
-                    entry=self._config_entry, data=new_data
-                )
-        except IECError as err:
-            raise ConfigEntryAuthFailed from err
-
         if not self._bp_number:
             customer = await self.api.get_customer()
             self._bp_number = customer.bp_number
@@ -469,7 +446,16 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
                             remote_reading.future_consumption_info
                         )
 
-                    daily_readings[device.device_number] = remote_reading.data
+                    if remote_reading and remote_reading.data:
+                        daily_readings[device.device_number] = remote_reading.data
+                    else:
+                        _LOGGER.warning(
+                            "No Monthly readings returned for device %s in contract %s on %s",
+                            device.device_number,
+                            contract_id,
+                            localized_today.strftime("%Y-%m-%d"),
+                        )
+                        daily_readings[device.device_number] = []
 
                     weekly_future_consumption = None
                     if localized_today.day == 1:
@@ -624,6 +610,37 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
 
         return data
 
+    async def _async_update_data(
+        self,
+    ) -> dict[str, dict[str, Any]]:
+        """Fetch data from API endpoint."""
+        if self._first_load:
+            _LOGGER.debug("Loading API token from config entry")
+            await self.api.load_jwt_token(
+                JWT.from_dict(self._entry_data[CONF_API_TOKEN])
+            )
+
+        self._first_load = False
+        try:
+            _LOGGER.debug("Checking if API token needs to be refreshed")
+            # First thing first, check the token and refresh if needed.
+            old_token = self.api.get_token()
+            await self.api.check_token()
+            new_token = self.api.get_token()
+            if old_token != new_token:
+                _LOGGER.debug("Token refreshed")
+                new_data = {**self._entry_data, CONF_API_TOKEN: new_token.to_dict()}
+                self.hass.config_entries.async_update_entry(
+                    entry=self._config_entry, data=new_data
+                )
+        except IECError as err:
+            raise ConfigEntryAuthFailed from err
+
+        try:
+            return await self._update_data()
+        except Exception as err:
+            raise UpdateFailed("Failed Updating IEC data") from err
+
     async def _insert_statistics(self, contract_id: int, is_smart_meter: bool) -> None:
         if not is_smart_meter:
             _LOGGER.info(
@@ -651,7 +668,26 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
             )
 
             if not last_stat:
+                _LOGGER.debug(
+                    "No statistics found, fetching today's MONTHLY readings to extract field `meterStartDate`"
+                )
+
                 month_ago_time = localized_today - timedelta(weeks=4)
+                readings = await self._get_readings(
+                    contract_id,
+                    device.device_number,
+                    device.device_code,
+                    localized_today,
+                    ReadingResolution.MONTHLY,
+                )
+
+                if readings and readings.meter_start_date:
+                    # Fetching the last reading from either the installation date or a month ago
+                    month_ago_time = max(month_ago_time, readings.meter_start_date)
+                else:
+                    _LOGGER.debug(
+                        "Failed to extract field `meterStartDate`, falling back to a month ago"
+                    )
 
                 _LOGGER.debug("Updating statistic for the first time")
                 _LOGGER.debug(

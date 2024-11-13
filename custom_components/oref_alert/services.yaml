@@ -6,6 +6,7 @@ remove_sensor:
         entity:
           exclude_entities:
           - binary_sensor.oref_alert
+          - binary_sensor.oref_alert_all_areas
           filter:
           - integration: oref_alert
             domain: binary_sensor
@@ -2937,3 +2938,16 @@ synthetic_alert:
           min: 1
           max: 100
           unit_of_measurement: seconds
+    category:
+      required: true
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 30
+          mode: box
+    title:
+      required: true
+      default: התרעה סינטטית לצורכי בדיקות
+      selector:
+        text: null

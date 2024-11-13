@@ -282,21 +282,6 @@
         message: "\U0001F916 Automation - Red Alert \U0001F680"
       enabled: true
       action: notify.supervisor_telegram
-    - alias: Alexa Announcement
-      if:
-      - condition: state
-        entity_id: binary_sensor.any_phone_at_home
-        state: 'on'
-      - condition: time
-        after: '16:00:00'
-        before: '22:40:00'
-      then:
-      - data:
-          message: AZAKAA
-        action: notify.alexa_media_shower_echo_dot
-      - action: notify.alexa_media_kitchen_echo_pop
-        data:
-          message: AZAKAA
     - data:
         message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
       action: notify.mobile_app_elians_iphone
@@ -315,6 +300,15 @@
           - light.kitchen_l2
         action: light.turn_on
       alias: Lights if someone home
+    - if:
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'On'
+      then:
+      - data:
+          message: צבע אדום - הוד השרון
+        action: notify.living_room_lg_webos_smart_tv
+      alias: Notification to TV
     - alias: Office LED Blink if someone in Office
       if:
       - alias: Confirm someone is Presence at Office
@@ -348,15 +342,21 @@
           entity_id: scene.thebeforetimes
         metadata: {}
         action: scene.turn_on
-    - if:
+    - alias: Alexa Announcement
+      if:
       - condition: state
-        entity_id: input_select.living_room_tv_status
-        state: 'On'
+        entity_id: binary_sensor.any_phone_at_home
+        state: 'on'
+      - condition: time
+        after: '16:00:00'
+        before: '22:40:00'
       then:
       - data:
-          message: צבע אדום - הוד השרון
-        action: notify.living_room_lg_webos_smart_tv
-      alias: Notification to TV
+          message: AZAKAA
+        action: notify.alexa_media_shower_echo_dot
+      - action: notify.alexa_media_kitchen_echo_pop
+        data:
+          message: AZAKAA
   - if:
     - condition: trigger
       id:

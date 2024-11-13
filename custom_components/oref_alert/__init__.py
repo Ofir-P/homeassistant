@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 from .config_flow import AREAS_CONFIG
 from .const import (
     ADD_SENSOR_SERVICE,
+    ATTR_CATEGORY,
+    ATTR_TITLE,
     CONF_ALERT_ACTIVE_DURATION,
     CONF_ALERT_MAX_AGE_DEPRECATED,
     CONF_AREA,
@@ -31,8 +33,10 @@ from .const import (
     CONF_SENSORS,
     DATA_COORDINATOR,
     DOMAIN,
+    END_TIME_ID_SUFFIX,
     REMOVE_SENSOR_SERVICE,
     SYNTHETIC_ALERT_SERVICE,
+    TIME_TO_SHELTER_ID_SUFFIX,
     TITLE,
 )
 from .coordinator import OrefAlertDataUpdateCoordinator
@@ -53,7 +57,10 @@ REMOVE_SENSOR_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_ENTITY_ID): selector.EntitySelector(
             selector.EntitySelectorConfig(
-                exclude_entities=["binary_sensor.oref_alert"],
+                exclude_entities=[
+                    "binary_sensor.oref_alert",
+                    "binary_sensor.oref_alert_all_areas",
+                ],
                 filter=selector.EntityFilterSelectorConfig(
                     integration="oref_alert", domain="binary_sensor"
                 ),
@@ -66,7 +73,9 @@ REMOVE_SENSOR_SCHEMA = vol.Schema(
 SYNTHETIC_ALERT_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_AREA): vol.All(cv.string, vol.In(AREAS)),
-        vol.Required(CONF_DURATION, default=10): cv.positive_int,  # type: ignore[reportArgumentType]
+        vol.Required(CONF_DURATION, default=10): cv.positive_int,
+        vol.Required(ATTR_CATEGORY, default=1): cv.positive_int,
+        vol.Optional(ATTR_TITLE): cv.string,
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -148,6 +157,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             if name != entity_name
         }
         entity_reg.async_remove(service_call.data[CONF_ENTITY_ID])
+        for suffix in [TIME_TO_SHELTER_ID_SUFFIX, END_TIME_ID_SUFFIX]:
+            entity_id = (
+                f"{Platform.SENSOR}."
+                f"{service_call.data[CONF_ENTITY_ID].split(".")[1]}_{suffix}"
+            )
+            if entity_reg.async_get(entity_id) is not None:
+                entity_reg.async_remove(entity_id)
         hass.config_entries.async_update_entry(
             config_entry,
             options={**config_entry.options, CONF_SENSORS: sensors},
@@ -163,9 +179,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def synthetic_alert(service_call: ServiceCall) -> None:
         """Add a synthetic alert for testing purposes."""
-        coordinator.add_synthetic_alert(
-            service_call.data[CONF_AREA], service_call.data[CONF_DURATION]
-        )
+        coordinator.add_synthetic_alert(service_call.data)
 
     async_register_admin_service(
         hass,
