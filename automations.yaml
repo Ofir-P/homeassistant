@@ -2511,9 +2511,8 @@
 - id: '1712580428389'
   alias: Elian Zone Change Notification
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - device_tracker.elians_iphone
     from: home
     to: not_home
@@ -2522,29 +2521,27 @@
       minutes: 0
       seconds: 50
     id: elian_left_home
-  - platform: device
-    device_id: 611a494457823cb15ab854ae5b741ef0
+    trigger: state
+  - device_id: 611a494457823cb15ab854ae5b741ef0
     domain: device_tracker
     entity_id: 4d605a96e7d9ad764a8f357609e42ebd
     type: leaves
     zone: zone.mofit
     id: elian_leaving_mofit
-  - platform: device
-    device_id: 611a494457823cb15ab854ae5b741ef0
-    domain: device_tracker
-    entity_id: 4d605a96e7d9ad764a8f357609e42ebd
-    type: enters
-    zone: zone.matrix
+    trigger: device
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
+    to: Compie
     id: elian_enter_work
-  - platform: device
-    device_id: 611a494457823cb15ab854ae5b741ef0
-    domain: device_tracker
-    entity_id: 4d605a96e7d9ad764a8f357609e42ebd
-    type: leaves
-    zone: zone.matrix
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
     id: elian_leaving_work
-  condition: []
-  action:
+    from: Compie
+    to: Not Connected
+  conditions: []
+  actions:
   - choose:
     - conditions:
       - condition: trigger
@@ -3516,6 +3513,9 @@
       message: 'התרעות פיקוד העורף: {{ alerts | join('' | '') }}'
     action: notify.mobile_app_ofir_honor_magic_5_pro
   - if:
+    - condition: state
+      entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
+      state: AutoKit8D
     - condition: state
       entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
       state: AutoKit8D
