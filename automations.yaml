@@ -2547,6 +2547,11 @@
       - condition: trigger
         id:
         - elian_leaving_mofit
+      - condition: state
+        entity_id: sensor.elians_iphone_ssid
+        state: Not Connected
+      - condition: time
+        after: 09:00:00
       sequence:
       - data:
           message: "\U0001F916 Automation - Elian has left Mofit."
@@ -3585,16 +3590,17 @@
 - id: '1725193009430'
   alias: Elian Zone Change Mofit Actionable Notification
   description: ''
-  trigger:
-  - platform: device
-    device_id: 611a494457823cb15ab854ae5b741ef0
-    domain: device_tracker
-    entity_id: 4d605a96e7d9ad764a8f357609e42ebd
-    type: enters
-    zone: zone.mofit
+  triggers:
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
+    to: Mofit5
     id: elian_enter_mofit
-  condition: []
-  action:
+  conditions:
+  - condition: zone
+    entity_id: device_tracker.elians_iphone
+    zone: zone.mofit
+  actions:
   - data:
       message: "\U0001F916 Automation - Elian has entered Mofit."
     action: notify.supervisor_telegram
@@ -3617,18 +3623,18 @@
     action: notify.mobile_app_elians_iphone
   - alias: Wait for a response
     wait_for_trigger:
-    - platform: event
-      event_type: mobile_app_notification_action
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_keep }}'
-    - platform: event
-      event_type: mobile_app_notification_action
+      trigger: event
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_stop }}'
-    - platform: event
-      event_type: mobile_app_notification_action
+      trigger: event
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_cab }}'
+      trigger: event
   - alias: Perform the action
     choose:
     - conditions:
