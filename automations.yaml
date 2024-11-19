@@ -3833,3 +3833,22 @@
     metadata: {}
     data: {}
   mode: single
+- id: '17306656577567'
+  alias: Oref Alert Country Notifications Details
+  triggers:
+  - trigger: event
+    event_type: oref_alert_event
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.event.data.home_distance < 85 }}'
+  actions:
+  - action: notify.mobile_app_ofir_honor_magic_5_pro
+    data:
+      title: התרעות פיקוד העורף
+      message: '{{ trigger.event.data.emoji }} {{ trigger.event.data.area }} [{{ trigger.event.data.title
+        }}]'
+  - action: notify.living_room_lg_webos_smart_tv
+    data:
+      message: '{{ trigger.event.data.emoji }} {{ trigger.event.data.area }} [{{ trigger.event.data.title
+        }}]'
+  mode: queued
