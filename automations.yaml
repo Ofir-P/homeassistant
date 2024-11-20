@@ -3840,7 +3840,7 @@
     event_type: oref_alert_event
   conditions:
   - condition: template
-    value_template: '{{ trigger.event.data.home_distance < 85 }}'
+    value_template: '{{ trigger.event.data.home_distance < 30 }}'
   actions:
   - action: notify.mobile_app_ofir_honor_magic_5_pro
     data:
