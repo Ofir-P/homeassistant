@@ -131,8 +131,6 @@ devices:
   '0xa4c138e6fc18ec4e':
     friendly_name: Kitchen
     description: located above the fridge
-  '0x00158d0009cf58d1':
-    friendly_name: Wardrobe Sticker Switch button
   '0x00158d000970764f':
     friendly_name: Kitchen Sticker Switch button
     description: in the drawer
@@ -151,8 +149,6 @@ devices:
   '0xa4c1388091f09665':
     friendly_name: Wardrobe Motion Sensor
     description: On top of the wardrobe door
-  '0xa4c1380dc6ffc141':
-    friendly_name: Shower Door Sensor
   '0x00158d0006c8f369':
     friendly_name: Dining Table Sticker Switch button
   '0x00158d0009cf58c2':
@@ -184,3 +180,7 @@ devices:
   '0xa4c138c861145739':
     friendly_name: Heater Shower
     description: Heater - located above the power plugs
+  '0x00158d0009cf58d1':
+    friendly_name: Wardrobe Sticker Switch button
+  '0xa4c1380dc6ffc141':
+    friendly_name: Shower Door Sensor

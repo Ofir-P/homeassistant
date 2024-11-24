@@ -649,17 +649,17 @@
   alias: Office - Presence Turn On Lights
   description: When Presence detected in Office, if lights off and Roborock is docked
     then turn on the lights in the room.
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.office_presence_sensor_presence
     to: 'on'
-  condition:
+    trigger: state
+  conditions:
   - condition: state
     entity_id: light.office
     state: 'off'
   - condition: time
-    after: '11:00:00'
+    after: 08:20:00
     before: '23:00:00'
   - condition: or
     conditions:
@@ -673,7 +673,7 @@
   - condition: numeric_state
     entity_id: zone.home
     above: 0
-  action:
+  actions:
   - data:
       rgb_color:
       - 115
@@ -1380,16 +1380,15 @@
 - id: '1712574828792'
   alias: Wardrobe - Sticker Button
   description: Hold - Clean Room
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sensor.wardrobe_sticker_switch_button_action
     to: hold
     id: sticker_hold_press
-  condition: []
-  action:
-  - service: vacuum.send_command
-    data:
+    trigger: state
+  conditions: []
+  actions:
+  - data:
       command: app_segment_clean
       params:
       - segments:
@@ -1397,11 +1396,12 @@
         repeat: 2
     target:
       entity_id: vacuum.roborock_s8_pro_ultra
-  - service: notify.home_assistant_group
-    metadata: {}
+    action: vacuum.send_command
+  - metadata: {}
     data:
       message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Wardrobe
         room!"
+    action: notify.home_assistant_group
   mode: single
 - id: '1712574926149'
   alias: Wardrobe - Wireless Remote
@@ -3852,3 +3852,37 @@
       message: '{{ trigger.event.data.emoji }} {{ trigger.event.data.area }} [{{ trigger.event.data.title
         }}]'
   mode: queued
+- id: '1732371977872'
+  alias: Notify MP3 Friday Song before Shabbat
+  description: ''
+  triggers:
+  - trigger: time
+    at:
+      entity_id: sensor.jewish_calendar_upcoming_candle_lighting
+      offset: 00:10:00
+  conditions: []
+  actions:
+  - action: notify.alexa_media
+    data:
+      message: <audio src='https://3t6d68jf8e966qfhla8sjf21kyd3jk0d.ui.nabu.casa/local/mp3/shishi.mp3'/>
+      target: media_player.kitchen_echo_pop
+      data:
+        type: tts
+  - action: notify.mobile_app_elians_iphone
+    metadata: {}
+    data:
+      message: "\U0001F54E שבת שלום צדיקה \U0001F54E"
+  - action: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - \U0001F54E Notify MP3 Friday Song before Shabbat"
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F54E Shabbat Shalom \U0001F54E"
+  mode: single
