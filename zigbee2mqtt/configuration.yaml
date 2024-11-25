@@ -184,3 +184,5 @@ devices:
     friendly_name: Wardrobe Sticker Switch button
   '0xa4c1380dc6ffc141':
     friendly_name: Shower Door Sensor
+  '0xa4c138e09b1de954':
+    friendly_name: Solar Rain Sensor
