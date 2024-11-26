@@ -285,21 +285,23 @@
     - data:
         message: "\U0001F680 אזעקות בהוד השרון\U0001F680"
       action: notify.mobile_app_elians_iphone
-    - if:
-      - condition: state
-        entity_id: binary_sensor.any_phone_at_home
-        state: 'on'
+    - alias: Alexa Announcement
+      if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: light.kitchen_l1
+          state: 'on'
+        - condition: state
+          entity_id: light.shower_l1
+          state: 'on'
       then:
       - data:
-          color_name: red
-        target:
-          entity_id:
-          - light.yeelink_color5_6079_light
-          - light.living_room_l1
-          - light.kitchen_l1
-          - light.kitchen_l2
-        action: light.turn_on
-      alias: Lights if someone home
+          message: AZAKAA
+        action: notify.alexa_media_shower_echo_dot
+      - action: notify.alexa_media_kitchen_echo_pop
+        data:
+          message: AZAKAA
     - if:
       - condition: state
         entity_id: input_select.living_room_tv_status
@@ -342,18 +344,39 @@
           entity_id: scene.thebeforetimes
         metadata: {}
         action: scene.turn_on
-    - alias: Alexa Announcement
+    - alias: Lights if someone home
       if:
-      - condition: time
-        after: '13:00:00'
-        before: '22:40:00'
+      - condition: state
+        entity_id: binary_sensor.any_phone_at_home
+        state: 'on'
       then:
-      - data:
-          message: AZAKAA
-        action: notify.alexa_media_shower_echo_dot
-      - action: notify.alexa_media_kitchen_echo_pop
+      - action: scene.create
+        metadata: {}
         data:
-          message: AZAKAA
+          scene_id: statebeforeredalert
+          snapshot_entities:
+          - light.yeelink_color5_6079_light
+          - light.living_room_l1
+          - light.kitchen_l1
+          - light.kitchen_l2
+      - data:
+          color_name: red
+        target:
+          entity_id:
+          - light.yeelink_color5_6079_light
+          - light.living_room_l1
+          - light.kitchen_l1
+          - light.kitchen_l2
+        action: light.turn_on
+      - delay:
+          hours: 0
+          minutes: 7
+          seconds: 0
+          milliseconds: 0
+      - action: scene.turn_on
+        metadata: {}
+        target:
+          entity_id: scene.statebeforeredalert
   - if:
     - condition: trigger
       id:
