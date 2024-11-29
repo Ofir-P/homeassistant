@@ -186,3 +186,5 @@ devices:
     friendly_name: Shower Door Sensor
   '0xa4c138e09b1de954':
     friendly_name: Solar Rain Sensor
+  '0x6cfd22fffeeaf896':
+    friendly_name: Living Room Blinds

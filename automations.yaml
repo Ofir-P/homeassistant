@@ -2160,32 +2160,32 @@
     3. -Tempature - 3_single
 
     4. Light toggle - 4_single'
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sensor.living_room_wireless_remote_switch_action
     to: 1_single
     id: button1_singlePress
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.living_room_wireless_remote_switch_action
     to: 2_single
     id: button2_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.living_room_wireless_remote_switch_action
     to: 3_single
     id: button3_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.living_room_wireless_remote_switch_action
     to: 4_single
     id: button4_singlePress
     enabled: true
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - alias: '1'
     if:
     - condition: trigger
@@ -2202,52 +2202,60 @@
           entity_id: climate.ofir_a_c
           state: heat
       then:
-      - service: climate.turn_off
-        metadata: {}
+      - metadata: {}
         data: {}
         target:
           device_id: 5747456c3abcc55ad57e3875baf58ba2
+        action: climate.turn_off
       else:
-      - service: climate.turn_on
-        metadata: {}
+      - metadata: {}
         data: {}
         target:
           device_id: 5747456c3abcc55ad57e3875baf58ba2
+        action: climate.turn_on
   - alias: '2'
     if:
     - condition: trigger
       id:
       - button2_singlePress
     then:
-    - service: climate.set_temperature
-      data:
+    - data:
         temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
           + 1 }}'
       target:
         entity_id: climate.ofir_a_c
+      action: climate.set_temperature
+      enabled: false
+    - action: script.living_room_blinds_open
+      metadata: {}
+      data: {}
   - alias: '3'
     if:
     - condition: trigger
       id:
       - button3_singlePress
     then:
-    - service: climate.set_temperature
-      data:
+    - data:
         temperature: '{{ state_attr(''climate.ofir_a_c'', ''temperature'')|int(7)
           - 1 }}'
       target:
         entity_id: climate.ofir_a_c
+      action: climate.set_temperature
+      enabled: false
+    - action: script.living_room_blinds_close
+      metadata: {}
+      data: {}
   - alias: '4'
     if:
     - condition: trigger
       id:
       - button4_singlePress
     then:
-    - service: light.toggle
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         entity_id: light.living_room_l1
+      action: light.toggle
   mode: single
 - id: '1712578588954'
   alias: Living Room - No Presence Turn Off TV/AC/Light
@@ -3905,4 +3913,105 @@
       metadata: {}
       data:
         message: "\U0001F54E Shabbat Shalom \U0001F54E"
+  mode: single
+- id: '1732803500639'
+  alias: Rain Notification
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.solar_rain_sensor_rain
+    to: 'on'
+    from: 'off'
+  conditions: []
+  actions:
+  - action: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: גשם גשם מטפטף
+  mode: single
+- id: '1732806327556'
+  alias: Living Room - Blinds Open Notification
+  description: ''
+  triggers:
+  - entity_id:
+    - cover.living_room_blinds
+    from: open
+    to: closed
+    id: blinds_set_on
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      message: "\U0001F916 Automation - \U0001FA9F Living Room Blinds is open \U0001F6CB️"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1732806364165'
+  alias: Living Room - Blinds Closed Notification
+  description: ''
+  triggers:
+  - entity_id:
+    - cover.living_room_blinds
+    from: closed
+    to: open
+    id: blinds_set_on
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      message: "\U0001F916 Automation - \U0001FA9F Living Room Blinds is Closed \U0001F6CB️"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1732806484351'
+  alias: Living Room - Blinds Open on Sunrise
+  description: ''
+  triggers:
+  - trigger: sun
+    event: sunrise
+    offset: 0
+  conditions:
+  - condition: state
+    entity_id: cover.living_room_blinds
+    state: open
+  actions:
+  - action: cover.close_cover
+    metadata: {}
+    data: {}
+    target:
+      entity_id: cover.living_room_blinds
+  - data:
+      message: "\U0001F916 Automation - \U0001FA9F Living Room - Blinds Open on Sunrise
+        \U0001F6CB️"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1732806588813'
+  alias: Living Room - Blinds Close
+  description: Will close blinds on sunset, tv state is on or it's raining outside!
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: 0
+  - trigger: state
+    entity_id:
+    - input_select.living_room_tv_status
+    to: 'On'
+    from: 'Off'
+  - trigger: state
+    entity_id:
+    - binary_sensor.solar_rain_sensor_rain
+    from: 'off'
+    to: 'on'
+  conditions:
+  - condition: state
+    entity_id: cover.living_room_blinds
+    state: closed
+  actions:
+  - action: cover.open_cover
+    metadata: {}
+    data: {}
+    target:
+      entity_id: cover.living_room_blinds
+  - data:
+      message: "\U0001F916 Automation - \U0001FA9F Living Room - Blinds Close \U0001F6CB️"
+    action: notify.supervisor_telegram
   mode: single
