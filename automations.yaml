@@ -3923,12 +3923,20 @@
     - binary_sensor.solar_rain_sensor_rain
     to: 'on'
     from: 'off'
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
   conditions: []
   actions:
   - action: notify.supervisor_telegram
     metadata: {}
     data:
-      message: גשם גשם מטפטף
+      message: "\U0001F916 Automation - \U0001F327️ It's raining now! ☔"
+  - action: notify.mobile_app_elians_iphone
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - \U0001F327️ It's raining now! ☔"
   mode: single
 - id: '1732806327556'
   alias: Living Room - Blinds Open Notification
@@ -4004,7 +4012,7 @@
   conditions:
   - condition: state
     entity_id: cover.living_room_blinds
-    state: closed
+    state: open
   actions:
   - action: cover.open_cover
     metadata: {}
