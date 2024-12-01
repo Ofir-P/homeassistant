@@ -798,24 +798,24 @@
 - id: '1710659808604'
   alias: Kitchen - Presence Turn On Lights
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - binary_sensor.kitchen_presence_sensor_presence
     from: 'off'
     to: 'on'
     id: yes_presence
-  condition:
+    trigger: state
+  conditions:
   - condition: state
     entity_id: light.kitchen_l1
     state: 'off'
   - condition: time
-    after: '15:00:00'
+    after: 08:00:00
     before: '23:59:00'
   - condition: numeric_state
     entity_id: zone.home
     above: 0
-  action:
+  actions:
   - metadata: {}
     data: {}
     target:
@@ -3887,7 +3887,7 @@
   - trigger: time
     at:
       entity_id: sensor.jewish_calendar_upcoming_candle_lighting
-      offset: 00:10:00
+      offset: -00:10:00
   conditions: []
   actions:
   - action: notify.alexa_media
@@ -3925,7 +3925,7 @@
     from: 'off'
     for:
       hours: 0
-      minutes: 4
+      minutes: 6
       seconds: 0
   conditions: []
   actions:
@@ -3982,11 +3982,9 @@
     entity_id: cover.living_room_blinds
     state: open
   actions:
-  - action: cover.close_cover
+  - action: script.living_room_blinds_open
     metadata: {}
     data: {}
-    target:
-      entity_id: cover.living_room_blinds
   - data:
       message: "\U0001F916 Automation - \U0001FA9F Living Room - Blinds Open on Sunrise
         \U0001F6CB️"
@@ -4009,16 +4007,18 @@
     - binary_sensor.solar_rain_sensor_rain
     from: 'off'
     to: 'on'
+    for:
+      hours: 0
+      minutes: 6
+      seconds: 0
   conditions:
   - condition: state
     entity_id: cover.living_room_blinds
-    state: open
+    state: closed
   actions:
-  - action: cover.open_cover
+  - action: script.living_room_blinds_close
     metadata: {}
     data: {}
-    target:
-      entity_id: cover.living_room_blinds
   - data:
       message: "\U0001F916 Automation - \U0001FA9F Living Room - Blinds Close \U0001F6CB️"
     action: notify.supervisor_telegram
