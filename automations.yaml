@@ -3624,10 +3624,7 @@
     - sensor.elians_iphone_ssid
     to: Mofit5
     id: elian_enter_mofit
-  conditions:
-  - condition: zone
-    entity_id: device_tracker.elians_iphone
-    zone: zone.mofit
+  conditions: []
   actions:
   - data:
       message: "\U0001F916 Automation - Elian has entered Mofit."
@@ -3981,7 +3978,7 @@
   conditions:
   - condition: state
     entity_id: cover.living_room_blinds
-    state: closed
+    state: open
   actions:
   - action: script.living_room_blinds_open
     metadata: {}
