@@ -747,9 +747,16 @@
     id: Morning
     enabled: true
     trigger: time
-  - at: '15:01:00'
+  - trigger: state
+    entity_id:
+    - sensor.ofir_honor_magic_5_pro_wifi_connection_2
+    from: Au10tix@Guest
+    to: <not connected>
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
     id: AfterWork
-    trigger: time
   conditions:
   - condition: time
     weekday:
@@ -766,9 +773,12 @@
     - condition: trigger
       id:
       - AfterWork
-    - condition: zone
-      entity_id: person.ofir
-      zone: zone.ofir_work
+    - condition: not
+      conditions:
+      - condition: zone
+        entity_id: device_tracker.ofir_honor_magic_5_pro
+        zone: zone.ofir_work
+      alias: Confirm Ofir not in AU10TIX Zone
     then:
     - metadata: {}
       data:
@@ -806,15 +816,20 @@
     id: yes_presence
     trigger: state
   conditions:
-  - condition: state
-    entity_id: light.kitchen_l1
-    state: 'off'
   - condition: time
     after: 08:00:00
     before: '23:59:00'
   - condition: numeric_state
     entity_id: zone.home
     above: 0
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: light.kitchen_l1
+      state: 'off'
+    - condition: state
+      entity_id: switch.kitchen_led_strip
+      state: 'off'
   actions:
   - metadata: {}
     data: {}
@@ -3979,6 +3994,7 @@
   - condition: state
     entity_id: cover.living_room_blinds
     state: open
+    enabled: false
   actions:
   - action: script.living_room_blinds_open
     metadata: {}
@@ -4012,7 +4028,8 @@
   conditions:
   - condition: state
     entity_id: cover.living_room_blinds
-    state: closed
+    state: open
+    enabled: true
   actions:
   - action: script.living_room_blinds_close
     metadata: {}
