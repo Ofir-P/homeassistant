@@ -75,6 +75,8 @@ class XEntity(BasicEntity):
             self._attr_translation_key = conv.prop.friendly_name
             self._miot_service = conv.prop.service
             self._miot_property = conv.prop
+            if not conv.prop.readable:
+                self._attr_available = True
 
         elif isinstance(conv, MiotActionConv):
             self.entity_id = device.spec.generate_entity_id(self, conv.action.name, conv.domain)
@@ -108,6 +110,13 @@ class XEntity(BasicEntity):
 
         self._attr_icon = conv.option.get('icon')
         self._attr_device_class = self.custom_config('device_class') or conv.option.get('device_class')
+
+        if self._attr_translation_key:
+            self._attr_translation_key = ( # hassfest
+                self._attr_translation_key
+                .replace(':', '-')
+                .replace('.', '-')
+            )
 
         cate = self.custom_config('entity_category') or conv.option.get('entity_category')
         if isinstance(cate, str):

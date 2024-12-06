@@ -258,7 +258,7 @@ class MiotRoborockVacuumEntity(MiotVacuumEntity):
         await super().async_added_to_hass()
         rooms = await self.get_room_mapping() or []
 
-        if add_buttons := self._add_entities.get('button'):
+        if add_buttons := self.device.entry.adders.get('button'):
             from .button import ButtonSubEntity
             for r in rooms:
                 if len(r) < 3:
@@ -288,7 +288,7 @@ class MiotRoborockVacuumEntity(MiotVacuumEntity):
             adt['clean_time'] = round(props['clean_time'] / 60, 1)
         if adt:
             await self.async_update_attrs(adt)
-            await self.device.dispatch(self.device.encode({'props': props}))
+            self.device.dispatch(self.device.decode_attrs({'props': props}))
 
     async def get_room_mapping(self):
         if not self.miot_device:
@@ -309,7 +309,9 @@ class MiotRoborockVacuumEntity(MiotVacuumEntity):
                     else:
                         r[2] = name
                 self._state_attrs['room_mapping'] = rooms
+                self.logger.info('Vacuum rooms: %s', rooms)
                 return rooms
+            self.logger.info('Vacuum rooms: %s', rooms)
         except (DeviceException, Exception):
             pass
         return None

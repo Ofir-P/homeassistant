@@ -768,6 +768,11 @@
   - condition: state
     entity_id: switch.boiler
     state: 'off'
+  - condition: not
+    conditions:
+    - condition: time
+      after: '12:00:00'
+      before: '14:50:00'
   actions:
   - if:
     - condition: trigger
@@ -1522,67 +1527,80 @@
 
     5. Wireless Remote - 1st button Hold - Light toggle
 
+    6. Wireless Remote - 4th button hold - ALL LIGHTS OFF
 
     9. Clean Room'
-  trigger:
-  - platform: state
-    entity_id:
+  triggers:
+  - entity_id:
     - sensor.bedroom_wireless_remote_switch_action
     to: 1_single
     id: button1_elianRemote_singlePress
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_second_wireless_remote_ac_action
     to: 1_single
     id: button1_ofirRemote_singlePress
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_wireless_remote_switch_action
     to: 2_single
     id: button2_elianRemote_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_second_wireless_remote_ac_action
     to: 2_single
     id: button2_ofirRemote_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_wireless_remote_switch_action
     to: 3_single
     id: button3_elianRemote_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_second_wireless_remote_ac_action
     to: 3_single
     id: button3_ofirRemote_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_wireless_remote_switch_action
     to: 4_single
     id: button4_elianRemote_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_second_wireless_remote_ac_action
     to: 4_single
     id: button4_ofirRemote_singlePress
     enabled: true
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_wireless_remote_switch_action
     to: 1_double
     id: button1_elianRemote_doublePress
-  - platform: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - sensor.bedroom_second_wireless_remote_ac_action
     to: 1_double
     id: button1_ofirRemote_doublePress
-  condition: []
-  action:
+    trigger: state
+  - entity_id:
+    - sensor.bedroom_wireless_remote_switch_action
+    to: 4_hold
+    id: button4_elianRemote_holdPress
+    enabled: true
+    trigger: state
+  - entity_id:
+    - sensor.bedroom_second_wireless_remote_ac_action
+    to: 4_hold
+    id: button4_ofirRemote_holdPress
+    enabled: true
+    trigger: state
+  conditions: []
+  actions:
   - alias: '1'
     if:
     - condition: trigger
@@ -1590,9 +1608,9 @@
       - button1_elianRemote_singlePress
       - button1_ofirRemote_singlePress
     then:
-    - service: script.toggle_bedroom_ac
-      metadata: {}
+    - metadata: {}
       data: {}
+      action: script.toggle_bedroom_ac
   - alias: '2'
     if:
     - condition: trigger
@@ -1600,12 +1618,12 @@
       - button2_elianRemote_singlePress
       - button2_ofirRemote_singlePress
     then:
-    - service: climate.set_temperature
-      data:
+    - data:
         temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
           + 1 }}'
       target:
         entity_id: climate.bedroom_ac
+      action: climate.set_temperature
   - alias: '3'
     if:
     - condition: trigger
@@ -1613,12 +1631,12 @@
       - button3_elianRemote_singlePress
       - button3_ofirRemote_singlePress
     then:
-    - service: climate.set_temperature
-      data:
+    - data:
         temperature: '{{ state_attr(''climate.bedroom_ac'', ''temperature'')|int(7)
           - 1 }}'
       target:
         entity_id: climate.bedroom_ac
+      action: climate.set_temperature
   - alias: '4'
     if:
     - condition: trigger
@@ -1626,8 +1644,8 @@
       - button4_elianRemote_singlePress
       - button4_ofirRemote_singlePress
     then:
-    - service: script.ir_turn_on_off_bedroom_tv
-      data: {}
+    - data: {}
+      action: script.ir_turn_on_off_bedroom_tv
   - alias: '5'
     if:
     - condition: trigger
@@ -1635,11 +1653,21 @@
       - button1_ofirRemote_doublePress
       - button1_elianRemote_doublePress
     then:
-    - service: light.toggle
-      metadata: {}
+    - metadata: {}
       data: {}
       target:
         entity_id: light.bedroom
+      action: light.toggle
+  - alias: '6'
+    if:
+    - condition: trigger
+      id:
+      - button4_ofirRemote_holdPress
+      - button4_elianRemote_holdPress
+    then:
+    - action: script.turn_all_lights_off
+      metadata: {}
+      data: {}
   - alias: '9'
     if:
     - condition: trigger
@@ -1647,8 +1675,7 @@
       - light_to_off
       enabled: false
     then:
-    - service: vacuum.send_command
-      data:
+    - data:
         command: app_segment_clean
         params:
         - segments:
@@ -1656,10 +1683,11 @@
           repeat: 2
       target:
         entity_id: vacuum.roborock_s8_pro_ultra
-    - service: notify.home_assistant_group
-      metadata: {}
+      action: vacuum.send_command
+    - metadata: {}
       data:
         message: "\U0001F916 Automation - \U0001F9F9 Roborock S8 going to clean Bathroom!"
+      action: notify.home_assistant_group
     enabled: false
   mode: single
 - id: '1712575201276'
@@ -3165,7 +3193,7 @@
     trigger: state
   conditions:
   - condition: state
-    entity_id: media_player.spotify_elian_sarfaty
+    entity_id: media_player.shower_echo_dot
     state: playing
   actions:
   - data:

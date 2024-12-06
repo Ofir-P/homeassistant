@@ -528,3 +528,38 @@ living_room_blinds_close:
     action: notify.supervisor_telegram
   description: ''
   icon: mdi:blinds
+turn_all_lights_off:
+  alias: Turn ALL Lights OFF
+  sequence:
+  - action: light.turn_off
+    metadata: {}
+    data: {}
+    target:
+      area_id:
+      - bedroom
+      - kitchen
+      - living_room
+      - shower
+      - wardrobe
+      entity_id:
+      - light.office
+      - light.office_bathroom
+      - light.office_wall_light
+      - light.yeelink_color5_6079_light
+      - light.bathroom
+      - light.ofir_desk_led
+  - action: switch.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id: switch.kitchen_led_strip
+  - if:
+    - condition: state
+      entity_id: input_select.office_corner_led_light_status
+      state: 'on'
+    then:
+    - action: script.office_corner_led_toggle
+      metadata: {}
+      data: {}
+  description: ''
+  icon: mdi:lamps-outline

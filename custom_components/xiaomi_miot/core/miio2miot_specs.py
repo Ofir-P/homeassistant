@@ -420,6 +420,12 @@ MIIO_TO_MIOT_SPECS = {
                 'params': [
                     'power', 'mode', 'pm25', 'co2', 'temperature_outside', 'favourite_speed', 'control_speed',
                     'ptc_on', 'ptc_status', 'child_lock', 'sound', 'display',
+                ],
+                'values': True,
+            },
+            {
+                'method': 'get_prop',
+                'params': [
                     'filter_intermediate', 'filter_inter_day', 'filter_efficient', 'filter_effi_day',
                     'ptc_level', 'screen_direction',
                 ],
@@ -1668,7 +1674,7 @@ MIIO_TO_MIOT_SPECS = {
         },
     },
     'viomi.waterheater.e1': {
-        'without_props': True,
+        'chunk_properties': 1,
         'miio_commands': [
             {
                 'method': 'get_prop',
@@ -1677,6 +1683,7 @@ MIIO_TO_MIOT_SPECS = {
                     'hotWater', 'needClean', 'modeType', 'appointStart', 'appointEnd',
                 ],
                 'values': True,
+                'ignore_error': True,
             },
         ],
         'miio_specs': {

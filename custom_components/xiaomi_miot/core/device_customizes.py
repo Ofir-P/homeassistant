@@ -161,6 +161,9 @@ DEVICE_CUSTOMIZES = {
         'device_class': 'voltage',
         'unit_of_measurement': 'V',
     },
+    'cgllc.motion.cgpr1': {
+        'sensor_properties': 'illumination,no_motion_duration',
+    },
     'chuangmi.camera.051a01': {
         'switch_properties': 'on,time_watermark,motion_tracking,motion_detection,wdr_mode,glimmer_full_color,'
                              'face_switch,babycry_switch,pet_switch,gesture_switch,cruise_switch,smart_care_switch,'
@@ -288,6 +291,7 @@ DEVICE_CUSTOMIZES = {
         'stat_power_cost_key': '2.2',
         'miot_mapping': {
             'switch.on': {'siid': 2, 'piid': 1},
+            'switch.voltage': {'siid': 2, 'piid': 3},
             'switch.electric_current': {'siid': 2, 'piid': 4},
             'switch.power': {'siid': 4, 'piid': 2},
             'physical_controls_locked': {'siid': 6, 'piid': 1},
@@ -1043,29 +1047,29 @@ DEVICE_CUSTOMIZES = {
     },
     'mmgg.feeder.fi1': {
         'chunk_properties': 1,
-        'state_property': 'pet_food_left_level',
         'button_actions': 'pet_food_out,resetclean,reset_desiccant_life',
         'binary_sensor_properties': 'outletstatus,doorstatus',
-        'sensor_properties': 'fault,outfood_num,cleantime,desiccant_left_time',
+        'sensor_properties': 'fault,pet_food_left_level,outfood_num,cleantime,desiccant_left_time',
         'number_properties': 'key_stat,indicator_light.on',
+        'select_actions': 'pet_food_out',
         'exclude_miot_properties': 'outfood_id,contrycode,feddplan_string,factory_result,phon_time_zone'
                                    'feedplan_hour,feedplan_min,feedplan_unit,feedplan_stat,feedplan_id,getfeedplan_num',
     },
     'mmgg.feeder.inland': {
         'chunk_properties': 1,
-        'state_property': 'pet_food_left_level',
         'button_actions': 'pet_food_out,resetclean,reset_desiccant_life',
         'binary_sensor_properties': 'outletstatus,doorstatus',
-        'sensor_properties': 'outfood_num,foodstatus,desiccant_left_time,cleantime',
+        'sensor_properties': 'pet_food_left_level,outfood_num,foodstatus,desiccant_left_time,cleantime',
         'switch_properties': 'key_stat,indicator_light.on',
+        'select_actions': 'pet_food_out',
         'exclude_miot_properties': 'fault,outfood_id,contrycode,feddplan_string,factory_result,phon_time_zone,'
                                    'feedplan_hour,feedplan_min,feedplan_unit,feedplan_stat,feedplan_id,getfeedplan_num',
     },
     'mmgg.feeder.petfeeder': {
-        'state_property': 'pet_food_left_level',
         'button_actions': 'reset_desiccant_life',
-        'sensor_properties': 'feed_today,desiccant_left_time,cleantime',
+        'sensor_properties': 'pet_food_left_level,feed_today,desiccant_left_time,cleantime',
         'switch_properties': 'feedstatus',
+        'select_actions': 'pet_food_out',
     },
     'mmgg.litter_box.lbc1': {
         'binary_sensor_properties': 'warehouse_uninstall,cover_open,roller_uninstall,device_dump,'
@@ -1286,7 +1290,7 @@ DEVICE_CUSTOMIZES = {
         'sensor_properties': 'illumination,no_one_duration,has_someone_duration',
     },
     'roborock.vacuum.*': {
-        'sensor_attributes': 'props:clean_area,props:clean_time,brush_life_level',
+        'sensor_attributes': 'props:clean_area,props:clean_time',
         'sensor_properties': 'vacuum.status',
         'select_properties': 'water_level,mop_mode',
     },
@@ -1658,6 +1662,7 @@ DEVICE_CUSTOMIZES = {
     },
     'yeelink.bhf_light.v6': {
         'select_properties': 'heat_mode,cold_mode,vent_mode',
+        'trans_options': False,
     },
     'yeelink.bhf_light.v10': {
         'chunk_properties': 1,
@@ -1719,7 +1724,7 @@ DEVICE_CUSTOMIZES = {
     },
     'yunmi.waterpuri.*': {
         'number_properties': 'tds_warn_thd',
-        'sensor_properties': 'tds_in,tds_out,rinse,filter_remaining',
+        'sensor_properties': 'tds_in,tds_out,temperature,rinse,filter_remaining',
         'switch_properties': 'light_mode',
     },
     'yunmi.waterpuri.s20': {
@@ -2060,12 +2065,19 @@ DEVICE_CUSTOMIZES = {
     '*.lock.*:timestamp': {
         'device_class': 'timestamp',
     },
+    '*.magnet.*': {
+        'binary_sensor_properties': 'contact_state',
+        'sensor_properties': 'illumination',
+    },
     '*.microwave.*': {
         'sensor_properties': 'left_time,heat_level,cook_time',
     },
     '*.mosq.*': {
         'sensor_properties': 'repellent_left_level,liquid_left',
         'select_properties': 'mode',
+    },
+    '*.motion.*': {
+        'sensor_properties': 'illumination,no_motion_duration',
     },
     '*.motion.*:light_strong': {
         'device_class': 'light',
@@ -2080,6 +2092,9 @@ DEVICE_CUSTOMIZES = {
         'sensor_properties': 'temperature,left_time,cook_time,working_time',
         'number_properties': 'target_temperature',
         'switch_properties': 'oven.on',
+    },
+    '*.plantmonitor.*': {
+        'sensor_properties': 'soil_ec,illumination,temperature,relative_humidity',
     },
     '*.senpres.*': {
         'binary_sensor_properties': 'pressure_present_state',
