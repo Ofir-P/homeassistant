@@ -120,6 +120,10 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
         # _async_update_data not periodically getting called which is needed for _insert_statistics.
         self.async_add_listener(_dummy_listener)
 
+    async def async_unload(self):
+        """Unload the coordinator, cancel any pending tasks."""
+        _LOGGER.info("Coordinator unloaded successfully.")
+
     async def _get_devices_by_contract_id(self, contract_id) -> list[Device]:
         devices = self._devices_by_contract_id.get(contract_id)
         if not devices:
@@ -190,6 +194,8 @@ class IecApiCoordinator(DataUpdateCoordinator[dict[str, dict[str, Any]]]):
             try:
                 self._kva_tariff = await self.api.get_kva_tariff()
             except IECError as e:
+                _LOGGER.exception("Failed fetching KVA Tariff from IEC API", e)
+            except Exception as e:
                 _LOGGER.exception("Failed fetching KVA Tariff", e)
         return self._kva_tariff or 0.0
 
