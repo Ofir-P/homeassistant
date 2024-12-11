@@ -2611,6 +2611,11 @@
     id: elian_leaving_work
     from: Compie
     to: Not Connected
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
+    to: Compie_Guest
+    id: elian_enter_work_2
   conditions: []
   actions:
   - choose:
@@ -2639,6 +2644,7 @@
       - condition: trigger
         id:
         - elian_enter_work
+        - elian_enter_work_2
       sequence:
       - data:
           message: "\U0001F916 Automation - Elian has entered Work."
@@ -3864,6 +3870,15 @@
   description: After 20 minutes of leaving Compie WiFi, Boiler will turn on for 60
     minutes.
   triggers:
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
+    from: Compie
+    for:
+      hours: 0
+      minutes: 20
+      seconds: 0
+    to: Not Connected
   - trigger: state
     entity_id:
     - sensor.elians_iphone_ssid
