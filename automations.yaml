@@ -3873,16 +3873,7 @@
   - trigger: state
     entity_id:
     - sensor.elians_iphone_ssid
-    from: Compie
-    for:
-      hours: 0
-      minutes: 20
-      seconds: 0
-    to: Not Connected
-  - trigger: state
-    entity_id:
-    - sensor.elians_iphone_ssid
-    from: Compie
+    from: Compie_Guest
     for:
       hours: 0
       minutes: 20
