@@ -433,6 +433,11 @@ MIIO_TO_MIOT_SPECS = {
             },
         ],
         'miio_specs': {
+            'prop.2.2': {'prop': 'mode', 'setter': True, 'dict': {
+                'auto': 0,
+                'sleep': 1,
+                'favourite': 2,
+            }},
             'prop.2.4': {'prop': 'ptc_level', 'setter': True, 'dict': {
                 'low': 1,
                 'medium': 2,
@@ -1335,7 +1340,7 @@ MIIO_TO_MIOT_SPECS = {
             },
         ],
         'miio_specs': {
-            'prop.2.1': {'prop': 'filter_use_time'},
+            'prop.2.1': {'prop': 'filter_use_time', 'template': '{{ value|int(0) * 24 }}'},
             'prop.2.2': {'prop': 'filter_use_flux'},
             'prop.3.1': {'prop': None, 'setter': 'seat_heat', 'format': 'onoff'},
             'prop.3.2': {'prop': None, 'setter': 'deodorant', 'format': 'onoff'},
@@ -2293,6 +2298,8 @@ MIIO_TO_MIOT_SPECS = {
             'prop.3.1': {'prop': 'color_mode', 'setter': True},
         },
     },
+    'yeelink.light.mono4': 'yeelink.light.mono1',
+    'yeelink.light.mono5': 'yeelink.light.mono1',
     'yeelink.light.panel1': 'yeelink.light.ceiling2',
     'yeelink.light.panel3': 'yeelink.light.ceiling2',
     'yeelink.light.strip1': 'yeelink.light.color1',

@@ -276,16 +276,15 @@ async def async_setup_xiaomi_cloud(hass: hass_core.HomeAssistant, config_entry: 
     try:
         cloud = await entry.get_cloud(check=True)
         config[CONF_XIAOMI_CLOUD] = cloud
-        config['devices_by_mac'] = await cloud.async_get_devices_by_key('mac', filters=entry_config) or {}
+        devices = await entry.get_cloud_devices()
     except (MiCloudException, MiCloudAccessDenied) as exc:
         _LOGGER.error('Setup xiaomi cloud for user: %s failed: %s', username, exc)
         return False
-    if not config.get('devices_by_mac'):
+    if not devices:
         _LOGGER.warning('None device in xiaomi cloud: %s', username)
     else:
-        cnt = len(config['devices_by_mac'])
-        _LOGGER.debug('Setup xiaomi cloud for user: %s, %s devices', username, cnt)
-    for mac, d in config['devices_by_mac'].items():
+        _LOGGER.debug('Setup xiaomi cloud for user: %s, %s devices', username, len(devices))
+    for d in devices.values():
         device = await entry.new_device(d)
         if not device.spec:
             _LOGGER.warning('%s: Device has no spec %s', device.name_model, device.info.urn)
@@ -577,18 +576,19 @@ async def _handle_device_registry_event(hass: hass_core.HomeAssistant):
     hass.bus.async_listen(dr.EVENT_DEVICE_REGISTRY_UPDATED, updated)
 
 
-async def async_remove_config_entry_device(hass: hass_core.HomeAssistant, entry: ConfigEntry, device: dr.DeviceEntry):
+async def async_remove_config_entry_device(hass: hass_core.HomeAssistant, config_entry: ConfigEntry, device: dr.DeviceEntry):
     """Supported from Hass v2022.3"""
-    dvc = None
+    entry = HassEntry.init(hass, config_entry)
+    cloud_device = None
     identifier = next(iter(device.identifiers))
     if len(identifier) >= 2 and identifier[0] == DOMAIN:
         mac = identifier[1].split('-')[0]
         if mac:
-            dvc = hass.data[DOMAIN].get(entry.entry_id, {}).get('devices_by_mac', {}).get(mac.upper()) or {}
-    data = {**entry.data, **entry.options}
-    for typ in (['did'] if dvc else []):
+            cloud_device = await entry.get_cloud_device(mac=mac.upper())
+    data = entry.entry.data
+    for typ in (['did'] if cloud_device else []):
         filter_typ = data.get(f'filter_{typ}')
-        filter_val = dvc.get(typ)
+        filter_val = cloud_device.get(typ)
         if not filter_val or not filter_typ:
             continue
         lst = data.get(f'{typ}_list') or []
@@ -597,8 +597,8 @@ async def async_remove_config_entry_device(hass: hass_core.HomeAssistant, entry:
         else:
             lst = list({*lst}.difference({filter_val}))
         data[f'{typ}_list'] = lst
-        hass.config_entries.async_update_entry(entry, data=data)
-        _LOGGER.info('Remove miot device: %s', [dvc])
+        hass.config_entries.async_update_entry(config_entry, data=data)
+        _LOGGER.info('Remove miot device: %s', cloud_device)
 
     dr.async_get(hass).async_remove_device(device.id)
     return True
@@ -973,10 +973,9 @@ class MiotEntity(MiioEntity):
         self._miot_mapping = dict(kwargs.get('mapping') or {})
         if self._miot_service:
             if not self._miot_mapping:
-                urp = self.custom_config_bool('unreadable_properties')
                 self._miot_mapping = miot_service.mapping(
-                    excludes=self.custom_config_list('exclude_miot_properties') or [],
-                    unreadable_properties=urp,
+                    excludes=self.device._exclude_miot_properties,
+                    unreadable_properties=self.device._unreadable_properties,
                 ) or {}
             self._unique_id = f'{self._unique_id}-{self._miot_service.iid}'
             self.entity_id = self._miot_service.generate_entity_id(self)
@@ -1008,12 +1007,9 @@ class MiotEntity(MiioEntity):
     @property
     def miot_did(self):
         did = self.custom_config('miot_did') or self._config.get('miot_did')
-        if self.entity_id and not did:
-            mac = self.device.info.mac
-            dvs = self.entry_config('devices_by_mac') or {}
-            if mac in dvs:
-                return dvs[mac].get('did')
-        return did
+        if did:
+            return did
+        return self.device.did
 
     @property
     def xiaomi_cloud(self):
@@ -1096,13 +1092,9 @@ class MiotEntity(MiioEntity):
             await asyncio.sleep(self._vars.get('delay_update'))
             self._vars.pop('delay_update', 0)
         attrs = {}
-        result = await self.device.update_miot_status(
-            use_local=self.custom_config_bool('miot_local'),
-            use_cloud=self.custom_config_bool('miot_cloud'),
-            auto_cloud=self.custom_config_bool('auto_cloud'),
-            check_lan=self.custom_config_bool('check_lan'),
-            max_properties=self.custom_config_integer('chunk_properties'),
-        )
+        result = self.device.miot_results
+        if not result:
+            return
         self._available = self.device.available
 
         if not result.is_valid:
@@ -1114,11 +1106,6 @@ class MiotEntity(MiioEntity):
                     firmware=self.device.info.firmware_version,
                     results=result._results or result.errors,
                 )
-            if result.is_empty and result._results:
-                self.logger.warning(
-                    '%s: Got invalid miot result while fetching the state: %s, mapping: %s',
-                    self.name_model, result._results, self._miot_mapping,
-                )
             return False
 
         if self.is_main_entity:
@@ -1126,6 +1113,13 @@ class MiotEntity(MiioEntity):
             attrs['state_updater'] = result.updater
             await self.async_update_for_main_entity()
         else:
+            result = await self.device.update_miot_status(
+                use_local=self.custom_config_bool('miot_local'),
+                use_cloud=self.custom_config_bool('miot_cloud'),
+                auto_cloud=self.custom_config_bool('auto_cloud'),
+                check_lan=self.custom_config_bool('check_lan'),
+                max_properties=self.custom_config_integer('chunk_properties'),
+            )
             attrs.update(result.to_attributes(self._state_attrs, self._miot_mapping))
         await self.async_update_attrs(attrs, update_subs=True)
         self.logger.debug('%s: Got new state: %s', self.name_model, attrs)

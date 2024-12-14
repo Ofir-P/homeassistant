@@ -3670,9 +3670,13 @@
   triggers:
   - trigger: state
     entity_id:
-    - sensor.elians_iphone_ssid
-    to: Mofit5
-    id: elian_enter_mofit
+    - device_tracker.elians_iphone
+    from: not_home
+    to: Mofit
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
   conditions: []
   actions:
   - data:

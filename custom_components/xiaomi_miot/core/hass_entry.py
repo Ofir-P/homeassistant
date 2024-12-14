@@ -16,6 +16,7 @@ _LOGGER = logging.getLogger(__name__)
 class HassEntry:
     ALL: dict[str, 'HassEntry'] = {}
     cloud: MiotCloud = None
+    cloud_devices = None
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry):
         self.id = entry.entry_id
@@ -23,6 +24,7 @@ class HassEntry:
         self.entry = entry
         self.adders: dict[str, AddEntitiesCallback] = {}
         self.devices: dict[str, 'Device'] = {}
+        self.mac_to_did = {}
 
     @staticmethod
     def init(hass: HomeAssistant, entry: ConfigEntry):
@@ -55,13 +57,37 @@ class HassEntry:
             **self.entry.data,
             **self.entry.options,
         }
+        if self.filter_models:
+            dat.pop('filter_did', None)
+            dat.pop('did_list', None)
+        else:
+            dat.pop('filter_model', None)
+            dat.pop('model_list', None)
         if key:
             return dat.get(key, default)
         return dat
 
+    @property
+    def filter_models(self):
+        data = {
+            **self.entry.data,
+            **self.entry.options,
+        }
+        if data.get('did_list'):
+            return False
+        if data.get('model_list'):
+            return True
+        if 'did_list' in data:
+            return False
+        if 'model_list' in data:
+            return True
+        return data.get('filter_models', False)
+
     async def new_device(self, device_info: dict):
         from .device import Device, DeviceInfo
         info = DeviceInfo(device_info)
+        if device := self.devices.get(info.unique_id):
+            return device
         device = Device(info, self)
         await device.async_init()
         self.devices[info.unique_id] = device
@@ -84,3 +110,22 @@ class HassEntry:
         if check:
             await self.cloud.async_check_auth(notify=True)
         return self.cloud
+
+    async def get_cloud_devices(self):
+        if isinstance(self.cloud_devices, dict):
+            return self.cloud_devices
+        cloud = await self.get_cloud()
+        config = self.get_config()
+        self.cloud_devices = await cloud.async_get_devices_by_key('did', filters=config) or {}
+        for did, info in self.cloud_devices.items():
+            mac = info.get('mac') or did
+            self.mac_to_did[mac] = did
+        return self.cloud_devices
+
+    async def get_cloud_device(self, did=None, mac=None):
+        devices = await self.get_cloud_devices()
+        if mac and not did:
+            did = self.mac_to_did.get(mac)
+        if did:
+            return devices.get(did)
+        return None
