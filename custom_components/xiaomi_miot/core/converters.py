@@ -99,7 +99,7 @@ class MiotPropConv(BaseConv):
                 from .miot_spec import MiotSpec
                 self.mi = MiotSpec.unique_prop(self.prop.siid, piid=self.prop.iid)
             if self.desc == None:
-                self.desc = bool(self.prop.value_list and self.domain in ['sensor', 'select'])
+                self.desc = self.prop.use_desc(self.domain)
 
     def decode(self, device: 'Device', payload: dict, value):
         if self.desc and self.prop:
@@ -110,9 +110,9 @@ class MiotPropConv(BaseConv):
 
     def encode(self, device: 'Device', payload: dict, value):
         if self.prop:
-            if self.desc and self.prop.value_list:
+            if self.desc:
                 value = self.prop.list_value(value)
-            if self.prop.is_integer:
+            elif self.prop.is_integer:
                 value = int(value) # bool to int
         super().encode(device, payload, value)
 
@@ -141,8 +141,11 @@ class MiotActionConv(BaseConv):
         super().decode(device, payload, value)
 
     def encode(self, device: 'Device', payload: dict, value):
-        if self.prop and self.prop.value_list and isinstance(value, str):
-            value = self.prop.list_value(value)
+        if self.prop and isinstance(value, str):
+            if self.prop.value_list or self.prop.value_range:
+                value = self.prop.list_value(value)
+            elif self.prop.is_integer:
+                value = int(value)
         ins = value if isinstance(value, list) else [] if value is None else [value]
         _, s, p = self.mi.split('.')
         payload['method'] = 'action'

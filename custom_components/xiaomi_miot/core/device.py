@@ -168,6 +168,7 @@ class Device(CustomConfigHelper):
         self.listeners: list[Callable] = []
         self.converters: list[BaseConv] = []
         self.coordinators: list[DataCoordinator] = []
+        self.main_coordinators: list[DataCoordinator] = []
         self.log = logging.getLogger(f'{__name__}.{self.model}')
 
     async def async_init(self):
@@ -346,14 +347,20 @@ class Device(CustomConfigHelper):
                             self.log.info('Converter has no main props: %s', conv)
                             conv = None
 
-                    for p in cfg.get('converters') or []:
-                        if not (props := p.get('props')):
+                    for pc in cfg.get('converters') or []:
+                        if not (props := pc.get('props')):
                             continue
-                        for prop in service.get_properties(*props, excludes=self._exclude_miot_properties):
-                            attr = p.get('attr', prop.full_name)
-                            c = p.get('class', MiotPropConv)
-                            d = p.get('domain', None)
-                            ac = c(attr, domain=d, prop=prop, desc=p.get('desc'))
+                        for p in props:
+                            if '.' in p:
+                                prop = self.spec.get_property(p)
+                            else:
+                                prop = service.get_property(p)
+                            if not prop:
+                                continue
+                            attr = pc.get('attr', prop.full_name)
+                            c = pc.get('class', MiotPropConv)
+                            d = pc.get('domain', None)
+                            ac = c(attr, domain=d, prop=prop, desc=pc.get('desc'))
                             self.add_converter(ac)
                             if conv and not d:
                                 conv.attrs.add(attr)
@@ -437,8 +444,9 @@ class Device(CustomConfigHelper):
                 DataCoordinator(self, self.update_miio_commands, update_interval=timedelta(seconds=interval)),
             )
         self.coordinators.extend(lst)
-        for coo in lst:
-            await coo.async_config_entry_first_refresh()
+        if self.entry.setup_in_progress:
+            for coo in lst:
+                await coo.async_config_entry_first_refresh()
 
     async def init_miot_coordinators(self, interval=60):
         lst = []
@@ -457,9 +465,9 @@ class Device(CustomConfigHelper):
                             continue
                         if not isinstance(entity, BasicEntity):
                             continue
-                        if not hasattr(entity, 'async_update'):
+                        if not hasattr(entity, 'async_update_from_device'):
                             continue
-                        await entity.async_update()
+                        await entity.async_update_from_device()
                 return result
             return _update
 
@@ -480,34 +488,30 @@ class Device(CustomConfigHelper):
             ) or {}
             for k in mapping.keys():
                 all_mapping.pop(k, None)
-            lst.append(
-                DataCoordinator(
-                    self, update_factory(mapping, chunk.get('notify')),
-                    name=f'chunk_{index}',
-                    update_interval=timedelta(seconds=inter),
-                ),
+            notify = chunk.get('notify')
+            coo = DataCoordinator(
+                self, update_factory(mapping, notify),
+                name=f'chunk_{index}',
+                update_interval=timedelta(seconds=inter),
             )
+            lst.append(coo)
+            if notify or not self.main_coordinators:
+                self.main_coordinators.append(coo)
 
         if all_mapping:
-            async def _update():
-                result = await self.update_miot_status(all_mapping)
-                for entity in self.entities.values():
-                    if isinstance(entity, XEntity):
-                        continue
-                    if not isinstance(entity, BasicEntity):
-                        continue
-                    if not hasattr(entity, 'async_update'):
-                        continue
-                    await entity.async_update()
-                return result
-            lst.append(
-                DataCoordinator(self, _update, name='miot_status', update_interval=timedelta(seconds=interval)),
-            )
+            coo = DataCoordinator(self, update_factory(all_mapping, True), name='miot_status', update_interval=timedelta(seconds=interval))
+            lst.append(coo)
+            if not self.main_coordinators:
+                self.main_coordinators.append(coo)
         self.log.debug('Miot coordinators: %s', [*chunks, all_mapping])
         return lst
 
     async def update_status(self):
         for coo in self.coordinators:
+            await coo.async_refresh()
+
+    async def update_main_status(self):
+        for coo in self.main_coordinators:
             await coo.async_refresh()
 
     def add_entities(self, domain):
@@ -608,51 +612,60 @@ class Device(CustomConfigHelper):
     async def async_write(self, payload: dict):
         """Send command to device."""
         data = self.encode(payload)
+        self.log.info('Device write data: %s', [payload, data])
         result = None
         method = data.get('method')
 
-        if method == 'update_status':
-            result = await self.update_miot_status()
+        try:
+            if method == 'update_status':
+                result = await self.update_main_status()
 
-        if method == 'set_properties':
-            params = data.get('params', [])
-            cloud_params = []
-            if not self._local_state or self.cloud_only:
-                cloud_params = params
-            elif self.miio2miot:
-                result = []
-                for param in params:
-                    siid = param['siid']
-                    piid = param['piid']
-                    if not self.miio2miot.has_setter(siid, piid=piid):
-                        cloud_params.append(param)
-                        continue
-                    cmd = partial(self.miio2miot.set_property, self.local, siid, piid, param['value'])
-                    result.append(await self.hass.async_add_executor_job(cmd))
-            elif self.local:
-                result = await self.local.async_send(method, params)
-            if self.cloud and cloud_params:
-                result = await self.cloud.async_set_props(cloud_params)
+            if method == 'set_properties':
+                params = data.get('params', [])
+                cloud_params = []
+                if not self._local_state or self.cloud_only:
+                    cloud_params = params
+                elif self.miio2miot:
+                    result = []
+                    for param in params:
+                        siid = param['siid']
+                        piid = param['piid']
+                        if not self.miio2miot.has_setter(siid, piid=piid):
+                            cloud_params.append(param)
+                            continue
+                        cmd = partial(self.miio2miot.set_property, self.local, siid, piid, param['value'])
+                        result.append(await self.hass.async_add_executor_job(cmd))
+                elif self.local:
+                    result = await self.local.async_send(method, params)
+                if self.cloud and cloud_params:
+                    result = await self.cloud.async_set_props(cloud_params)
 
-        if method == 'action':
-            param = data.get('param', {})
-            cloud_param = None
-            siid = param['siid']
-            aiid = param['aiid']
-            if not self._local_state or self.cloud_only:
-                cloud_param = param
-            elif self.miio2miot:
-                if self.miio2miot.has_setter(siid, aiid=aiid):
-                    cmd = partial(self.miio2miot.call_action, self.local, siid, aiid, param.get('in', []))
-                    result = await self.hass.async_add_executor_job(cmd)
-                else:
+            if method == 'action':
+                param = data.get('param', {})
+                cloud_param = None
+                siid = param['siid']
+                aiid = param['aiid']
+                ins = param.get('in') or []
+                if not self._local_state or self.cloud_only:
                     cloud_param = param
-            elif self.local:
-                result = await self.local.async_send(method, param)
-            if self.cloud and cloud_param:
-                result = await self.cloud.async_do_action(cloud_param)
+                elif self.miio2miot:
+                    if self.miio2miot.has_setter(siid, aiid=aiid):
+                        cmd = partial(self.miio2miot.call_action, self.local, siid, aiid, ins)
+                        result = await self.hass.async_add_executor_job(cmd)
+                    else:
+                        cloud_param = param
+                elif self.local:
+                    action = self.spec.services.get(siid, {}).actions.get(aiid) if self.spec else None
+                    if action and ins:
+                        param['in'] = action.in_params(ins)
+                    result = await self.local.async_send(method, param)
+                if self.cloud and cloud_param:
+                    result = await self.cloud.async_do_action(cloud_param)
 
-        self.log.info('Device write: %s', [payload, data, result])
+        except (DeviceException, MiCloudException) as exc:
+            self.log.exception('Device write failed: %s', [exc, payload, data])
+
+        self.log.info('Device write result: %s', [payload, result])
         if result:
             self.dispatch(payload)
         return result
@@ -978,20 +991,25 @@ class Device(CustomConfigHelper):
             'aiid': aiid,
             'in':   params or [],
         }
-        action = kwargs.get('action')
-        if not action and self.spec:
-            action = self.spec.services.get(siid, {}).actions.get(aiid)
-        m2m = None if self.custom_config_bool('miot_cloud_action') else self.miio2miot
-        mca = self.cloud if not self.use_local else None
-        if self.auto_cloud and not self._local_state:
-            mca = self.cloud
+        cloud = None
+        if kwargs.get('cloud'):
+            cloud = self.cloud
+        elif self.custom_config_bool('miot_cloud_action'):
+            cloud = self.cloud
+        elif self.auto_cloud and not self._local_state:
+            cloud = self.cloud
+        elif self.use_cloud:
+            cloud = self.cloud
         try:
-            if m2m and m2m.has_setter(siid, aiid=aiid):
-                result = m2m.call_action(self.local, siid, aiid, params)
-            elif isinstance(mca, MiotCloud):
-                result = mca.do_action(pms)
+            if self.miio2miot and self.miio2miot.has_setter(siid, aiid=aiid):
+                result = self.miio2miot.call_action(self.local, siid, aiid, params)
+            elif cloud:
+                result = cloud.do_action(pms)
             else:
                 if not kwargs.get('force_params'):
+                    action = kwargs.get('action')
+                    if not action and self.spec:
+                        action = self.spec.services.get(siid, {}).actions.get(aiid)
                     pms['in'] = action.in_params(params or [])
                 result = self.local.send('action', pms)
             result = MiotResult(result)
@@ -999,7 +1017,7 @@ class Device(CustomConfigHelper):
             self.log.warning('Call miot action %s failed: %s', pms, exc)
             return MiotResult({}, code=-1, error=str(exc))
         except (TypeError, ValueError) as exc:
-            self.log.warning('Call miot action %s failed: %s, result: %s', pms, exc, result)
+            self.log.warning('Call miot action %s failed: %s, result: %s', pms, exc)
             return MiotResult({}, code=-1, error=str(exc))
         if result.is_success:
             self.log.debug('Call miot action %s, result: %s', pms, result)
