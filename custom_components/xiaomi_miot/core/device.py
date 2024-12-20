@@ -21,7 +21,11 @@ from .const import (
 )
 from .hass_entry import HassEntry
 from .hass_entity import XEntity, BasicEntity, convert_unique_id
-from .converters import BaseConv, InfoConv, MiotPropConv, MiotPropValueConv, MiotActionConv, AttrConv
+from .converters import (
+    BaseConv, InfoConv, MiotPropConv,
+    MiotPropValueConv, MiotActionConv,
+    AttrConv, MiotTargetPositionConv,
+)
 from .coordinator import DataCoordinator
 from .miot_spec import MiotSpec, MiotProperty, MiotResults, MiotResult
 from .miio2miot import Miio2MiotHelper
@@ -185,6 +189,9 @@ class Device(CustomConfigHelper):
         self._exclude_miot_properties = self.custom_config_list('exclude_miot_properties', [])
         self._unreadable_properties = self.custom_config_bool('unreadable_properties')
 
+        if not self.coordinators:
+            await self.init_coordinators()
+
     async def async_unload(self):
         for coo in self.coordinators:
             await coo.async_shutdown()
@@ -317,20 +324,39 @@ class Device(CustomConfigHelper):
             self.info.data['urn'] = urn
         return urn
 
+    @property
+    def hass_device(self):
+        dev_reg = dr.async_get(self.hass)
+        return dev_reg.async_get_device(self.identifiers)
+
+    @property
+    def hass_device_disabled(self):
+        if dev := self.hass_device:
+            return dev.disabled_by
+        return None
+
     def add_converter(self, conv: BaseConv):
         if conv in self.converters:
             return
-        for c in self.converters:
-            if c.attr == conv.attr:
-                self.log.info('Converter for %s already exists. Ignored.', c.attr)
-                return
+        if self.find_converter(conv.full_name):
+            self.log.info('Converter for %s already exists. Ignored.', conv.full_name)
+            return
         self.converters.append(conv)
+
+    def find_converter(self, full_name):
+        for c in self.converters:
+            if c.full_name == full_name:
+                return c
+        return None
 
     def init_converters(self):
         self.add_converter(InfoConverter)
         self.dispatch_info()
 
         if not self.spec:
+            return
+        if dby := self.hass_device_disabled:
+            self.log.debug('Device disabled by: %s', dby)
             return
 
         for cfg in GLOBAL_CONVERTERS:
@@ -363,11 +389,11 @@ class Device(CustomConfigHelper):
                             ac = c(attr, domain=d, prop=prop, desc=pc.get('desc'))
                             self.add_converter(ac)
                             if conv and not d:
-                                conv.attrs.add(attr)
+                                conv.attrs.add(ac.full_name)
 
         for d in [
             'button', 'sensor', 'binary_sensor', 'switch', 'number', 'select', 'text',
-            'number_select', 'scanner',
+            'number_select', 'scanner', 'target_position',
         ]:
             pls = self.custom_config_list(f'{d}_properties') or []
             if not pls:
@@ -384,6 +410,7 @@ class Device(CustomConfigHelper):
                 platform = {
                     'scanner': 'device_tracker',
                     'tracker': 'device_tracker',
+                    'target_position': 'cover',
                 }.get(d) or d
                 if platform == 'button':
                     if prop.value_list:
@@ -399,8 +426,14 @@ class Device(CustomConfigHelper):
                 elif platform == 'number' and not prop.value_range:
                     self.log.warning(f'Unsupported customize entity: %s for %s', platform, prop.full_name)
                     continue
+                elif d == 'target_position' and not prop.value_range:
+                    self.log.warning(f'Unsupported customize entity: %s for %s', d, prop.full_name)
+                    continue
                 else:
-                    conv = MiotPropConv(prop.full_name, platform, prop=prop)
+                    conv_cls = {
+                        'target_position': MiotTargetPositionConv,
+                    }.get(d) or MiotPropConv
+                    conv = conv_cls(prop.full_name, platform, prop=prop)
                     conv.with_option(
                         entity_type=None if platform == d else d,
                     )
@@ -444,9 +477,8 @@ class Device(CustomConfigHelper):
                 DataCoordinator(self, self.update_miio_commands, update_interval=timedelta(seconds=interval)),
             )
         self.coordinators.extend(lst)
-        if self.entry.setup_in_progress:
-            for coo in lst:
-                await coo.async_config_entry_first_refresh()
+        for coo in lst:
+            await coo.async_config_entry_first_refresh()
 
     async def init_miot_coordinators(self, interval=60):
         lst = []
@@ -508,17 +540,17 @@ class Device(CustomConfigHelper):
 
     async def update_status(self):
         for coo in self.coordinators:
-            await coo.async_refresh()
+            await coo.async_request_refresh()
 
     async def update_main_status(self):
         for coo in self.main_coordinators:
-            await coo.async_refresh()
+            await coo.async_request_refresh()
 
     def add_entities(self, domain):
         for conv in self.converters:
             if conv.domain != domain:
                 continue
-            unique = convert_unique_id(conv)
+            unique = f'{domain}.{convert_unique_id(conv)}'
             entity = self.entities.get(unique)
             if entity:
                 continue
@@ -536,8 +568,6 @@ class Device(CustomConfigHelper):
 
         if domain == 'button':
             self.dispatch_info()
-            if not self.coordinators:
-                self.hass.loop.create_task(self.init_coordinators())
 
     def add_entity(self, entity: 'BasicEntity', unique=None):
         if unique == None:
@@ -557,7 +587,7 @@ class Device(CustomConfigHelper):
 
     def dispatch(self, data: dict, only_info=False, log=True):
         if log:
-            self.log.info('Device updated: %s', data)
+            self.log.info('Device updated: %s', {**data, 'only_info': only_info})
         for handler in self.listeners:
             handler(data, only_info=only_info)
 
@@ -605,7 +635,7 @@ class Device(CustomConfigHelper):
         payload = {}
         for k, v in value.items():
             for conv in self.converters:
-                if conv.attr == k:
+                if conv.full_name == k:
                     conv.encode(self, payload, v)
         return payload
 
@@ -674,15 +704,15 @@ class Device(CustomConfigHelper):
     def use_local(self):
         if self.cloud_only:
             return False
-        if not self.local:
-            return False
         if self.local_only:
             return True
         if self.miio2miot:
             return True
-        if self.model in MIOT_LOCAL_MODELS:
-            return True
         if self.custom_config_bool('miot_local'):
+            return True
+        if not self.local:
+            return False
+        if self.model in MIOT_LOCAL_MODELS:
             return True
         return False
 
@@ -744,6 +774,8 @@ class Device(CustomConfigHelper):
             use_cloud = False if use_local else self.use_cloud
         if auto_cloud is None:
             auto_cloud = self.auto_cloud
+        if check_lan is None:
+            check_lan = self.custom_config_bool('check_lan')
 
         if mapping is None:
             mapping = self.miot_mapping()
@@ -753,7 +785,7 @@ class Device(CustomConfigHelper):
 
         self.log.debug('Update miot status: %s', {
             'use_local': [use_local, self.use_local, self.local],
-            'use_cloud': [use_cloud, self.use_cloud],
+            'use_cloud': [use_cloud, self.use_cloud, self.auto_cloud],
             'mapping': mapping,
         })
 
