@@ -3975,7 +3975,7 @@
     from: 'off'
     for:
       hours: 0
-      minutes: 6
+      minutes: 2
       seconds: 0
   conditions: []
   actions:
@@ -3987,6 +3987,10 @@
     metadata: {}
     data:
       message: "\U0001F916 Automation - \U0001F327️ It's raining now! ☔"
+  - action: notify.living_room_lg_webos_smart_tv
+    metadata: {}
+    data:
+      message: "\U0001F327️ It's raining now! ☔"
   mode: single
 - id: '1732806327556'
   alias: Living Room - Blinds Open Notification
