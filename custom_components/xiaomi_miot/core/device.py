@@ -471,7 +471,7 @@ class Device(CustomConfigHelper):
             self.log.debug('Device disabled by: %s', dby)
             return
 
-        interval = 30
+        interval = 60
         interval = self.entry.get_config('scan_interval') or interval
         interval = self.custom_config_integer('interval_seconds') or interval
         lst = await self.init_miot_coordinators(interval)
@@ -987,6 +987,9 @@ class Device(CustomConfigHelper):
             self.dispatch(self.decode(results))
         result = MiotResults(results, mapping)
         return result.to_attributes()
+
+    async def async_set_property(self, *args, **kwargs):
+        return await self.hass.async_add_executor_job(partial(self.set_property,*args, **kwargs))
 
     def set_property(self, field, value):
         if isinstance(field, MiotProperty):
