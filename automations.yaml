@@ -765,6 +765,7 @@
     - tue
     - wed
     - thu
+    enabled: false
   - condition: state
     entity_id: switch.boiler
     state: 'off'

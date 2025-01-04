@@ -186,4 +186,4 @@ devices:
     friendly_name: Solar Rain Sensor
   '0x6cfd22fffeeaf896':
     friendly_name: Living Room Blinds
-version: 4
+version: 3

@@ -1,5 +1,4 @@
-homeassistant:
-  enabled: true
+homeassistant: true
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt_user
@@ -7,11 +6,14 @@ mqtt:
 serial:
   port: /dev/ttyUSB0
 frontend:
-  enabled: true
   port: 8099
 advanced:
+  homeassistant_legacy_entity_attributes: false
+  legacy_api: false
+  legacy_availability_payload: false
   log_level: info
-device_options: {}
+device_options:
+  legacy: false
 devices:
   '0xa4c138058812e73e':
     friendly_name: Bedroom Wireless Remote Switch
@@ -186,4 +188,3 @@ devices:
     friendly_name: Solar Rain Sensor
   '0x6cfd22fffeeaf896':
     friendly_name: Living Room Blinds
-version: 4
