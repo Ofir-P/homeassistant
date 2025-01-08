@@ -2612,10 +2612,10 @@
     id: elian_leaving_work
     from: Compie
     to: Not Connected
-  - trigger: state
-    entity_id:
-    - sensor.elians_iphone_ssid
-    to: Compie_Guest
+  - trigger: zone
+    entity_id: device_tracker.elians_iphone
+    zone: zone.matrix
+    event: enter
     id: elian_enter_work_2
   conditions: []
   actions:
@@ -2650,6 +2650,10 @@
       - data:
           message: "\U0001F916 Automation - Elian has entered Work."
         action: notify.supervisor_telegram
+      - action: notify.mobile_app_elians_iphone
+        metadata: {}
+        data:
+          message: "  \U0001F478 !! בהצלחה בעבודה החדשה, למלכה של הבית \U0001F478"
     - conditions:
       - condition: trigger
         id:

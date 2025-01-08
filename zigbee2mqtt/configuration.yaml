@@ -1,5 +1,6 @@
 homeassistant:
   enabled: true
+  legacy_action_sensor: true
 mqtt:
   server: mqtt://core-mosquitto:1883
   user: mqtt_user
