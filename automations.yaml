@@ -790,10 +790,6 @@
       data:
         message: "\U0001F916 Automation - ♨️ Shower Water after Work has been activated!"
       action: notify.supervisor_telegram
-    - action: notify.mobile_app_elians_iphone
-      metadata: {}
-      data:
-        message: "\U0001F6BF מדליק דוד למלך של הבית\U0001F6C1"
     - action: script.turn_on_boiler_for_45_minutes
       data: {}
   - if:
