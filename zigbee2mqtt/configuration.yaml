@@ -187,4 +187,6 @@ devices:
     friendly_name: Solar Rain Sensor
   '0x6cfd22fffeeaf896':
     friendly_name: Living Room Blinds
+  '0xa4c1381ead1ca0a5':
+    friendly_name: Dish Washer
 version: 4
