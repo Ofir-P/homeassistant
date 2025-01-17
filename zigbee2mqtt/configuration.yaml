@@ -12,181 +12,186 @@ frontend:
   port: 8099
 advanced:
   log_level: info
+  homeassistant_legacy_entity_attributes: false
+  homeassistant_legacy_triggers: false
+  legacy_api: false
+  legacy_availability_payload: false
 device_options: {}
+legacy: false
 devices:
-  '0xa4c138058812e73e':
+  "0xa4c138058812e73e":
     friendly_name: Bedroom Wireless Remote Switch
-  '0xa4c13870da020238':
+  "0xa4c13870da020238":
     friendly_name: Laundry Machine
     description: Smart Switch EU
-  '0x70ac08fffe22f51e':
+  "0x70ac08fffe22f51e":
     friendly_name: Smart IR Remote Control
-  '0xa4c1383422d28f86':
+  "0xa4c1383422d28f86":
     friendly_name: Bedroom Temperature Sensor
     description: Temp - located next to the plugs, behind the TV.
-  '0x00158d0008e0195a':
+  "0x00158d0008e0195a":
     friendly_name: Water Leak Shower Sink
     description: Sensor - Water Leak Shower Sink under the shower sink
-  '0xa4c138cf6f460fd1':
+  "0xa4c138cf6f460fd1":
     friendly_name: Bedroom AC
     description: Smart Switch EU
-  '0xa4c1387bf0a99185':
+  "0xa4c1387bf0a99185":
     friendly_name: Office Temperature Sensor
     description: Temp - On top of the 'Game On' photo frame.
-  '0xa4c13838ba9b0045':
+  "0xa4c13838ba9b0045":
     friendly_name: Wardrobe Temperature Sensor
     description: Temp - located on top of the closet.
-  '0xa4c13852cfb738a6':
+  "0xa4c13852cfb738a6":
     friendly_name: Bathroom Temperature Sensor
     description: Temp - located on top of fan.
-  '0x943469fffef84a59':
+  "0x943469fffef84a59":
     friendly_name: Bedroom Smart IR Remote Control
-  '0x00158d0006f84b67':
+  "0x00158d0006f84b67":
     friendly_name: Office desk button
     description: Under the gaming table, right side
     legacy: false
-  '0xa4c13825cb23672c':
+  "0xa4c13825cb23672c":
     friendly_name: Bedroom TV
-  '0xa4c1389c053df036':
+  "0xa4c1389c053df036":
     friendly_name: Office TV
-  '0xa4c13849a2e5e351':
+  "0xa4c13849a2e5e351":
     friendly_name: Living Room TV
-  '0x00158d00076b15f3':
+  "0x00158d00076b15f3":
     friendly_name: Bedroom Sticker Switch button
     description: Under the table next to the bed
-  '0xa4c1383a2646aef0':
+  "0xa4c1383a2646aef0":
     friendly_name: Office Presence Sensor
     description: Presence Sensor - located in Office room, next to the side window.
-  '0xa4c138a84422458a':
+  "0xa4c138a84422458a":
     friendly_name: Office Wall Light
     description: Light - located next to shower/bathroom door in office, on the wall.
-  '0x00158d000a9c73de':
+  "0x00158d000a9c73de":
     friendly_name: Water Leak Office Sink
     description: Sensor - Water Leak Office Shower Sink under the sink.
-  '0xa4c13811ce44a42b':
+  "0xa4c13811ce44a42b":
     friendly_name: Wardrobe Wireless Remote Switch
-  '0x54ef4410007588b8':
+  "0x54ef4410007588b8":
     friendly_name: Kitchen Presence Sensor
     description: Presence - located above the kitchen cabinet, next to the reolink camera
-  '0x70ac08fffe5aa806':
+  "0x70ac08fffe5aa806":
     friendly_name: Kitchen Smoke Detector
     description: Smoke Detector - located above the gas, on the celling.
-  '0x00158d000a9747d1':
+  "0x00158d000a9747d1":
     friendly_name: Living Room Left Window
     description: on the left window blinds
-  '0x00158d000a95e833':
+  "0x00158d000a95e833":
     friendly_name: Living Room Right Window
     description: on the right window blinds
-  '0xf082c0fffe89fdaf':
+  "0xf082c0fffe89fdaf":
     friendly_name: Wardrobe Zigbee Extender
     description: Extender - located under the AC
-  '0x040d84fffebdf9a6':
+  "0x040d84fffebdf9a6":
     friendly_name: Living Room Zigbee Extender
     description: Extender - located under the AC
-  '0xa4c1380973dca97e':
+  "0xa4c1380973dca97e":
     friendly_name: Living Room Presence Sensor
     description: Presence - located on top of eufy HomeBase
-  '0xa4c1385f2de174b5':
+  "0xa4c1385f2de174b5":
     friendly_name: Bedroom Motion Sensor
     description: Motion Sensor - located next to Ofir bed side.
-  '0xbc026efffe8e9bf2':
+  "0xbc026efffe8e9bf2":
     friendly_name: Kitchen LED Strip
     description: behind the ninja
-  '0xbc026efffe8436d2':
+  "0xbc026efffe8436d2":
     friendly_name: Wardrobe AC
     description: next to the AC plug
-  '0xa4c138a3afc34202':
+  "0xa4c138a3afc34202":
     friendly_name: Kitchen Temperature Sensor
     description: Above the water machine on top of the cabinet
-  '0xa4c1386c61626446':
+  "0xa4c1386c61626446":
     friendly_name: Living Room Temperature Sensor
     description: on top of the AC, right side.
-  '0xa4c1381dac33f60b':
+  "0xa4c1381dac33f60b":
     friendly_name: Bedroom Second Wireless Remote AC
-  '0xa4c13813fa807dac':
+  "0xa4c13813fa807dac":
     friendly_name: Office
     description: office right top box, controls Office and Bathroom lights.
-  '0xa4c13895aac85991':
+  "0xa4c13895aac85991":
     friendly_name: Office Bathroom
     description: office left top box, controls Office Bathroom and Shower
-  '0xa4c1380cd141e5fa':
+  "0xa4c1380cd141e5fa":
     friendly_name: Bedroom
     description: bedroom box top of the door
-  '0xa4c138d65347e112':
+  "0xa4c138d65347e112":
     friendly_name: Shower
     description: box next to boiler, controls Shower and Corridor
-  '0xa4c13887c1e425cb':
+  "0xa4c13887c1e425cb":
     friendly_name: Office AC
-  '0xa4c1387d201f5691':
+  "0xa4c1387d201f5691":
     friendly_name: Wardrobe
     description: inside the switch box of Wardrobe.
-  '0xa4c138cd3ad3670b':
+  "0xa4c138cd3ad3670b":
     friendly_name: Kitchen Gas Detector
-  '0xa4c138d230136a38':
+  "0xa4c138d230136a38":
     friendly_name: Laundry Machine Light
-  '0xa4c138ec28a26421':
+  "0xa4c138ec28a26421":
     friendly_name: Living Room
     description: located right side of the door.
-  '0xa4c138e6fc18ec4e':
+  "0xa4c138e6fc18ec4e":
     friendly_name: Kitchen
     description: located above the fridge
-  '0x00158d000970764f':
+  "0x00158d000970764f":
     friendly_name: Kitchen Sticker Switch button
     description: in the drawer
-  '0x00158d000adbfa23':
+  "0x00158d000adbfa23":
     friendly_name: Water Leak Laundry Machine
     description: located on the floor, under the boiler, behind the laundry machine
-  '0x00158d0008d0bf86':
+  "0x00158d0008d0bf86":
     friendly_name: Bedroom Vibration
     description: Inside Ofir Top drawer
-  '0xa4c138e832f03f77':
+  "0xa4c138e832f03f77":
     friendly_name: Bedroom Door Sensor
-  '0xa4c1384fd1d8ba32':
+  "0xa4c1384fd1d8ba32":
     friendly_name: Living Room Wireless Remote Switch
-  '0x00158d000a95e954':
+  "0x00158d000a95e954":
     friendly_name: Office Fish Feeder
-  '0xa4c1388091f09665':
+  "0xa4c1388091f09665":
     friendly_name: Wardrobe Motion Sensor
     description: On top of the wardrobe door
-  '0x00158d0006c8f369':
+  "0x00158d0006c8f369":
     friendly_name: Dining Table Sticker Switch button
-  '0x00158d0009cf58c2':
+  "0x00158d0009cf58c2":
     friendly_name: Dining Table Sticker Switch button 2nd
-  '0x54ef441000c4bc27':
+  "0x54ef441000c4bc27":
     friendly_name: Office LUX
-  '0xa4c13822c402f4e9':
+  "0xa4c13822c402f4e9":
     friendly_name: Boiler
     description: Boiler - located next to shower door, in the wall.
-  '0xa4c138dc96ec297c':
+  "0xa4c138dc96ec297c":
     friendly_name: Main Door Sensor
     description: top of Main Door
-  '0xa4c1383bed0900d7':
+  "0xa4c1383bed0900d7":
     friendly_name: Plant Monitor
-  '0xa4c138641cb105b1':
+  "0xa4c138641cb105b1":
     friendly_name: Office Bathroom Motion Sensor
-  '0x60b647fffe57ef24':
+  "0x60b647fffe57ef24":
     friendly_name: Shower IKEA Button
-  '0x00158d000ad8180f':
+  "0x00158d000ad8180f":
     friendly_name: Bathroom Door Sensor
-  '0xf4b3b1fffea0bae7':
+  "0xf4b3b1fffea0bae7":
     friendly_name: Bathroom Motion Sensor
-  '0xa4c138621f5ece9d':
+  "0xa4c138621f5ece9d":
     friendly_name: Ofir Desk LED
-  '0xa4c138b90334a6f4':
+  "0xa4c138b90334a6f4":
     friendly_name: Shower Motion Sensor
-  '0x00158d0008dff275':
+  "0x00158d0008dff275":
     friendly_name: Water Leak Sensor Kitchen Sink
-  '0xa4c138c861145739':
+  "0xa4c138c861145739":
     friendly_name: Heater Shower
     description: Heater - located above the power plugs
-  '0x00158d0009cf58d1':
+  "0x00158d0009cf58d1":
     friendly_name: Wardrobe Sticker Switch button
-  '0xa4c1380dc6ffc141':
+  "0xa4c1380dc6ffc141":
     friendly_name: Shower Door Sensor
-  '0xa4c138e09b1de954':
+  "0xa4c138e09b1de954":
     friendly_name: Solar Rain Sensor
-  '0x6cfd22fffeeaf896':
+  "0x6cfd22fffeeaf896":
     friendly_name: Living Room Blinds
-  '0xa4c1381ead1ca0a5':
+  "0xa4c1381ead1ca0a5":
     friendly_name: Dish Washer
 version: 4

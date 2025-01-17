@@ -484,25 +484,25 @@
   description: 'Will start to vacuum home if zone.home is empty for more than 90 minutes.
 
     Will run only once a day'
-  trigger:
-  - platform: numeric_state
-    entity_id:
+  triggers:
+  - entity_id:
     - zone.home
     for:
       hours: 1
       minutes: 20
       seconds: 0
     below: 1
-  condition:
+    trigger: numeric_state
+  conditions:
   - condition: template
-    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
+    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_start'')
       | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
   - condition: time
     after: 08:00:00
   - condition: state
     entity_id: vacuum.roborock_s8_pro_ultra
     state: docked
-  action:
+  actions:
   - target:
       entity_id: vacuum.roborock_s8_pro_ultra
     data: {}
@@ -519,20 +519,19 @@
 - id: '1709821554566'
   alias: Robot Vacuum 3 Days Without cleaning Actionable Notification
   description: ''
-  trigger:
-  - platform: time
-    at: '12:00:00'
-  condition:
+  triggers:
+  - at: '12:00:00'
+    trigger: time
+  conditions:
   - condition: template
-    value_template: '{{ now() - states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
+    value_template: '{{ now() - states(''sensor.roborock_s8_pro_ultra_last_clean_start'')
       | as_datetime | as_local > timedelta(days=3) }}'
-  action:
+  actions:
   - alias: Set up variables for the actions
     variables:
       action_keep: '{{ ''OPEN_'' ~ context.id }}'
       action_stop: '{{ ''CLOSE_'' ~ context.id }}'
   - alias: Ask to clean or not the House via Roborock S8 Vacuum
-    service: notify.mobile_app_ofir_honor_magic_5_pro
     data:
       message: House is dirty for 3 days. Do you want him to clean now?
       data:
@@ -541,36 +540,37 @@
           title: Clean House
         - action: '{{ action_stop }}'
           title: Do not clean
+    action: notify.mobile_app_ofir_honor_magic_5_pro
   - alias: Wait for a response
     wait_for_trigger:
-    - platform: event
-      event_type: mobile_app_notification_action
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_keep }}'
-    - platform: event
-      event_type: mobile_app_notification_action
+      trigger: event
+    - event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_stop }}'
+      trigger: event
   - alias: Perform the action
     choose:
     - conditions:
       - condition: template
         value_template: '{{ wait.trigger.event.data.action == action_stop }}'
       sequence:
-      - service: notify.mobile_app_ofir_honor_magic_5_pro
-        data:
+      - data:
           message: You chose to NOT clean the house, shame on you.
+        action: notify.mobile_app_ofir_honor_magic_5_pro
     - conditions:
       - condition: template
         value_template: '{{ wait.trigger.event.data.action == action_keep }}'
       sequence:
-      - service: vacuum.start
-        target:
+      - target:
           entity_id: vacuum.roborock_s8_pro_ultra
         data: {}
-      - service: notify.mobile_app_ofir_honor_magic_5_pro
-        data:
+        action: vacuum.start
+      - data:
           message: You chose to clean the house, well done!
+        action: notify.mobile_app_ofir_honor_magic_5_pro
   mode: single
 - id: '1710137624869'
   alias: Fish Fed Telegram Notification
@@ -2586,7 +2586,7 @@
     to: not_home
     for:
       hours: 0
-      minutes: 0
+      minutes: 1
       seconds: 50
     id: elian_left_home
     trigger: state
@@ -2597,12 +2597,6 @@
     zone: zone.mofit
     id: elian_leaving_mofit
     trigger: device
-  - trigger: state
-    entity_id:
-    - sensor.elians_iphone_ssid
-    to: Compie
-    id: elian_enter_work
-    enabled: false
   - trigger: zone
     entity_id: device_tracker.elians_iphone
     zone: zone.matrix
@@ -2640,7 +2634,6 @@
     - conditions:
       - condition: trigger
         id:
-        - elian_enter_work
         - elian_enter_work_2
       sequence:
       - data:
@@ -2712,10 +2705,9 @@
 - id: '1712835404165'
   alias: Robot Vacuum Status Notification
   description: ''
-  trigger:
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_cleaning_progress_2
+  triggers:
+  - entity_id:
+    - sensor.roborock_s8_pro_ultra_cleaning_progress
     to: '0'
     id: vacuum_robot_finished
     for:
@@ -2725,48 +2717,48 @@
     not_from:
     - unknown
     - unavailable
-  - platform: state
-    entity_id:
-    - sensor.roborock_s8_pro_ultra_cleaning_progress_2
+    trigger: state
+  - entity_id:
+    - sensor.roborock_s8_pro_ultra_cleaning_progress
     id: vacuum_robot_cleaning
     not_to:
     - unknown
     - unavailable
     from: '0'
-  condition: []
-  action:
+    trigger: state
+  conditions: []
+  actions:
   - alias: Robot Vacuum started
     if:
     - condition: trigger
       id:
       - vacuum_robot_cleaning
     then:
-    - service: notify.home_assistant_group
-      metadata: {}
+    - metadata: {}
       data:
         message: "\U0001F9F9 Vacuum Robot has started!"
+      action: notify.home_assistant_group
   - alias: Robot Vacuum finished
     if:
     - condition: trigger
       id:
       - vacuum_robot_finished
     then:
-    - service: camera.snapshot
-      data:
+    - data:
         filename: /config/www/tmp/snapshot_vacuum.jpg
       target:
         entity_id:
         - camera.roborock_s8_pro_ultra_map
-    - service: telegram_bot.send_photo
-      data:
+      action: camera.snapshot
+    - data:
         authentication: digest
         file: /config/www/tmp/snapshot_vacuum.jpg
         caption: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
           took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
           / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
           }} m²."
-    - service: notify.mobile_app_elians_iphone
-      data:
+      action: telegram_bot.send_photo
+    - data:
         title: Vacuum Robot
         message: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
           took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
@@ -2774,6 +2766,7 @@
           }} m².\n"
         data:
           image: /local/tmp/snapshot_vacuum.jpg
+      action: notify.mobile_app_elians_iphone
   mode: single
 - id: '1712835545156'
   alias: Laundry Machine Status Notification
@@ -3430,7 +3423,7 @@
     entity_id: zone.home
     below: 1
   - condition: template
-    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_begin'')
+    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_start'')
       | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
   actions:
   - alias: Set up variables for the actions

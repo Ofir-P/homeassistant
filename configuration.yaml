@@ -121,13 +121,6 @@ shell_command:
   pushupdates_to_github: /bin/bash pushupdates.sh
   legacy_action_sensor: true
 
-advanced:
-  homeassistant_legacy_entity_attributes: false
-  homeassistant_legacy_triggers: false
-  legacy_api: false
-  legacy_availability_payload: false
-device_options:
-  legacy: false
 # [=========================]Ombi[=========================]
 ombi:
   host: "10.0.0.153"
