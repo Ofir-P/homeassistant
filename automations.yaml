@@ -4070,3 +4070,75 @@
       message: "\U0001F916 Automation - \U0001FA9F Living Room - Blinds Close \U0001F6CB️"
     action: notify.supervisor_telegram
   mode: single
+- id: '1737126979138'
+  alias: ' Kitchen - Dish Washer On Notification'
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.dish_washer_power
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 25
+    above: 8
+    id: DishWasher_On_Notification
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_select.dish_washer_status
+    state: 'off'
+  actions:
+  - target:
+      entity_id:
+      - input_select.dish_washer_status
+    data:
+      option: 'on'
+    action: input_select.select_option
+  - data:
+      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned ON!"
+    action: notify.home_assistant_group
+  - metadata: {}
+    data:
+      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned ON!"
+    action: notify.mobile_app_elians_iphone
+  - action: notify.living_room_lg_webos_smart_tv
+    metadata: {}
+    data:
+      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned ON! \U0001F9FD\U0001F9FC\U0001F37D✨"
+  mode: single
+- id: '1737127072684'
+  alias: Kitchen - Dish Washer Off Notification
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.dish_washer_power
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 25
+    id: DishWasher_Off_Notification
+    trigger: numeric_state
+    below: 5
+  conditions:
+  - condition: state
+    entity_id: input_select.dish_washer_status
+    state: 'on'
+  actions:
+  - target:
+      entity_id:
+      - input_select.dish_washer_status
+    data:
+      option: 'off'
+    action: input_select.select_option
+  - data:
+      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF!"
+    action: notify.home_assistant_group
+  - metadata: {}
+    data:
+      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has finished!"
+    action: notify.mobile_app_elians_iphone
+  - action: notify.living_room_lg_webos_smart_tv
+    metadata: {}
+    data:
+      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF! \U0001F9FD\U0001F9FC\U0001F37D✨"
+  mode: single
