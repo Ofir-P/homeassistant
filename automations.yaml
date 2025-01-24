@@ -3501,7 +3501,7 @@
         data:
           message: "\U0001F916 Automation - Robot Vacuum Daily Routine \U0001F9FC"
         action: notify.mobile_app_elians_iphone
-      - action: script.turn_on_boiler_for_35_minutes
+      - action: script.turn_on_boiler_for_45_minutes
         metadata: {}
         data: {}
   mode: single
