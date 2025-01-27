@@ -687,6 +687,9 @@
     - condition: state
       entity_id: vacuum.roborock_s8_pro_ultra
       state: unavailable
+    - condition: state
+      entity_id: vacuum.roborock_s8_pro_ultra
+      state: idle
   - condition: numeric_state
     entity_id: zone.home
     above: 0
