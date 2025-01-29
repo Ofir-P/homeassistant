@@ -4114,7 +4114,7 @@
     - sensor.dish_washer_power
     for:
       hours: 0
-      minutes: 10
+      minutes: 13
       seconds: 5
     id: DishWasher_Off_Notification
     trigger: numeric_state
@@ -4141,4 +4141,23 @@
     metadata: {}
     data:
       message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF! \U0001F9FD\U0001F9FC\U0001F37D✨"
+  mode: single
+- id: '1738076285031'
+  alias: Elian Overtime at Work Notification
+  description: ''
+  triggers:
+  - trigger: state
+    entity_id:
+    - zone.matrix
+    to: '1'
+    for:
+      hours: 0
+      minutes: 9
+      seconds: 1
+  conditions: []
+  actions:
+  - action: notify.mobile_app_elians_iphone
+    metadata: {}
+    data:
+      message: ' !את עובדת כבר 9 שעות, יאללה הביתה הגזמת'
   mode: single
