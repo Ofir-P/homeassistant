@@ -4151,9 +4151,9 @@
     - zone.matrix
     to: '1'
     for:
-      hours: 0
-      minutes: 9
-      seconds: 1
+      hours: 9
+      minutes: 0
+      seconds: 0
   conditions: []
   actions:
   - action: notify.mobile_app_elians_iphone
