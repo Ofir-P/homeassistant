@@ -2001,10 +2001,15 @@
     data:
       message: "\U0001F6BF Boiler has been turned ON!"
     action: notify.mobile_app_elians_iphone
-  - action: notify.living_room_lg_webos_smart_tv
-    metadata: {}
-    data:
-      message: "\U0001F4A6\U0001F4A6 Boiler is ON \U0001F4A6\U0001F4A6"
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F4A6\U0001F4A6 Boiler is ON \U0001F4A6\U0001F4A6"
   mode: single
 - id: '1712577543414'
   alias: Shower - Boiler Off Notification
@@ -2037,10 +2042,15 @@
     data:
       message: "\U0001F6BF Boiler has been turned OFF!"
     action: notify.mobile_app_elians_iphone
-  - action: notify.living_room_lg_webos_smart_tv
-    metadata: {}
-    data:
-      message: "\U0001F4A6\U0001F4A6 Boiler is OFF \U0001F4A6\U0001F4A6"
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F4A6\U0001F4A6 Boiler is OFF \U0001F4A6\U0001F4A6"
   mode: single
 - id: '1712577596194'
   alias: Shower - Light On Notification
@@ -2843,10 +2853,15 @@
       data:
         message: "\U0001F456 Laundry machine has finished!"
       action: notify.mobile_app_elians_iphone
-    - action: notify.living_room_lg_webos_smart_tv
-      metadata: {}
-      data:
-        message: "\U0001F456 Laundry machine has finished! \U0001F456"
+    - if:
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'On'
+      then:
+      - action: notify.living_room_lg_webos_smart_tv
+        metadata: {}
+        data:
+          message: "\U0001F456 Laundry machine has finished! \U0001F456"
   mode: single
 - id: '1712835629886'
   alias: Laundry Machine - Light On Notification
@@ -4108,10 +4123,16 @@
     data:
       message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned ON!"
     action: notify.mobile_app_elians_iphone
-  - action: notify.living_room_lg_webos_smart_tv
-    metadata: {}
-    data:
-      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned ON! \U0001F9FD\U0001F9FC\U0001F37D✨"
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned ON!
+          \U0001F9FD\U0001F9FC\U0001F37D✨"
   mode: single
 - id: '1737127072684'
   alias: Kitchen - Dish Washer Off Notification
@@ -4144,10 +4165,16 @@
     data:
       message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has finished!"
     action: notify.mobile_app_elians_iphone
-  - action: notify.living_room_lg_webos_smart_tv
-    metadata: {}
-    data:
-      message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF! \U0001F9FD\U0001F9FC\U0001F37D✨"
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF!
+          \U0001F9FD\U0001F9FC\U0001F37D✨"
   mode: single
 - id: '1738076285031'
   alias: Elian Overtime at Work Notification

@@ -58,6 +58,7 @@
           {% set devices = [
             states.switch.boiler,
             states.input_select.washing_machine_status,
+            states.input_select.dish_washer_status,
             states.vacuum.roborock_s8_pro_ultra
           ] %}
 
