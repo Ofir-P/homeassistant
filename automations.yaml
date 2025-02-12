@@ -3969,41 +3969,6 @@
       data:
         message: "\U0001F54E Shabbat Shalom \U0001F54E"
   mode: single
-- id: '1732803500639'
-  alias: Rain Notification
-  description: ''
-  triggers:
-  - trigger: numeric_state
-    entity_id:
-    - sensor.solar_rain_sensor_rain_intensity
-    for:
-      hours: 0
-      minutes: 2
-      seconds: 30
-    above: 325
-  conditions:
-  - condition: state
-    entity_id: binary_sensor.solar_rain_sensor_rain
-    state: 'on'
-  actions:
-  - action: notify.supervisor_telegram
-    metadata: {}
-    data:
-      message: "\U0001F916 Automation - \U0001F327️ It's raining now! ☔"
-  - action: notify.mobile_app_elians_iphone
-    metadata: {}
-    data:
-      message: "\U0001F916 Automation - \U0001F327️ It's raining now! ☔"
-  - if:
-    - condition: state
-      entity_id: input_select.living_room_tv_status
-      state: 'On'
-    then:
-    - action: notify.living_room_lg_webos_smart_tv
-      metadata: {}
-      data:
-        message: "\U0001F327️ It's raining now! ☔"
-  mode: single
 - id: '1732806327556'
   alias: Living Room - Blinds Open Notification
   description: ''
@@ -4072,17 +4037,16 @@
     from: 'Off'
   - trigger: state
     entity_id:
-    - binary_sensor.solar_rain_sensor_rain
-    from: 'off'
-    to: 'on'
+    - input_select.rain_status
     for:
       hours: 0
-      minutes: 6
+      minutes: 0
       seconds: 0
+    to: 'on'
   conditions:
   - condition: state
     entity_id: cover.living_room_blinds
-    enabled: false
+    enabled: true
     state: open
   actions:
   - action: script.living_room_blinds_close
@@ -4194,4 +4158,82 @@
     metadata: {}
     data:
       message: ' !את עובדת כבר 9 שעות, יאללה הביתה הגזמת'
+  mode: single
+- id: '1739275973535'
+  alias: Office - Rain Sensor On Notification
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.solar_rain_sensor_rain_intensity
+    for:
+      hours: 0
+      minutes: 2
+      seconds: 30
+    above: 550
+  conditions:
+  - condition: state
+    entity_id: input_select.rain_status
+    state: 'off'
+  actions:
+  - target:
+      entity_id:
+      - input_select.rain_status
+    data:
+      option: 'on'
+    action: input_select.select_option
+  - action: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - Rain Sensor On Notification \U0001F327️ "
+  - action: notify.mobile_app_elians_iphone
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - \U0001F327️ It's raining now! ☔"
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F327️ It's raining now! ☔"
+  mode: single
+- id: '1739276206916'
+  alias: Office - Rain Sensor Off Notification
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.solar_rain_sensor_rain_intensity
+    for:
+      hours: 0
+      minutes: 7
+      seconds: 0
+    below: 100
+  conditions:
+  - condition: state
+    entity_id: input_select.rain_status
+    state: 'on'
+  actions:
+  - target:
+      entity_id:
+      - input_select.rain_status
+    data:
+      option: 'off'
+    action: input_select.select_option
+  - action: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - Rain Sensor Off Notification \U0001F327️ "
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: "\U0001F327️ It's raining now! ☔"
   mode: single
