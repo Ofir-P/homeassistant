@@ -2654,6 +2654,11 @@
       - condition: trigger
         id:
         - elian_leaving_work
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: sensor.elians_iphone_ssid
+          state: Logica-it
       sequence:
       - data:
           message: "\U0001F916 Automation - Elian has left Work."
@@ -3603,9 +3608,6 @@
     - condition: state
       entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
       state: AutoKit8D
-    - condition: state
-      entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
-      state: AutoKit8D
     then:
     - action: notify.whatsapp
       data:
@@ -3676,12 +3678,16 @@
   - trigger: state
     entity_id:
     - device_tracker.elians_iphone
-    from: not_home
     to: Mofit
     for:
       hours: 0
       minutes: 4
       seconds: 0
+    enabled: true
+  - trigger: state
+    entity_id:
+    - sensor.elians_iphone_ssid
+    to: Mofit5
   conditions: []
   actions:
   - data:
@@ -3874,48 +3880,6 @@
         \U0001F4DD"
     action: notify.supervisor_telegram
   mode: single
-- id: '1730665894242'
-  alias: Elian Left Work Turn ON Boiler
-  description: After 20 minutes of leaving Compie WiFi, Boiler will turn on for 60
-    minutes.
-  triggers:
-  - trigger: state
-    entity_id:
-    - sensor.elians_iphone_ssid
-    from: Compie_Guest
-    for:
-      hours: 0
-      minutes: 20
-      seconds: 0
-    to: Not Connected
-  conditions:
-  - condition: not
-    conditions:
-    - condition: zone
-      entity_id: person.elian
-      zone: zone.matrix
-  - condition: time
-    after: '15:00:00'
-    before: '20:30:00'
-    weekday:
-    - thu
-    - wed
-    - tue
-    - mon
-    - sun
-  actions:
-  - action: notify.mobile_app_elians_iphone
-    metadata: {}
-    data:
-      message: "\U0001F6BF מדליק דוד למלכה של הבית\U0001F6C1"
-  - data:
-      message: "\U0001F916 Automation - Elian left Work a while ago and turned on
-        the Boiler for 60 minutes."
-    action: notify.supervisor_telegram
-  - action: script.turn_on_switcher_for_60mins
-    metadata: {}
-    data: {}
-  mode: parallel
 - id: '17306656577567'
   alias: Oref Alert Country Notifications Details
   triggers:
@@ -4139,25 +4103,6 @@
       data:
         message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF!
           \U0001F9FD\U0001F9FC\U0001F37D✨"
-  mode: single
-- id: '1738076285031'
-  alias: Elian Overtime at Work Notification
-  description: ''
-  triggers:
-  - trigger: state
-    entity_id:
-    - zone.matrix
-    to: '1'
-    for:
-      hours: 9
-      minutes: 0
-      seconds: 0
-  conditions: []
-  actions:
-  - action: notify.mobile_app_elians_iphone
-    metadata: {}
-    data:
-      message: ' !את עובדת כבר 9 שעות, יאללה הביתה הגזמת'
   mode: single
 - id: '1739275973535'
   alias: Office - Rain Sensor On Notification
