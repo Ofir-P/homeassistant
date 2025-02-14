@@ -754,18 +754,16 @@
     to: <not connected>
     for:
       hours: 0
-      minutes: 10
-      seconds: 0
+      minutes: 9
+      seconds: 30
     id: AfterWork
+  - trigger: state
+    entity_id:
+    - person.ofir
+    from: AU10TIX
+    to: not_home
+    id: after_work2
   conditions:
-  - condition: time
-    weekday:
-    - sun
-    - mon
-    - tue
-    - wed
-    - thu
-    enabled: false
   - condition: state
     entity_id: switch.boiler
     state: 'off'
@@ -779,6 +777,7 @@
     - condition: trigger
       id:
       - AfterWork
+      - after_work2
     - condition: not
       conditions:
       - condition: zone
