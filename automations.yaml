@@ -3932,39 +3932,6 @@
       data:
         message: "\U0001F54E Shabbat Shalom \U0001F54E"
   mode: single
-- id: '1732806327556'
-  alias: Living Room - Blinds Open Notification
-  description: ''
-  triggers:
-  - entity_id:
-    - cover.living_room_blinds
-    id: blinds_set_on
-    trigger: state
-    from: closed
-    to: open
-  conditions: []
-  actions:
-  - data:
-      message: "\U0001F916 Automation - \U0001FA9F Living Room Blinds is Open now
-        \U0001F6CB️"
-    action: notify.supervisor_telegram
-  mode: single
-- id: '1732806364165'
-  alias: Living Room - Blinds Closed Notification
-  description: ''
-  triggers:
-  - entity_id:
-    - cover.living_room_blinds
-    id: blinds_set_on
-    trigger: state
-    from: open
-    to: closed
-  conditions: []
-  actions:
-  - data:
-      message: "\U0001F916 Automation - \U0001FA9F Living Room Blinds is Closed \U0001F6CB️"
-    action: notify.supervisor_telegram
-  mode: single
 - id: '1732806484351'
   alias: Living Room - Blinds Open on Sunrise
   description: ''
@@ -3974,9 +3941,9 @@
     offset: 0
   conditions:
   - condition: state
-    entity_id: cover.living_room_blinds
-    state: open
-    enabled: false
+    entity_id: input_select.blinds_status
+    state: closed
+    enabled: true
   actions:
   - action: script.living_room_blinds_open
     metadata: {}
@@ -4008,7 +3975,7 @@
     to: 'on'
   conditions:
   - condition: state
-    entity_id: cover.living_room_blinds
+    entity_id: input_select.blinds_status
     enabled: true
     state: open
   actions:
@@ -4180,4 +4147,54 @@
       metadata: {}
       data:
         message: "\U0001F327️ It's raining now! ☔"
+  mode: single
+- id: '1739521766846'
+  alias: Living Room - Blinds Closed Notification
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - cover.living_room_blinds
+    attribute: current_position
+    above: 95
+  conditions:
+  - condition: state
+    entity_id: input_select.blinds_status
+    state: open
+  actions:
+  - action: input_select.select_option
+    metadata: {}
+    data:
+      option: closed
+    target:
+      entity_id: input_select.blinds_status
+  - data:
+      message: "\U0001F916 Automation - \U0001FA9F Living Room Blinds Status changed
+        to Closed \U0001F6CB️"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1739521722206'
+  alias: Living Room - Blinds Open Notification
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - cover.living_room_blinds
+    attribute: current_position
+    below: 15
+  conditions:
+  - condition: state
+    entity_id: input_select.blinds_status
+    state: closed
+  actions:
+  - action: input_select.select_option
+    metadata: {}
+    data:
+      option: open
+    target:
+      entity_id: input_select.blinds_status
+  - data:
+      message: "\U0001F916 Automation - \U0001FA9F Living Room Blinds Status changed
+        to Open \U0001F6CB️"
+    action: notify.supervisor_telegram
   mode: single
