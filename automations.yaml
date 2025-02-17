@@ -750,40 +750,43 @@
   - trigger: state
     entity_id:
     - sensor.ofir_honor_magic_5_pro_wifi_connection_2
-    from: Au10tix@Guest
-    to: <not connected>
     for:
       hours: 0
-      minutes: 9
+      minutes: 8
       seconds: 30
     id: AfterWork
-  - trigger: state
-    entity_id:
-    - person.ofir
-    from: AU10TIX
-    to: not_home
-    id: after_work2
+    to: AutoKit8D
   conditions:
   - condition: state
     entity_id: switch.boiler
     state: 'off'
-  - condition: not
-    conditions:
-    - condition: time
-      after: '12:00:00'
-      before: '14:50:00'
   actions:
-  - if:
+  - action: notify.supervisor_telegram
+    metadata: {}
+    data:
+      message: "\U0001F916 Automation - ♨️ Boiler Activated! - \U0001F552 Time: {{
+        now().strftime('%H:%M') }} - \U0001F525 Duration: {% if trigger.id == 'Morning'
+        %} 35 min {% else %} 45 min {% endif %} - \U0001F464 Triggered by: {% if trigger.id
+        == 'Morning' %} Morning Routine {% else %} Returning from Work {% endif %}\n"
+  - alias: AFTER WORK OFIR
+    if:
     - condition: trigger
       id:
       - AfterWork
-      - after_work2
     - condition: not
       conditions:
       - condition: zone
         entity_id: device_tracker.ofir_honor_magic_5_pro
         zone: zone.ofir_work
       alias: Confirm Ofir not in AU10TIX Zone
+    - condition: time
+      after: '14:30:00'
+      before: '17:30:00'
+      weekday:
+      - sun
+      - mon
+      - tue
+      - thu
     then:
     - metadata: {}
       data:
@@ -805,6 +808,7 @@
       action: notify.supervisor_telegram
     - data: {}
       action: script.turn_on_boiler_for_35_minutes
+    alias: BEFORE WORK
   mode: single
 - id: '1710659808604'
   alias: Kitchen - Presence Turn On Lights
