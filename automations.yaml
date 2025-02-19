@@ -761,13 +761,6 @@
     entity_id: switch.boiler
     state: 'off'
   actions:
-  - action: notify.supervisor_telegram
-    metadata: {}
-    data:
-      message: "\U0001F916 Automation - ♨️ Boiler Activated! - \U0001F552 Time: {{
-        now().strftime('%H:%M') }} - \U0001F525 Duration: {% if trigger.id == 'Morning'
-        %} 35 min {% else %} 45 min {% endif %} - \U0001F464 Triggered by: {% if trigger.id
-        == 'Morning' %} Morning Routine {% else %} Returning from Work {% endif %}\n"
   - alias: AFTER WORK OFIR
     if:
     - condition: trigger
@@ -792,9 +785,19 @@
       data:
         message: "\U0001F916 Automation - ♨️ Shower Water after Work has been activated!"
       action: notify.supervisor_telegram
+      enabled: false
+    - action: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - ♨️ Boiler Activated! - \U0001F552 Time:
+          {{ now().strftime('%H:%M') }} - \U0001F525 Duration: {% if trigger.id ==
+          'Morning' %} 35 min {% else %} 45 min {% endif %} - \U0001F464 Triggered
+          by: {% if trigger.id == 'Morning' %} Morning Routine {% else %} Returning
+          from Work {% endif %}\n"
     - action: script.turn_on_boiler_for_45_minutes
       data: {}
-  - if:
+  - alias: BEFORE WORK
+    if:
     - condition: trigger
       id:
       - Morning
@@ -806,9 +809,17 @@
       data:
         message: "\U0001F916 Automation - ♨️ Hot Water before Work has been activated!"
       action: notify.supervisor_telegram
+      enabled: false
+    - action: notify.supervisor_telegram
+      metadata: {}
+      data:
+        message: "\U0001F916 Automation - ♨️ Boiler Activated! - \U0001F552 Time:
+          {{ now().strftime('%H:%M') }} - \U0001F525 Duration: {% if trigger.id ==
+          'Morning' %} 35 min {% else %} 45 min {% endif %} - \U0001F464 Triggered
+          by: {% if trigger.id == 'Morning' %} Morning Routine {% else %} Returning
+          from Work {% endif %}\n"
     - data: {}
       action: script.turn_on_boiler_for_35_minutes
-    alias: BEFORE WORK
   mode: single
 - id: '1710659808604'
   alias: Kitchen - Presence Turn On Lights
