@@ -4161,7 +4161,7 @@
     - action: notify.living_room_lg_webos_smart_tv
       metadata: {}
       data:
-        message: "\U0001F327️ It's raining now! ☔"
+        message: "\U0001F916 Automation - Rain Sensor Off Notification \U0001F327️ "
   mode: single
 - id: '1739521766846'
   alias: Living Room - Blinds Closed Notification
