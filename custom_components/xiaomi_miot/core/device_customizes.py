@@ -319,6 +319,13 @@ DEVICE_CUSTOMIZES = {
         **CHUNK_1,
         'exclude_miot_services': 'setting,cycle',
     },
+    'cuco.plug.co3d': {
+        'binary_sensor_properties': 'temp_over,current_over',
+        'switch_properties': 'light,mode',
+        'select_properties': 'memory',
+        'sensor_attributes': 'power_cost_today,power_cost_month',
+        'stat_power_cost_key': '8.1',
+    },
     'cuco.plug.cp1': {
         **CHUNK_1,
         'exclude_miot_services': 'indicator_light',
@@ -928,6 +935,13 @@ DEVICE_CUSTOMIZES = {
         'chunk_coordinators': [
             {'interval': 3, 'props': 'occupancy_status,illumination'},
         ],
+    },
+    'jipin.blanket.tt7xxa': {
+        **CHUNK_1,
+        'interval_seconds': 90,
+        'sensor_properties': 'left_time',
+        'switch_properties': 'left_speed_hot,right_speed_hot,anti_acne',
+        'number_properties': 'timer,left_gears,right_gears',
     },
     'jyf.tow_w.ts03': {
         'auto_cloud': True,
@@ -1815,6 +1829,14 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'alarm,dry_switch,over_wet_protect,screen.on',
         'number_properties': 'off_delay_time',
     },
+    'xiaomi.kettle.v20': {
+        'button_actions': 'stop_work',
+        'binary_sensor_properties': 'kettle_lifting',
+        'sensor_properties': 'status,temperature,warming_time',
+        'switch_properties': 'on,auto_keep_warm,no_disturb,custom_knob_temp,lift_remember_temp,'
+                             'boiling_reminder,keep_warm_reminder',
+        'number_properties': 'target_temperature,keep_warm_temperature,keep_warm_time,target_mode',
+    },
     'xiaomi.plug.mcn003': {
         'button_actions': 'toggle',
         'sensor_properties': 'fault,electric_power',
@@ -1849,7 +1871,7 @@ DEVICE_CUSTOMIZES = {
         'number_properties': 'speaker.volume',
     },
     'xiaomi.vacuum.b108gl': {
-        'interval_seconds': 120,
+        'interval_seconds': 150,
         'sensor_properties': 'status,fault,cleaning_area,cleaning_time,charging_state,status_extend,'
                              'brush_life_level,filter_life_level',
         'binary_sensor_properties': 'mop_status',
@@ -1865,8 +1887,10 @@ DEVICE_CUSTOMIZES = {
                                   'carpet_avoidance,carpet_display,sweep_break_switch,edge_sweep_frequency,'
                                   'carpet_cleaning_method,reset_brush_life,reset_filter_life',
         'chunk_coordinators': [
-            {'interval': 10, 'props': 'status,mop_status,cleaning_area,cleaning_time,charging_state', 'notify': True},
-            {'interval': 15, 'props': 'sweep_mop_type,sweep_type,mode,clean_times,suction_level'},
+            {'interval': 21, 'props': 'status,mop_status,cleaning_area,cleaning_time,charging_state', 'notify': True},
+            {'interval': 31, 'props': 'sweep_mop_type,sweep_type,mode,clean_times,suction_level'},
+            {'interval': 301, 'props': 'brush_life_level,brush_left_time,filter_life_level,filter_left_time'},
+            {'interval': 302, 'props': 'frameware_version,current_physical_control_lock'},
         ],
     },
     'xiaomi.vacuum.b108gl:cleaning_area': {
@@ -2364,9 +2388,13 @@ DEVICE_CUSTOMIZES = {
         ],
     },
     '*.blanket.*': {
+        'interval_seconds': 120,
         'sensor_properties': 'temperature',
         'select_properties': 'mode,heat_level,water_level',
         'number_properties': 'target_temperature',
+        'chunk_coordinators': [
+            {'interval': 21, 'props': 'on,mode,heat_level,water_level,target_temperature,left_time'},
+        ],
     },
     '*.camera.*': {
         'miot_cloud_action': True,
