@@ -20,8 +20,8 @@ browser_mod:
           cards:
             - type: logbook
               entities:
-                - vacuum.roborock_s8_pro_ultra
-                - sensor.roborock_s8_pro_ultra_current_room
+                - vacuum.s8_pro_ultra
+                - sensor.s8_pro_ultra_current_room
               card_mod:
                 style: |
                   ha-logbook {
@@ -30,10 +30,10 @@ browser_mod:
 
             - type: custom:xiaomi-vacuum-map-card
               map_source:
-                camera: camera.roborock_s8_pro_ultra_map
+                camera: camera.s8_pro_ultra_map
               calibration_source:
                 camera: true
-              entity: vacuum.roborock_s8_pro_ultra
+              entity: vacuum.s8_pro_ultra
               vacuum_platform: default
               map_locked: true
               map_modes:

@@ -221,7 +221,7 @@
       entity_id: device_tracker.elians_iphone
       type: is_not_home
   - condition: state
-    entity_id: vacuum.roborock_s8_pro_ultra
+    entity_id: vacuum.s8_pro_ultra
     state: docked
     attribute: state
   - condition: state
@@ -495,16 +495,16 @@
     trigger: numeric_state
   conditions:
   - condition: template
-    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_start'')
-      | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
+    value_template: '{{ (states(''sensor.s8_pro_ultra_last_clean_start'') | as_datetime(as_datetime(0))
+      | as_local).date() != now().date() }}'
   - condition: time
     after: 08:00:00
   - condition: state
-    entity_id: vacuum.roborock_s8_pro_ultra
+    entity_id: vacuum.s8_pro_ultra
     state: docked
   actions:
   - target:
-      entity_id: vacuum.roborock_s8_pro_ultra
+      entity_id: vacuum.s8_pro_ultra
     data: {}
     action: vacuum.start
   - metadata: {}
@@ -524,8 +524,8 @@
     trigger: time
   conditions:
   - condition: template
-    value_template: '{{ now() - states(''sensor.roborock_s8_pro_ultra_last_clean_start'')
-      | as_datetime | as_local > timedelta(days=3) }}'
+    value_template: '{{ now() - states(''sensor.s8_pro_ultra_last_clean_start'') |
+      as_datetime | as_local > timedelta(days=3) }}'
   actions:
   - alias: Set up variables for the actions
     variables:
@@ -565,7 +565,7 @@
         value_template: '{{ wait.trigger.event.data.action == action_keep }}'
       sequence:
       - target:
-          entity_id: vacuum.roborock_s8_pro_ultra
+          entity_id: vacuum.s8_pro_ultra
         data: {}
         action: vacuum.start
       - data:
@@ -681,14 +681,14 @@
   - condition: or
     conditions:
     - condition: state
-      entity_id: vacuum.roborock_s8_pro_ultra
+      entity_id: vacuum.s8_pro_ultra
       state: docked
       attribute: state
     - condition: state
-      entity_id: vacuum.roborock_s8_pro_ultra
+      entity_id: vacuum.s8_pro_ultra
       state: unavailable
     - condition: state
-      entity_id: vacuum.roborock_s8_pro_ultra
+      entity_id: vacuum.s8_pro_ultra
       state: idle
   - condition: numeric_state
     entity_id: zone.home
@@ -1134,7 +1134,7 @@
   description: ''
   triggers:
   - entity_id:
-    - sensor.roborock_s8_pro_ultra_current_error
+    - sensor.s8_pro_ultra_current_error
     not_from:
     - unknown
     - unavailable
@@ -1142,7 +1142,7 @@
     id: robot_trapped
     trigger: state
   - entity_id:
-    - sensor.roborock_s8_pro_ultra_current_error
+    - sensor.s8_pro_ultra_current_error
     not_from:
     - unknown
     - unavailable
@@ -1150,7 +1150,7 @@
     id: main_brush_jammed
     trigger: state
   - entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_status
+    - sensor.s8_pro_ultra_current_error
     not_from:
     - unknown
     - unavailable
@@ -1158,7 +1158,7 @@
     id: water_empty
     trigger: state
   - entity_id:
-    - sensor.roborock_s8_pro_ultra_dock_status
+    - sensor.s8_pro_ultra_current_error
     not_from:
     - unknown
     - unavailable
@@ -1183,14 +1183,14 @@
         filename: /config/www/tmp/snapshot_vacuum.jpg
       target:
         entity_id:
-        - camera.roborock_s8_pro_ultra_map
+        - camera.s8_pro_ultra_map
       action: camera.snapshot
     - data:
         authentication: digest
         target: -804542874
         file: /config/www/tmp/snapshot_vacuum.jpg
         caption: "\U0001F9F9 \U0001F916 Automation - Robot Vacuum is trapped or stuck
-          in {{ ( states('sensor.roborock_s8_pro_ultra_current_room')) }} ! ⚠️. "
+          in {{ ( states('sensor.s8_pro_ultra_current_room')) }} ! ⚠️. "
       action: telegram_bot.send_photo
   - alias: Main Brush jammed
     if:
@@ -1202,7 +1202,7 @@
         filename: /config/www/tmp/snapshot_vacuum.jpg
       target:
         entity_id:
-        - camera.roborock_s8_pro_ultra_map
+        - camera.s8_pro_ultra_map
       action: camera.snapshot
     - data:
         message: "\U0001F916 Automation - Robot Vacuum main brush is jammed! ⚠️"
@@ -1212,7 +1212,7 @@
         target: -804542874
         file: /config/www/tmp/snapshot_vacuum.jpg
         caption: "\U0001F9F9 \U0001F916 Automation - Robot Vacuum is trapped or stuck
-          in {{ ( states('sensor.roborock_s8_pro_ultra_current_room')) }} ! ⚠️."
+          in {{ ( states('sensor.s8_pro_ultra_current_room')) }} ! ⚠️."
       action: telegram_bot.send_photo
   - alias: Water Empty
     if:
@@ -1447,7 +1447,7 @@
         - 16
         repeat: 2
     target:
-      entity_id: vacuum.roborock_s8_pro_ultra
+      entity_id: vacuum.s8_pro_ultra
     action: vacuum.send_command
   - metadata: {}
     data:
@@ -1694,7 +1694,7 @@
           - 20
           repeat: 2
       target:
-        entity_id: vacuum.roborock_s8_pro_ultra
+        entity_id: vacuum.s8_pro_ultra
       action: vacuum.send_command
     - metadata: {}
       data:
@@ -2723,7 +2723,7 @@
           - 24
           repeat: 2
       target:
-        entity_id: vacuum.roborock_s8_pro_ultra
+        entity_id: vacuum.s8_pro_ultra
       action: vacuum.send_command
     - metadata: {}
       data:
@@ -2736,7 +2736,7 @@
   description: ''
   triggers:
   - entity_id:
-    - sensor.roborock_s8_pro_ultra_cleaning_progress
+    - sensor.s8_pro_ultra_cleaning_progress
     to: '0'
     id: vacuum_robot_finished
     for:
@@ -2748,7 +2748,7 @@
     - unavailable
     trigger: state
   - entity_id:
-    - sensor.roborock_s8_pro_ultra_cleaning_progress
+    - sensor.s8_pro_ultra_cleaning_progress
     id: vacuum_robot_cleaning
     not_to:
     - unknown
@@ -2777,21 +2777,21 @@
         filename: /config/www/tmp/snapshot_vacuum.jpg
       target:
         entity_id:
-        - camera.roborock_s8_pro_ultra_map
+        - camera.s8_pro_ultra_map
       action: camera.snapshot
     - data:
         authentication: digest
         file: /config/www/tmp/snapshot_vacuum.jpg
         caption: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
-          took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
-          / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
+          took {{ ( states('sensor.s8_pro_ultra_last_clean_duration') | int / 60 )
+          | round(1) }} minutes and covered {{ states('sensor.s8_pro_ultra_current_clean_area')
           }} m²."
       action: telegram_bot.send_photo
     - data:
         title: Vacuum Robot
         message: "\U0001F9F9 Vacuum Robot has finished and returned to base!               It
-          took {{ ( states('sensor.roborock_s8_pro_ultra_last_clean_duration') | int
-          / 60 ) | round(1) }} minutes and covered {{ states('sensor.roborock_s8_pro_ultra_current_clean_area')
+          took {{ ( states('sensor.s8_pro_ultra_last_clean_duration') | int / 60 )
+          | round(1) }} minutes and covered {{ states('sensor.s8_pro_ultra_current_clean_area')
           }} m².\n"
         data:
           image: /local/tmp/snapshot_vacuum.jpg
@@ -3457,8 +3457,8 @@
     entity_id: zone.home
     below: 1
   - condition: template
-    value_template: '{{ (states(''sensor.roborock_s8_pro_ultra_last_clean_start'')
-      | as_datetime(as_datetime(0)) | as_local).date() != now().date() }}'
+    value_template: '{{ (states(''sensor.s8_pro_ultra_last_clean_start'') | as_datetime(as_datetime(0))
+      | as_local).date() != now().date() }}'
   actions:
   - alias: Set up variables for the actions
     variables:
@@ -3505,7 +3505,7 @@
         value_template: '{{ wait.trigger.event.data.action == action_keep }}'
       sequence:
       - target:
-          entity_id: vacuum.roborock_s8_pro_ultra
+          entity_id: vacuum.s8_pro_ultra
         data: {}
         action: vacuum.start
       - data:
@@ -3524,7 +3524,7 @@
         value_template: '{{ wait.trigger.event.data.action == action_cab }}'
       sequence:
       - target:
-          entity_id: vacuum.roborock_s8_pro_ultra
+          entity_id: vacuum.s8_pro_ultra
         data: {}
         action: vacuum.start
       - data:
