@@ -1444,7 +1444,7 @@
       command: app_segment_clean
       params:
       - segments:
-        - 16
+        - 17
         repeat: 2
     target:
       entity_id: vacuum.s8_pro_ultra
@@ -2720,7 +2720,7 @@
         command: app_segment_clean
         params:
         - segments:
-          - 24
+          - 16
           repeat: 2
       target:
         entity_id: vacuum.s8_pro_ultra
