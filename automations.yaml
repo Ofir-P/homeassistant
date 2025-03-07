@@ -747,15 +747,25 @@
     id: Morning
     enabled: true
     trigger: time
+  - trigger: zone
+    entity_id: device_tracker.ofir_honor_magic_5_pro
+    zone: zone.ofir_afterwork
+    event: leave
+    id: AfterWork
+  - trigger: zone
+    entity_id: device_tracker.ofir_honor_magic_5_pro
+    zone: zone.ofir_afterwork_sharonim
+    event: leave
+    id: AfterWork2
   - trigger: state
     entity_id:
     - sensor.ofir_honor_magic_5_pro_wifi_connection_2
     for:
       hours: 0
-      minutes: 8
-      seconds: 30
-    id: AfterWork
+      minutes: 0
+      seconds: 0
     to: AutoKit8D
+    enabled: false
   conditions:
   - condition: state
     entity_id: switch.boiler
@@ -766,6 +776,7 @@
     - condition: trigger
       id:
       - AfterWork
+      - AfterWork2
     - condition: not
       conditions:
       - condition: zone
@@ -780,6 +791,9 @@
       - mon
       - tue
       - thu
+    - condition: state
+      entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
+      state: AutoKit8D
     then:
     - metadata: {}
       data:
