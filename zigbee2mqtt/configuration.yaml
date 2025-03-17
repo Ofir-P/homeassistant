@@ -141,9 +141,6 @@ devices:
   '0x00158d000adbfa23':
     friendly_name: Water Leak Laundry Machine
     description: located on the floor, under the boiler, behind the laundry machine
-  '0x00158d0008d0bf86':
-    friendly_name: Bedroom Vibration
-    description: Inside Ofir Top drawer
   '0xa4c138e832f03f77':
     friendly_name: Bedroom Door Sensor
   '0xa4c1384fd1d8ba32':
