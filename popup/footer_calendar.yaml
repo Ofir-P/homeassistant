@@ -22,7 +22,6 @@ browser_mod:
           type: calendar
           entities:
             - calendar.ofirx3_gmail_com
-            - calendar.birthdays
             - calendar.real_madrid
             - calendar.birthdays_2
             - calendar.champions_league

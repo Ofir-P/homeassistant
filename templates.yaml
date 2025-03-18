@@ -59,7 +59,7 @@
             states.switch.boiler,
             states.input_select.washing_machine_status,
             states.input_select.dish_washer_status,
-            states.vacuum.roborock_s8_pro_ultra
+            states.vacuum.s8_pro_ultra
           ] %}
 
           {% set lights_on = lights | selectattr('state','eq','on') | list %}
@@ -94,7 +94,7 @@
           {% endif %}
           </b>
         vacuum: >
-          {% set entity_id = 'vacuum.roborock_s8_pro_ultra' %}
+          {% set entity_id = 'vacuum.s8_pro_ultra' %}
           {% if is_state(entity_id, 'cleaning') %}
             <b>S8 Robot is cleaning</b>
           {% elif is_state(entity_id, 'returning') %}

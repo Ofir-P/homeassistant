@@ -1423,26 +1423,6 @@
       message: "\U0001F916 Automation - Corridor Light off if on for 5 minutes\U0001F4A1"
     action: notify.supervisor_telegram
   mode: single
-- id: '1712574104564'
-  alias: Bedroom - Vibration Drawer Turn on Light
-  description: ''
-  triggers:
-  - entity_id:
-    - sensor.bedroom_vibration_action
-    to: vibration
-    id: vibration
-    trigger: state
-  conditions: []
-  actions:
-  - metadata: {}
-    data: {}
-    target:
-      entity_id: light.bedroom
-    action: light.toggle
-  - data:
-      message: "\U0001F916 Automation - \U0001F4A1Bedroom Vibration Light \U0001F6CF️"
-    action: notify.supervisor_telegram
-  mode: single
 - id: '1712574828792'
   alias: Wardrobe - Sticker Button
   description: Hold - Clean Room
