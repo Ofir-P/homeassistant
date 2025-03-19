@@ -294,7 +294,7 @@ home_leave:
             action: switch.turn_off
       - delay:
           hours: 0
-          minutes: 9
+          minutes: 10
           seconds: 55
           milliseconds: 0
   - data:

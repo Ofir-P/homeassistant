@@ -129,62 +129,84 @@
     action: notify.home_assistant_group
   mode: single
 - id: '1676503252475'
-  alias: Hallway Motion Light
-  description: between 00:01 to 6:55 light will turn on for 1 minute and 20 seconds
-    in the hallway
+  alias: Hallway Motion Light Control
+  description: Gentle hallway light from 00:00-06:20 AM for nighttime navigation with
+    adaptive brightness
   triggers:
-  - entity_id:
-    - binary_sensor.bedroom_motion_sensor_occupancy
+  - trigger: state
+    entity_id: binary_sensor.bedroom_motion_sensor_occupancy
     to: 'on'
-    id: Motion Detected on Dining Table by Person
+    id: motion_detected
     enabled: true
-    trigger: state
-  - entity_id:
-    - binary_sensor.bedroom_motion_sensor_occupancy
+  - trigger: state
+    entity_id: binary_sensor.bedroom_motion_sensor_occupancy
     to: 'off'
     for:
       hours: 0
       minutes: 1
       seconds: 0
+    id: motion_cleared
     enabled: true
-    trigger: state
+  - trigger: state
+    entity_id: light.yeelink_color5_6079_light
+    to: 'on'
+    for:
+      hours: 0
+      minutes: 3
+      seconds: 0
+    id: light_timeout
   conditions:
   - condition: time
     after: 00:00:00
     before: 06:20:00
+    alias: Nighttime window 00:00-06:20
   actions:
-  - if:
-    - condition: trigger
-      id: Motion Detected on Dining Table by Person
-    - condition: time
-      after: 00:01:00
-      before: 06:30:00
-    - condition: state
-      entity_id: input_select.living_room_tv_status
-      state: 'Off'
-    then:
-    - condition: state
-      entity_id: light.yeelink_color5_6079_light
-      state: 'off'
-    - data:
-        brightness_pct: 38
-        rgb_color:
-        - 255
-        - 255
-        - 255
-      target:
-        device_id: 5972c49b7f01f8fde1fe7d5f02db377d
-      action: light.turn_on
-    - data:
-        message: "\U0001F916 Automation - Hallway Motion Light"
-      action: notify.supervisor_telegram
-    else:
-    - data:
-        transition: 15
-      target:
-        device_id: 5972c49b7f01f8fde1fe7d5f02db377d
-      action: light.turn_off
-    enabled: true
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: motion_detected
+      - condition: state
+        entity_id: light.yeelink_color5_6079_light
+        state: 'off'
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'Off'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.yeelink_color5_6079_light
+        data:
+          brightness_pct: '{% if now().hour < 3 %} 15 {% else %} 25 {% endif %}'
+          rgb_color:
+          - 255
+          - 240
+          - 200
+          transition: 2
+      - action: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Hallway light on (gentle mode, {% if now().hour < 3
+            %} 15 {% else %} 25 {% endif %}%) at {{ now().strftime('%H:%M:%S') }}"
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: motion_cleared
+        - condition: trigger
+          id: light_timeout
+      - condition: state
+        entity_id: light.yeelink_color5_6079_light
+        state: 'on'
+      sequence:
+      - action: light.turn_off
+        target:
+          entity_id: light.yeelink_color5_6079_light
+        data:
+          transition: 15
+      - action: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Hallway light off  {% if trigger.id == 'motion_cleared'
+            %}after 1 min no motion {% else %}after 3-min timeout{% endif %} at {{
+            now().strftime('%H:%M:%S') }}"
   mode: single
 - id: '1676677991115'
   alias: Notify with camera snapshot when motion is detected and both of you are not
@@ -401,83 +423,77 @@
   mode: single
 - id: '1706093864988'
   alias: Water Leakage Notification
-  description: Will notify if there is a leakage anywhere in the house.
+  description: Notifies of water leaks and shuts off relevant smart plugs in affected
+    areas if devices are on
   triggers:
-  - entity_id:
-    - binary_sensor.water_leak_shower_sink_water_leak
+  - trigger: state
+    entity_id: binary_sensor.water_leak_shower_sink_water_leak
     to: 'on'
     id: shower_sink
-    trigger: state
-  - entity_id:
-    - binary_sensor.water_leak_office_sink_water_leak
+    for:
+      seconds: 5
+  - trigger: state
+    entity_id: binary_sensor.water_leak_office_sink_water_leak
     to: 'on'
     id: office_sink
-    trigger: state
-  - entity_id:
-    - binary_sensor.water_leak_sensor_kitchen_sink_water_leak
+    for:
+      seconds: 5
+  - trigger: state
+    entity_id: binary_sensor.water_leak_sensor_kitchen_sink_water_leak
     to: 'on'
     id: kitchen_sink
-    trigger: state
-  - entity_id:
-    - binary_sensor.water_leak_laundry_machine_water_leak
+    for:
+      seconds: 5
+  - trigger: state
+    entity_id: binary_sensor.water_leak_laundry_machine_water_leak
     to: 'on'
     id: laundry_machine
-    trigger: state
+    for:
+      seconds: 5
   conditions: []
   actions:
+  - variables:
+      location: '{% if trigger.id == ''kitchen_sink'' %}Kitchen {% elif trigger.id
+        == ''shower_sink'' %}Shower Room {% elif trigger.id == ''office_sink'' %}Office
+        Bathroom/Shower Room {% elif trigger.id == ''laundry_machine'' %}Boiler/Laundry
+        Machine Area {% endif %}'
   - choose:
     - conditions:
       - condition: trigger
-        id:
-        - kitchen_sink
+        id: kitchen_sink
+      - condition: state
+        entity_id: input_select.dish_washer_status
+        state: 'on'
       sequence:
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Kitchen ⚠️
-        action: notify.notify
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Kitchen ⚠️
-        action: notify.home_assistant_group
+      - action: switch.turn_off
+        target:
+          entity_id: switch.dish_washer
     - conditions:
       - condition: trigger
-        id:
-        - shower_sink
+        id: laundry_machine
+      - condition: state
+        entity_id: input_select.washing_machine_status
+        state: 'On'
       sequence:
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Shower Room⚠️
-        action: notify.notify
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Shower Room⚠️
-        action: notify.home_assistant_group
-    - conditions:
-      - condition: trigger
-        id:
-        - office_sink
-      sequence:
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Office Bathroom/Shower Room⚠️
-        action: notify.notify
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Office Bathroom/Shower Room⚠️
-        action: notify.home_assistant_group
-    - conditions:
-      - condition: trigger
-        id:
-        - laundry_machine
-      sequence:
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Boiler / Laundry Machine area⚠️
-        action: notify.notify
-      - metadata: {}
-        data:
-          message: ⚠️ Water Leak has been detected in Boiler / Laundry Machine area⚠️
-        action: notify.home_assistant_group
+      - action: switch.turn_off
+        target:
+          entity_id: switch.laundry_machine
+  - action: notify.notify
+    data:
+      title: "\U0001F6A8 Water Leak Alert"
+      message: ⚠️ Water Leak detected in {{ location }} at {{ now().strftime('%H:%M:%S')
+        }}  {% if trigger.id == 'kitchen_sink' and is_state('input_select.dish_washer_status',
+        'on') %} - Dishwasher power off {% elif trigger.id == 'laundry_machine' and
+        is_state('input_select.washing_machine_status', 'On') %} - Laundry machine
+        power off {% endif %} ⚠️
+  - action: notify.home_assistant_group
+    data:
+      title: "\U0001F6A8 Water Leak Alert"
+      message: ⚠️ Water Leak detected in {{ location }} at {{ now().strftime('%H:%M:%S')
+        }}  {% if trigger.id == 'kitchen_sink' and is_state('input_select.dish_washer_status',
+        'on') %} - Dishwasher power off {% elif trigger.id == 'laundry_machine' and
+        is_state('input_select.washing_machine_status', 'On') %} - Laundry machine
+        power off {% endif %} ⚠️
   mode: single
 - id: '1709561304330'
   alias: Robot Vacuum Daily Routine
@@ -1081,67 +1097,98 @@
       action: notify.supervisor_telegram
   mode: single
 - id: '1710709437729'
-  alias: Office - Blink Red Light
-  description: When Ofir is home and Main Door open or Elian enters Home area.
+  alias: Office - Blink Red Light Alert
+  description: Blinks lights with specific colors when Ofir is home and door opens
+    or Elian enters, with cooldown and state restoration
   triggers:
-  - entity_id:
+  - trigger: state
+    entity_id:
     - binary_sensor.main_door_sensor_contact
     to: 'on'
-    from: 'off'
-    trigger: state
-  - entity_id:
-    - device_tracker.elians_iphone
+    id: door_opened
+  - trigger: state
+    entity_id: device_tracker.elians_iphone
     from: not_home
     to: home
-    id: elian_home_area
+    id: elian_arrived
     for:
       hours: 0
       minutes: 0
       seconds: 45
-    trigger: state
   conditions:
   - condition: time
     after: '16:15:00'
     before: 01:30:00
-  - alias: Confirm someone is Presence at Office
-    condition: state
+  - condition: state
     entity_id: binary_sensor.office_presence_sensor_presence
     state: 'on'
-    enabled: true
+    alias: Confirm office presence
   - condition: state
     entity_id: light.office
     state: 'on'
+    alias: Office light must be on
+  - condition: state
+    entity_id: automation.office_blink_red_light
+    state: 'on'
+    for:
+      minutes: 5
+    alias: Cooldown check
   actions:
-  - data:
-      scene_id: thebeforetimes
+  - action: scene.create
+    data:
+      scene_id: office_lights_snapshot
       snapshot_entities:
       - light.office_wall_light
       - light.ofir_desk_led
-    action: scene.create
   - repeat:
-      count: 40
+      count: 20
       sequence:
-      - data:
-          color_name: red
+      - action: light.turn_on
         target:
           entity_id:
           - light.office_wall_light
           - light.ofir_desk_led
-        action: light.toggle
+        data:
+          color_name: '{% if trigger.id == ''door_opened'' %} red {% else %} purple
+            {% endif %}'
+          brightness_pct: 100
       - delay:
-          hours: 0
-          minutes: 0
-          seconds: 0
           milliseconds: 350
-  - target:
-      entity_id: scene.thebeforetimes
-    metadata: {}
-    action: scene.turn_on
+      - action: light.turn_off
+        target:
+          entity_id:
+          - light.office_wall_light
+          - light.ofir_desk_led
+        data: {}
+      - delay:
+          milliseconds: 350
+  - action: scene.turn_on
+    target:
+      entity_id: scene.office_lights_snapshot
     data: {}
-  - metadata: {}
+  - delay:
+      seconds: 1
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: light.ofir_desk_led
+        state: 'off'
+      sequence:
+      - action: light.turn_on
+        target:
+          entity_id: light.ofir_desk_led
+        data:
+          rgb_color:
+          - 86
+          - 241
+          - 255
+          brightness_pct: 50
+  - action: notify.supervisor_telegram
     data:
-      message: "\U0001F916 Automation - Blink Red Lights Office"
-    action: notify.supervisor_telegram
+      title: Office Alert
+      message: "\U0001F916 Automation - Light Alert triggered by  {% if trigger.id
+        == 'door_opened' %}\n  Main Door opening (Red)\n{% elif trigger.id == 'elian_arrived'
+        %}\n  Elian arriving home (Purple)\n{% endif %}"
   mode: single
 - id: '1710843500416'
   alias: Robot Vacuum Dock Error Notifications
@@ -2189,7 +2236,7 @@
     - sensor.living_room_tv_power
     for:
       hours: 0
-      minutes: 5
+      minutes: 10
       seconds: 40
     below: 5
     id: tv_is_off
@@ -2596,11 +2643,11 @@
     action: notify.supervisor_telegram
   mode: single
 - id: '1712580428389'
-  alias: Elian Zone Change Notification
-  description: ''
+  alias: Elian Location Tracking
+  description: Tracks Elian's location changes and sends appropriate notifications
   triggers:
-  - entity_id:
-    - device_tracker.elians_iphone
+  - trigger: state
+    entity_id: device_tracker.elians_iphone
     from: home
     to: not_home
     for:
@@ -2608,69 +2655,94 @@
       minutes: 1
       seconds: 50
     id: elian_left_home
-    trigger: state
-  - device_id: 611a494457823cb15ab854ae5b741ef0
+  - trigger: state
+    entity_id: device_tracker.elians_iphone
+    to: Mofit
+    for:
+      hours: 0
+      minutes: 4
+      seconds: 0
+    id: elian_entered_mofit
+  - trigger: device
+    device_id: 611a494457823cb15ab854ae5b741ef0
     domain: device_tracker
     entity_id: 4d605a96e7d9ad764a8f357609e42ebd
     type: leaves
     zone: zone.mofit
     id: elian_leaving_mofit
-    trigger: device
   - trigger: zone
     entity_id: device_tracker.elians_iphone
     zone: zone.matrix
     event: enter
-    id: elian_enter_work_2
+    id: elian_enter_work
   - trigger: zone
     entity_id: device_tracker.elians_iphone
     zone: zone.matrix
     event: leave
     id: elian_leaving_work
+  - trigger: state
+    entity_id: sensor.elians_iphone_ssid
+    to: Mofit5
+    id: elian_mofit_wifi
   conditions: []
   actions:
   - choose:
     - conditions:
       - condition: trigger
-        id:
-        - elian_leaving_mofit
+        id: elian_left_home
+      sequence:
+      - action: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Elian has left the house."
+          title: Location Update
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: trigger
+          id: elian_entered_mofit
+        - condition: trigger
+          id: elian_mofit_wifi
+      sequence:
+      - action: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Automation - Elian has entered Mofit."
+          title: Location Update
+    - conditions:
+      - condition: trigger
+        id: elian_leaving_mofit
       - condition: state
         entity_id: sensor.elians_iphone_ssid
         state: Not Connected
       - condition: time
         after: 09:00:00
+        before: '23:59:59'
       sequence:
-      - data:
+      - action: notify.supervisor_telegram
+        data:
           message: "\U0001F916 Automation - Elian has left Mofit."
-        action: notify.supervisor_telegram
+          title: Location Update
     - conditions:
       - condition: trigger
-        id:
-        - elian_left_home
+        id: elian_enter_work
       sequence:
-      - data:
-          message: "\U0001F916 Automation - Elian has left the house."
-        action: notify.supervisor_telegram
-    - conditions:
-      - condition: trigger
-        id:
-        - elian_enter_work_2
-      sequence:
-      - data:
+      - action: notify.supervisor_telegram
+        data:
           message: "\U0001F916 Automation - Elian has entered Work."
-        action: notify.supervisor_telegram
+          title: Location Update
     - conditions:
       - condition: trigger
-        id:
-        - elian_leaving_work
+        id: elian_leaving_work
       - condition: not
         conditions:
         - condition: state
           entity_id: sensor.elians_iphone_ssid
           state: Logica-it
       sequence:
-      - data:
+      - action: notify.supervisor_telegram
+        data:
           message: "\U0001F916 Automation - Elian has left Work."
-        action: notify.supervisor_telegram
+          title: Location Update
+    default: []
   mode: single
 - id: '1712580944148'
   alias: Kitchen - Sticker Button
