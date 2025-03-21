@@ -679,8 +679,8 @@ DEVICE_CUSTOMIZES = {
         ],
         'append_converters': [
             {
-                'services': ['dm_service'],
-                'converters': [{'props': ['speed_level']}],
+                'services': ['fan'],
+                'converters': [{'props': ['dm_service.speed_level']}],
             }
         ],
     },
@@ -880,19 +880,20 @@ DEVICE_CUSTOMIZES = {
         'interval_seconds': 120,
         'button_actions': 'start_sweep*,start_only_sweep,start_mop,start_charge,stop_*',
         'sensor_properties': 'vacuum.status,door_state,main_brush_life,side_brush_life,hypa_life,mop_life',
-        'switch_properties': 'vacuum.on,repeat_state,alarm',
+        'switch_properties': 'repeat_state,alarm',
         'select_properties': 'mode,sweep_type,suction_state,water_state',
         'exclude_miot_services': 'order',
-        'exclude_miot_properties': '*_points,multi_prop_vacuum,cur_cleaning_path,consumablesinfo',
+        'exclude_miot_properties': 'vacuum.on,*_points,multi_prop_vacuum,cur_cleaning_path,consumablesinfo,'
+                                   'dnd_start_*,dnd_end_*',
         'chunk_coordinators': [
             {'interval': 21, 'props': 'status,mode,sweep_type,suction_state'},
-            {'interval': 31, 'props': 'water-state,repeat-state,mop-route'},
-            {'interval': 41, 'props': 'ai-recognize,dirt-recognize,pet-recognize,repeat-state,cloth-state'},
-            {'interval': 81, 'props': 'remember-state,cur-map-id,build-map,has-new-map'},
-            {'interval': 91, 'props': 'alarm,volume,door-state,cleaning-time,cleaning-area,carpet-booster'},
-            {'interval': 131, 'props': 'battery-level,tank-shake,shake-shift,map-encrypt,target-point'},
-            {'interval': 300, 'props': 'main_brush_*,side_brush_*,hypa_*,mop_life,mop_hours,map-num'},
-            {'interval': 999, 'props': 'time-zone,cur-lang,multi-prop-vacuum'},
+            {'interval': 31, 'props': 'water_state,repeat_state,mop_route'},
+            {'interval': 41, 'props': 'ai_recognize,dirt_recognize,pet_recognize,repeat_state,cloth_state'},
+            {'interval': 81, 'props': 'remember_state,cur_map_id,build_map,has_new_map'},
+            {'interval': 91, 'props': 'alarm,volume,door_state,cleaning_time,cleaning_area,carpet_booster'},
+            {'interval': 131, 'props': 'battery_level,tank_shake,shake_shift,map_encrypt,target_point'},
+            {'interval': 300, 'props': 'main_brush_*,side_brush_*,hypa_*,mop_life,mop_hours,map_num'},
+            {'interval': 999, 'props': 'time_zone,cur_lang,multi_prop_vacuum'},
         ],
     },
     'ijomoo.toilet.zs320': {
@@ -1576,7 +1577,7 @@ DEVICE_CUSTOMIZES = {
     },
 
     'topwit.bhf_light.rz01': {
-        'sensor_properties': 'temperature',
+        'sensor_attributes': 'ptc_bath_heater.temperature.error',
         'switch_properties': 'heating,blow,ventilation',
         'number_properties': 'ventilation_cnt_down',
     },
@@ -1917,6 +1918,10 @@ DEVICE_CUSTOMIZES = {
         'sensor_properties': 'clean_time,fan_dry_time,fault,water_level,water_status',
         'switch_properties': 'alarm,dry_switch,over_wet_protect,screen.on',
         'number_properties': 'off_delay_time',
+    },
+    'xiaomi.humidifier.p1200:water_level': {
+        'state_class': 'measurement',
+        'unit_of_measurement': '%',
     },
     'xiaomi.kettle.v20': {
         'button_actions': 'stop_work',
@@ -2645,6 +2650,7 @@ DEVICE_CUSTOMIZES = {
     },
     '*.heater.*': {
         'switch_properties': 'heater.on,horizontal_swing,alarm.alarm,delay.delay',
+        'select_properties': 'heat_level',
         'number_properties': 'countdown_time,delay_time',
         'chunk_coordinators': [
             {'interval': 10, 'props': 'on,mode,target_temperature,fan_level'},
@@ -2981,7 +2987,8 @@ GLOBAL_CONVERTERS = [
         'class': MiotHumidifierConv,
         'services': ['humidifier', 'dehumidifier'],
         'converters' : [
-            {'props': ['on', 'mode', 'target_humidity']},
+            {'props': ['on', 'target_humidity']},
+            {'props': ['mode'], 'desc': True},
             {'props': ['relative_humidity', 'humidity']},
             {'props': ['environment.relative_humidity', 'environment.humidity']},
             {'props': ['fan_level', 'fan_control.fan_level'], 'desc': True, 'domain': 'select'},

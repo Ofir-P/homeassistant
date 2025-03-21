@@ -598,3 +598,79 @@ toggle_wardrobe_ac:
   mode: single
   icon: mdi:air-conditioner
   description: ''
+send_doorbell_notification_to_lg_tv:
+  alias: Send Doorbell Notification to LG TV
+  description: Sends notification with doorbell snapshot to LG TV when TV is on
+  sequence:
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: input_select.living_room_tv_status
+        state: 'Off'
+    then:
+    - action: notify.living_room_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
+          image:
+            path: /config/www/tmp/snapshot_doorbell.jpg
+        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
+          Snapshot Captured!"
+        title: Doorbell Notification
+send_doorbell_notification_to_bedroom_tv:
+  sequence:
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        state: 'On'
+        entity_id: input_select.bedroom_tv_status
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
+          image:
+            path: /config/www/tmp/snapshot_doorbell.jpg
+        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
+          Snapshot Captured!"
+        title: Doorbell Notification
+  alias: Send Doorbell Notification to Bedroom TV
+  description: Sends notification with doorbell snapshot to Bedroom TV when TV is
+    on
+send_red_alert_notification_to_bedroom_tv:
+  sequence:
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        state: 'On'
+        entity_id: input_select.bedroom_tv_status
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 20
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 20
+          color: cyan
+          interrupt: 0
+        title: "\U0001F680 Notification"
+        message: 'אזעקות ב: {{ alerts | join('' | '') }}'
+  alias: Send Red Alert Notification to Bedroom TV
+  description: ''

@@ -160,6 +160,10 @@
     after: 00:00:00
     before: 06:20:00
     alias: Nighttime window 00:00-06:20
+  - condition: state
+    entity_id: automation.red_alert
+    state: 'off'
+    enabled: false
   actions:
   - choose:
     - conditions:
@@ -298,7 +302,11 @@
       message: "\U0001F916 Automation - Red Alert in {{ alert_location }} \U0001F680"
   - action: notify.mobile_app_elians_iphone
     data:
-      message: "\U0001F680 אזעקות ב{{ alert_location }} \U0001F680"
+      message: "\U0001F680 Red Alert in {{\n  'Hod HaSharon and Ramla' if \n    (states('binary_sensor.oref_alert_home')
+        == 'on' and \n     states('binary_sensor.oref_alert_ramla') == 'on') \n  else
+        \n    'Hod HaSharon' if states('binary_sensor.oref_alert_home') == 'on' \n
+        \ else \n    'Ramla' if states('binary_sensor.oref_alert_ramla') == 'on' \n
+        \ else \n    'Unknown' \n}} \U0001F680\n"
   - if:
     - condition: and
       conditions:
@@ -311,7 +319,7 @@
     then:
     - action: notify.living_room_lg_webos_smart_tv
       data:
-        message: צבע אדום - {{ alert_location }}
+        message: "\U0001F680 Red Alert in {{ alert_location }} \U0001F680"
   - if:
     - condition: or
       conditions:
@@ -349,11 +357,13 @@
             entity_id:
             - light.office_wall_light
             - light.ofir_desk_led
+          data: {}
         - delay:
             milliseconds: 350
     - action: scene.turn_on
       target:
         entity_id: scene.office_before_alert
+      data: {}
   - if:
     - condition: state
       entity_id: binary_sensor.any_phone_at_home
@@ -374,11 +384,13 @@
         - light.living_room_l1
         - light.kitchen_l1
         - light.kitchen_l2
+      data: {}
     - delay:
         minutes: 10
     - action: scene.turn_on
       target:
         entity_id: scene.home_before_alert
+      data: {}
   - delay:
       minutes: 12
   - if:
@@ -398,6 +410,7 @@
         - light.living_room_l1
         - light.kitchen_l1
         - light.kitchen_l2
+      data: {}
   mode: single
   variables:
     alert_location: '{% if trigger.id == ''home_alert'' %} Hod HaSharon {% elif trigger.id
@@ -605,38 +618,41 @@
   description: If state changed to `Open` send photo of Main Door Camera and Telegram
     Message of Door being Open.
   triggers:
-  - entity_id:
+  - trigger: state
+    entity_id:
     - binary_sensor.main_door_sensor_contact
+    - binary_sensor.front_door_door
+    - binary_sensor.front_door_door_2
     to: 'on'
-    trigger: state
-  conditions: []
+  conditions:
+  - condition: template
+    value_template: "{{ (as_timestamp(now()) - as_timestamp(states.binary_sensor.main_door_sensor_contact.last_changed))
+      | float < 2\n   or (as_timestamp(now()) - as_timestamp(states.binary_sensor.front_door_door.last_changed))
+      | float < 2\n   or (as_timestamp(now()) - as_timestamp(states.binary_sensor.front_door_door_2.last_changed))
+      | float < 2 }}"
   actions:
-  - metadata: {}
-    data: {}
+  - action: light.turn_on
     target:
       entity_id: light.kitchen_l2
-    action: light.turn_on
+    data: {}
   - delay:
-      hours: 0
-      minutes: 0
       seconds: 1
-  - metadata: {}
-    data:
-      filename: /config/www/tmp/snapshot_living_room_sub.jpg
+  - action: camera.snapshot
     target:
       entity_id: camera.dining_table_sub
-    action: camera.snapshot
-  - metadata: {}
+    data:
+      filename: /config/www/tmp/snapshot_living_room_sub.jpg
+  - action: telegram_bot.send_photo
     data:
       authentication: digest
       file: /config/www/tmp/snapshot_living_room_sub.jpg
-      caption: "\U0001F916 Automation - \U0001F6AAMain Door is open now!"
-    action: telegram_bot.send_photo
+      caption: "\U0001F916 Automation - \U0001F6AA Main Door is open now!"
   mode: single
 - id: '1710394310075'
   alias: Door Closed Notification to Telegram
-  description: If state changed to `Closed` send  Telegram Message of Door being Closed
-    and turn off the light after 25 seconds.
+  description: If state changed to `Closed` send Telegram Message of Door being Closed
+    and turn off the light after 25 seconds, with a 30-second cooldown and fresh state
+    check.
   triggers:
   - entity_id:
     - binary_sensor.main_door_sensor_contact
@@ -644,10 +660,14 @@
     - unknown
     - unavailable
     to: 'off'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 3
+    trigger: state
+  - entity_id:
+    - binary_sensor.front_door_door
+    - binary_sensor.front_door_door_2
+    not_from:
+    - unknown
+    - unavailable
+    to: 'off'
     trigger: state
   conditions: []
   actions:
@@ -1202,12 +1222,10 @@
               - 255
       - action: notify.supervisor_telegram
         data:
-          title: Office Alert
-          message: "\U0001F916 Automation - Light Alert triggered at {{ now().strftime('%H:%M:%S')
+          message: "\U0001F916 Automation - Blink Office Light triggered at {{ now().strftime('%H:%M:%S')
             }} by   {% if trigger.id in ['door_opened_main', 'door_opened_front_2',
-            'door_opened_front'] %}\n  Main Door opening (Red) - {{ trigger.entity_id
-            }}\n{% elif trigger.id == 'elian_arrived' %}\n  Elian arriving home (Purple)\n{%
-            endif %}"
+            'door_opened_front'] %}\n  Main Door opening (Red)\n{% elif trigger.id
+            == 'elian_arrived' %}\n  Elian arriving home (Purple)\n{% endif %}"
     - conditions:
       - condition: template
         value_template: '{{ trigger.id == ''wall_light_timeout'' }}'
@@ -2250,9 +2268,14 @@
       - condition: trigger
         id:
         - no_move
-      - condition: state
-        entity_id: climate.ofir_a_c
-        state: cool
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: cool
+        - condition: state
+          entity_id: climate.ofir_a_c
+          state: heat
     then:
     - metadata: {}
       data: {}
@@ -2675,19 +2698,16 @@
         entity_id: camera.s8_pro_ultra_map
       data:
         filename: /config/www/tmp/snapshot_vacuum.jpg
+    - action: notify.home_assistant_group
+      data:
+        message: "\U0001F916 Automation - \U0001F9F9 Robot Vacuum finished! Took {{
+          duration_minutes }} min, covered {{ area_cleaned }} m²."
     - action: telegram_bot.send_photo
       data:
         authentication: digest
         file: /config/www/tmp/snapshot_vacuum.jpg
         caption: "\U0001F916 Automation - \U0001F9F9 Robot Vacuum finished! Took {{
           duration_minutes }} min, covered {{ area_cleaned }} m²."
-    - action: notify.mobile_app_elians_iphone
-      data:
-        title: Vacuum Robot
-        message: "\U0001F916 Automation - \U0001F9F9 Robot Vacuum finished! Took {{
-          duration_minutes }} min, covered {{ area_cleaned }} m²."
-        data:
-          image: /local/tmp/snapshot_vacuum.jpg
     - action: notify.supervisor_telegram
       data:
         message: "\U0001F916 Automation - \U0001F9F9 Robot Vacuum finished! Took {{
@@ -2923,8 +2943,7 @@
   conditions: []
   actions:
   - data:
-      message: "\U0001F916 Automation - \U0001F4A1 Living Roo m Light is on in Living
-        Room \U0001F6CB️"
+      message: "\U0001F916 Automation - \U0001F4A1 Living Room Light is on \U0001F6CB️"
     action: notify.supervisor_telegram
   mode: single
 - id: '1713157388984'
@@ -2940,8 +2959,7 @@
   conditions: []
   actions:
   - data:
-      message: "\U0001F916 Automation - \U0001F4A1 Living Room Light is off in Living
-        Room \U0001F6CB️"
+      message: "\U0001F916 Automation - \U0001F4A1 Living Room Light is off \U0001F6CB️"
     action: notify.supervisor_telegram
   mode: single
 - id: '1713157489878'
@@ -2986,28 +3004,12 @@
     - light.kitchen_l2
     from: 'off'
     to: 'on'
-    id: aqara_sensor_on
     trigger: state
-  - trigger: state
-    entity_id:
-    - binary_sensor.front_door_door_2
-    - binary_sensor.front_door_door
-    to: 'on'
-    from: 'off'
-    id: yale_sensor_on
   conditions: []
   actions:
-  - if:
-    - condition: or
-      conditions:
-      - condition: trigger
-        id:
-        - aqara_sensor_on
-        - yale_sensor_on
-    then:
-    - data:
-        message: "\U0001F916 Automation - \U0001F4A1 Main Door Light is on \U0001F6AA"
-      action: notify.supervisor_telegram
+  - data:
+      message: "\U0001F916 Automation - \U0001F4A1 Main Door Light is on \U0001F6AA"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1713157657112'
   alias: Main Door - Light Off Notification
@@ -3017,28 +3019,12 @@
     - light.kitchen_l2
     from: 'on'
     to: 'off'
-    id: aqara_sensor_off
     trigger: state
-  - trigger: state
-    entity_id:
-    - binary_sensor.front_door_door_2
-    - binary_sensor.front_door_door
-    from: 'on'
-    to: 'off'
-    id: yale_sensor_off
   conditions: []
   actions:
-  - if:
-    - condition: or
-      conditions:
-      - condition: trigger
-        id:
-        - aqara_sensor_off
-        - yale_sensor_off
-    then:
-    - data:
-        message: "\U0001F916 Automation - \U0001F4A1 Main Door Light is off \U0001F6AA"
-      action: notify.supervisor_telegram
+  - data:
+      message: "\U0001F916 Automation - \U0001F4A1 Main Door Light is off \U0001F6AA"
+    action: notify.supervisor_telegram
   mode: single
 - id: '1713203658731'
   alias: Office - Wall Light off if on for 3 minutes
@@ -3180,7 +3166,7 @@
     from: 'on'
     for:
       hours: 0
-      minutes: 20
+      minutes: 15
       seconds: 0
     id: no_motion
     trigger: state
@@ -3524,10 +3510,7 @@
   - entity_id: binary_sensor.oref_alert_all_areas
     attribute: country_active_alerts
     trigger: state
-  conditions:
-  - condition: state
-    entity_id: input_select.living_room_tv_status
-    state: 'On'
+  conditions: []
   actions:
   - variables:
       current: '{{ state_attr(''binary_sensor.oref_alert_all_areas'', ''country_active_alerts'')
@@ -3537,10 +3520,18 @@
       alerts: '{{ current | reject(''in'', previous) | unique | sort | list }}'
   - condition: template
     value_template: '{{ alerts | length > 0 }}'
-  - action: notify.living_room_lg_webos_smart_tv
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      metadata: {}
+      data:
+        message: 'אזעקות ב: {{ alerts | join('' | '') }}'
+  - action: script.send_red_alert_notification_to_bedroom_tv
     metadata: {}
-    data:
-      message: 'אזעקות ב: {{ alerts | join('' | '') }}'
+    data: {}
   mode: single
 - id: oref_alert_country_notifications
   alias: Oref Alert Country Notifications
@@ -3774,10 +3765,15 @@
       title: התרעות פיקוד העורף
       message: '{{ trigger.event.data.emoji }} {{ trigger.event.data.area }} [{{ trigger.event.data.title
         }}]'
-  - action: notify.living_room_lg_webos_smart_tv
-    data:
-      message: '{{ trigger.event.data.emoji }} {{ trigger.event.data.area }} [{{ trigger.event.data.title
-        }}]'
+  - if:
+    - condition: state
+      entity_id: input_select.living_room_tv_status
+      state: 'On'
+    then:
+    - action: notify.living_room_lg_webos_smart_tv
+      data:
+        message: '{{ trigger.event.data.emoji }} {{ trigger.event.data.area }} [{{
+          trigger.event.data.title }}]'
   mode: queued
 - id: '1732371977872'
   alias: Notify MP3 Friday Song before Shabbat
@@ -4094,15 +4090,16 @@
   - condition: state
     entity_id: lock.front_door
     state: unlocked
+  - condition: state
+    entity_id: automation.red_alert
+    state: 'off'
+    enabled: false
   actions:
-  - variables:
-      action_lock: '{{ ''LOCK_'' ~ context.id }}'
-      action_unlocked: '{{ ''UNLOCKED_'' ~ context.id }}'
   - alias: Ask to lock or not the main door
     data:
       message: "\U0001F6AA Door is UNLOCKED for more than 90 seconds"
       data:
-        notification_id: door_unlocked_{{ context.id }}
+        notification_id: door_unlocked_notification
         actions:
         - action: '{{ action_lock }}'
           title: Lock the Door
@@ -4113,7 +4110,7 @@
     data:
       message: "\U0001F6AA Door is UNLOCKED for more than 90 seconds"
       data:
-        notification_id: door_unlocked_{{ context.id }}
+        notification_id: door_unlocked_notification
         actions:
         - action: '{{ action_lock }}'
           title: Lock the Door
@@ -4142,10 +4139,11 @@
       - target:
           entity_id: lock.front_door
         action: lock.lock
+        data: {}
       - data:
           message: No response received. Door locked automatically.
           data:
-            notification_id: door_unlocked_{{ context.id }}
+            notification_id: door_unlocked_notification
         action: notify.mobile_app_ofir_honor_magic_5_pro
     - conditions:
       - condition: template
@@ -4160,7 +4158,7 @@
           - data:
               message: You chose to keep the door unlocked.
               data:
-                notification_id: door_unlocked_{{ context.id }}
+                notification_id: door_unlocked_notification
             action: notify.mobile_app_ofir_honor_magic_5_pro
         - conditions:
           - condition: template
@@ -4170,7 +4168,7 @@
           - data:
               message: You chose to keep the door unlocked.
               data:
-                notification_id: door_unlocked_{{ context.id }}
+                notification_id: door_unlocked_notification
             action: notify.mobile_app_elians_iphone
     - conditions:
       - condition: template
@@ -4179,6 +4177,7 @@
       - target:
           entity_id: lock.front_door
         action: lock.lock
+        data: {}
       - choose:
         - conditions:
           - condition: template
@@ -4188,7 +4187,7 @@
           - data:
               message: You chose to lock the door!
               data:
-                notification_id: door_unlocked_{{ context.id }}
+                notification_id: door_unlocked_notification
             action: notify.mobile_app_ofir_honor_magic_5_pro
         - conditions:
           - condition: template
@@ -4198,12 +4197,15 @@
           - data:
               message: You chose to lock the door!
               data:
-                notification_id: door_unlocked_{{ context.id }}
+                notification_id: door_unlocked_notification
             action: notify.mobile_app_elians_iphone
+  variables:
+    action_lock: LOCK_DOOR
+    action_unlocked: KEEP_UNLOCKED
   mode: restart
-- id: '1742414300943'
-  alias: Doorbell Ring Notification with Snapshot
-  description: Doorbell Ring Notification with Snapshot
+- id: '1742495241093'
+  alias: Doorbell Ring Notification with Immediate Alert and Snapshot
+  description: Sends an immediate notification and a follow-up with a fresh snapshot
   triggers:
   - trigger: state
     entity_id:
@@ -4211,15 +4213,81 @@
     to: 'on'
   conditions: []
   actions:
+  - action: button.press
+    target:
+      entity_id: button.doorbell_start_p2p_stream
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
   - action: camera.snapshot
     target:
       entity_id: camera.doorbell
     data:
       filename: /config/www/tmp/snapshot_doorbell.jpg
+  - action: button.press
+    target:
+      entity_id: button.doorbell_stop_p2p_stream
+    data: {}
   - action: notify.mobile_app_ofir_honor_magic_5_pro
     data:
-      title: Doorbell ring!
-      message: "\U0001F916 Automation - \U0001F514 Doorbell ring!"
+      message: "\U0001F916 Automation - \U0001F4F8 Doorbell snapshot captured!"
       data:
         image: /local/tmp/snapshot_doorbell.jpg
+  - action: telegram_bot.send_photo
+    data:
+      authentication: digest
+      file: /config/www/tmp/snapshot_doorbell.jpg
+      caption: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
+        Snapshot Captured!"
+  - action: notify.mobile_app_elians_iphone
+    data:
+      message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
+        Snapshot Captured!"
+      data:
+        image: /local/tmp/snapshot_doorbell.jpg
+  - action: script.send_doorbell_notification_to_lg_tv
+    metadata: {}
+    data: {}
+  - action: script.send_doorbell_notification_to_bedroom_tv
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1742495432062'
+  alias: Doorbell Motion Detected Notification with Snapshot
+  description: Sends a Telegram notification with a snapshot when motion is detected
+    at the doorbell, with a 3-minute cooldown to prevent spamming
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.doorbell_motion_detected
+    to: 'on'
+  conditions: []
+  actions:
+  - action: button.press
+    target:
+      entity_id: button.doorbell_start_p2p_stream
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
+  - action: camera.snapshot
+    target:
+      entity_id: camera.doorbell
+    data:
+      filename: /config/www/tmp/snapshot_doorbell_motion.jpg
+  - action: button.press
+    target:
+      entity_id: button.doorbell_stop_p2p_stream
+    data: {}
+  - action: telegram_bot.send_photo
+    data:
+      authentication: digest
+      file: /config/www/tmp/snapshot_doorbell_motion.jpg
+      caption: "\U0001F916 Automation - \U0001F6A8 Motion Detected at Doorbell! \U0001F4F8
+        Snapshot Captured!"
   mode: single

@@ -306,8 +306,8 @@ views:
       #################################################
       #                                               #
       #                     MEDIA                     #
-      #                                               #
       #################################################
+
       - type: grid
         title: Media
         view_layout:
@@ -350,14 +350,6 @@ views:
                       - entity: media_player.mecool_ofir
                         state_not: playing
 
-                      - entity: media_player.plex_plex_for_android_tv_0_2
-                        state_not: playing
-
-                      - entity: select.conditional_media
-                        state_not: Spotify
-
-                      - entity: select.conditional_media
-                        state_not: Shower
                     card:
                       type: custom:button-card
                       entity: sensor.recently_added_tv_2
@@ -367,50 +359,109 @@ views:
                         - conditional_media
                         - icon_plex
 
-                  - type: conditional
-                    conditions:
-                      - entity: select.conditional_media
-                        state: LR
-                    card:
-                      type: custom:button-card
-                      entity: media_player.plex_plex_for_android_tv_km2_plus
-                      template:
-                        - conditional_media
-                        - icon_apple_tv
+      # - type: grid
+      #   title: Media
+      #   view_layout:
+      #     grid-area: media
+      #   columns: 1
+      #   cards:
+      #     - type: custom:swipe-card
+      #       parameters:
+      #         speed: 550
+      #         spaceBetween: 40
+      #         threshold: 5
+      #       cards:
+      #         - type: horizontal-stack
+      #           cards:
+      #             - type: conditional
+      #               conditions:
+      #                 - entity: media_player.plex_plex_for_android_tv_0_2
+      #                   state: playing
+      #               card:
+      #                 type: custom:mini-media-player
+      #                 entity: media_player.plex_plex_for_android_tv_0_2
+      #                 artwork: full-cover
+      #                 mini-media-player-scale: 1.25
+      #                 hide:
+      #                   power: true
+      #                   source: true
+      #                   controls: true
+      #                   volume: true
+      #                   progress: true
+      #                 card_mod:
+      #                   style: |
+      #                     ha-card {
+      #                       border: solid 1px var(--primary-text-color);
+      #                       background-color: rgba(0, 0, 0, 0);
+      #                       height: 100%;
+      #                       width: 100%;
+      #                     }
+      #             - type: conditional
+      #               conditions:
+      #                 - entity: media_player.mecool_ofir
+      #                   state_not: playing
 
-                  - type: conditional
-                    conditions:
-                      - entity: select.conditional_media
-                        state: Bedroom
-                    card:
-                      type: custom:button-card
-                      entity: media_player.mibox4_2
-                      template:
-                        - conditional_media
-                        - icon_apple_tv
+      #                 - entity: media_player.plex_plex_for_android_tv_0_2
+      #                   state_not: playing
 
-                  - type: conditional
-                    conditions:
-                      - entity: select.conditional_media
-                        state: Shower
-                    card:
-                      type: custom:button-card
-                      entity: script.shower_music
-                      name: Shower Music
-                      template:
-                        - base
-                        - icon_spotify
+      #                 - entity: select.conditional_media
+      #                   state_not: Spotify
 
-                  - type: conditional
-                    conditions:
-                      - entity: select.conditional_media
-                        state: Shower
-                    card:
-                      type: custom:button-card
-                      entity: media_player.shower_echo_dot
-                      template:
-                        - conditional_media
-                        - icon_alexa
+      #                 - entity: select.conditional_media
+      #                   state_not: Shower
+      #               card:
+      #                 type: custom:button-card
+      #                 entity: sensor.recently_added_tv_2
+      #                 name: Recently Added
+      #                 tap_action: !include popup/plex.yaml
+      #                 template:
+      #                   - conditional_media
+      #                   - icon_plex
+
+      #             - type: conditional
+      #               conditions:
+      #                 - entity: select.conditional_media
+      #                   state: LR
+      #               card:
+      #                 type: custom:button-card
+      #                 entity: media_player.plex_plex_for_android_tv_km2_plus
+      #                 template:
+      #                   - conditional_media
+      #                   - icon_apple_tv
+
+      #             - type: conditional
+      #               conditions:
+      #                 - entity: select.conditional_media
+      #                   state: Bedroom
+      #               card:
+      #                 type: custom:button-card
+      #                 entity: media_player.mibox4_2
+      #                 template:
+      #                   - conditional_media
+      #                   - icon_apple_tv
+
+      #             - type: conditional
+      #               conditions:
+      #                 - entity: select.conditional_media
+      #                   state: Shower
+      #               card:
+      #                 type: custom:button-card
+      #                 entity: script.shower_music
+      #                 name: Shower Music
+      #                 template:
+      #                   - base
+      #                   - icon_spotify
+
+      #             - type: conditional
+      #               conditions:
+      #                 - entity: select.conditional_media
+      #                   state: Shower
+      #               card:
+      #                 type: custom:button-card
+      #                 entity: media_player.shower_echo_dot
+      #                 template:
+      #                   - conditional_media
+      #                   - icon_alexa
 
       #################################################
       #                                               #
