@@ -5,3 +5,22 @@
       value_template: "{{ is_state('device_tracker.elians_iphone', 'home') or is_state('ofir_honor_magic_5_pro', 'home') }}"
       device_class: presence
 # [=========================]Phones at home[=========================]
+
+- platform: template
+  sensors:
+    main_door_combined:
+      friendly_name: "Main Door Combined"
+      value_template: >
+        {% set sensors = [
+          states('binary_sensor.main_door_sensor_contact'),
+          states('binary_sensor.front_door_door'),
+          states('binary_sensor.front_door_door_2')
+        ] %}
+        {% if 'on' in sensors %}
+          true
+        {% elif sensors | select('eq', 'off') | list | count == 3 %}
+          false
+        {% else %}
+          {{ states('binary_sensor.main_door_combined') }}
+        {% endif %}
+      device_class: door

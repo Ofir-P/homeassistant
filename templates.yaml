@@ -116,55 +116,6 @@
             {{ state_attr(sensor, 'friendly_name') }} {{ states(sensor) }}%
           {% endfor %}
 
-    # Combined Recently Added Media
-    - name: combined_recently_added_media
-      state: "{{ states('sensor.recently_added_tv_2') | default('unknown') }}"
-      attributes:
-        debug_tv_attrs: "{{ state_attr('sensor.recently_added_tv_2', None) | default('No attributes') }}"
-        debug_movie_attrs: "{{ state_attr('sensor.recently_added_movies', None) | default('No attributes') }}"
-        media_items: >
-          {% set all_items = [] %}
 
-          # Process TV shows (most recent item)
-          {% set tv_attrs = state_attr('sensor.recently_added_tv_2', None) | default({}) %}
-          {% if tv_attrs is not none and 'title' in tv_attrs %}
-            {% set title = tv_attrs.get('title', '') %}
-            {% set poster = tv_attrs.get('poster', '') %}
-            {% set runtime = tv_attrs.get('runtime', 0) | int(default=0) %}
-            {% set genres = tv_attrs.get('genres', '') | string %}
-            {% set rating = tv_attrs.get('rating', '') | string %}
-            {% if title and title != 'unknown' %}
-              {% set item = {
-                'type': 'tv',
-                'title': title,
-                'poster': poster,
-                'runtime': runtime,
-                'genres': genres,
-                'rating': rating
-              } %}
-              {% set all_items = all_items + [item] %}
-            {% endif %}
-          {% endif %}
 
-          # Process movies (most recent item)
-          {% set movie_attrs = state_attr('sensor.recently_added_movies', None) | default({}) %}
-          {% if movie_attrs is not none and 'title' in movie_attrs %}
-            {% set title = movie_attrs.get('title', '') %}
-            {% set poster = movie_attrs.get('poster', '') %}
-            {% set runtime = movie_attrs.get('runtime', 0) | int(default=0) %}
-            {% set genres = movie_attrs.get('genres', '') | string %}
-            {% set rating = movie_attrs.get('rating', '') | string %}
-            {% if title and title != 'unknown' %}
-              {% set item = {
-                'type': 'movie',
-                'title': title,
-                'poster': poster,
-                'runtime': runtime,
-                'genres': genres,
-                'rating': rating
-              } %}
-              {% set all_items = all_items + [item] %}
-            {% endif %}
-          {% endif %}
-
-          {{ all_items if all_items else [] }}
+  

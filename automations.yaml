@@ -620,17 +620,17 @@
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.main_door_sensor_contact
-    - binary_sensor.front_door_door
-    - binary_sensor.front_door_door_2
+    - binary_sensor.main_door_combined
     to: 'on'
   conditions:
-  - condition: template
-    value_template: "{{ (as_timestamp(now()) - as_timestamp(states.binary_sensor.main_door_sensor_contact.last_changed))
-      | float < 2\n   or (as_timestamp(now()) - as_timestamp(states.binary_sensor.front_door_door.last_changed))
-      | float < 2\n   or (as_timestamp(now()) - as_timestamp(states.binary_sensor.front_door_door_2.last_changed))
-      | float < 2 }}"
+  - condition: state
+    entity_id: input_boolean.door_open_cooldown
+    state: 'off'
   actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.door_open_cooldown
+    data: {}
   - action: light.turn_on
     target:
       entity_id: light.kitchen_l2
@@ -647,43 +647,68 @@
       authentication: digest
       file: /config/www/tmp/snapshot_living_room_sub.jpg
       caption: "\U0001F916 Automation - \U0001F6AA Main Door is open now!"
+  - action: notify.bedroom_tv
+    data:
+      data:
+        duration: 10
+        position: top-left
+        fontsize: medium
+        transparency: 50%
+        timeout: 10
+        color: cyan
+        interrupt: 0
+        image:
+          path: /config/www/tmp/snapshot_living_room_sub.jpg
+      message: "\U0001F916 Automation - \U0001F6AA Main Door is open now!"
+  - delay:
+      seconds: 26
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.door_open_cooldown
+    data: {}
   mode: single
+  max_exceeded: silent
 - id: '1710394310075'
   alias: Door Closed Notification to Telegram
   description: If state changed to `Closed` send Telegram Message of Door being Closed
-    and turn off the light after 25 seconds, with a 30-second cooldown and fresh state
-    check.
+    and turn off the light after 25 seconds, with a 30-second cooldown.
   triggers:
-  - entity_id:
-    - binary_sensor.main_door_sensor_contact
+  - trigger: state
+    entity_id:
+    - binary_sensor.main_door_combined
     not_from:
     - unknown
     - unavailable
     to: 'off'
-    trigger: state
-  - entity_id:
-    - binary_sensor.front_door_door
-    - binary_sensor.front_door_door_2
-    not_from:
-    - unknown
-    - unavailable
-    to: 'off'
-    trigger: state
-  conditions: []
+  conditions:
+  - condition: state
+    entity_id: input_boolean.door_closed_cooldown
+    state: 'off'
   actions:
-  - data:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.door_closed_cooldown
+  - action: notify.supervisor_telegram
+    data:
       message: "\U0001F916 Automation - \U0001F6AA Main Door is closed now!"
-    action: notify.supervisor_telegram
   - delay:
       hours: 0
       minutes: 0
       seconds: 25
-  - target:
+  - action: light.turn_off
+    target:
       entity_id:
       - light.kitchen_l2
     data: {}
-    action: light.turn_off
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.door_closed_cooldown
   mode: single
+  max_exceeded: silent
 - id: '1710448585060'
   alias: Office - Presence Turn On Lights
   description: When Presence detected in Office, if lights off and Roborock is docked
@@ -1961,6 +1986,22 @@
       metadata: {}
       data:
         message: "\U0001F4A6\U0001F4A6 Boiler is ON \U0001F4A6\U0001F4A6"
+  - if:
+    - condition: state
+      entity_id: input_select.bedroom_tv_status
+      state: 'On'
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
+        message: "\U0001F4A6\U0001F4A6 Boiler is ON \U0001F4A6\U0001F4A6"
   mode: single
 - id: '1712577543414'
   alias: Shower - Boiler Off Notification
@@ -2001,6 +2042,22 @@
     - action: notify.living_room_lg_webos_smart_tv
       metadata: {}
       data:
+        message: "\U0001F4A6\U0001F4A6 Boiler is OFF \U0001F4A6\U0001F4A6"
+  - if:
+    - condition: state
+      entity_id: input_select.bedroom_tv_status
+      state: 'On'
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
         message: "\U0001F4A6\U0001F4A6 Boiler is OFF \U0001F4A6\U0001F4A6"
   mode: single
 - id: '1712577596194'
@@ -2804,6 +2861,22 @@
       - action: notify.living_room_lg_webos_smart_tv
         metadata: {}
         data:
+          message: "\U0001F456 Laundry machine has finished! \U0001F456"
+    - if:
+      - condition: state
+        entity_id: input_select.bedroom_tv_status
+        state: 'On'
+      then:
+      - action: notify.bedroom_tv
+        data:
+          data:
+            duration: 10
+            position: top-left
+            fontsize: medium
+            transparency: 50%
+            timeout: 10
+            color: cyan
+            interrupt: 0
           message: "\U0001F456 Laundry machine has finished! \U0001F456"
   mode: single
 - id: '1712835629886'
@@ -3946,6 +4019,23 @@
       data:
         message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF!
           \U0001F9FD\U0001F9FC\U0001F37D✨"
+  - if:
+    - condition: state
+      entity_id: input_select.bedroom_tv_status
+      state: 'On'
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
+        message: "\U0001F9FD\U0001F9FC\U0001F37D✨ Dish Washer has been turned OFF!
+          \U0001F9FD\U0001F9FC\U0001F37D✨"
   mode: single
 - id: '1739275973535'
   alias: Office - Rain Sensor On Notification
@@ -3987,6 +4077,22 @@
       metadata: {}
       data:
         message: "\U0001F327️ It's raining now! ☔"
+  - if:
+    - condition: state
+      entity_id: input_select.bedroom_tv_status
+      state: 'On'
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
+        message: "\U0001F327️ It's raining now! ☔"
   mode: single
 - id: '1739276206916'
   alias: Office - Rain Sensor Off Notification
@@ -4023,6 +4129,22 @@
     - action: notify.living_room_lg_webos_smart_tv
       metadata: {}
       data:
+        message: "\U0001F916 Automation - Rain Sensor Off Notification \U0001F327️ "
+  - if:
+    - condition: state
+      entity_id: input_select.bedroom_tv_status
+      state: 'On'
+    then:
+    - action: notify.bedroom_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
         message: "\U0001F916 Automation - Rain Sensor Off Notification \U0001F327️ "
   mode: single
 - id: '1739521766846'
@@ -4258,36 +4380,54 @@
 - id: '1742495432062'
   alias: Doorbell Motion Detected Notification with Snapshot
   description: Sends a Telegram notification with a snapshot when motion is detected
-    at the doorbell, with a 3-minute cooldown to prevent spamming
+    at the doorbell, with a 3-minute cooldown to prevent spamming. Only sends notification
+    if no one is at home.
   triggers:
   - trigger: state
     entity_id:
     - binary_sensor.doorbell_motion_detected
     to: 'on'
-  conditions: []
+  conditions:
+  - condition: state
+    entity_id: input_boolean.doorbell_motion_cooldown
+    state: 'off'
+  - condition: state
+    entity_id: binary_sensor.any_phone_at_home
+    state: 'off'
   actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.doorbell_motion_cooldown
   - action: button.press
     target:
       entity_id: button.doorbell_start_p2p_stream
     data: {}
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 1
-      milliseconds: 0
   - action: camera.snapshot
     target:
       entity_id: camera.doorbell
     data:
       filename: /config/www/tmp/snapshot_doorbell_motion.jpg
-  - action: button.press
-    target:
-      entity_id: button.doorbell_stop_p2p_stream
-    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 1
+      milliseconds: 0
   - action: telegram_bot.send_photo
     data:
       authentication: digest
       file: /config/www/tmp/snapshot_doorbell_motion.jpg
       caption: "\U0001F916 Automation - \U0001F6A8 Motion Detected at Doorbell! \U0001F4F8
         Snapshot Captured!"
+  - action: button.press
+    target:
+      entity_id: button.doorbell_stop_p2p_stream
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 3
+      seconds: 0
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.doorbell_motion_cooldown
   mode: single
+  max_exceeded: silent
