@@ -597,6 +597,26 @@ views:
             template:
               - base
               - icon_aquarium
+      #################################################
+      #                                               #
+      #                    DOORBELL POPUP             #
+      #                                               #
+      #################################################
+      - type: horizontal-stack
+        cards:
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: "#doorbell"
+            trigger:
+              - condition: state
+                entity: binary_sensor.doorbell_ringing
+                state: "on"
+          - show_state: false
+            show_name: false
+            camera_view: live
+            type: picture-entity
+            image: /config/www/tmp/snapshot_doorbell.jpg
+            entity: camera.doorbell
 
       #################################################
       #                                               #
