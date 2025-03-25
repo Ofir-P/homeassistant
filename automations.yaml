@@ -324,23 +324,16 @@
       data:
         message: "\U0001F680 Red Alert in {{ alert_location }} \U0001F680"
   - if:
-    - condition: or
-      conditions:
-      - condition: state
-        entity_id: light.kitchen_l1
-        state: 'on'
-      - condition: state
-        entity_id: light.shower_l1
-        state: 'on'
+    - condition: state
+      entity_id: light.shower_l1
+      state: 'on'
     then:
-    - action: notify.alexa_media_shower_echo_dot
+    - action: notify.alexa_media
       data:
-        message: AZAKAA
-        volume: '{{ 0.3 if is_nighttime else 0.7 }}'
-    - action: notify.alexa_media_kitchen_echo_pop
-      data:
-        message: AZAKAA
-        volume: '{{ 0.3 if is_nighttime else 0.7 }}'
+        message: <audio src='https://3t6d68jf8e966qfhla8sjf21kyd3jk0d.ui.nabu.casa/local/mp3/Red_Alert_15_Seconds.mp3'/>
+        target: media_player.shower_echo_dot
+        data:
+          type: tts
   - if:
     - condition: state
       entity_id: binary_sensor.office_presence_sensor_presence
@@ -673,13 +666,25 @@
     and turn off the light after 25 seconds, with a 30-second cooldown.
   triggers:
   - trigger: state
-    entity_id:
-    - binary_sensor.main_door_combined
-    not_from:
-    - unknown
-    - unavailable
+    entity_id: binary_sensor.main_door_combined
+    from: 'on'
     to: 'off'
-  conditions: []
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.main_door_combined
+      state:
+      - unknown
+      - unavailable
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 0
   actions:
   - action: notify.supervisor_telegram
     data:
@@ -4312,30 +4317,37 @@
       entity_id: camera.doorbell
     data:
       filename: /config/www/tmp/snapshot_doorbell.jpg
+  - action: script.send_doorbell_notification_to_lg_tv
+    metadata: {}
+    data: {}
   - action: button.press
     target:
       entity_id: button.doorbell_stop_p2p_stream
     data: {}
-  - action: notify.mobile_app_ofir_honor_magic_5_pro
+  - action: notify.alexa_media
     data:
-      message: "\U0001F916 Automation - \U0001F4F8 Doorbell snapshot captured!"
+      message: <audio src='https://3t6d68jf8e966qfhla8sjf21kyd3jk0d.ui.nabu.casa/local/mp3/household_doorbell_ring.mp3'/>
+      target: media_player.kitchen_echo_pop
       data:
-        image: /local/tmp/snapshot_doorbell.jpg
+        type: tts
+    continue_on_error: true
   - action: telegram_bot.send_photo
     data:
       authentication: digest
       file: /config/www/tmp/snapshot_doorbell.jpg
       caption: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
         Snapshot Captured!"
+  - action: notify.mobile_app_ofir_honor_magic_5_pro
+    data:
+      message: "\U0001F916 Automation - \U0001F4F8 Doorbell snapshot captured!"
+      data:
+        image: /local/tmp/snapshot_doorbell.jpg
   - action: notify.mobile_app_elians_iphone
     data:
       message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
         Snapshot Captured!"
       data:
         image: /local/tmp/snapshot_doorbell.jpg
-  - action: script.send_doorbell_notification_to_lg_tv
-    metadata: {}
-    data: {}
   - action: script.send_doorbell_notification_to_bedroom_tv
     metadata: {}
     data: {}
