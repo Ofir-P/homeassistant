@@ -96,6 +96,10 @@ lovelace:
         url: "/hacsfiles/light-entity-card/light-entity-card.js",
         type: module,
       }, #Mobile Dashboard
+      {
+        url: "/hacsfiles/calendar-card-pro/calendar-card-pro.js",
+        type: module,
+      }, #Calendar Pro
       { url: "/hacsfiles/Bubble-Card/bubble-card.js", type: module }, #Bubble Card for Doorbell photo
       { url: "/local/marked.min.js?v=4.2.1", type: module }, #Tablet Dashboard
       { url: "/local/vanilla-tilt.min.js?v=1.7.3", type: module }, #Tablet Dashboard

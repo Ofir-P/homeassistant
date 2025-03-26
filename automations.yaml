@@ -1223,10 +1223,7 @@
       - delay:
           seconds: 1
       - choose:
-        - conditions:
-          - condition: state
-            entity_id: light.ofir_desk_led
-            state: 'off'
+        - conditions: []
           sequence:
           - action: light.turn_on
             target:
@@ -1236,6 +1233,11 @@
               - 86
               - 241
               - 255
+              brightness: 128
+          - action: notify.supervisor_telegram
+            data:
+              message: "\U0001F916 Ofir Desk LED color set to RGB(86, 241, 255) at
+                {{ now().strftime('%H:%M:%S') }}"
       - action: notify.supervisor_telegram
         data:
           message: "\U0001F916 Automation - Blink Office Light triggered at {{ now().strftime('%H:%M:%S')
@@ -1859,8 +1861,8 @@
   description: ''
   triggers:
   - entity_id:
-    - input_select.switcher_boiler_status
-    to: 'On'
+    - switch.boiler
+    to: 'on'
     for:
       hours: 1
       minutes: 20
@@ -1869,16 +1871,14 @@
     trigger: state
   conditions: []
   actions:
-  - metadata: {}
-    data: {}
+  - action: switch.turn_off
     target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
-    action: switch.turn_off
+      entity_id: switch.boiler
   - data:
       message: "\U0001F916 Automation - Turn Boiler off after 1 hour and 20 minutes
         \U0001F6BF"
     action: notify.supervisor_telegram
-  mode: single
+  mode: restart
 - id: '1712577097928'
   alias: Shower - Heater On Notification
   description: ''
@@ -4381,3 +4381,67 @@
         Snapshot Captured!"
   mode: single
   max_exceeded: silent
+- id: '1742881086168'
+  alias: Reload Vacuum Integration After Internet Restore
+  description: Reloads the vacuum integration with delay and notifies after internet
+    is restored if the vacuum is unavailable
+  triggers:
+  - entity_id: binary_sensor.8_8_8_8
+    from: 'off'
+    to: 'on'
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: vacuum.s8_pro_ultra
+    state: unavailable
+  actions:
+  - delay:
+      seconds: 30
+  - data:
+      entity_id: vacuum.s8_pro_ultra
+    action: homeassistant.reload_config_entry
+  - data:
+      message: "\U0001F916 Automation - \U0001F9F9 Vacuum integration reloaded after
+        internet outage\U0001F4E1"
+    action: notify.supervisor_telegram
+  mode: single
+- id: '1742909599888'
+  alias: Home Parking Spot Surveillance
+  description: ''
+  triggers:
+  - entity_id: device_tracker.ofir_honor_magic_5_pro
+    zone: zone.parkingcheckzone
+    event: leave
+    trigger: zone
+  conditions:
+  - condition: state
+    entity_id: input_select.switcher_boiler_status
+    state: 'On'
+  actions:
+  - data:
+      message: "\U0001F698"
+      data:
+        image: /api/image_proxy/image.parking_event_image?token={{ state_attr('image.parking_event_image',
+          'access_token') }}
+    action: notify.mobile_app_ofir_honor_magic_5_pro
+- id: '1742921574161'
+  alias: Handle Boiler Power Unavailable
+  description: ''
+  triggers:
+  - entity_id:
+    - sensor.boiler_power
+    to: unavailable
+    trigger: state
+  conditions: []
+  actions:
+  - data:
+      message: ⚠️ Boiler power sensor is unavailable! Checking switch state...
+    action: notify.home_assistant_group
+  - target:
+      entity_id: input_select.switcher_boiler_status
+    data:
+      option: "{% if states('switch.boiler') == 'on' %}\n  On\n{% elif states('switch.boiler')
+        == 'off' %}\n  Off\n{% else %}\n  {{ states('input_select.switcher_boiler_status')
+        }}  # Preserve last known state\n{% endif %}"
+    action: input_select.select_option
+  mode: single

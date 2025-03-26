@@ -10,28 +10,123 @@ browser_mod:
     content:
       type: vertical-stack
       cards:
-        - type: custom:mushroom-person-card
-          entity: person.ofir
-          icon_type: entity-picture
-          secondary_info: none
-          layout: vertical
-          fill_container: false
-          primary_info: name
+        # - type: custom:mushroom-person-card
+        #   entity: person.ofir
+        #   icon_type: entity-picture
+        #   secondary_info: none
+        #   layout: vertical
+        #   fill_container: false
+        #   primary_info: name
 
-        - initial_view: listWeek
-          type: calendar
+        # - initial_view: listWeek
+        #   type: calendar
+        #   entities:
+        #     - calendar.ofirx3_gmail_com
+        #     - calendar.real_madrid
+        #     - calendar.birthdays_2
+        #     - calendar.champions_league
+        # - type: custom:mushroom-person-card
+        #   entity: person.elian
+        #   layout: vertical
+        #   secondary_info: none
+        #   icon_type: entity-picture
+        #   primary_info: name
+        # - initial_view: listWeek
+        #   type: calendar
+        #   entities:
+        #     - calendar.calendar_2
+        - type: custom:calendar-card-pro
+          card_mod:
+            style: |
+              /* Make today's events stand out */
+              .day-table.today .event-title {
+                font-size: 16px !important;     /* Larger text */
+                font-weight: bold !important;   /* Bold text */
+                color: var(--accent-color) !important; /* Use theme accent color */
+              }
+
+              /* Add subtle left border pulse animation */
+              .day-table.today .event {
+                border-left-width: 4px !important;
+                transition: border-left-color 1s ease-in-out;
+                animation: todayPulse 3s infinite alternate;
+              }
+
+              @keyframes todayPulse {
+                from { border-left-color: var(--accent-color); }
+                to { border-left-color: var(--primary-color); }
+              }
+              ha-card {
+                border-radius: 0;
+                border: none;
+              }
+          # Core Settings
           entities:
-            - calendar.ofirx3_gmail_com
-            - calendar.real_madrid
-            - calendar.birthdays_2
-            - calendar.champions_league
-        - type: custom:mushroom-person-card
-          entity: person.elian
-          layout: vertical
-          secondary_info: none
-          icon_type: entity-picture
-          primary_info: name
-        - initial_view: listWeek
-          type: calendar
-          entities:
-            - calendar.calendar_2
+            - entity: calendar.calendar_2 # Elian
+              color: "#df2700"
+              label: "👩🏽"
+            - entity: calendar.ofirx3_gmail_com # Ofir
+              color: "#b3ffd9"
+              label: "👨"
+            - entity: calendar.real_madrid # Ofir
+              color: "00ffe0"
+              label: "⚽"
+              show_location: false
+            - entity: calendar.champions_league # Ofir
+              color: "00ffe0"
+              label: "⚽"
+              show_location: false
+            - entity: calendar.birthdays_2 # Ofir
+              color: "#FFD700"
+              label: "🎉"
+              show_time: false
+              show_location: false
+          days_to_show: 3
+          show_month: false
+          max_events_to_show: 12
+          language: en
+          show_single_allday_time: false
+
+          # Header
+          title: 📅 Peled Calendar
+          title_font_size: 26px
+          title_color: "#baf1ff"
+
+          # Layout and Spacing
+          background_color: "#eeeeee50"
+          row_spacing: 10px
+          additional_card_spacing: 0px
+          vertical_line_width: 5px
+          vertical_line_color: "#baf1ff"
+          horizontal_line_width: 2px
+          horizontal_line_color: "#baf1ff80"
+
+          # Date Column
+          date_vertical_alignment: middle
+          weekday_font_size: 14px
+          weekday_color: "#baf1ff"
+          day_font_size: 32px
+          day_color: "#baf1ff"
+
+          # Event Column
+          show_past_events: false
+          event_spacing: 6px
+          event_font_size: 14px
+          event_color: "#baf1ff"
+          time_24h: true
+          show_end_time: true
+          time_font_size: 12px
+          time_color: "#baf1ff"
+          time_icon_size: 14px
+          show_location: true
+          remove_location_country: true
+          location_font_size: 12px
+          location_color: "#baf1ff"
+          location_icon_size: 14px
+          event_background_opacity: 15
+          # Actions
+          tap_action:
+            action: expand
+
+          # Cache and Refresh
+          refresh_interval: 15 # Auto-refresh events every 15 minutes

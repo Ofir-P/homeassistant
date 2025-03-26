@@ -12,19 +12,44 @@ browser_mod:
         - square: false
           columns: 1
           type: grid
-          cards:        
+          cards:
             - type: horizontal-stack
               cards:
-                - chart_type: bar
-                  period: month
-                  type: statistics-graph
-                  entities:
-                    - sensor.last_iec_bill_electric_usage_to_date
-                  title: Energy IEC
-                  stat_types:
-                    - sum
-                    - state
-                    - change
+                - type: custom:apexcharts-card
+                  chart_type: line
+                  update_interval: 1h
+                  graph_span: 1month # Limit the chart to the last 30 days
+                  span:
+                    end: day # Align the end of the span to the current day
+                  header:
+                    show: true
+                    title: Energy Usage Overview
+                  series:
+                    - entity: sensor.last_iec_bill_electric_usage_to_date
+                      name: Monthly Usage (kWh)
+                      type: column
+                      group_by:
+                        func: sum
+                        duration: 1day # Aggregate data daily within the month
+                    - entity: sensor.last_iec_bill_electric_cost
+                      name: Bill Cost (ILS)
+                      type: column
+                      group_by:
+                        func: sum
+                        duration: 1day
+                    - entity: sensor.last_iec_bill_meter_reading
+                      name: Meter Reading
+                      type: line
+                      group_by:
+                        func: last
+                        duration: 1day
+                  apex_config:
+                    yaxis:
+                      - title:
+                          text: Usage (kWh) / Cost (ILS)
+                      - opposite: true
+                        title:
+                          text: Meter Reading
             - type: horizontal-stack
               cards:
                 - type: custom:mushroom-entity-card
