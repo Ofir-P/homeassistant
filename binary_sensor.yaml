@@ -18,9 +18,10 @@
         ] %}
         {% set open_count = sensors | select('eq', 'on') | list | count %}
         {% set closed_count = sensors | select('eq', 'off') | list | count %}
-        {% if open_count > 0 and closed_count == 0 %}
+        {% set total_responses = open_count + closed_count %}
+        {% if open_count > 0 %}
           true
-        {% elif closed_count >= 2 %}
+        {% elif closed_count > 0 and total_responses == closed_count %}
           false
         {% else %}
           {{ states('binary_sensor.main_door_combined') }}

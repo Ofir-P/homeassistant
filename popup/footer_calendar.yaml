@@ -10,31 +10,6 @@ browser_mod:
     content:
       type: vertical-stack
       cards:
-        # - type: custom:mushroom-person-card
-        #   entity: person.ofir
-        #   icon_type: entity-picture
-        #   secondary_info: none
-        #   layout: vertical
-        #   fill_container: false
-        #   primary_info: name
-
-        # - initial_view: listWeek
-        #   type: calendar
-        #   entities:
-        #     - calendar.ofirx3_gmail_com
-        #     - calendar.real_madrid
-        #     - calendar.birthdays_2
-        #     - calendar.champions_league
-        # - type: custom:mushroom-person-card
-        #   entity: person.elian
-        #   layout: vertical
-        #   secondary_info: none
-        #   icon_type: entity-picture
-        #   primary_info: name
-        # - initial_view: listWeek
-        #   type: calendar
-        #   entities:
-        #     - calendar.calendar_2
         - type: custom:calendar-card-pro
           card_mod:
             style: |
@@ -81,7 +56,7 @@ browser_mod:
               label: "🎉"
               show_time: false
               show_location: false
-          days_to_show: 3
+          days_to_show: 5
           show_month: false
           max_events_to_show: 12
           language: en

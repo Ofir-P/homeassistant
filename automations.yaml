@@ -3536,17 +3536,20 @@
       seconds: 0
     trigger: state
   conditions:
-  - condition: or
+  - condition: state
+    entity_id: binary_sensor.main_door_combined
+    state: 'off'
+  - condition: not
     conditions:
     - condition: state
-      entity_id: binary_sensor.main_door_sensor_contact
-      state: 'off'
-    - condition: state
-      entity_id: binary_sensor.front_door_door_2
-      state: 'off'
-    - condition: state
-      entity_id: binary_sensor.front_door_door
-      state: 'off'
+      entity_id: binary_sensor.main_door_combined
+      state:
+      - unknown
+      - unavailable
+      for:
+        hours: 0
+        minutes: 0
+        seconds: 0
   actions:
   - data:
       message: "\U0001F916 Automation - \U0001F6AA LOCKED MAIN DOOR AFTER DOOR WAS
@@ -3558,10 +3561,6 @@
       entity_id:
       - lock.front_door
     action: lock.lock
-  - data:
-      message: "\U0001F916 Automation - \U0001F6AA LOCKED MAIN DOOR AFTER DOOR WAS
-        UNLOCKED FOR 1 MINUTE!!!!"
-    action: notify.mobile_app_ofir_honor_magic_5_pro
   mode: single
 - id: '1723800933700'
   alias: Red Alert notifications to LG Living Room TV
@@ -4411,7 +4410,7 @@
   triggers:
   - entity_id: device_tracker.ofir_honor_magic_5_pro
     zone: zone.parkingcheckzone
-    event: leave
+    event: enter
     trigger: zone
   conditions:
   - condition: state
