@@ -4416,6 +4416,10 @@
   - condition: state
     entity_id: input_select.switcher_boiler_status
     state: 'On'
+    enabled: false
+  - condition: state
+    entity_id: sensor.ofir_honor_magic_5_pro_wifi_connection_2
+    state: AutoKit8D
   actions:
   - data:
       message: "\U0001F698"
@@ -4444,3 +4448,38 @@
         }}  # Preserve last known state\n{% endif %}"
     action: input_select.select_option
   mode: single
+- id: '1743065916702'
+  alias: Send Daily Schedule Notification
+  description: Sends today's schedule from the Peled Calendar to Telegram at 8:00
+    AM
+  triggers:
+  - at: 08:00:00
+    trigger: time
+  actions:
+  - response_variable: calendar_events
+    action: script.fetch_calendar_events
+    data: {}
+  - variables:
+      calendar_events: '{{ calendar_events }}'
+  - data:
+      title: "\U0001F4C5 Today's Schedule (Peled Calendar)"
+      message: "{% set calendar_entities = [\n  {'entity': 'calendar.calendar_2',
+        'label': '\U0001F469\U0001F3FD'},\n  {'entity': 'calendar.ofirx3_gmail_com',
+        'label': '\U0001F468'},\n  {'entity': 'calendar.real_madrid', 'label': '⚽'},\n
+        \ {'entity': 'calendar.champions_league', 'label': '⚽'},\n  {'entity': 'calendar.birthdays_2',
+        'label': '\U0001F389'}\n] %} {% set ns = namespace(events=[]) %} {% if calendar_events
+        is defined %}\n  {% for cal in calendar_entities %}\n    {% if cal.entity
+        in calendar_events %}\n      {% set entity_events = calendar_events[cal.entity].events
+        | default([]) %}\n      {% for event in entity_events %}\n        {% set ns.events
+        = ns.events + [{'event': event, 'label': cal.label}] %}\n      {% endfor %}\n
+        \   {% endif %}\n  {% endfor %}\n{% endif %} {% if ns.events is defined and
+        ns.events | length > 0 %}\n  {% set sorted_events = ns.events | sort(attribute='event.start')
+        %}\n  {% for item in sorted_events %}\n    {{ item.label }} {{ item.event.summary
+        }} {% if 'all_day' in item.event and item.event.all_day %}(All Day){% else
+        %}{% if item.event.start %}({{ item.event.start | as_timestamp | timestamp_custom('%H:%M',
+        true) }}{% if item.event.end %} - {{ item.event.end | as_timestamp | timestamp_custom('%H:%M',
+        true) }}{% endif %}){% else %}(Time unavailable){% endif %}{% endif %}{% if
+        'location' in item.event and item.event.location %} at {{ item.event.location
+        }}{% endif %}\n    {% if not loop.last %}\n    {% endif %}\n  {% endfor %}\n{%
+        else %}\n  No events scheduled for today or an error occurred.\n{% endif %}\n"
+    action: notify.home_assistant_group
