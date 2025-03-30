@@ -16,12 +16,14 @@
           states('binary_sensor.front_door_door'),
           states('binary_sensor.front_door_door_2')
         ] %}
-        {% set open_count = sensors | select('eq', 'on') | list | count %}
-        {% set closed_count = sensors | select('eq', 'off') | list | count %}
-        {% set total_responses = open_count + closed_count %}
-        {% if open_count > 0 %}
+        {% set valid_sensors = sensors | reject('in', ['unknown', 'unavailable']) | list %}
+        {% set open_count = valid_sensors | select('eq', 'on') | list | count %}
+        {% set closed_count = valid_sensors | select('eq', 'off') | list | count %}
+        {% if valid_sensors | length == 0 %}
+          {{ states('binary_sensor.main_door_combined') }}
+        {% elif open_count >= 2 %}
           true
-        {% elif closed_count > 0 and total_responses == closed_count %}
+        {% elif closed_count >= 2 %}
           false
         {% else %}
           {{ states('binary_sensor.main_door_combined') }}

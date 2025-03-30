@@ -524,60 +524,62 @@
     action: notify.supervisor_telegram
   mode: single
 - id: '1709821554566'
-  alias: Robot Vacuum 3 Days Without cleaning Actionable Notification
-  description: ''
+  alias: Robot Vacuum 3 Days Without Cleaning Actionable Notification
+  description: Notify if the vacuum hasn't run in 3 days and allow action
   triggers:
-  - at: '12:00:00'
-    trigger: time
+  - trigger: time_pattern
+    hours: /1
   conditions:
   - condition: template
-    value_template: '{{ now() - states(''sensor.s8_pro_ultra_last_clean_start'') |
-      as_datetime | as_local > timedelta(days=3) }}'
+    value_template: "{{ states('sensor.s8_pro_ultra_last_clean_start') != 'unknown'
+      and \n   states('sensor.s8_pro_ultra_last_clean_start') is not none and \n   (now()
+      - (states('sensor.s8_pro_ultra_last_clean_start') | as_datetime | as_local)
+      > timedelta(days=3)) }}"
   actions:
   - alias: Set up variables for the actions
     variables:
       action_keep: '{{ ''OPEN_'' ~ context.id }}'
       action_stop: '{{ ''CLOSE_'' ~ context.id }}'
   - alias: Ask to clean or not the House via Roborock S8 Vacuum
+    action: notify.mobile_app_ofir_honor_magic_5_pro
     data:
-      message: House is dirty for 3 days. Do you want him to clean now?
+      message: House is dirty for 3 days. Do you want to clean now?
       data:
         actions:
         - action: '{{ action_keep }}'
           title: Clean House
         - action: '{{ action_stop }}'
           title: Do not clean
-    action: notify.mobile_app_ofir_honor_magic_5_pro
   - alias: Wait for a response
     wait_for_trigger:
-    - event_type: mobile_app_notification_action
+    - trigger: event
+      event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_keep }}'
-      trigger: event
-    - event_type: mobile_app_notification_action
+    - trigger: event
+      event_type: mobile_app_notification_action
       event_data:
         action: '{{ action_stop }}'
-      trigger: event
   - alias: Perform the action
     choose:
     - conditions:
       - condition: template
         value_template: '{{ wait.trigger.event.data.action == action_stop }}'
       sequence:
-      - data:
+      - action: notify.mobile_app_ofir_honor_magic_5_pro
+        data:
           message: You chose to NOT clean the house, shame on you.
-        action: notify.mobile_app_ofir_honor_magic_5_pro
     - conditions:
       - condition: template
         value_template: '{{ wait.trigger.event.data.action == action_keep }}'
       sequence:
-      - target:
+      - action: vacuum.start
+        target:
           entity_id: vacuum.s8_pro_ultra
         data: {}
-        action: vacuum.start
-      - data:
+      - action: notify.mobile_app_ofir_honor_magic_5_pro
+        data:
           message: You chose to clean the house, well done!
-        action: notify.mobile_app_ofir_honor_magic_5_pro
   mode: single
 - id: '1710137624869'
   alias: Fish Fed Telegram Notification
@@ -668,17 +670,13 @@
       minutes: 0
       seconds: 0
   conditions:
-  - condition: not
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.main_door_combined
-      state:
-      - unknown
-      - unavailable
-      for:
-        hours: 0
-        minutes: 0
-        seconds: 0
+  - condition: state
+    entity_id: binary_sensor.main_door_combined
+    state: 'off'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
   actions:
   - action: notify.supervisor_telegram
     data:
@@ -1115,8 +1113,8 @@
 - id: '1710709437729'
   alias: Office - Blink Light Alert with Timeout
   description: Blinks wall light red when door opens (via multiple sensors) or purple
-    when Elian arrives,  with cooldown, state restoration, and turns off wall light
-    if on for 3 minutes.
+    when Elian arrives, and blinks desk LED with specific colors, with cooldown, state
+    restoration, and turns off wall light if on for 3 minutes.
   triggers:
   - trigger: state
     entity_id: binary_sensor.main_door_sensor_contact
@@ -1194,7 +1192,7 @@
           - light.office_wall_light
           - light.ofir_desk_led
       - repeat:
-          count: 5
+          count: 8
           sequence:
           - action: light.turn_on
             target:
@@ -1202,11 +1200,22 @@
             data:
               color_name: '{% if trigger.id in [''door_opened_main'', ''door_opened_front_2'',
                 ''door_opened_front''] %} red {% else %} purple {% endif %}'
+          - action: light.turn_on
+            target:
+              entity_id: light.ofir_desk_led
+            data:
+              rgb_color: "{% if trigger.id == 'door_opened_main' %}\n  [200, 25, 144]\n{%
+                else %}\n  [86, 241, 255]\n{% endif %}"
+              brightness: 128
           - delay:
               milliseconds: 350
           - action: light.turn_off
             target:
               entity_id: light.office_wall_light
+            data: {}
+          - action: light.turn_off
+            target:
+              entity_id: light.ofir_desk_led
             data: {}
           - delay:
               milliseconds: 350
@@ -1214,24 +1223,11 @@
         target:
           entity_id: scene.office_lights_snapshot
         data: {}
-      - delay:
-          seconds: 1
-      - choose:
-        - conditions: []
-          sequence:
-          - action: light.turn_on
-            target:
-              entity_id: light.ofir_desk_led
-            data:
-              rgb_color:
-              - 86
-              - 241
-              - 255
-              brightness: 128
-          - action: notify.supervisor_telegram
-            data:
-              message: "\U0001F916 Ofir Desk LED color set to RGB(86, 241, 255) at
-                {{ now().strftime('%H:%M:%S') }}"
+      - action: notify.supervisor_telegram
+        data:
+          message: "\U0001F916 Ofir Desk LED blinked with RGB({{ '200, 25, 144' if
+            trigger.id == 'door_opened_main' else '86, 241, 255' }}) at {{ now().strftime('%H:%M:%S')
+            }}"
       - action: notify.supervisor_telegram
         data:
           message: "\U0001F916 Automation - Blink Office Light triggered at {{ now().strftime('%H:%M:%S')
@@ -4370,8 +4366,7 @@
       authentication: digest
       url: http://localhost:8123{{ state_attr('image.doorbell_event_image', 'entity_picture')
         }}
-      caption: "\U0001F916 Automation - \U0001F6A8 Motion Detected at Doorbell! \U0001F4F8
-        Snapshot Captured!"
+      caption: "\U0001F916 Automation - \U0001F3C3 Motion Detected at Doorbell!"
   mode: single
   max_exceeded: silent
 - id: '1742881086168'
