@@ -156,10 +156,10 @@
       seconds: 0
     id: light_timeout
   conditions:
-  - condition: time
+  - alias: Nighttime window 00:00-06:10
+    condition: time
     after: 00:00:00
-    before: 06:20:00
-    alias: Nighttime window 00:00-06:20
+    before: 06:10:00
   - condition: template
     value_template: '{{ (now() - states.automation.red_alert.attributes.last_triggered).total_seconds()
       > 720 or states.automation.red_alert.attributes.last_triggered is none }}'
@@ -3590,9 +3590,11 @@
     attribute: country_active_alerts
     trigger: state
   actions:
+  - condition: '{{ ''country_active_alerts'' in trigger.to_state.attributes }}'
+  - condition: '{{ ''country_active_alerts'' in trigger.from_state.attributes }}'
   - variables:
-      current: '{{ state_attr(''binary_sensor.oref_alert'', ''country_active_alerts'')
-        | map(attribute=''data'') | list }}'
+      current: '{{ trigger.to_state.attributes.country_active_alerts | map(attribute=''data'')
+        | list }}'
       previous: '{{ trigger.from_state.attributes.country_active_alerts | map(attribute=''data'')
         | list }}'
       alerts: '{{ current | reject(''in'', previous) | unique | sort | list }}'
