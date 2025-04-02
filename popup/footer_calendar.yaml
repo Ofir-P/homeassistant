@@ -43,6 +43,9 @@ browser_mod:
             - entity: calendar.ofirx3_gmail_com # Ofir
               color: "#b3ffd9"
               label: "👨"
+            - entity: calendar.hapoel_tel_aviv # Ofir
+              color: "00ffe0"
+              label: "⚽"
             - entity: calendar.real_madrid # Ofir
               color: "00ffe0"
               label: "⚽"
