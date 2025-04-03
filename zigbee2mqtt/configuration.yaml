@@ -191,4 +191,6 @@ devices:
   '0x1cc089fffece77fc':
     friendly_name: Zigbee Dongle Router
     description: Wardrobe
+  '0xf082c0fffe89fdaf':
+    friendly_name: '0xf082c0fffe89fdaf'
 version: 4
