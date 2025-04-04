@@ -47,6 +47,8 @@ snapshot_aquarium_sub.jpg
 home-assistant_v2.db
 deps
 tts
+go2rtc.*
+go2rtc
 www/icons
 www/floorplans
 www/community

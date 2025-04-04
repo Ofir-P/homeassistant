@@ -654,11 +654,9 @@ send_doorbell_notification_to_bedroom_tv:
 send_red_alert_notification_to_bedroom_tv:
   sequence:
   - if:
-    - condition: not
-      conditions:
-      - condition: state
-        state: 'On'
-        entity_id: input_select.bedroom_tv_status
+    - condition: state
+      state: 'On'
+      entity_id: input_select.bedroom_tv_status
     then:
     - action: notify.bedroom_tv
       data:
