@@ -142,8 +142,6 @@ devices:
     friendly_name: Bedroom Door Sensor
   '0xa4c1384fd1d8ba32':
     friendly_name: Living Room Wireless Remote Switch
-  '0x00158d000a95e954':
-    friendly_name: Office Fish Feeder
   '0xa4c1388091f09665':
     friendly_name: Wardrobe Motion Sensor
     description: On top of the wardrobe door

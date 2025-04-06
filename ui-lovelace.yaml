@@ -472,27 +472,6 @@ views:
               - loader
               - icon_away
 
-          - type: custom:button-card
-            entity: binary_sensor.office_fish_feeder_contact
-            show_state: false
-            state_display: >
-              [[[
-                if (variables.state.toLowerCase() === 'on') {
-                    return 'On';
-                }
-                else if (variables.state.toLowerCase() === 'off') {
-                    return 'Off';
-                }                
-                else if (variables.state.toLowerCase() === 'unknown') {
-                    return variables.translate_unknown;
-                } 
-                else { return 'Error'; }
-              ]]]
-            tap_action: !include popup/aquarium.yaml
-            name: Aquarium
-            template:
-              - base
-              - icon_aquarium
       #################################################
       #                                               #
       #                    DOORBELL POPUP             #
