@@ -69,13 +69,13 @@
           {% set devices_name = devices_on | map(attribute='name') | join(', ') %}
 
           {% if (lights_on | length == 0) and (devices_on | length > 0) %}
-            {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} is on
+            {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} {{ 'is' if (devices_on | length == 1) else 'are' }} on
 
           {% elif (lights_on | length == 1) and (devices_on | length == 1) %}
-            {{ lights_name }} and {{devices_name }} is on
+            {{ lights_name }} and {{ devices_name }} are on
 
           {% elif (lights_on | length == 1) and (devices_on | length > 1) %}
-            {{ lights_name }}, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} is on
+            {{ lights_name }}, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} are on
 
           {% elif (lights_on | length > 1) and (devices_on | length == 1) %}
             {{ lights_on | length }} lamps and {{ devices_name }} are on
@@ -84,7 +84,7 @@
             {{ lights_on | length }} lamps, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} are on
 
           {% elif (lights_on | length == 1) and (devices_on | length == 0) %}
-            {{ lights_name }} are on
+            {{ lights_name }} is on
 
           {% elif (lights_on | length > 1) and (devices_on | length == 0) %}
             {{ lights_on | length }} lamps are on
@@ -115,7 +115,3 @@
             {% if loop.first %} {{'\u26A0\uFE0F'}} Battery {% else %}, {% endif %}
             {{ state_attr(sensor, 'friendly_name') }} {{ states(sensor) }}%
           {% endfor %}
-
-
-
-  
