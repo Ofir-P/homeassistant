@@ -33,6 +33,7 @@ home-assistant.env
 home-assistant.*
 known_devices.yaml
 entity_registry.yaml
+backups/
 automations.yaml
 backups/
 automations.yaml.bak
