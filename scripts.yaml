@@ -1,21 +1,3 @@
-camera_play:
-  alias: Play Video on Chromecast
-  sequence:
-  - service: camera.play_stream
-    data_template:
-      media_player: '{% if is_state("input_select.camera_display", "Bedroom display")
-        %} media_player.mibox4_2 {% elif is_state("input_select.camera_display", "Living
-        Room display") %} media_player.mecool_ofir {% elif is_state("input_select.camera_display",
-        "Office display") %} media_player.mibox4 {% endif %}
-
-        '
-      entity_id: '{% if is_state("input_select.camera_select", "Living Room") %} camera.living_room_sub
-        {% elif is_state("input_select.camera_select", "Dining Table") %} camera.dining_table_sub
-        {% endif %} '
-  - service: notify.supervisor_telegram
-    data:
-      message: "\U0001F4DC Script - Play Video on Chromecast script has been triggered!"
-  mode: single
 ir_learn_mode_on:
   alias: IR Learn Mode On
   sequence:

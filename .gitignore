@@ -34,6 +34,8 @@ home-assistant.*
 known_devices.yaml
 entity_registry.yaml
 automations.yaml
+backups/
+automations.yaml.bak
 secrets.yaml
 google_calendars.yaml
 SERVICE_ACCOUNT.json
