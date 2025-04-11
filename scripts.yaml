@@ -633,27 +633,6 @@ send_doorbell_notification_to_bedroom_tv:
   alias: Send Doorbell Notification to Bedroom TV
   description: Sends notification with doorbell snapshot to Bedroom TV when TV is
     on
-send_red_alert_notification_to_bedroom_tv:
-  sequence:
-  - if:
-    - condition: state
-      state: 'On'
-      entity_id: input_select.bedroom_tv_status
-    then:
-    - action: notify.bedroom_tv
-      data:
-        data:
-          duration: 20
-          position: top-left
-          fontsize: medium
-          transparency: 50%
-          timeout: 20
-          color: cyan
-          interrupt: 0
-        title: "\U0001F680 Notification"
-        message: 'אזעקות ב: {{ alerts | join('' | '') }}'
-  alias: Send Red Alert Notification to Bedroom TV
-  description: ''
 fetch_calendar_events:
   alias: Fetch Calendar Events for Today
   sequence:
