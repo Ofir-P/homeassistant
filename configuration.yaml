@@ -49,7 +49,6 @@ lovelace:
   mode: yaml
   resources: [
       { url: "/hacsfiles/apexcharts-card/apexcharts-card.js", type: module },
-      { url: "/hacsfiles/bar-card/bar-card.js", type: module },
       { url: "/hacsfiles/button-card/button-card.js", type: module },
       { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
       { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
@@ -64,17 +63,12 @@ lovelace:
         type: module,
       }, # Mobile Cards
       { url: "/hacsfiles/lovelace-layout-card/layout-card.js", type: module }, # Grid Layout - Tablet Dashboard
-      {
-        url: "/hacsfiles/lovelace-more-info-card/more-info-card.js",
-        type: module,
-      },
       { url: "/hacsfiles/lovelace-mushroom/mushroom.js", type: module },
       {
         url: "/hacsfiles/lovelace-slider-entity-row/slider-entity-row.js",
         type: module,
       },
       { url: "/hacsfiles/swipe-card/swipe-card.js", type: module },
-      { url: "/hacsfiles/tabbed-card/tabbed-card.js", type: module },
       {
         url: "/hacsfiles/lovelace-multiple-entity-row/multiple-entity-row.js",
         type: module,
