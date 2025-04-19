@@ -125,19 +125,30 @@ class BaseFlowHandler:
 
     async def get_cloud(self, user_input):
         if not self.cloud:
-            self.cloud = await MiotCloud.from_token(self.hass, user_input, login=False)
+            login_data = {
+                **user_input,
+                'auto_verify': True,
+            }
+            self.cloud = await MiotCloud.from_token(self.hass, login_data, login=False)
             self.cloud.login_times = 0
-            if not await self.cloud.async_check_auth(False):
-                raise MiCloudException('Login failed')
-        if captcha := user_input.get('captcha'):
-            await self.cloud.async_login(captcha=captcha)
+        identity_session = self.context.get('identity_session')
+        auto_verify = not identity_session
+        login_data = {}
+        if verify_ticket := user_input.pop('verify_ticket', None):
+            if identity_session:
+                login_data['verify_ticket'] = verify_ticket
+        if captcha := user_input.pop('captcha', None):
+            login_data['captcha'] = captcha
+        if login_data:
+            await self.cloud.async_login(auto_verify=auto_verify, login_data=login_data)
+        elif not await self.cloud.async_check_auth(notify=False, auto_verify=auto_verify):
+            raise MiCloudException('Login failed')
         return self.cloud
 
     async def check_xiaomi_account(self, user_input, errors, renew_devices=False):
         dvs = []
         mic = None
         try:
-            self.cloud = None
             mic = await self.get_cloud(user_input)
             dvs = await mic.async_get_devices(renew=renew_devices) or []
             if renew_devices:
@@ -149,7 +160,9 @@ class BaseFlowHandler:
             if not mic:
                 mic = self.cloud
             if isinstance(exc, MiCloudAccessDenied) and mic:
-                if url := mic.attrs.pop('captchaImg', None):
+                if identity_session := mic.attrs.get('identity_session'):
+                    self.context['identity_session'] = identity_session
+                elif url := mic.attrs.pop('captchaImg', None):
                     err = f'Captcha:\n![captcha](data:image/jpeg;base64,{url})'
                     self.context['captchaIck'] = mic.attrs.get('captchaIck')
             if isinstance(exc, requests.exceptions.ConnectionError):
@@ -332,9 +345,13 @@ class XiaomiMiotFlowHandler(config_entries.ConfigFlow, BaseFlowHandler, domain=D
                 self.filter_models = user_input.get('filter_models')
                 return await self.async_step_cloud_filter(user_input)
         schema = {}
+        if self.context.get('identity_session'):
+            schema.update({
+                vol.Optional('verify_ticket', default=''): str,
+            })
         if self.context.get('captchaIck'):
             schema.update({
-                vol.Required('captcha', default=''): str,
+                vol.Optional('captcha', default=''): str,
             })
         schema.update({
             vol.Required(CONF_USERNAME, default=user_input.get(CONF_USERNAME, vol.UNDEFINED)): str,
@@ -681,9 +698,13 @@ class OptionsFlowHandler(config_entries.OptionsFlow, BaseFlowHandler):
         else:
             user_input = prev_input
         schema = {}
+        if self.context.get('identity_session'):
+            schema.update({
+                vol.Optional('verify_ticket', default=''): str,
+            })
         if self.context.get('captchaIck'):
             schema.update({
-                vol.Required('captcha', default=''): str,
+                vol.Optional('captcha', default=''): str,
             })
         if user_input.get('trans_options') == None:
             user_input['trans_options'] = False
@@ -726,6 +747,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow, BaseFlowHandler):
                 **user_input,
             })
             self.config_data.pop('filtering', None)
+            self.config_data.pop('verify_ticket', None)
             if self.filter_models:
                 self.config_data.pop('filter_did', None)
                 self.config_data.pop('did_list', None)
