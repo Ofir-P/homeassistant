@@ -39,12 +39,43 @@ browser_mod:
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
+              entity: light.shower_l1
+            - type: custom:mushroom-light-card
+              entity: light.wardrobe
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
               entity: light.office
             - type: custom:mushroom-light-card
               entity: light.office_bathroom
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
-              entity: light.shower_l1
+              entity: light.ofir_desk_led
+              show_color_temp_control: true
+              show_brightness_control: false
+              use_light_color: true
+              show_color_control: true
+              collapsible_controls: true
+            - type: custom:mushroom-entity-card
+              entity: input_select.office_corner_led_light_status
+              name: Corner LED
+              fill_container: true
+              tap_action:
+                action: perform-action
+                perform_action: script.office_corner_led_toggle
+                target: {}
+        - type: horizontal-stack
+          cards:
             - type: custom:mushroom-light-card
-              entity: light.wardrobe
+              entity: light.yeelink_color5_6079_light
+              show_color_temp_control: false
+              show_brightness_control: false
+              use_light_color: false
+              show_color_control: false
+              collapsible_controls: true
+            - type: custom:mushroom-entity-card
+              entity: switch.kitchen_led_strip
+              fill_container: true
+              tap_action:
+                action: toggle
