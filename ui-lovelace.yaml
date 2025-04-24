@@ -529,7 +529,6 @@ views:
           - type: custom:button-card
             name: >
               <ha-icon icon="mdi:cctv"></ha-icon> Cams
-            double_tap_action: !include popup/cast_cams.yaml
             tap_action: !include popup/footer_cams.yaml
             template: footer
           - type: custom:button-card

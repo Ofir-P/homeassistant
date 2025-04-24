@@ -230,8 +230,8 @@ browser_mod:
               title: false
               type: glance
             - content: >
-                # <img width="30" height="30" src='/local/Logos/ombi.png'
-                style='vertical-align:middle' /> Ombi Requests
+                # <img width="30" height="30" src='/local/Logos/overseerr.png'
+                style='vertical-align:middle' /> Overseerr Requests
               style:
                 .: |
                   ha-card {
@@ -248,12 +248,15 @@ browser_mod:
                     }
               type: markdown
             - entities:
-                - entity: sensor.ombi_movie_requests
+                - entity: sensor.overseerr_movie_requests
                   name: Movie Requests
-                - entity: sensor.ombi_tv_show_requests
+                - entity: sensor.overseerr_tv_requests
                   name: TV Requests
-                - entity: sensor.ombi_pending_requests
+                - entity: sensor.overseerr_pending_requests
                   name: Pending Requests
+                - entity: sensor.overseerr_total_requests
+                  name: Total Requests
+
               style: |
                 ha-card {
                   text-align: center;

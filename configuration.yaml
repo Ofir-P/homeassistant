@@ -120,13 +120,6 @@ shell_command:
   pushupdates_to_github: /bin/bash pushupdates.sh
   legacy_action_sensor: true
 
-# [=========================]Ombi[=========================]
-ombi:
-  host: "10.0.0.153"
-  username: !secret ombi_user
-  api_key: !secret ombi_api
-  port: 3579
-# [=========================]Ombi[=========================]
 # [=========================]Home Zone[=========================]
 zone:
   # This will override the default home zone
