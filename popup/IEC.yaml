@@ -25,19 +25,19 @@ browser_mod:
                     show: true
                     title: Energy Usage Overview
                   series:
-                    - entity: sensor.last_iec_bill_electric_usage_to_date
+                    - entity: sensor.iec_contract_348194460_last_bill_electric_usage_to_date
                       name: Monthly Usage (kWh)
                       type: column
                       group_by:
                         func: sum
                         duration: 1day # Aggregate data daily within the month
-                    - entity: sensor.last_iec_bill_electric_cost
+                    - entity: sensor.iec_contract_348194460_last_bill_electric_cost
                       name: Bill Cost (ILS)
                       type: column
                       group_by:
                         func: sum
                         duration: 1day
-                    - entity: sensor.last_iec_bill_meter_reading
+                    - entity: sensor.iec_contract_348194460_last_bill_meter_reading
                       name: Meter Reading
                       type: line
                       group_by:
@@ -56,21 +56,21 @@ browser_mod:
                   entity: sensor.iec_kwh_tariff
                   name: תעריף
                 - type: custom:mushroom-entity-card
-                  entity: sensor.last_iec_bill_length_in_days
+                  entity: sensor.iec_contract_348194460_last_bill_length_in_days
                   name: תשלום אחרון
             - type: horizontal-stack
               cards:
                 - type: custom:mushroom-entity-card
-                  entity: sensor.last_iec_bill_electric_usage_to_date
+                  entity: sensor.iec_contract_348194460_last_bill_electric_usage_to_date
                   name: צריכה חודשית
                 - type: custom:mushroom-entity-card
-                  entity: sensor.last_iec_bill_meter_reading
+                  entity: sensor.iec_contract_348194460_last_bill_meter_reading
                   name: ק. מונה אחרונה
             - type: horizontal-stack
               cards:
                 - type: custom:mushroom-entity-card
-                  entity: sensor.last_iec_bill_electric_cost
+                  entity: sensor.iec_contract_348194460_last_bill_amount_to_pay
                   name: סכום לתשלום
                 - type: custom:mushroom-entity-card
-                  entity: sensor.last_iec_bill_date
+                  entity: sensor.iec_contract_348194460_last_bill_payment_date
                   name: תאריך תשלום

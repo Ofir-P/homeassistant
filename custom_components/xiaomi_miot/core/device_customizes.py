@@ -814,7 +814,7 @@ DEVICE_CUSTOMIZES = {
     },
     'hyd.airer.lyjpro': {
         **CHUNK_1,
-        'number_properties': 'target_position',
+        'number_properties': 'target_position,drying_time',
         'append_converters': [
             {
                 'class': MiotCoverConv,
@@ -852,6 +852,7 @@ DEVICE_CUSTOMIZES = {
         'target_position_props': 'set_position',
         'cover_position_mapping': None,
     },
+    'hyd.airer.znlyj2': CHUNK_1,
     'hyd.airer.znlyj5': {
         'cover_position_mapping': {0: 50, 1: 0, 2: 100},
     },
@@ -1069,17 +1070,22 @@ DEVICE_CUSTOMIZES = {
     },
     'lumi.acpartner.mcn04': {
         'auto_cloud': True,
-        'chunk_properties': 8,
+        'interval_seconds': 120,
         'sensor_properties': 'electric_power',
-        'switch_properties': 'on,quick_cool_enable,indicator_light',
+        'switch_properties': 'on,vertical_swing,quick_cool_enable,indicator_light',
         'select_properties': 'fan_level,ac_mode',
         'miio_cloud_props': [],
         'stat_power_cost_type': 'stat_day_v3',
         'stat_power_cost_key': '7.1,7.3',
         'sensor_attributes': 'power_cost_today,power_cost_month,power_cost_today_2,power_cost_month_2',
         'configuration_entities': 'ac_mode,indicator_light',
+        'exclude_miot_services': 'device_protect,device_info',
+        'exclude_miot_properties': 'fault,set_ele_info,sleep_cfg',
         'chunk_coordinators': [
-            {'interval': 10, 'props': 'on,mode,target_temperature,fan_level,electric_power'},
+            {'interval': 11, 'props': 'on,mode,target_temperature'},
+            {'interval': 16, 'props': 'fan_level,vertical_swing'},
+            {'interval': 26, 'props': 'electric_power'},
+            {'interval': 500, 'props': 'brand_id,remote_id,ac_ctrl_range,ac_state'},
         ],
     },
     'lumi.acpartner.mcn04:power_consumption': ENERGY_KWH,
@@ -1756,8 +1762,17 @@ DEVICE_CUSTOMIZES = {
     },
     'xiaomi.airc.*:power_consumption': ENERGY_KWH,
     'xiaomi.aircondition.m9': {
-        'exclude_miot_services': 'machine_state,flag_bit,single_smart_scene',
-        'exclude_miot_properties': 'enhance.timer,humidity_range',
+        'interval_seconds': 90,
+        'switch_properties': 'air_conditioner.on,un_straight_blowing,favorite_on',
+        'exclude_miot_services': 'electricity,maintenance,enhance,machine_state,flag_bit,single_smart_scene,system_parm,'
+                                 'mosquito_repellent,favorite_type_data,air_conditioner_dev_mode,product_appearance',
+        'exclude_miot_properties': 'fault,enhance.timer,humidity_range',
+        'chunk_coordinators': [
+            {'interval': 16, 'props': 'air_conditioner.on,mode,target_temperature,target_humidity'},
+            {'interval': 26, 'props': 'fan_level,vertical_swing,vertical_angle'},
+            {'interval': 56, 'props': 'eco,heater,dryer,sleep_mode,temperature,relative_humidity'},
+            {'interval': 299, 'props': 'filter_life_level'},
+        ],
     },
     'xiaomi.aircondition.ma1': {
         'miot_type': 'urn:miot-spec-v2:device:air-conditioner:0000A004:xiaomi-ma1:4',
@@ -1807,6 +1822,10 @@ DEVICE_CUSTOMIZES = {
         'brightness_for_on': 0,
         'brightness_for_off': 2,
         'exclude_miot_services': 'rfid',
+    },
+    'xiaomi.airp.va2b': {
+        'switch_properties': 'on,anion',
+        'exclude_miot_services': 'custom_service,rfid',
     },
     'xiaomi.airp.va4': {
         'sensor_properties': 'relative_humidity,air_quality,pm2_5_density,temperature,hcho_density,filter_life_level',
@@ -2593,7 +2612,9 @@ DEVICE_CUSTOMIZES = {
         'switch_properties': 'dryer,uv',
         'select_properties': 'drying_level',
         'chunk_coordinators': [
-            {'interval': 15, 'props': 'status,current_position,target_position,dryer,drying_level'},
+            {'interval': 16, 'props': 'status,current_position,target_position'},
+            {'interval': 21, 'props': 'light.on'},
+            {'interval': 26, 'props': 'dryer,drying_level,uv'},
         ],
     },
     '*.airfresh.*': {
