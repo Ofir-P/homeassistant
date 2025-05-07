@@ -36,6 +36,23 @@ CATEGORY_METADATA = {
 
 DEFAULT_CATEGORY = CATEGORY_METADATA[4]
 UPDATE_CATEGORY = 13
+FIRST_DRILL_CATEGORY = 15
+
+# Reverse engineered mapping from real-time to history categories.
+# Look for '"aircraftIntrusion"' in the code of https://www.oref.org.il/
+# The first category-to-icon mapping is for real-time categories,
+# and the following mapping is for history categories.
+REAL_TIME_TO_HISTORY_CATEGORY = {
+    1: 1,  # missile
+    2: 4,  # info
+    3: 7,  # earthquake
+    4: 9,  # radiological
+    5: 11,  # tsunami
+    6: 2,  # aircraftIntrusion
+    7: 12,  # hazardousMaterials
+    10: 13,  # info
+    13: 10,  # terroristInfiltration
+}
 
 
 def category_metadata(category: int) -> tuple[str, str, bool]:
@@ -55,9 +72,14 @@ def category_to_emoji(category: int) -> str:
 
 def category_is_alert(category: int) -> bool:
     """Return the alert category."""
-    return category_metadata(category)[2]
+    return 0 < category < FIRST_DRILL_CATEGORY and category_metadata(category)[2]
 
 
 def category_is_update(category: int) -> bool:
     """Check if category is update."""
     return category == UPDATE_CATEGORY
+
+
+def real_time_to_history_category(category: int) -> int | None:
+    """Return the history category for the real-time category."""
+    return REAL_TIME_TO_HISTORY_CATEGORY.get(category)
