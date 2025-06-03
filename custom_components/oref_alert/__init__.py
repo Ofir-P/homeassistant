@@ -44,6 +44,7 @@ from .coordinator import OrefAlertDataUpdateCoordinator
 from .metadata.areas import AREAS
 
 AREAS_CHECKER: Final = "areas_checker"
+UNLOAD_TEMPLATE_EXTENSIONS: Final = "unload_template_extensions"
 PLATFORMS = (Platform.BINARY_SENSOR, Platform.SENSOR, Platform.GEO_LOCATION)
 
 ADD_SENSOR_SCHEMA = vol.Schema(
@@ -73,7 +74,9 @@ REMOVE_SENSOR_SCHEMA = vol.Schema(
 
 SYNTHETIC_ALERT_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_AREA): vol.All(cv.string, vol.In(AREAS)),
+        vol.Required(CONF_AREA): vol.All(
+            cv.ensure_list, [vol.All(cv.string, vol.In(AREAS))]
+        ),
         vol.Required(CONF_DURATION, default=10): cv.positive_int,
         vol.Required(ATTR_CATEGORY, default=1): cv.positive_int,
         vol.Optional(ATTR_TITLE): cv.string,
@@ -111,12 +114,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 },
             )
 
-    coordinator = OrefAlertDataUpdateCoordinator(hass, entry)
-    await coordinator.async_config_entry_first_refresh()
-    hass.data.setdefault(DOMAIN, {})[entry.entry_id] = {
-        DATA_COORDINATOR: coordinator,
+    entry.runtime_data = {
+        DATA_COORDINATOR: OrefAlertDataUpdateCoordinator(hass, entry),
         AREAS_CHECKER: AreasChecker(hass),
+        UNLOAD_TEMPLATE_EXTENSIONS: await inject_template_extensions(hass),
     }
+
+    await entry.runtime_data[DATA_COORDINATOR].async_config_entry_first_refresh()
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     async def add_sensor(service_call: ServiceCall) -> None:
@@ -179,7 +184,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def synthetic_alert(service_call: ServiceCall) -> None:
         """Add a synthetic alert for testing purposes."""
-        coordinator.add_synthetic_alert(service_call.data)
+        entry.runtime_data[DATA_COORDINATOR].add_synthetic_alert(service_call.data)
 
     async_register_admin_service(
         hass,
@@ -188,8 +193,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         synthetic_alert,
         SYNTHETIC_ALERT_SCHEMA,
     )
-
-    await inject_template_extensions(hass)
 
     return True
 
@@ -201,10 +204,11 @@ async def config_entry_update_listener(hass: HomeAssistant, entry: ConfigEntry) 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    if DOMAIN not in hass.data:
+    if not getattr(entry, "runtime_data", None):
         return True
-    if (data := hass.data[DOMAIN].pop(entry.entry_id)) is not None:
-        data[AREAS_CHECKER].stop()
+    entry.runtime_data[AREAS_CHECKER].stop()
+    entry.runtime_data[UNLOAD_TEMPLATE_EXTENSIONS]()
+    entry.runtime_data = None
     for service in [ADD_SENSOR_SERVICE, REMOVE_SENSOR_SERVICE, SYNTHETIC_ALERT_SERVICE]:
         hass.services.async_remove(DOMAIN, service)
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
