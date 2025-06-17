@@ -1,14 +1,13 @@
 """DataUpdateCoordinator for oref_alert integration."""
 
 import asyncio
+import json
 from datetime import timedelta
 from functools import cmp_to_key
 from http import HTTPStatus
-from json import JSONDecodeError
 from typing import Any
 
 import homeassistant.util.dt as dt_util
-from aiohttp.client_exceptions import ContentTypeError
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -119,7 +118,10 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
     async def _async_update_data(self) -> OrefAlertCoordinatorData:
         """Request the data from Oref servers.."""
         (current, current_modified), (history, history_modified) = await asyncio.gather(
-            *[self._async_fetch_url(url) for url in (OREF_ALERTS_URL, OREF_HISTORY_URL)]
+            *[
+                self._async_fetch_url(url, strict)
+                for url, strict in ((OREF_ALERTS_URL, False), (OREF_HISTORY_URL, True))
+            ]
         )
         if (
             current_modified
@@ -142,7 +144,7 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
             alerts = self.data.items
         return OrefAlertCoordinatorData(alerts, self._active_duration)
 
-    async def _async_fetch_url(self, url: str) -> tuple[Any, bool]:
+    async def _async_fetch_url(self, url: str, strict: bool) -> tuple[Any, bool]:  # noqa: FBT001
         """Fetch data from Oref servers."""
         exc_info = Exception()
         cached_content, last_modified = self._http_cache.get(url, (None, None))
@@ -156,11 +158,9 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
                 async with self._http_client.get(url, headers=headers) as response:
                     if response.status == HTTPStatus.NOT_MODIFIED:
                         return cached_content, False
-                    try:
-                        content = await response.json(encoding="utf-8-sig")
-                    except (JSONDecodeError, ContentTypeError):
-                        # Empty file is a valid return but not a valid JSON file
-                        content = None
+                    raw = await response.read()
+                    text = raw.decode("utf-8-sig").strip()
+                    content = None if not strict and not text else json.loads(text)
                     self._http_cache[url] = (
                         content,
                         response.headers.get("Last-Modified"),
@@ -168,10 +168,15 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
                     return content, not (content is None and cached_content is None)
             except Exception as ex:  # noqa: BLE001
                 exc_info = ex
-        LOGGER.error("Failed to fetch '%s'", url, exc_info=exc_info)
         if url in self._http_cache:
             # Return the cached content if available to prevent entities unavailability.
+            LOGGER.info(
+                "Failed to fetch '%s'. Using the cached content.",
+                url,
+                exc_info=exc_info,
+            )
             return cached_content, False
+        LOGGER.error("Failed to fetch '%s'", url)
         raise exc_info
 
     def _current_to_history_format(
@@ -256,6 +261,10 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
             if expired >= now
         ]
         return [alert for _, alert in self._synthetic_alerts]
+
+    def is_synthetic_alert(self, alert: dict[str, Any]) -> bool:
+        """Check if the alert is a synthetic alert."""
+        return any(alert == entry[1] for entry in self._synthetic_alerts)
 
     def _fix_areas_spelling(self, alerts: list[Any]) -> list[Any]:
         """Fix spelling errors in area names."""
