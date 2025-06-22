@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import itertools
 from typing import TYPE_CHECKING, Final
 
@@ -19,11 +20,20 @@ from custom_components.oref_alert.update_events import OrefAlertUpdateEventManag
 
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
-    from homeassistant.core import HomeAssistant, ServiceCall
+    from homeassistant.core import (
+        HomeAssistant,
+        ServiceCall,
+        ServiceResponse,
+    )
+
+from homeassistant.core import (
+    SupportsResponse,
+)
 
 from .config_flow import AREAS_CONFIG
 from .const import (
-    ADD_SENSOR_SERVICE,
+    ADD_AREAS,
+    ADD_SENSOR_ACTION,
     ATTR_CATEGORY,
     ATTR_TITLE,
     CONF_ALERT_ACTIVE_DURATION,
@@ -34,9 +44,11 @@ from .const import (
     CONF_SENSORS,
     DATA_COORDINATOR,
     DOMAIN,
+    EDIT_SENSOR_ACTION,
     END_TIME_ID_SUFFIX,
-    REMOVE_SENSOR_SERVICE,
-    SYNTHETIC_ALERT_SERVICE,
+    REMOVE_AREAS,
+    REMOVE_SENSOR_ACTION,
+    SYNTHETIC_ALERT_ACTION,
     TIME_TO_SHELTER_ID_SUFFIX,
     TITLE,
 )
@@ -50,24 +62,35 @@ PLATFORMS = (Platform.BINARY_SENSOR, Platform.SENSOR, Platform.GEO_LOCATION)
 ADD_SENSOR_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_NAME): selector.TextSelector(),
-        vol.Required(CONF_AREAS, default=[]): selector.SelectSelector(AREAS_CONFIG),  # type: ignore[reportArgumentType]
+        vol.Required(CONF_AREAS, default=[]): selector.SelectSelector(AREAS_CONFIG),
     },
     extra=vol.ALLOW_EXTRA,
 )
 
+EXISTING_SENSOR_SELECTOR = selector.EntitySelector(
+    selector.EntitySelectorConfig(
+        exclude_entities=[
+            "binary_sensor.oref_alert",
+            "binary_sensor.oref_alert_all_areas",
+        ],
+        filter=selector.EntityFilterSelectorConfig(
+            integration="oref_alert", domain="binary_sensor"
+        ),
+    )
+)
+
 REMOVE_SENSOR_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_ENTITY_ID): selector.EntitySelector(
-            selector.EntitySelectorConfig(
-                exclude_entities=[
-                    "binary_sensor.oref_alert",
-                    "binary_sensor.oref_alert_all_areas",
-                ],
-                filter=selector.EntityFilterSelectorConfig(
-                    integration="oref_alert", domain="binary_sensor"
-                ),
-            )
-        ),
+        vol.Required(CONF_ENTITY_ID): EXISTING_SENSOR_SELECTOR,
+    },
+    extra=vol.ALLOW_EXTRA,
+)
+
+EDIT_SENSOR_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_ENTITY_ID): EXISTING_SENSOR_SELECTOR,
+        vol.Required(ADD_AREAS, default=[]): selector.SelectSelector(AREAS_CONFIG),
+        vol.Required(REMOVE_AREAS, default=[]): selector.SelectSelector(AREAS_CONFIG),
     },
     extra=vol.ALLOW_EXTRA,
 )
@@ -85,7 +108,7 @@ SYNTHETIC_ALERT_SCHEMA = vol.Schema(
 )
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:  # noqa: PLR0915
     """Set up entity from a config entry."""
     entry.async_on_unload(entry.add_update_listener(config_entry_update_listener))
 
@@ -142,7 +165,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async_register_admin_service(
         hass,
         DOMAIN,
-        ADD_SENSOR_SERVICE,
+        ADD_SENSOR_ACTION,
         add_sensor,
         ADD_SENSOR_SCHEMA,
     )
@@ -172,9 +195,45 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async_register_admin_service(
         hass,
         DOMAIN,
-        REMOVE_SENSOR_SERVICE,
+        REMOVE_SENSOR_ACTION,
         remove_sensor,
         REMOVE_SENSOR_SCHEMA,
+    )
+
+    async def edit_sensor(service_call: ServiceCall) -> ServiceResponse | None:
+        """Edit sensor."""
+        entity_reg = entity_registry.async_get(hass)
+        entity_id = service_call.data[CONF_ENTITY_ID]
+        entity_name = getattr(entity_reg.async_get(entity_id), "original_name", "")
+        config_entry = hass.config_entries.async_get_entry(entry.entry_id)
+        if config_entry is not None:
+            sensors = {**config_entry.options.get(CONF_SENSORS, {})}
+            if areas := sensors.get(entity_name):
+                sensors[entity_name] = [
+                    area
+                    for area in (areas + service_call.data[ADD_AREAS])
+                    if area not in service_call.data[REMOVE_AREAS]
+                ]
+                hass.config_entries.async_update_entry(
+                    config_entry,
+                    options={**config_entry.options, CONF_SENSORS: sensors},
+                )
+                if service_call.return_response:
+                    return {CONF_AREAS: sensors[entity_name]}
+        return None
+
+    async_register_admin_service(
+        hass,
+        DOMAIN,
+        EDIT_SENSOR_ACTION,
+        edit_sensor,
+        EDIT_SENSOR_SCHEMA,
+        **(
+            {"supports_response": SupportsResponse.OPTIONAL}
+            if "supports_response"
+            in inspect.signature(async_register_admin_service).parameters
+            else {}
+        ),
     )
 
     async def synthetic_alert(service_call: ServiceCall) -> None:
@@ -184,7 +243,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async_register_admin_service(
         hass,
         DOMAIN,
-        SYNTHETIC_ALERT_SERVICE,
+        SYNTHETIC_ALERT_ACTION,
         synthetic_alert,
         SYNTHETIC_ALERT_SCHEMA,
     )
@@ -204,6 +263,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     entry.runtime_data[AREAS_CHECKER].stop()
     entry.runtime_data[UNLOAD_TEMPLATE_EXTENSIONS]()
     entry.runtime_data = None
-    for service in [ADD_SENSOR_SERVICE, REMOVE_SENSOR_SERVICE, SYNTHETIC_ALERT_SERVICE]:
+    for service in [
+        ADD_SENSOR_ACTION,
+        REMOVE_SENSOR_ACTION,
+        EDIT_SENSOR_ACTION,
+        SYNTHETIC_ALERT_ACTION,
+    ]:
         hass.services.async_remove(DOMAIN, service)
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
