@@ -11,13 +11,6 @@ logbook:
   exclude:
     entities:
       - sensor.time
-# [=========================]Alexa[=========================]
-alexa_media:
-  accounts:
-    - email: !secret amazon_user
-      password: !secret amazon_password
-      url: amazon.com
-# [=========================]Alexa[=========================]
 # [=========================]trakt.tv[=========================]
 trakt_tv:
   language: en
@@ -151,4 +144,9 @@ notify:
       source: HA
       phone: !secret whatsapp_PhoneNum
       apikey: !secret whatsapp_ApiKey
+  - platform: group
+    name: mobile_app_group_ofir_and_elian
+    services:
+      - service: mobile_app_ofir_honor_magic_5_pro
+      - service: mobile_app_elians_iphone
 # [=========================]Telegram[=========================]
