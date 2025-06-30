@@ -142,9 +142,6 @@ devices:
     friendly_name: Bedroom Door Sensor
   '0xa4c1384fd1d8ba32':
     friendly_name: Living Room Wireless Remote Switch
-  '0xa4c1388091f09665':
-    friendly_name: Wardrobe Motion Sensor
-    description: On top of the wardrobe door
   '0x00158d0006c8f369':
     friendly_name: Dining Table Sticker Switch button
   '0x00158d0009cf58c2':
@@ -191,4 +188,6 @@ devices:
     friendly_name: '0xf082c0fffe89fdaf'
   '0xa4c138b90334a6f4':
     friendly_name: Shower Motion Sensor
+  '0xa4c1388091f09665':
+    friendly_name: Wardrobe Motion Sensor
 version: 4
