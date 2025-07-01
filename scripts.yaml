@@ -688,3 +688,20 @@ toggle_dining_table_light:
   mode: single
   icon: hue:ceiling-round
   description: ''
+#############################################
+notify_elian_arrived_home:
+  mode: single            # if called again during delay → skipped
+  sequence:
+    - action: notify.supervisor_telegram
+      data:
+        message: 🤖 Automation – 👩🏽 Elian has arrived home 🏠
+    - delay: "00:20:00"   # 20-minute lock-out
+#############################################
+notify_elian_left_home:
+  mode: single
+  sequence:
+    - action: notify.supervisor_telegram
+      data:
+        message: 🤖 Automation – 👩🏽 Elian has left the house 🏠
+    - delay: "00:20:00"
+#############################################
