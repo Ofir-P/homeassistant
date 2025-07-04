@@ -123,13 +123,6 @@ zone:
     icon: mdi:account-multiple
 # [=========================]Home Zone[=========================]
 # [=========================]Telegram[=========================]
-telegram_bot:
-  - platform: polling
-    api_key: !secret telegram_api
-    allowed_chat_ids:
-      - !secret telegramSupervisor_groupChatId
-      - !secret telegram_groupChatId
-
 notify:
   - platform: telegram
     name: Home Assistant Group
