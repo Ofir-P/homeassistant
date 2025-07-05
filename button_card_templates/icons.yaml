@@ -857,6 +857,73 @@ icon_away:
         `;
       ]]]
 
+# ─── icon_vacuum_cleaning ─────────────────────────────────────────────────────
+icon_vacuum_cleaning:
+  # ► Second line on the button (dynamic):
+  state_display: >
+    [[[                               // Capitalise first letter nicely
+      const s = variables.vacuum_state ?? 'unknown';
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    ]]]
+
+  # ► Variables we’ll reuse:
+  variables:
+    # Point to *your* robot-vacuum entity
+    vacuum_state: >
+      [[[ return states['vacuum.s8_pro_ultra']?.state; ]]]
+    # Define the “on”/animated condition
+    state_on: >
+      [[[ return variables.vacuum_state === 'cleaning'; ]]]
+
+  # ► Styling
+  styles:
+    card:
+      - transition: all 0.3s ease-out
+    custom_fields:
+      icon:
+        - width: 79%
+        - margin-left: -1%
+        - margin-top: -1%
+        # Blue while cleaning, muted grey otherwise
+        - fill: >
+            [[[ return variables.state_on ? '#44a9ff' : '#9da0a2'; ]]]
+
+  # ► SVG icon itself
+  custom_fields:
+    icon: >
+      [[[  
+        const active = variables.state_on ? 'on' : '';
+        return `
+        <svg viewBox="0 0 50 50">
+          <style>
+            @keyframes spin {
+              from { transform: rotate(0deg); }
+              to   { transform: rotate(360deg); }
+            }
+            .on {
+              animation: spin 1.6s linear infinite;
+              transform-origin: 50% 50%;
+            }
+          </style>
+
+          <!-- Main body -->
+          <circle class="${active}" cx="25" cy="25" r="20" />
+          <!-- Inner sensor ring -->
+          <circle cx="25" cy="25" r="15" fill="white" opacity="0.35"/>
+          <!-- Top lidar/bump -->
+          <rect class="${active}" x="22" y="6" width="6" height="4" rx="1"/>
+
+          <!-- Side & bottom brushes -->
+          <line class="${active}" x1="5"  y1="25" x2="12" y2="25"
+                stroke-width="3" stroke-linecap="round"/>
+          <line class="${active}" x1="38" y1="25" x2="45" y2="25"
+                stroke-width="3" stroke-linecap="round"/>
+          <line class="${active}" x1="25" y1="38" x2="25" y2="45"
+                stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        `;
+      ]]]
+
 icon_home:
   state_display: Auto
   styles:

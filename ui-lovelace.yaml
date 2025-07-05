@@ -6,42 +6,24 @@ views:
   - type: custom:grid-layout
     title: Home
     layout:
-      #default
       margin: 0
       grid-gap: var(--custom-layout-card-padding)
-      grid-template-columns: repeat(4, 1fr) 0
-      grid-template-rows: 0 repeat(2, fit-content(100%)) 0fr
-      grid-template-areas: |
-        "sidebar  .           .       .       ."
-        "sidebar  LR       Office  Bedroom   ."
-        "sidebar  media       Shower  Home   ."
-        "sidebar  footer      footer  footer  ."
+      grid-template-columns: repeat(4, 1fr)
+      grid-template-rows: auto repeat(2, fit-content(100%)) auto
+
       mediaquery:
-        #phone
-        "(max-width: 800px)":
-          grid-gap: calc(var(--custom-layout-card-padding) * 1.7)
-          grid-template-columns: 0 repeat(2, 1fr) 0
-          grid-template-rows: 0 repeat(5, fit-content(100%)) 0fr
-          grid-template-areas: |
-            ".  .           .        ."
-            ".  sidebar     sidebar  ."
-            ".  LR         Bedroom   ."
-            ".  Office      Shower   ."
-            ".  media        Home    ."
-            ".  footer      footer   ."
-            ".  .           .        ."
-        #portrait
-        "(max-width: 1200px)":
-          grid-gap: var(--custom-layout-card-padding)
-          grid-template-columns: repeat(3, 1fr) 0
-          grid-template-rows: 0 repeat(3, fit-content(100%)) 0fr
-          grid-template-areas: |
-            "sidebar  .           .       ."
-            "sidebar  LR         Bedroom  ."
-            "sidebar  Office      Shower  ."
-            "sidebar  media        Home   ."
-            "sidebar  footer      footer  ."
-            "sidebar  .           .       ."
+        "(max-width: 800px) and (orientation: portrait)":
+          grid-gap: 4px
+          grid-template-columns: repeat(2, 1fr)
+          grid-template-rows: auto 1fr 1fr auto
+          card-mod-theme: tablet_theme
+
+        "(max-height: 800px) and (orientation: landscape)":
+          grid-gap: 6px
+          grid-template-columns: repeat(4, 1fr)
+          grid-template-rows: auto 1fr 1fr auto
+          card-mod-theme: tablet_theme
+
     cards:
       #extra_styles fix, do not remove
       #also warn if theme is not set
@@ -471,6 +453,14 @@ views:
               - base
               - loader
               - icon_away
+
+          - type: custom:button-card
+            entity: script.house_clean
+            name: Clean House
+            template:
+              - base
+              - loader
+              - icon_vacuum_cleaning
 
       #################################################
       #                                               #

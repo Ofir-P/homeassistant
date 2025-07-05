@@ -18,7 +18,7 @@ base:
   show_state: true
   show_icon: false
   state_display: >
-    [[[
+    [[[ 
       const stateDict = {
         'on': variables.translate_on,
         'off': variables.translate_off,
@@ -33,7 +33,7 @@ base:
     ]]]
   tap_action:
     ui_sound_tablet: |
-      [[[
+      [[[ 
         let screensaver = states[variables.entity_tablet] === undefined ||
             states[variables.entity_tablet].state;
 
@@ -53,15 +53,10 @@ base:
         }
       ]]]
     card_bounce: |
-      [[[
-        // add animation
+      [[[ 
         if (this.getElementsByTagName("style").length === 0) {
-
-            // phone condition
             let mq = window.matchMedia('(max-width: 800px)').matches;
-
             let style = document.createElement('style');
-
             style.innerHTML = `
                 @keyframes card_bounce {
                     0%   { transform: scale(1); }
@@ -71,18 +66,11 @@ base:
                     100% { transform: scale(1); }
                 }
             `;
-
             this.appendChild(style);
         }
-
-        // duration
         let duration = 800;
-
-        // animate
-        this.style.animation = `card_bounce ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
-
-        // reset
-        window.setTimeout(() => { this.style.animation = "none"; }, duration + 100)
+        this.style.animation = \`card_bounce \${duration}ms cubic-bezier(0.22, 1, 0.36, 1)\`;
+        window.setTimeout(() => { this.style.animation = "none"; }, duration + 100);
       ]]]
     action: toggle
     haptic: medium
@@ -91,42 +79,17 @@ base:
   hold_action:
     action: block
   styles:
-    grid:
-      - grid-template-areas: |
-          "icon  circle"
-          "n     n"
-          "s     s"
-      - grid-template-columns: repeat(2, 1fr)
-      - grid-template-rows: auto repeat(2, min-content)
-      - gap: 1.3%
-      - align-items: start
-      - will-change: transform
-    name:
-      - justify-self: start
-      - line-height: 121%
-    state:
-      - justify-self: start
-      - line-height: 115%
     card:
       - border-radius: var(--button-card-border-radius)
       - border-width: 0
       - -webkit-tap-highlight-color: rgba(0,0,0,0)
       - transition: none
+      - height: auto
+      - padding: 8px
+      - font-size: 14px
       - --mdc-ripple-color: >
-          [[[
-            return variables.state_on
-                ? 'rgb(0, 0, 0)'
-                : '#97989c';
-          ]]]
+          [[[ return variables.state_on ? 'rgb(0, 0, 0)' : '#97989c'; ]]]
       - color: >
-          [[[
-            return variables.state_on
-                ? '#4b5254'
-                : '#97989c';
-          ]]]
+          [[[ return variables.state_on ? '#4b5254' : '#97989c'; ]]]
       - background-color: >
-          [[[
-            return variables.state_on
-                ? 'rgba(255, 255, 255, 0.85)'
-                : 'rgba(115, 115, 115, 0.25)';
-          ]]]
+          [[[ return variables.state_on ? 'rgba(255, 255, 255, 0.85)' : 'rgba(115, 115, 115, 0.25)'; ]]]
