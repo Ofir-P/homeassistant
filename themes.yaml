@@ -100,14 +100,6 @@ themes:
     #                     CARD-MOD                     #
     #                                                  #
     ####################################################
-  tablet_theme:
-    card-mod-card-yaml: |
-      ha-card {
-        padding: 6px !important;
-        height: 85px !important;
-        font-size: 12px !important;
-      }
-
     card-mod-theme: tablet
 
     card-mod-root: |
