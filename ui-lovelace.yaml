@@ -490,6 +490,7 @@ views:
           - type: custom:bubble-card
             card_type: pop-up
             hash: "#doorbell"
+            close_on_click: true
             trigger:
               - condition: state
                 entity: binary_sensor.doorbell_ringing
