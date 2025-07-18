@@ -184,10 +184,8 @@ devices:
   '0x1cc089fffece77fc':
     friendly_name: Zigbee Dongle Router
     description: Wardrobe
-  '0xf082c0fffe89fdaf':
-    friendly_name: '0xf082c0fffe89fdaf'
-  '0xa4c138b90334a6f4':
-    friendly_name: Shower Motion Sensor
   '0xa4c1388091f09665':
     friendly_name: Wardrobe Motion Sensor
+  '0xa4c138b90334a6f4':
+    friendly_name: '0xa4c138b90334a6f4'
 version: 4
