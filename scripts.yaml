@@ -644,8 +644,6 @@ fetch_calendar_events:
         label: "\U0001F469\U0001F3FD"
       - entity: calendar.ofirx3_gmail_com
         label: "\U0001F468"
-      - entity: calendar.radarr
-        label: "\U0001F37F"
       - entity: calendar.real_madrid
         label: ⚽
       - entity: calendar.hapoel_tel_aviv
