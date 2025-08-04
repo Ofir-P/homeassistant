@@ -186,6 +186,6 @@ devices:
     description: Wardrobe
   '0xa4c1388091f09665':
     friendly_name: Wardrobe Motion Sensor
-  '0xa4c138b90334a6f4':
-    friendly_name: '0xa4c138b90334a6f4'
+  '0x54ef4410010f7cbe':
+    friendly_name: Shower Motion Sensor
 version: 4
