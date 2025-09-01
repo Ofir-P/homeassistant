@@ -67,21 +67,60 @@ browser_mod:
             type: horizontal-stack
             cards:
               - type: custom:button-card
-                name: Play audio on iPhone
-                icon: mdi:volume-high
-                template: icon_name
+                entity: sensor.elian_work_waze
+                name: Commute – Elian → Work
+                icon: mdi:waze
+                show_state: false
+                show_label: true
+                label: >-
+                  [[[
+                    const e = states['sensor.elian_work_waze'];      // ← גישה ישירה לסטייט
+                    if (!e) return '—';
+                    const v = Number(e.state);
+                    const dur = Number(e.attributes?.duration);
+                    const n = Number.isFinite(v) ? v : (Number.isFinite(dur) ? dur : NaN);
+                    if (!Number.isFinite(n)) return '—';
+                    const mins = Math.round(n);
+                    return mins <= 0 ? 'Here' : `${mins} min`;      // אם אתה ממש בעבודה
+                  ]]]
+                triggers_update: all
                 tap_action:
-                  action: call-service
-                  service: notify.mobile_app_elians_iphone
-                  service_data:
-                    title: Find my iPhone
-                    message: You found me!
-                    data:
-                      push:
-                        sound:
-                          name: findmy.wav
-                          critical: 1
-                          volume: 1
+                  action: url
+                  url_path: >-
+                    [[[
+                      const z = states['zone.elian_work'];
+                      if (z) {
+                        const { latitude: lat, longitude: lon } = z.attributes;
+                        return `https://waze.com/ul?ll=${lat},${lon}&navigate=yes`;
+                      }
+                      return 'https://waze.com';
+                    ]]]
+                styles:
+                  card:
+                    - padding: 16px
+                    - border-radius: 18px
+                    - background: rgba(32,35,36,0.6)
+                    - backdrop-filter: blur(6px)
+                    - box-shadow: none
+                  name: [font-weight: 600, font-size: 14px]
+                  label:
+                    [
+                      font-size: 28px,
+                      font-weight: 700,
+                      line-height: 1.1,
+                      margin-top: 4px,
+                    ]
+                  icon: [width: 26px]
+                state:
+                  - operator: "<="
+                    value: 20
+                    styles: { card: [background: rgba(0, 160, 100, 0.20)] } # קצר – ירקרק
+                  - operator: "<="
+                    value: 35
+                    styles: { card: [background: rgba(200, 150, 0, 0.20)] } # בינוני – צהבהב
+                  - operator: ">"
+                    value: 35
+                    styles: { card: [background: rgba(170, 40, 40, 0.22)] } # עמוס – אדמדם
 
         - type: map
           default_zoom: 16
