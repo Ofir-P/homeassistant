@@ -706,3 +706,13 @@ notify_elian_left_home:
       message: "\U0001F916 Automation – \U0001F469\U0001F3FD Elian has left the house
         \U0001F3E0"
   - delay: 00:20:00
+parking_snapshot:
+  sequence:
+  - data:
+      message: "\U0001F698"
+      data:
+        image: /api/image_proxy/image.parking_event_image?token={{ state_attr('image.parking_event_image',
+          'access_token') }}
+    action: notify.mobile_app_ofir_honor_magic_5_pro
+  alias: Parking Snapshot
+  description: ''
