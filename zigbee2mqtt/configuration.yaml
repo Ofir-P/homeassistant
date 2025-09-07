@@ -146,8 +146,6 @@ devices:
     friendly_name: Dining Table Sticker Switch button
   '0x00158d0009cf58c2':
     friendly_name: Dining Table Sticker Switch button 2nd
-  '0x54ef441000c4bc27':
-    friendly_name: Office LUX
   '0xa4c13822c402f4e9':
     friendly_name: Boiler
     description: Boiler - located next to shower door, in the wall.
