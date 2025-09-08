@@ -520,14 +520,6 @@ turn_all_lights_off:
     data: {}
     target:
       entity_id: switch.kitchen_led_strip
-  - if:
-    - condition: state
-      entity_id: input_select.office_corner_led_light_status
-      state: 'on'
-    then:
-    - action: script.office_corner_led_toggle
-      metadata: {}
-      data: {}
   description: ''
   icon: mdi:lamps-outline
 toggle_wardrobe_ac:
