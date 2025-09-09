@@ -2,6 +2,7 @@
 - sensor:
     - unique_id: sidebar
       state: template
+      name: "Sidebar"
       attributes:
         time: >
           {% set hours = now().strftime('%H') %}
