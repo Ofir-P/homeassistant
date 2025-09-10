@@ -38,6 +38,7 @@ logger:
 # [=========================]Themes[=========================]
 frontend: !include themes.yaml
 
+
 lovelace:
   mode: yaml
   resources: [
