@@ -303,6 +303,20 @@ home_leave:
   - data:
       message: "\U0001F916 Automation - House devices are OFF!"
     action: notify.supervisor_telegram
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: binary_sensor.ofir_honor_magic_5_pro_android_auto
+        state: 'on'
+      sequence:
+      - action: notify.mobile_app_ofir_honor_magic_5_pro
+        data:
+          message: "\U0001F916 Automation - House devices are OFF!"
+          data:
+            car_ui: true
+            channel: Driving alerts
+            importance: high
+            notification_icon: mdi:power-plug-off
   mode: single
   icon: mdi:hand-wave
 tv_power_office:
@@ -681,6 +695,9 @@ notify_elian_left_home:
   - variables:
       msg: "\U0001F916 Automation – \U0001F469\U0001F3FD Elian has left the house
         \U0001F3E0"
+  - action: notify.supervisor_telegram
+    data:
+      message: '{{ msg }}'
   - choose:
     - conditions:
       - condition: state
@@ -695,10 +712,6 @@ notify_elian_left_home:
             channel: Driving alerts
             importance: high
             notification_icon: mdi:car
-    default:
-    - action: notify.supervisor_telegram
-      data:
-        message: '{{ msg }}'
   - delay: 00:20:00
 parking_snapshot:
   sequence:
