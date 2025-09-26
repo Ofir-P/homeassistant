@@ -188,4 +188,6 @@ devices:
     friendly_name: Shower Motion Sensor
   '0x54ef441000c4bc27':
     friendly_name: '0x54ef441000c4bc27'
+  '0xf082c0fffe89fdaf':
+    friendly_name: '0xf082c0fffe89fdaf'
 version: 4
