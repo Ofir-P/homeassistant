@@ -103,8 +103,6 @@ devices:
   '0xa4c1386c61626446':
     friendly_name: Living Room Temperature Sensor
     description: on top of the AC, right side.
-  '0xa4c1381dac33f60b':
-    friendly_name: Bedroom Second Wireless Remote AC
   '0xa4c13813fa807dac':
     friendly_name: Office
     description: office right top box, controls Office and Bathroom lights.
@@ -190,4 +188,6 @@ devices:
     friendly_name: '0x54ef441000c4bc27'
   '0xf082c0fffe89fdaf':
     friendly_name: '0xf082c0fffe89fdaf'
+  '0xa4c1381dac33f60b':
+    friendly_name: Bedroom Second Wireless Remote AC
 version: 4

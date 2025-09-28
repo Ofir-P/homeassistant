@@ -5,15 +5,12 @@ template:
           {% set recently_added = 'Recently Added' %}
           {% set paused_timeout_minutes = 15 %}
           {% set media_players = [
-            states.media_player.bedroom_echo_dot,
-            states.media_player.living_room_echo_dot,
-            states.media_player.mecool_ofir,
-            states.media_player.mibox4,
-            states.media_player.mibox4_2,
-            states.media_player.shower_echo_dot,
-            states.media_player.office_echo_show5,
-            states.media_player.spotify_elian_sarfaty,
-            states.media_player.spotify_ofir_peled ] %}
+            states.media_player.plex_plex_for_android_mobile_honor_magic5_pro,
+            states.media_player.plex_plex_for_android_mobile_incredible_4g_lte,
+            states.media_player.plex_plex_for_android_tv_km2_plus_2,
+            states.media_player.plex_plex_for_android_tv_0,
+            states.media_player.plex_plex_for_android_tv_g1_eea,
+            states.media_player.plex_plex_for_windows_ofirp_lp] %}
 
           {% macro media(state) %}
           {% set state = media_players | selectattr('state','eq',state) | list %}
@@ -39,18 +36,15 @@ template:
         options: >
           {% set recently_added = ['Recently Added'] %}
           {% set media_players = [
-            states.media_player.bedroom_echo_dot,
-            states.media_player.living_room_echo_dot,
-            states.media_player.mecool_ofir,
-            states.media_player.mibox4,
-            states.media_player.mibox4_2,
-            states.media_player.shower_echo_dot,
-            states.media_player.office_echo_show5,
-            states.media_player.spotify_elian_sarfaty,
-            states.media_player.spotify_ofir_peled ] %}
+            states.media_player.plex_plex_for_android_mobile_honor_magic5_pro,
+            states.media_player.plex_plex_for_android_mobile_incredible_4g_lte,
+            states.media_player.plex_plex_for_android_tv_km2_plus_2,
+            states.media_player.plex_plex_for_android_tv_0,
+            states.media_player.plex_plex_for_android_tv_g1_eea,
+            states.media_player.plex_plex_for_windows_ofirp_lp] %}
           {{ recently_added + media_players | map(attribute='name') | list }}
         select_option:
-          service: select.select_option
+          action: select.select_option
           target:
             entity_id: select.conditional_media
           data:

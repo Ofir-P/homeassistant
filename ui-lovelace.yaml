@@ -324,11 +324,11 @@ views:
                 cards:
                   - type: conditional
                     conditions:
-                      - entity: media_player.plex_plex_for_android_tv_0_2
+                      - entity: media_player.plex_plex_for_android_tv_km2_plus_2
                         state: playing
                     card:
                       type: custom:mini-media-player
-                      entity: media_player.plex_plex_for_android_tv_0_2
+                      entity: media_player.plex_plex_for_android_tv_km2_plus_2
                       artwork: full-cover
                       mini-media-player-scale: 1.25
                       hide:
@@ -347,9 +347,8 @@ views:
                           }
                   - type: conditional
                     conditions:
-                      - entity: media_player.mecool_ofir
+                      - entity: media_player.plex_plex_for_android_tv_km2_plus_2
                         state_not: playing
-
                     card:
                       type: custom:button-card
                       entity: sensor.recently_added_tv_2
