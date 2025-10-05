@@ -190,4 +190,6 @@ devices:
     friendly_name: '0xf082c0fffe89fdaf'
   '0xa4c1381dac33f60b':
     friendly_name: Bedroom Second Wireless Remote AC
+  '0xa4c138b90334a6f4':
+    friendly_name: '0xa4c138b90334a6f4'
 version: 4
