@@ -37,7 +37,7 @@ logger:
 # [=========================]Authenticated[=========================]
 # [=========================]Themes[=========================]
 frontend: !include themes.yaml
-
+default_theme: tablet
 
 lovelace:
   mode: yaml
