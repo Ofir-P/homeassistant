@@ -130,8 +130,6 @@ devices:
     description: located on the floor, under the boiler, behind the laundry machine
   '0xa4c138e832f03f77':
     friendly_name: Bedroom Door Sensor
-  '0xa4c1384fd1d8ba32':
-    friendly_name: Living Room Wireless Remote Switch
   '0x00158d0006c8f369':
     friendly_name: Dining Table Sticker Switch button
   '0x00158d0009cf58c2':
@@ -184,4 +182,6 @@ devices:
     friendly_name: '0xa4c138b90334a6f4'
   '0xa4c1381dac33f60b':
     friendly_name: Bedroom Second Wireless Remote AC
+  '0xa4c1384fd1d8ba32':
+    friendly_name: Living Room Wireless Remote Switch
 version: 4
