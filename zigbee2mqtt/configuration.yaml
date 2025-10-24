@@ -59,9 +59,6 @@ devices:
   '0xa4c1383a2646aef0':
     friendly_name: Office Presence Sensor
     description: Presence Sensor - located in Office room, next to the side window.
-  '0xa4c138a84422458a':
-    friendly_name: Office Wall Light
-    description: Light - located next to shower/bathroom door in office, on the wall.
   '0x00158d000a9c73de':
     friendly_name: Water Leak Office Sink
     description: Sensor - Water Leak Office Shower Sink under the sink.
@@ -70,12 +67,6 @@ devices:
   '0x54ef4410007588b8':
     friendly_name: Kitchen Presence Sensor
     description: Presence - located above the kitchen cabinet, next to the reolink camera
-  '0x00158d000a9747d1':
-    friendly_name: Living Room Left Window
-    description: on the left window blinds
-  '0x00158d000a95e833':
-    friendly_name: Living Room Right Window
-    description: on the right window blinds
   '0x040d84fffebdf9a6':
     friendly_name: Living Room Zigbee Extender
     description: Extender - located under the AC
@@ -177,7 +168,7 @@ devices:
   '0x54ef441000c4bc27':
     friendly_name: '0x54ef441000c4bc27'
   '0xf082c0fffe89fdaf':
-    friendly_name: '0xf082c0fffe89fdaf'
+    friendly_name: Bedroom Zigbee Signal Repeater
   '0xa4c138b90334a6f4':
     friendly_name: '0xa4c138b90334a6f4'
   '0xa4c1381dac33f60b':
