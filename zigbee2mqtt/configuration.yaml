@@ -141,8 +141,6 @@ devices:
     friendly_name: Bathroom Door Sensor
   '0xf4b3b1fffea0bae7':
     friendly_name: Bathroom Motion Sensor
-  '0xa4c138621f5ece9d':
-    friendly_name: Ofir Desk LED
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
   '0xa4c138c861145739':
