@@ -113,9 +113,6 @@ devices:
   '0xa4c138e6fc18ec4e':
     friendly_name: Kitchen
     description: located above the fridge
-  '0x00158d000970764f':
-    friendly_name: Kitchen Sticker Switch button
-    description: in the drawer
   '0x00158d000adbfa23':
     friendly_name: Water Leak Laundry Machine
     description: located on the floor, under the boiler, behind the laundry machine
@@ -163,12 +160,8 @@ devices:
     friendly_name: Wardrobe Motion Sensor
   '0x54ef4410010f7cbe':
     friendly_name: Shower Motion Sensor
-  '0x54ef441000c4bc27':
-    friendly_name: '0x54ef441000c4bc27'
   '0xf082c0fffe89fdaf':
     friendly_name: Bedroom Zigbee Signal Repeater
-  '0xa4c138b90334a6f4':
-    friendly_name: '0xa4c138b90334a6f4'
   '0xa4c1381dac33f60b':
     friendly_name: Bedroom Second Wireless Remote AC
   '0xa4c1384fd1d8ba32':
