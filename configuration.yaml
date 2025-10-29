@@ -36,8 +36,8 @@ logger:
     custom_components.authenticated: debug
 # [=========================]Authenticated[=========================]
 # [=========================]Themes[=========================]
-frontend: !include themes.yaml
-default_theme: tablet
+frontend:
+  themes: !include themes.yaml
 
 lovelace:
   mode: yaml
@@ -46,6 +46,7 @@ lovelace:
       { url: "/hacsfiles/button-card/button-card.js", type: module },
       { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
       { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
+      { url: "/hacsfiles/lovelace-card-mod/card-mod.js", type: module }, #tablet theme
       { url: "/hacsfiles/stack-in-card/stack-in-card.js", type: module }, # Lock button
       {
         url: "/hacsfiles/lovelace-xiaomi-vacuum-map-card/xiaomi-vacuum-map-card.js",
