@@ -20,16 +20,16 @@ browser_mod:
                 }}
               secondary: >-
                 Current:
-                {{states("sensor.boiler_power")}}{{state_attr("sensor.boiler_power","unit_of_measurement")}}
+                {{states("sensor.switcher_boiler_43b9_power")}}{{state_attr("sensor.switcher_boiler_43b9_power","unit_of_measurement")}}
               icon: mdi:water-boiler
-              entity: switch.boiler
+              entity: switch.switcher_boiler_43b9
               tap_action:
                 action: call-service
                 service: switch.toggle
                 target:
-                  entity_id: switch.boiler
+                  entity_id: switch.switcher_boiler_43b9
               icon_color: |
-                {% if states('switch.boiler') == 'off' %}
+                {% if states('switch.switcher_boiler_43b9') == 'off' %}
                   blue
                 {% else %}
                   red

@@ -71,7 +71,7 @@ turn_on_switcher_for_60mins:
   alias: Turn ON Boiler for 60 minutes
   sequence:
   - target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
+      entity_id: switch.switcher_boiler_43b9
     data: {}
     action: switch.turn_on
   - data:
@@ -83,8 +83,7 @@ turn_on_switcher_for_60mins:
       seconds: 0
       milliseconds: 0
   - target:
-      device_id:
-      - 928250a9ace44dda8bbe162fc9440d6d
+      entity_id: switch.switcher_boiler_43b9
     data: {}
     action: switch.turn_off
   mode: single
@@ -331,7 +330,7 @@ turn_on_boiler_for_35_minutes:
   alias: Turn ON Boiler for 35 minutes
   sequence:
   - target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
+      entity_id: switch.switcher_boiler_43b9
     data: {}
     action: switch.turn_on
   - data:
@@ -343,8 +342,7 @@ turn_on_boiler_for_35_minutes:
       seconds: 0
       milliseconds: 0
   - target:
-      device_id:
-      - 928250a9ace44dda8bbe162fc9440d6d
+      entity_id: switch.switcher_boiler_43b9
     data: {}
     action: switch.turn_off
   mode: single
@@ -353,7 +351,7 @@ turn_on_boiler_for_45_minutes:
   alias: Turn ON Boiler for 45 minutes
   sequence:
   - target:
-      device_id: 928250a9ace44dda8bbe162fc9440d6d
+      entity_id: switch.switcher_boiler_43b9
     data: {}
     action: switch.turn_on
   - data:
@@ -364,11 +362,10 @@ turn_on_boiler_for_45_minutes:
       minutes: 45
       seconds: 0
       milliseconds: 0
-  - target:
-      device_id:
-      - 928250a9ace44dda8bbe162fc9440d6d
-    data: {}
+  - data: {}
     action: switch.turn_off
+    target:
+      entity_id: switch.switcher_boiler_43b9
   mode: single
   icon: mdi:water-boiler-auto
 toggle_office_ac:
@@ -439,8 +436,7 @@ unlock_main_door:
     data: {}
     target:
       entity_id:
-      - lock.front_door_2
-      - lock.front_door
+      - lock.home_door
     action: lock.unlock
   - data:
       message: "\U0001F916 Automation - \U0001F6AA Main Door Unlocked by Script! \U0001F510"
