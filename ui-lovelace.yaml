@@ -93,7 +93,7 @@ views:
       #################################################
 
       - type: grid
-        title: LR
+        title: Living Room
         view_layout:
           grid-area: LR
         columns: 2
@@ -238,7 +238,7 @@ views:
       #################################################
 
       - type: grid
-        title: Bedroom
+        title: Master Bedroom
         view_layout:
           grid-area: Bedroom
         columns: 2
@@ -360,12 +360,12 @@ views:
 
       #################################################
       #                                               #
-      #                    Shower/Wardrobe            #
+      #                    Kids                       #
       #                                               #
       #################################################
 
       - type: grid
-        title: Shower_Wardrobe
+        title: Kids Room
         view_layout:
           grid-area: Shower
         columns: 2

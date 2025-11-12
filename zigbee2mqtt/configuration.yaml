@@ -169,4 +169,8 @@ devices:
     friendly_name: '0x00158d000970764f'
   '0xa4c138b90334a6f4':
     friendly_name: '0xa4c138b90334a6f4'
+  '0x00158d000a95e954':
+    friendly_name: '0x00158d000a95e954'
+  '0x00158d000a9747d1':
+    friendly_name: '0x00158d000a9747d1'
 version: 4

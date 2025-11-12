@@ -475,32 +475,6 @@ boil_tami4_water:
         message: ♨️ Boiling Tami4 Water ♨️
   description: ''
   icon: mdi:kettle-steam
-living_room_blinds_open:
-  alias: Living Room - Blinds Open
-  sequence:
-  - action: cover.close_cover
-    metadata: {}
-    data: {}
-    target:
-      entity_id: cover.living_room_blinds
-  - data:
-      message: "\U0001F4DC Script - \U0001FA9F Living Room - Blinds Open \U0001F6CB️"
-    action: notify.supervisor_telegram
-  description: ''
-  icon: mdi:blinds-open
-living_room_blinds_close:
-  alias: Living Room - Blinds Close
-  sequence:
-  - action: cover.open_cover
-    metadata: {}
-    data: {}
-    target:
-      entity_id: cover.living_room_blinds
-  - data:
-      message: "\U0001F4DC Script - \U0001FA9F Living Room - Blinds Close \U0001F6CB️"
-    action: notify.supervisor_telegram
-  description: ''
-  icon: mdi:blinds
 turn_all_lights_off:
   alias: Turn ALL Lights OFF
   sequence:
