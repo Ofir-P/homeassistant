@@ -42,8 +42,8 @@ devices:
     friendly_name: Wardrobe Temperature Sensor
     description: Temp - located on top of the closet.
   '0xa4c13852cfb738a6':
-    friendly_name: Bathroom Temperature Sensor
-    description: Temp - located on top of fan.
+    friendly_name: Guest Bathroom Temperature Sensor
+    description: ''
   '0x943469fffef84a59':
     friendly_name: Bedroom Smart IR Remote Control
   '0x00158d0006f84b67':
@@ -132,9 +132,9 @@ devices:
   '0x60b647fffe57ef24':
     friendly_name: Shower IKEA Button
   '0x00158d000ad8180f':
-    friendly_name: Bathroom Door Sensor
+    friendly_name: Guest Bathroom Door Sensor
   '0xf4b3b1fffea0bae7':
-    friendly_name: Bathroom Motion Sensor
+    friendly_name: Guest Bathroom Motion Sensor
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
   '0xa4c138c861145739':
