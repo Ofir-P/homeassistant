@@ -5,27 +5,3 @@
       value_template: "{{ is_state('device_tracker.elians_iphone', 'home') or is_state('device_tracker.ofir_honor_magic_5_pro', 'home') }}"
       device_class: presence
 # [=========================]Phones at home[=========================]
-
-- platform: template
-  sensors:
-    main_door_combined:
-      friendly_name: "Main Door Combined"
-      value_template: >
-        {% set sensors = [
-          states('binary_sensor.main_door_sensor_contact'),
-          states('binary_sensor.front_door_door'),
-          states('binary_sensor.front_door_door_2')
-        ] %}
-        {% set valid_sensors = sensors | reject('in', ['unknown', 'unavailable']) | list %}
-        {% set open_count = valid_sensors | select('eq', 'on') | list | count %}
-        {% set closed_count = valid_sensors | select('eq', 'off') | list | count %}
-        {% if valid_sensors | length == 0 %}
-          {{ states('binary_sensor.main_door_combined') }}
-        {% elif open_count >= 2 %}
-          true
-        {% elif closed_count >= 2 %}
-          false
-        {% else %}
-          {{ states('binary_sensor.main_door_combined') }}
-        {% endif %}
-      device_class: door

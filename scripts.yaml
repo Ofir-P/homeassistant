@@ -104,33 +104,15 @@ shower_music:
 toggle_living_room_ac:
   alias: Toggle Living Room AC
   sequence:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: cool
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: heat
-        - condition: state
-          entity_id: climate.ofir_a_c
-          state: heat_cool
-      sequence:
-      - data: {}
-        target:
-          entity_id: climate.ofir_a_c
-        action: climate.turn_off
-    - conditions:
-      - condition: state
-        entity_id: climate.ofir_a_c
-        state: 'off'
-      sequence:
-      - data: {}
-        target:
-          entity_id: climate.ofir_a_c
-        action: climate.turn_on
+  - target:
+      entity_id: remote.livingroom_broadlink_remote
+    data:
+      device: livingroom_ac
+      command: toggle
+    action: remote.send_command
+  - data:
+      message: "\U0001F4DC Script – ❄️ Living Room Broadlink AC toggle activated \U0001F6CB️"
+    action: notify.supervisor_telegram
   mode: single
   icon: mdi:air-conditioner
 toggle_bedroom_ac:

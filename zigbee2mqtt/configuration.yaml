@@ -37,7 +37,7 @@ devices:
     description: Smart Switch EU
   '0xa4c1387bf0a99185':
     friendly_name: Office Temperature Sensor
-    description: Temp - On top of the 'Game On' photo frame.
+    description: Next to Vent platform on top of gaming table
   '0xa4c13838ba9b0045':
     friendly_name: Wardrobe Temperature Sensor
     description: Temp - located on top of the closet.
@@ -47,8 +47,8 @@ devices:
   '0x943469fffef84a59':
     friendly_name: Bedroom Smart IR Remote Control
   '0x00158d0006f84b67':
-    friendly_name: Office desk button
-    description: Under the gaming table, right side
+    friendly_name: Balcony Button
+    description: ''
     legacy: false
   '0xa4c13825cb23672c':
     friendly_name: Bedroom TV
@@ -81,10 +81,10 @@ devices:
     description: next to the AC plug
   '0xa4c138a3afc34202':
     friendly_name: Kitchen Temperature Sensor
-    description: Above the water machine on top of the cabinet
+    description: Above Electric Curtain Motor
   '0xa4c1386c61626446':
     friendly_name: Living Room Temperature Sensor
-    description: on top of the AC, right side.
+    description: On top of BOSCH speaker next to the Main Door
   '0xa4c13813fa807dac':
     friendly_name: Office
     description: office right top box, controls Office and Bathroom lights.
@@ -113,8 +113,6 @@ devices:
   '0x00158d000adbfa23':
     friendly_name: Water Leak Laundry Machine
     description: located on the floor, under the boiler, behind the laundry machine
-  '0xa4c138e832f03f77':
-    friendly_name: Bedroom Door Sensor
   '0x00158d0006c8f369':
     friendly_name: Dining Table Sticker Switch button
   '0x00158d0009cf58c2':
@@ -122,9 +120,6 @@ devices:
   '0xa4c13822c402f4e9':
     friendly_name: Boiler
     description: Boiler - located next to shower door, in the wall.
-  '0xa4c138dc96ec297c':
-    friendly_name: Main Door Sensor
-    description: top of Main Door
   '0xa4c1383bed0900d7':
     friendly_name: Plant Monitor
   '0xa4c138641cb105b1':
@@ -152,7 +147,7 @@ devices:
     friendly_name: Dish Washer
   '0x1cc089fffece77fc':
     friendly_name: Zigbee Dongle Router
-    description: Wardrobe
+    description: Kids Room
   '0xa4c1388091f09665':
     friendly_name: Wardrobe Motion Sensor
   '0x54ef4410010f7cbe':
@@ -165,12 +160,15 @@ devices:
     friendly_name: Living Room Wireless Remote Switch
   '0x54ef441000c4bc27':
     friendly_name: '0x54ef441000c4bc27'
-  '0x00158d000970764f':
-    friendly_name: '0x00158d000970764f'
   '0xa4c138b90334a6f4':
     friendly_name: '0xa4c138b90334a6f4'
   '0x00158d000a95e954':
-    friendly_name: '0x00158d000a95e954'
+    friendly_name: Main Door Sensor
+    description: Top of the door, left side
   '0x00158d000a9747d1':
-    friendly_name: '0x00158d000a9747d1'
+    friendly_name: Master Bedroom Door Sensor
+    description: Top of Master Bedroom door
+  '0x00158d000a95e833':
+    friendly_name: Kids Room Door Sensor
+    description: On top of the door
 version: 4
