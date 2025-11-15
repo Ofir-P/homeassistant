@@ -48,17 +48,3 @@ browser_mod:
               entity: light.office
             - type: custom:mushroom-light-card
               entity: light.office_bathroom
-        - type: horizontal-stack
-          cards:
-            - type: custom:mushroom-light-card
-              entity: light.ofir_desk_led
-              show_color_temp_control: true
-              show_brightness_control: false
-              use_light_color: true
-              show_color_control: true
-              collapsible_controls: true
-            - type: custom:mushroom-entity-card
-              entity: switch.kitchen_led_strip
-              fill_container: true
-              tap_action:
-                action: toggle
