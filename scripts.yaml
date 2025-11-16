@@ -1,23 +1,9 @@
-ir_learn_mode_on:
-  alias: IR Learn Mode On
-  sequence:
-  - data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"learn_ir_code":"ON"}'
-      qos: 0
-      retain: false
-    action: mqtt.publish
-  - data:
-      message: "\U0001F4DC Script - Living Room IR device is now on Learn Mode"
-    action: notify.supervisor_telegram
-  mode: single
-  icon: mdi:remote
 ir_turn_on_off_living_room_tv:
   alias: IR Toggle Living Room TV
   sequence:
   - data:
-      topic: zigbee2mqtt/Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
+      topic: zigbee2mqtt/Balcony Smart IR Remote Control
+      payload: '{"ir_code_to_send": "B28jexE9AhcCgAMBsAZACcAB4AELQBcFsAY9Aj0CQAfgCQMAPSABQAVAA0AfAD0gAYAFgAFAE8ADARcCQA9AAwMXArAGoAcInW8j1gg9Av//4AIHAggXAg=="}'
       qos: 0
       retain: false
     action: mqtt.publish
@@ -26,6 +12,7 @@ ir_turn_on_off_living_room_tv:
     action: notify.supervisor_telegram
   mode: single
   icon: mdi:remote-tv
+  description: ''
 ir_learn_mode_on_bedroom:
   alias: IR Learn Mode On (Bedroom)
   sequence:
@@ -478,41 +465,6 @@ turn_all_lights_off:
       - light.ofir_desk_led
   description: ''
   icon: mdi:lamps-outline
-toggle_wardrobe_ac:
-  sequence:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.wardrobe
-          state: cool
-        - condition: state
-          entity_id: climate.wardrobe
-          state: heat
-        - condition: state
-          entity_id: climate.wardrobe
-          state: heat_cool
-      sequence:
-      - data: {}
-        target:
-          entity_id:
-          - climate.wardrobe
-        action: climate.turn_off
-    - conditions:
-      - condition: state
-        entity_id: climate.wardrobe
-        state: 'off'
-      sequence:
-      - data: {}
-        target:
-          entity_id:
-          - climate.wardrobe
-        action: climate.turn_on
-  alias: Toggle Wardrobe AC
-  mode: single
-  icon: mdi:air-conditioner
-  description: ''
 send_doorbell_notification_to_lg_tv:
   alias: Send Doorbell Notification to LG TV
   description: Sends notification with doorbell snapshot to LG TV when TV is on
