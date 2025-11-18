@@ -1,80 +1,67 @@
-ir_turn_on_off_living_room_tv:
-  alias: IR Toggle Living Room TV
-  sequence:
-  - data:
-      topic: zigbee2mqtt/Balcony Smart IR Remote Control
-      payload: '{"ir_code_to_send": "B28jexE9AhcCgAMBsAZACcAB4AELQBcFsAY9Aj0CQAfgCQMAPSABQAVAA0AfAD0gAYAFgAFAE8ADARcCQA9AAwMXArAGoAcInW8j1gg9Av//4AIHAggXAg=="}'
-      qos: 0
-      retain: false
-    action: mqtt.publish
-  - data:
-      message: "\U0001F4DC Script - Living room IR has turned ON/OFF Living room TV!"
-    action: notify.supervisor_telegram
-  mode: single
-  icon: mdi:remote-tv
-  description: ''
 ir_learn_mode_on_bedroom:
   alias: IR Learn Mode On (Bedroom)
+  mode: single
+  icon: mdi:remote
   sequence:
-  - data:
+  - action: mqtt.publish
+    data:
       topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
       payload: '{"learn_ir_code":"ON"}'
       qos: 0
       retain: false
-    action: mqtt.publish
-  - data:
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - Bedroom IR device is now on Learn Mode"
-    action: notify.supervisor_telegram
-  mode: single
-  icon: mdi:remote
 ir_turn_on_off_bedroom_tv:
   alias: IR Toggle Bedroom TV
+  mode: single
+  icon: mdi:remote-tv
   sequence:
-  - data:
+  - action: mqtt.publish
+    data:
       topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
       payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
       qos: 0
       retain: false
-    action: mqtt.publish
-  - data:
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered"
-    action: notify.supervisor_telegram
-  mode: single
-  icon: mdi:remote-tv
 turn_off_on_kitchen_light:
   alias: Toggle Kitchen Light
+  description: ''
+  mode: single
+  icon: mdi:ceiling-light-multiple
   sequence:
-  - metadata: {}
-    data: {}
+  - action: light.toggle
     target:
       entity_id: light.kitchen_l1
-    action: light.toggle
-  - data:
-      message: "\U0001F4DC Script - Kitchen light has been triggered"
-    action: notify.supervisor_telegram
-  mode: single
-  icon: hue:ceiling-round
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation – \U0001F4A1 Kitchen Light is {{\n  'on' if
+        is_state('light.kitchen_l1', 'off') else 'off'\n}} \U0001F52A\n"
 turn_on_switcher_for_60mins:
   alias: Turn ON Boiler for 60 minutes
-  sequence:
-  - target:
-      entity_id: switch.switcher_boiler_43b9
-    data: {}
-    action: switch.turn_on
-  - data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 60 minutes has been triggered!"
-    action: notify.supervisor_telegram
-  - delay:
-      hours: 1
-      minutes: 0
-      seconds: 0
-      milliseconds: 0
-  - target:
-      entity_id: switch.switcher_boiler_43b9
-    data: {}
-    action: switch.turn_off
   mode: single
   icon: mdi:water-boiler-auto
+  sequence:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.switcher_boiler_43b9
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – Boiler turned on for 60 minutes \U0001F525"
+  - delay:
+      hours: 1
+  - action: switch.turn_off
+    target:
+      entity_id: switch.switcher_boiler_43b9
+    data: {}
 shower_music:
   alias: Shower Music
   sequence:
@@ -90,18 +77,19 @@ shower_music:
   icon: mdi:account-music
 toggle_living_room_ac:
   alias: Toggle Living Room AC
+  mode: single
+  icon: mdi:air-conditioner
   sequence:
-  - target:
+  - action: remote.send_command
+    target:
       entity_id: remote.livingroom_broadlink_remote
     data:
       device: livingroom_ac
       command: toggle
-    action: remote.send_command
-  - data:
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – ❄️ Living Room Broadlink AC toggle activated \U0001F6CB️"
-    action: notify.supervisor_telegram
-  mode: single
-  icon: mdi:air-conditioner
 toggle_bedroom_ac:
   alias: Toggle Bedroom AC
   sequence:
@@ -137,9 +125,10 @@ toggle_bedroom_ac:
 home_leave:
   alias: Home Leave
   sequence:
-  - data:
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F916 Automation - Home Leave activated!"
-    action: notify.supervisor_telegram
   - repeat:
       while:
       - condition: template
@@ -155,12 +144,12 @@ home_leave:
             entity_id: input_select.bedroom_tv_status
             state: 'On'
           sequence:
-          - data:
+          - action: mqtt.publish
+            data:
               topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
-              payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA0ABwDdAG+AHAUATwANAAcALwAcJTJ6iI9oIKQL//+BLBwCE4EZX4AdP4AcP4E/H4DdX4Gen4A9v4A8X4DffCSkC//+iI9oIKQI="}'
+              payload: '{"ir_code_to_send": "BaIjxREpAkABB4QCKQK6BikCQAfgBwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
               qos: 0
               retain: false
-            action: mqtt.publish
         enabled: true
       - choose:
         - conditions:
@@ -168,10 +157,10 @@ home_leave:
             entity_id: input_select.bedroom_ac_status
             state: 'On'
           sequence:
-          - data: {}
+          - action: climate.turn_off
             target:
               entity_id: climate.bedroom_ac
-            action: climate.turn_off
+            data: {}
       - choose:
         - conditions:
           - condition: or
@@ -183,75 +172,75 @@ home_leave:
               entity_id: climate.ofir_a_c
               state: heat
           sequence:
-          - data: {}
+          - action: climate.turn_off
             target:
               entity_id: climate.ofir_a_c
-            action: climate.turn_off
+            data: {}
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.living_room_tv_status
             state: 'On'
           sequence:
-          - data:
+          - action: mqtt.publish
+            data:
               topic: zigbee2mqtt/Smart IR Remote Control/set
               payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
               qos: 0
               retain: false
             enabled: false
-            action: mqtt.publish
-          - metadata: {}
+          - action: script.ir_turn_on_off_living_room_tv
             data: {}
-            action: script.ir_turn_on_off_living_room_tv
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.office_tv_status
             state: 'On'
           sequence:
-          - data: {}
-            action: script.tv_power_office
+          - action: script.tv_power_office
+            data: {}
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.office_ac_status
             state: 'On'
           sequence:
-          - data: {}
+          - action: climate.turn_off
             target:
               entity_id: climate.office
-            action: climate.turn_off
+            data: {}
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.wardrobe_ac_status
             state: 'On'
           sequence:
-          - data: {}
+          - action: climate.turn_off
             target:
               entity_id:
               - climate.wardrobe
-            action: climate.turn_off
+            data: {}
       - choose:
         - conditions:
           - condition: state
             entity_id: input_select.shower_heater_status
             state: 'On'
           sequence:
-          - target:
+          - action: switch.turn_off
+            target:
               entity_id: switch.heater_shower
             data: {}
-            action: switch.turn_off
       - delay:
           hours: 0
           minutes: 12
           seconds: 55
           milliseconds: 0
-  - data:
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F916 Automation - Home Leave electric devices are OFF!"
-    action: notify.supervisor_telegram
   - continue_on_error: true
-    data: {}
+    action: light.turn_off
     target:
       area_id:
       - living_room
@@ -263,10 +252,11 @@ home_leave:
       - light.office_bathroom
       - light.office_wall_light
       - light.ofir_desk_led
-    action: light.turn_off
-  - data:
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F916 Automation - House devices are OFF!"
-    action: notify.supervisor_telegram
   - choose:
     - conditions:
       - condition: state
@@ -297,46 +287,42 @@ tv_power_office:
   icon: mdi:television
 turn_on_boiler_for_35_minutes:
   alias: Turn ON Boiler for 35 minutes
-  sequence:
-  - target:
-      entity_id: switch.switcher_boiler_43b9
-    data: {}
-    action: switch.turn_on
-  - data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 35 minutes has been triggered!"
-    action: notify.supervisor_telegram
-  - delay:
-      hours: 0
-      minutes: 35
-      seconds: 0
-      milliseconds: 0
-  - target:
-      entity_id: switch.switcher_boiler_43b9
-    data: {}
-    action: switch.turn_off
   mode: single
   icon: mdi:water-boiler-auto
-turn_on_boiler_for_45_minutes:
-  alias: Turn ON Boiler for 45 minutes
   sequence:
-  - target:
-      entity_id: switch.switcher_boiler_43b9
-    data: {}
-    action: switch.turn_on
-  - data:
-      message: "\U0001F4DC Script -  Turn On Switcher for 45 minutes has been triggered!"
-    action: notify.supervisor_telegram
-  - delay:
-      hours: 0
-      minutes: 45
-      seconds: 0
-      milliseconds: 0
-  - data: {}
-    action: switch.turn_off
+  - action: switch.turn_on
     target:
       entity_id: switch.switcher_boiler_43b9
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – Boiler turned on for 35 minutes \U0001F525"
+  - delay:
+      minutes: 35
+  - action: switch.turn_off
+    target:
+      entity_id: switch.switcher_boiler_43b9
+    data: {}
+turn_on_boiler_for_45_minutes:
+  alias: Turn ON Boiler for 45 minutes
   mode: single
   icon: mdi:water-boiler-auto
+  sequence:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.switcher_boiler_43b9
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – Boiler turned on for 45 minutes \U0001F525"
+  - delay:
+      minutes: 45
+  - action: switch.turn_off
+    target:
+      entity_id: switch.switcher_boiler_43b9
+    data: {}
 toggle_office_ac:
   alias: Toggle Office AC
   sequence:
@@ -373,45 +359,44 @@ toggle_office_ac:
   icon: mdi:air-conditioner
 toggle_living_room_light:
   alias: Toggle Living Room Light
+  mode: single
+  icon: mdi:ceiling-light
   sequence:
-  - metadata: {}
-    data: {}
+  - action: light.toggle
     target:
       entity_id:
       - light.living_room_l1
-    action: light.toggle
-  - data:
-      message: "\U0001F4DC Script - Living Room Light has been triggered! "
-    action: notify.supervisor_telegram
-  mode: single
-  icon: mdi:ceiling-light
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – Living Room Light has been triggered! \U0001F6CB️"
 toggle_bedroom_light:
   alias: Toggle Bedroom Light
-  sequence:
-  - metadata: {}
-    data: {}
-    target:
-      entity_id: light.bedroom
-    action: light.toggle
-  - data:
-      message: "\U0001F4DC Script - Bedroom Light has been triggered! "
-    action: notify.supervisor_telegram
   mode: single
   icon: mdi:ceiling-fan-light
+  sequence:
+  - action: light.toggle
+    target:
+      entity_id: light.bedroom
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - Bedroom Light has been triggered!"
 unlock_main_door:
   alias: Unlock Main Door
-  sequence:
-  - metadata: {}
-    data: {}
-    target:
-      entity_id:
-      - lock.home_door
-    action: lock.unlock
-  - data:
-      message: "\U0001F916 Automation - \U0001F6AA Main Door Unlocked by Script! \U0001F510"
-    action: notify.supervisor_telegram
   mode: single
   icon: mdi:lock-open
+  sequence:
+  - action: lock.unlock
+    target:
+      entity_id: lock.home_door
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – \U0001F6AA Main Door has been Unlocked \U0001F510"
 boil_tami4_water:
   alias: Boil Tami4 Water
   sequence:
@@ -439,35 +424,47 @@ boil_tami4_water:
       entity_id: input_select.living_room_tv_status
       state: 'On'
     then:
-    - action: notify.living_room_lg_webos_smart_tv
+    - action: notify.lg_webos_tv_75ur78006ll
+      data:
+        message: ♨️ Boiling Tami4 Water ♨️
+  - alias: If Master Bedroom TV ON - Notification
+    if:
+    - condition: state
+      entity_id: input_select.bedroom_tv_status
+      state: 'On'
+    then:
+    - action: notify.lg_webos_tv_50ua80006lc_dmfulwe
       data:
         message: ♨️ Boiling Tami4 Water ♨️
   description: ''
   icon: mdi:kettle-steam
 turn_all_lights_off:
   alias: Turn ALL Lights OFF
+  description: ''
+  icon: mdi:lamps-outline
+  mode: single
   sequence:
   - action: light.turn_off
-    metadata: {}
-    data: {}
     target:
       area_id:
       - bedroom
       - kitchen
       - living_room
       - shower
-      - wardrobe
       entity_id:
       - light.office
       - light.office_bathroom
       - light.office_wall_light
       - light.bathroom
-      - light.ofir_desk_led
-  description: ''
-  icon: mdi:lamps-outline
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – All house lights have been turned off! \U0001F4A1\U0001F50C"
 send_doorbell_notification_to_lg_tv:
-  alias: Send Doorbell Notification to LG TV
-  description: Sends notification with doorbell snapshot to LG TV when TV is on
+  alias: Send Doorbell Notification to Living Room TV
+  description: Sends notification with doorbell snapshot to Living Room TV when TV
+    is on
   sequence:
   - if:
     - condition: not
@@ -492,16 +489,22 @@ send_doorbell_notification_to_lg_tv:
           Snapshot Captured!"
         title: Doorbell Notification
 send_doorbell_notification_to_bedroom_tv:
+  alias: Send Doorbell Notification to Master Bedroom TV
+  description: Sends notification with doorbell snapshot to Master Bedroom TV when
+    TV is on
   sequence:
   - if:
     - condition: not
       conditions:
       - condition: state
-        state: 'On'
         entity_id: input_select.bedroom_tv_status
+        state: 'Off'
     then:
     - action: notify.bedroom_tv
       data:
+        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
+          Snapshot Captured!"
+        title: Doorbell Notification
         data:
           duration: 10
           position: top-left
@@ -512,12 +515,6 @@ send_doorbell_notification_to_bedroom_tv:
           interrupt: 0
           image:
             path: /config/www/tmp/snapshot_doorbell.jpg
-        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
-          Snapshot Captured!"
-        title: Doorbell Notification
-  alias: Send Doorbell Notification to Bedroom TV
-  description: Sends notification with doorbell snapshot to Bedroom TV when TV is
-    on
 fetch_calendar_events:
   alias: Fetch Calendar Events for Today
   sequence:
@@ -547,41 +544,41 @@ fetch_calendar_events:
   - stop: Done
     response_variable: calendar_events
 house_clean:
-  sequence:
-  - target:
-      entity_id: vacuum.s8_pro_ultra
-    data: {}
-    action: vacuum.start
-  - metadata: {}
-    data:
-      message: "\U0001F916 Automation - Robot Vacuum Clean House Alexa \U0001F9FC"
-    action: notify.supervisor_telegram
   alias: House Clean
   description: ''
-toggle_dining_table_light:
   sequence:
-  - metadata: {}
-    data: {}
+  - action: vacuum.start
     target:
-      entity_id:
-      - light.living_room_l2
-    action: light.toggle
-  - data:
-      message: "\U0001F4DC Script - Dining Table light has been triggered"
-    action: notify.supervisor_telegram
+      entity_id: vacuum.s8_pro_ultra
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - Robot Vacuum Clean House Alexa \U0001F9FC"
+toggle_dining_table_light:
   alias: Toggle Dining Table Light
-  mode: single
-  icon: hue:ceiling-round
   description: ''
+  mode: single
+  icon: mdi:ceiling-light-multiple
+  sequence:
+  - action: light.toggle
+    target:
+      entity_id: light.living_room_l2
+    data: {}
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation – \U0001F4A1 Dining Table Light is {{\n  'on'
+        if is_state('light.living_room_l2', 'off') else 'off'\n}} \U0001F37D️\n"
 notify_elian_arrived_home:
   alias: Notify – Elian Arrived Home
   mode: single
   sequence:
-  - action: notify.supervisor_telegram
+  - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F916 Automation – \U0001F469\U0001F3FD Elian has arrived home
         \U0001F3E0"
-  - delay: 00:20:00
 notify_elian_left_home:
   alias: Notify – Elian Left Home
   mode: single
@@ -589,8 +586,9 @@ notify_elian_left_home:
   - variables:
       msg: "\U0001F916 Automation – \U0001F469\U0001F3FD Elian has left the house
         \U0001F3E0"
-  - action: notify.supervisor_telegram
+  - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: '{{ msg }}'
   - choose:
     - conditions:
@@ -606,4 +604,37 @@ notify_elian_left_home:
             channel: Driving alerts
             importance: high
             notification_icon: mdi:car
-  - delay: 00:20:00
+ir_learn_mode_on_balcony:
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Balcony Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
+      qos: 0
+      retain: false
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - Balcony IR device is now on Learn Mode"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: IR Learn Mode On (Balcony)
+  mode: single
+  icon: mdi:remote
+  description: ''
+ir_toggle_balcony_tv:
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Balcony Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BUEjsxEnAsABA7sGJwLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABw+snUEjAwknAv//QSMDCScC"}'
+      qos: 0
+      retain: false
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - Balcony IR to turn ON/OFF TV has been triggered"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: IR Toggle Balcony TV
+  mode: single
+  icon: mdi:remote-tv
+  description: ''
