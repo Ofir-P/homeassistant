@@ -1,12 +1,5 @@
 # Loads default set of integrations. Do not remove.
 default_config:
-# [=========================]Spotcast[=========================]
-spotcast:
-  sp_dc: !secret primary_sp_dc
-  sp_key: !secret primary_sp_key
-  country: IL #optional, added in 3.6.24
-
-# [=========================]Spotcast[=========================]
 logbook:
   exclude:
     entities:
@@ -131,13 +124,6 @@ notify:
   - platform: telegram
     name: Supervisor Telegram
     chat_id: !secret telegramSupervisor_groupChatId
-  - name: WhatsApp
-    platform: rest
-    resource: https://api.callmebot.com/whatsapp.php
-    data:
-      source: HA
-      phone: !secret whatsapp_PhoneNum
-      apikey: !secret whatsapp_ApiKey
   - platform: group
     name: mobile_app_group_ofir_and_elian
     services:

@@ -1,19 +1,14 @@
-"""Module for cryptographic methods and functions"""
+"""Module for managing spotify time-based one time password"""
 
 from base64 import b32encode
 
 from pyotp import TOTP
+from custom_components.spotcast.crypto.utils import hex_to_bytes
 
 
 _CIPHER_BASE = (12, 56, 76, 33, 88, 44, 88, 33,
                 78, 78, 11, 66, 22, 22, 55, 69, 54)
 CIPHER_BYTES = [j ^ (i % 33 + 9) for i, j in enumerate(_CIPHER_BASE)]
-
-
-def hex_to_bytes(data: str) -> bytes:
-    """Converts a hex string to bytes"""
-    data = data.replace(" ", "")
-    return bytes.fromhex(data)
 
 
 def get_totp(
