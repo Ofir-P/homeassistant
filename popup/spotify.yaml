@@ -35,7 +35,7 @@ browser_mod:
                         }
                   type: markdown
                 - account: default
-                  device: media_player.shower_echo_dot
+                  device: media_player.
                   grid_covers_per_row: "5"
                   hide_warning: true
                   limit: 15

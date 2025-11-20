@@ -62,19 +62,6 @@ turn_on_switcher_for_60mins:
     target:
       entity_id: switch.switcher_boiler_43b9
     data: {}
-shower_music:
-  alias: Shower Music
-  sequence:
-  - data:
-      device_name: Shower Echo Dot
-      uri: spotify:playlist:3OrzpgkRM3gHd4xAhy86Zr
-      random_song: true
-      shuffle: true
-      force_playback: true
-      start_volume: 86
-    action: spotcast.start
-  mode: single
-  icon: mdi:account-music
 toggle_living_room_ac:
   alias: Toggle Living Room AC
   mode: single

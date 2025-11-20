@@ -413,7 +413,6 @@ views:
                 else { return 'Error'; }
               ]]]
             tap_action: !include popup/spotify.yaml
-            double_tap_action: script.shower_music
             name: Spotify
             template:
               - base
