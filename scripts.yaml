@@ -625,3 +625,17 @@ ir_toggle_balcony_tv:
   mode: single
   icon: mdi:remote-tv
   description: ''
+building_entrance_door_unlock:
+  alias: Building Entrance - Door Unlock
+  mode: single
+  sequence:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.building_door_unlock_fingerbot
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - \U0001F6AA Building Door unlocked by Fingerbot
+        \U0001F3E2"
+  description: ''
+  icon: mdi:lock-open-variant
