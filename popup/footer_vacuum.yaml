@@ -30,9 +30,9 @@ browser_mod:
 
             - type: custom:xiaomi-vacuum-map-card
               map_source:
-                camera: image.s8_pro_ultra_house_map
+                camera: image.s8_pro_ultra_natan_alterman
               calibration_source:
-                camera: false
+                identity: true
               entity: vacuum.s8_pro_ultra
               vacuum_platform: default
               map_locked: true
