@@ -701,3 +701,74 @@ wake_shower_echo_random_spotify_playlist:
       entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',
         'media_album_name') }} \U0001F6BF\n"
+wake_kitchen_echo_random_spotify_playlist:
+  sequence:
+  - variables:
+      playlist_uri: "{{ [\n  'spotify:playlist:3mp9kNj2SdzziDBHAJJ3s1',\n  'spotify:playlist:19x1tlgbyvG7xatQ3UX4Qk',\n
+        \ 'spotify:playlist:6eYN2mMJ7sjLM49eXbwe7i'\n] | random }}\n"
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: media_player.kitchen_echo_dot
+        state: playing
+      sequence:
+      - target:
+          device_id:
+          - b07a5e4dc39e8b6d440aafa032bb4161
+        data:
+          shuffle: true
+        action: media_player.shuffle_set
+      - data:
+          media_player:
+            device_id:
+            - f33666e567ec215a45f023eb55e37f1e
+          spotify_uri: '{{ playlist_uri }}'
+          account: 01KAB2YAREPM46QYFDTBFC0CWH
+        action: spotcast.play_media
+      - delay:
+          seconds: 3
+      - target:
+          device_id:
+          - b07a5e4dc39e8b6d440aafa032bb4161
+        action: media_player.media_next_track
+        data: {}
+    default:
+    - data:
+        target:
+        - media_player.kitchen_echo_dot
+        message: <speak><break time='100ms'/></speak>
+        data:
+          type: tts
+      action: notify.alexa_media
+    - delay:
+        seconds: 2
+    - target:
+        device_id:
+        - b07a5e4dc39e8b6d440aafa032bb4161
+      data:
+        shuffle: true
+      action: media_player.shuffle_set
+    - data:
+        media_player:
+          device_id:
+          - f33666e567ec215a45f023eb55e37f1e
+        spotify_uri: '{{ playlist_uri }}'
+        account: 01KAB2YAREPM46QYFDTBFC0CWH
+      action: spotcast.play_media
+    - delay:
+        seconds: 2
+    - target:
+        device_id:
+        - b07a5e4dc39e8b6d440aafa032bb4161
+      action: media_player.media_next_track
+      data: {}
+  - delay:
+      seconds: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - \U0001F3B5 Kitchen Music Script - {{ state_attr('media_player.kitchen_echo_dot',
+        'media_album_name') }} \U0001F6BF\n"
+  alias: Wake Kitchen Echo - random Spotify playlist
+  mode: restart
+  description: ''
