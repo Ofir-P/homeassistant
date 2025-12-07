@@ -163,11 +163,13 @@ devices:
   '0x00158d000a95e833':
     friendly_name: Kids Room Door Sensor
     description: On top of the door
-  '0x70ac08fffe22f51e':
-    friendly_name: Balcony Smart IR Remote Control
   '0xa4c138c6e7497975':
     friendly_name: Building Door Unlock Fingerbot
     description: Sticked to the intercom
   '0xa4c138dc96ec297c':
     friendly_name: Utillity Room Door Sensor
+  '0x70ac08fffe22f51e':
+    friendly_name: Balcony Smart IR Remote Control
+  '0xd44867fffe07863a':
+    friendly_name: Balcony Presence Sensor
 version: 4

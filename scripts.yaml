@@ -260,18 +260,6 @@ home_leave:
             notification_icon: mdi:power-plug-off
   mode: single
   icon: mdi:hand-wave
-tv_power_office:
-  alias: TV Power Office
-  sequence:
-  - metadata: {}
-    data:
-      device: TV
-      command: Power
-    target:
-      device_id: 213c1e28be789af24d278bfa20f54941
-    action: remote.send_command
-  mode: single
-  icon: mdi:television
 turn_on_boiler_for_35_minutes:
   alias: Turn ON Boiler for 35 minutes
   mode: single
@@ -310,40 +298,6 @@ turn_on_boiler_for_45_minutes:
     target:
       entity_id: switch.switcher_boiler_43b9
     data: {}
-toggle_office_ac:
-  alias: Toggle Office AC
-  sequence:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.office
-          state: cool
-        - condition: state
-          entity_id: climate.office
-          state: heat
-        - condition: state
-          entity_id: climate.office
-          state: heat_cool
-      sequence:
-      - data: {}
-        target:
-          entity_id:
-          - climate.office
-        action: climate.turn_off
-    - conditions:
-      - condition: state
-        entity_id: climate.office
-        state: 'off'
-      sequence:
-      - data: {}
-        target:
-          entity_id:
-          - climate.office
-        action: climate.turn_on
-  mode: single
-  icon: mdi:air-conditioner
 toggle_living_room_light:
   alias: Toggle Living Room Light
   mode: single
@@ -613,7 +567,7 @@ ir_toggle_balcony_tv:
   - action: mqtt.publish
     data:
       topic: zigbee2mqtt/Balcony Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "BUEjsxEnAsABA7sGJwLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABw+snUEjAwknAv//QSMDCScC"}'
+      payload: '{"ir_code_to_send": "BUAjmxErAuADAQOsBisC4AcBQBPAA0ABwAvgCwdAAUAXQAFAB0AD4AMBwA/AB0ABCV6gQCPuCCsC///gAgcCCCsC"}'
       qos: 0
       retain: false
   - action: notify.send_message
@@ -772,3 +726,30 @@ wake_kitchen_echo_random_spotify_playlist:
   alias: Wake Kitchen Echo - random Spotify playlist
   mode: restart
   description: ''
+send_doorbell_notification_to_balcony_tv:
+  sequence:
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: input_select.balcony_tv_status
+        state: 'Off'
+    then:
+    - action: notify.balcony_tv
+      data:
+        data:
+          duration: 10
+          position: top-left
+          fontsize: medium
+          transparency: 50%
+          timeout: 10
+          color: cyan
+          interrupt: 0
+          image:
+            path: /config/www/tmp/snapshot_doorbell.jpg
+        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
+          Snapshot Captured!"
+        title: Doorbell Notification
+  alias: Send Doorbell Notification to Balcony TV
+  description: Sends notification with doorbell snapshot to Living Room TV when TV
+    is on
