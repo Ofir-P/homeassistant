@@ -613,7 +613,8 @@ wake_shower_echo_random_spotify_playlist:
         action: media_player.shuffle_set
       - data:
           media_player:
-            device_id: e08a09f6c4b32f31a799d55036698284
+            device_id:
+            - f67ef7a5cee2cff59441983ff6b2e500
           spotify_uri: '{{ playlist_uri }}'
           account: 01KAB2YAREPM46QYFDTBFC0CWH
         action: spotcast.play_media
@@ -639,7 +640,8 @@ wake_shower_echo_random_spotify_playlist:
       action: media_player.shuffle_set
     - data:
         media_player:
-          device_id: e08a09f6c4b32f31a799d55036698284
+          device_id:
+          - f67ef7a5cee2cff59441983ff6b2e500
         spotify_uri: '{{ playlist_uri }}'
         account: 01KAB2YAREPM46QYFDTBFC0CWH
       action: spotcast.play_media
@@ -717,7 +719,7 @@ wake_kitchen_echo_random_spotify_playlist:
       action: media_player.media_next_track
       data: {}
   - delay:
-      seconds: 1
+      seconds: 4
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
