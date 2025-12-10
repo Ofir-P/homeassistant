@@ -116,3 +116,25 @@
             {% if loop.first %} {{'\u26A0\uFE0F'}} Battery {% else %}, {% endif %}
             {{ state_attr(sensor, 'friendly_name') }} {{ states(sensor) }}%
           {% endfor %}
+# [=========================]qBitTorrent[=========================]
+- sensor:
+    - name: "MB Sent"
+      unit_of_measurement: "MB/s"
+      availability: "{{ states('sensor.qbittorrent_down_speed')|is_number }}"
+      state: "{{ (states('sensor.qbittorrent_down_speed') | int / 1000) | round(1) }}"
+
+    - name: "MB Upload"
+      unit_of_measurement: "MB/s"
+      availability: "{{ states('sensor.qbittorrent_up_speed')|is_number }}"
+      state: "{{ (states('sensor.qbittorrent_up_speed') | int / 1000) | round(1) }}"
+# [=========================]qBitTorrent[=========================]
+# [=========================]Phones at home[=========================]
+- binary_sensor:
+    - name: "Any phone at home"
+      unique_id: any_phone_at_home
+      device_class: presence
+      state: >
+        {{ is_state('device_tracker.elians_iphone', 'home')
+           or is_state('device_tracker.ofir_honor_magic_5_pro', 'home') }}
+
+# [=========================]Phones at home[=========================]

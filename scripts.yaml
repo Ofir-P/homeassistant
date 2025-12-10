@@ -614,7 +614,7 @@ wake_shower_echo_random_spotify_playlist:
       - data:
           media_player:
             device_id:
-            - f67ef7a5cee2cff59441983ff6b2e500
+            - 12472f805d9cb87b27582661cc0599bc
           spotify_uri: '{{ playlist_uri }}'
           account: 01KAB2YAREPM46QYFDTBFC0CWH
         action: spotcast.play_media
@@ -641,7 +641,7 @@ wake_shower_echo_random_spotify_playlist:
     - data:
         media_player:
           device_id:
-          - f67ef7a5cee2cff59441983ff6b2e500
+          - 12472f805d9cb87b27582661cc0599bc
         spotify_uri: '{{ playlist_uri }}'
         account: 01KAB2YAREPM46QYFDTBFC0CWH
       action: spotcast.play_media
@@ -651,7 +651,10 @@ wake_shower_echo_random_spotify_playlist:
         device_id: 86ba0c575ee9202fa82ac55b73ab1165
       action: media_player.media_next_track
   - delay:
-      seconds: 1
+      hours: 0
+      minutes: 0
+      seconds: 6
+      milliseconds: 0
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
