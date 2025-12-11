@@ -54,18 +54,6 @@ browser_mod:
               icon: mdi:map-marker-radius
               card_mod:
                 style: *state
-
-        - type: custom:mod-card
-          card_mod:
-            style:
-              hui-horizontal-stack-card$: |
-                #root {
-                  justify-content: space-evenly !important;
-                  padding: var(--tablet-popup-button-padding);
-                }
-          card:
-            type: horizontal-stack
-            cards:
         - type: map
           default_zoom: 16
           dark_mode: true

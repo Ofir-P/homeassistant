@@ -110,23 +110,15 @@ views:
               entity_id: light.living_room_l1
 
           - type: custom:button-card
-            entity: climate.ofir_a_c
-            name: Climate
-            double_tap_action: !include popup/livingroom_climate.yaml
+            entity: light.living_room_l1
+            name: Light
             template:
-              - base
-              - icon_climate
-              - circle
-            variables:
-              circle_input: >
-                [[[
-                  if (entity) {
-                      return entity.state === 'cool'
-                          ? Math.round(entity.attributes.temperature).toString()
-                          : Math.round(entity.attributes.current_temperature).toString();
-                  }
-                ]]]
-              circle_input_unit: "°C"
+              - light
+              - icon_hue
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.living_room_l1
 
           - type: custom:button-card
             entity: input_select.living_room_tv_status
@@ -143,9 +135,9 @@ views:
                     return variables.translate_unknown;
                 }
               ]]]
-            tap_action:
-              action: call-service
-              service: script.ir_turn_on_off_living_room_tv
+#            tap_action:
+#              action: call-service
+#              service: script.
 
             template:
               - base
@@ -179,45 +171,20 @@ views:
               - icon_hue
 
           - type: custom:button-card
-            entity: climate.office
-            name: Climate
-            tap_action:
-              action: call-service
-              service: script.toggle_office_ac
-            double_tap_action: !include popup/office_climate.yaml
+            entity: light.office_bathroom
+            name: Bathroom
             template:
-              - base
-              - icon_climate
-              - circle
-            variables:
-              circle_input: >
-                [[[
-                  if (entity) {
-                      return entity.state === 'on'
-                          ? Math.round(entity.attributes.temperature).toString()
-                          : Math.round(entity.attributes.current_temperature).toString();
-                  }
-                ]]]
-              circle_input_unit: "°C"
+              - light
+              - icon_hue
+
 
           - type: custom:button-card
-            entity: input_select.office_tv_status
-            name: TV
-            state_display: >
-              [[[
-                if (variables.state === 'On') {
-                    return 'On';
-                }
-                if (variables.state === 'Off') {
-                    return 'Off';
-                }                
-                if (variables.state === true) {
-                    return variables.translate_unknown;
-                }
-              ]]]
-            tap_action:
-              action: call-service
-              service: script.tv_power_office
+            entity: light.office_bathroom
+            name: Bathroom
+            template:
+              - light
+              - icon_hue
+
 
             template:
               - base
@@ -251,27 +218,28 @@ views:
               - icon_lamp
 
           - type: custom:button-card
-            entity: climate.bedroom_ac
-            name: Climate
+            entity: input_select.bedroom_tv_status
+            name: TV
+            state_display: >
+              [[[
+                if (variables.state === 'On') {
+                    return 'On';
+                }
+                if (variables.state === 'Off') {
+                    return 'Off';
+                }                
+                if (variables.state === true) {
+                    return variables.translate_unknown;
+                }
+              ]]]
             tap_action:
               action: call-service
-              service: script.toggle_bedroom_ac
-            double_tap_action: !include popup/bedroom_climate.yaml
+              service: script.ir_turn_on_off_bedroom_tv
             template:
               - base
-              - icon_climate
-              - circle
-            variables:
-              circle_input: >
-                [[[
-                  if (entity) {
-                      return entity.state === 'on'
-                          ? Math.round(entity.attributes.temperature).toString()
-                          : Math.round(entity.attributes.current_temperature).toString();
-                  }
-                ]]]
-              circle_input_unit: "°C"
-
+              - icon_tv
+              - loader
+              
           - type: custom:button-card
             entity: input_select.bedroom_tv_status
             name: TV
@@ -378,23 +346,11 @@ views:
               - icon_hue
 
           - type: custom:button-card
-            entity: climate.wardrobe
-            name: Climate
-            double_tap_action: !include popup/wardrobe_climate.yaml
+            entity: light.shower_l1
+            name: Light
             template:
-              - base
-              - icon_climate
-              - circle
-            variables:
-              circle_input: >
-                [[[
-                  if (entity) {
-                      return entity.state === 'cool'
-                          ? Math.round(entity.attributes.temperature).toString()
-                          : Math.round(entity.attributes.current_temperature).toString();
-                  }
-                ]]]
-              circle_input_unit: "°C"
+              - light
+              - icon_hue
 
           - type: custom:button-card
             entity: media_player.spotify_elian_sarfaty
