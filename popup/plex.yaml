@@ -216,10 +216,10 @@ browser_mod:
                     }
               type: markdown
             - entities:
-                - entity: sensor.bytes_sent
+                - entity: sensor.mb_sent
                   name: Download Speed
                   icon: mdi:download
-                - entity: sensor.bytes_upload
+                - entity: sensor.mb_upload
                   name: Upload Speed
                   icon: mdi:upload
               style: |

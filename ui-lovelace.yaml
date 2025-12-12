@@ -135,9 +135,9 @@ views:
                     return variables.translate_unknown;
                 }
               ]]]
-#            tap_action:
-#              action: call-service
-#              service: script.
+            #            tap_action:
+            #              action: call-service
+            #              service: script.
 
             template:
               - base
@@ -177,19 +177,12 @@ views:
               - light
               - icon_hue
 
-
           - type: custom:button-card
             entity: light.office_bathroom
             name: Bathroom
             template:
               - light
               - icon_hue
-
-
-            template:
-              - base
-              - icon_tv
-              - loader
 
           - type: custom:button-card
             entity: light.office_bathroom
@@ -239,7 +232,7 @@ views:
               - base
               - icon_tv
               - loader
-              
+
           - type: custom:button-card
             entity: input_select.bedroom_tv_status
             name: TV
