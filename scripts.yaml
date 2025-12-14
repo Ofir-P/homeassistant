@@ -585,6 +585,16 @@ building_entrance_door_unlock:
   sequence:
   - action: switch.turn_on
     target:
+      entity_id:
+      - switch.building_camera_fingerbot
+    data: {}
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 2
+      milliseconds: 0
+  - action: switch.turn_on
+    target:
       entity_id: switch.building_door_unlock_fingerbot
   - action: notify.send_message
     data:

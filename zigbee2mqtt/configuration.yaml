@@ -172,4 +172,6 @@ devices:
     friendly_name: Balcony Smart IR Remote Control
   '0xd44867fffe07863a':
     friendly_name: Balcony Presence Sensor
+  '0xa4c138abf5715c30':
+    friendly_name: Building Camera Fingerbot
 version: 4
