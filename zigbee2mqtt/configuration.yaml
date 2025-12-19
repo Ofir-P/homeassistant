@@ -174,4 +174,6 @@ devices:
     friendly_name: Balcony Presence Sensor
   '0xa4c138abf5715c30':
     friendly_name: Building Camera Fingerbot
+  '0x54ef441000c4bc27':
+    friendly_name: '0x54ef441000c4bc27'
 version: 4
