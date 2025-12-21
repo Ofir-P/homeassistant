@@ -30,9 +30,6 @@ devices:
   '0x00158d0008e0195a':
     friendly_name: Water Leak Shower Sink
     description: Sensor - Water Leak Shower Sink under the shower sink
-  '0xa4c138cf6f460fd1':
-    friendly_name: Bedroom AC
-    description: Smart Switch EU
   '0xa4c1387bf0a99185':
     friendly_name: Office Temperature Sensor
     description: Next to Vent platform on top of gaming table
@@ -96,8 +93,6 @@ devices:
   '0xa4c138d65347e112':
     friendly_name: Shower
     description: box next to boiler, controls Shower and Corridor
-  '0xa4c13887c1e425cb':
-    friendly_name: Office AC
   '0xa4c1387d201f5691':
     friendly_name: Wardrobe
     description: inside the switch box of Wardrobe.
@@ -128,9 +123,6 @@ devices:
     friendly_name: Guest Bathroom Motion Sensor
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
-  '0xa4c138c861145739':
-    friendly_name: Heater Shower
-    description: Heater - located above the power plugs
   '0x00158d0009cf58d1':
     friendly_name: Wardrobe Sticker Switch button
   '0xa4c1380dc6ffc141':
@@ -176,4 +168,12 @@ devices:
     friendly_name: Building Camera Fingerbot
   '0x54ef441000c4bc27':
     friendly_name: '0x54ef441000c4bc27'
+  '0xa4c138cf6f460fd1':
+    friendly_name: Living Room Deco
+  '0xa4c138c861145739':
+    friendly_name: Tami 4
+  '0xbc026efffe8e9bf2':
+    friendly_name: Balcony Echo Dot
+  '0xa4c13887c1e425cb':
+    friendly_name: Nespresso
 version: 4
