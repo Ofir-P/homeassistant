@@ -115,20 +115,14 @@ devices:
     friendly_name: Plant Monitor
   '0xa4c138641cb105b1':
     friendly_name: Office Bathroom Motion Sensor
-  '0x60b647fffe57ef24':
-    friendly_name: Shower IKEA Button
   '0x00158d000ad8180f':
     friendly_name: Guest Bathroom Door Sensor
-  '0xf4b3b1fffea0bae7':
-    friendly_name: Guest Bathroom Motion Sensor
   '0x00158d0008dff275':
     friendly_name: Water Leak Sensor Kitchen Sink
   '0x00158d0009cf58d1':
     friendly_name: Wardrobe Sticker Switch button
   '0xa4c1380dc6ffc141':
     friendly_name: Shower Door Sensor
-  '0xa4c138e09b1de954':
-    friendly_name: Solar Rain Sensor
   '0x6cfd22fffeeaf896':
     friendly_name: Living Room Blinds
   '0xa4c1381ead1ca0a5':
@@ -176,4 +170,11 @@ devices:
     friendly_name: Balcony Echo Dot
   '0xa4c13887c1e425cb':
     friendly_name: Nespresso
+  '0xa4c138e09b1de954':
+    friendly_name: Solar Rain Sensor
+    description: Outside kids room window
+  '0x60b647fffe57ef24':
+    friendly_name: Shower IKEA Button
+  '0xf4b3b1fffea0bae7':
+    friendly_name: Guest Bathroom Motion Sensor
 version: 4
