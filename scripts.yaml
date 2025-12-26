@@ -591,7 +591,7 @@ building_entrance_door_unlock:
   - delay:
       hours: 0
       minutes: 0
-      seconds: 6
+      seconds: 4
       milliseconds: 0
   - action: switch.turn_on
     target:
