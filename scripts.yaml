@@ -77,38 +77,6 @@ toggle_living_room_ac:
     data:
       entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – ❄️ Living Room Broadlink AC toggle activated \U0001F6CB️"
-toggle_bedroom_ac:
-  alias: Toggle Bedroom AC
-  sequence:
-  - choose:
-    - conditions:
-      - condition: or
-        conditions:
-        - condition: state
-          entity_id: climate.bedroom_ac
-          state: cool
-        - condition: state
-          entity_id: climate.bedroom_ac
-          state: heat
-        - condition: state
-          entity_id: climate.bedroom_ac
-          state: heat_cool
-      sequence:
-      - data: {}
-        target:
-          entity_id: climate.bedroom_ac
-        action: climate.turn_off
-    - conditions:
-      - condition: state
-        entity_id: climate.bedroom_ac
-        state: 'off'
-      sequence:
-      - data: {}
-        target:
-          entity_id: climate.bedroom_ac
-        action: climate.turn_on
-  mode: single
-  icon: mdi:air-conditioner
 home_leave:
   alias: Home Leave
   sequence:
