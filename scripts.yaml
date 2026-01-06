@@ -109,31 +109,6 @@ home_leave:
       - choose:
         - conditions:
           - condition: state
-            entity_id: input_select.bedroom_ac_status
-            state: 'On'
-          sequence:
-          - action: climate.turn_off
-            target:
-              entity_id: climate.bedroom_ac
-            data: {}
-      - choose:
-        - conditions:
-          - condition: or
-            conditions:
-            - condition: state
-              entity_id: climate.ofir_a_c
-              state: cool
-            - condition: state
-              entity_id: climate.ofir_a_c
-              state: heat
-          sequence:
-          - action: climate.turn_off
-            target:
-              entity_id: climate.ofir_a_c
-            data: {}
-      - choose:
-        - conditions:
-          - condition: state
             entity_id: input_select.living_room_tv_status
             state: 'On'
           sequence:
@@ -149,41 +124,10 @@ home_leave:
       - choose:
         - conditions:
           - condition: state
-            entity_id: input_select.office_tv_status
+            entity_id: input_select.balcony_tv_status
             state: 'On'
           sequence:
-          - action: script.tv_power_office
-            data: {}
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.office_ac_status
-            state: 'On'
-          sequence:
-          - action: climate.turn_off
-            target:
-              entity_id: climate.office
-            data: {}
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.wardrobe_ac_status
-            state: 'On'
-          sequence:
-          - action: climate.turn_off
-            target:
-              entity_id:
-              - climate.wardrobe
-            data: {}
-      - choose:
-        - conditions:
-          - condition: state
-            entity_id: input_select.shower_heater_status
-            state: 'On'
-          sequence:
-          - action: switch.turn_off
-            target:
-              entity_id: switch.heater_shower
+          - action: script.ir_toggle_balcony_tv
             data: {}
       - delay:
           hours: 0
@@ -205,8 +149,6 @@ home_leave:
       entity_id:
       - light.office
       - light.office_bathroom
-      - light.office_wall_light
-      - light.ofir_desk_led
     data: {}
   - action: notify.send_message
     data:
