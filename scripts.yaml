@@ -88,9 +88,7 @@ home_leave:
       while:
       - condition: template
         value_template: '{{ is_state(''input_select.bedroom_tv_status'', ''On'') or
-          is_state(''input_select.bedroom_ac_status'', ''On'') or is_state(''input_select.living_room_tv_status'',
-          ''On'') or is_state(''input_select.office_tv_status'', ''On'') or is_state(''input_select.office_ac_status'',
-          ''On'') or is_state(''input_select.wardrobe_ac_status'', ''On'') or is_state(''input_select.shower_heater_status'',
+          is_state(''input_select.living_room_tv_status'', ''On'') or is_state(''input_select.balcony_tv_status'',
           ''On'')}}'
       sequence:
       - choose:
@@ -131,8 +129,8 @@ home_leave:
             data: {}
       - delay:
           hours: 0
-          minutes: 12
-          seconds: 55
+          minutes: 11
+          seconds: 30
           milliseconds: 0
   - action: notify.send_message
     data:
@@ -520,129 +518,48 @@ wake_shower_echo_random_spotify_playlist:
   - variables:
       playlist_uri: "{{ [\n  'spotify:playlist:3mp9kNj2SdzziDBHAJJ3s1',\n  'spotify:playlist:19x1tlgbyvG7xatQ3UX4Qk',\n
         \ 'spotify:playlist:6eYN2mMJ7sjLM49eXbwe7i'\n] | random }}\n"
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: media_player.master_bedroom_shower_echo_dot
-        state: playing
-      sequence:
-      - target:
-          device_id: 86ba0c575ee9202fa82ac55b73ab1165
-        data:
-          shuffle: true
-        action: media_player.shuffle_set
-      - data:
-          media_player:
-            device_id:
-            - 12472f805d9cb87b27582661cc0599bc
-          spotify_uri: '{{ playlist_uri }}'
-          account: 01KAB2YAREPM46QYFDTBFC0CWH
-        action: spotcast.play_media
-      - delay:
-          seconds: 3
-      - target:
-          device_id: 86ba0c575ee9202fa82ac55b73ab1165
-        action: media_player.media_next_track
-    default:
-    - data:
-        target:
-        - media_player.master_bedroom_shower_echo_dot
-        message: <speak><break time='100ms'/></speak>
-        data:
-          type: tts
-      action: notify.alexa_media
-    - delay:
-        seconds: 2
-    - target:
-        device_id: 86ba0c575ee9202fa82ac55b73ab1165
+  - action: spotcast.play_media
+    data:
+      media_player:
+        entity_id:
+        - media_player.balcony_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+      account: 01KAB2YAREPM46QYFDTBFC0CWH
+      spotify_uri: '{{ playlist_uri }}'
       data:
+        volume: 70
         shuffle: true
-      action: media_player.shuffle_set
-    - data:
-        media_player:
-          device_id:
-          - 12472f805d9cb87b27582661cc0599bc
-        spotify_uri: '{{ playlist_uri }}'
-        account: 01KAB2YAREPM46QYFDTBFC0CWH
-      action: spotcast.play_media
-    - delay:
-        seconds: 2
-    - target:
-        device_id: 86ba0c575ee9202fa82ac55b73ab1165
-      action: media_player.media_next_track
+        random: true
   - delay:
       hours: 0
       minutes: 0
-      seconds: 6
+      seconds: 7
       milliseconds: 0
   - action: notify.send_message
     data:
-      entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',
+      message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script - {{ state_attr('media_player.balcony_echo_dot',
         'media_album_name') }} \U0001F6BF\n"
+    target:
+      entity_id: notify.supervisor_telegram
 wake_kitchen_echo_random_spotify_playlist:
   sequence:
   - variables:
       playlist_uri: "{{ [\n  'spotify:playlist:3mp9kNj2SdzziDBHAJJ3s1',\n  'spotify:playlist:19x1tlgbyvG7xatQ3UX4Qk',\n
         \ 'spotify:playlist:6eYN2mMJ7sjLM49eXbwe7i'\n] | random }}\n"
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: media_player.kitchen_echo_dot
-        state: playing
-      sequence:
-      - target:
-          device_id:
-          - b07a5e4dc39e8b6d440aafa032bb4161
-        data:
-          shuffle: true
-        action: media_player.shuffle_set
-      - data:
-          media_player:
-            device_id:
-            - f33666e567ec215a45f023eb55e37f1e
-          spotify_uri: '{{ playlist_uri }}'
-          account: 01KAB2YAREPM46QYFDTBFC0CWH
-        action: spotcast.play_media
-      - delay:
-          seconds: 3
-      - target:
-          device_id:
-          - b07a5e4dc39e8b6d440aafa032bb4161
-        action: media_player.media_next_track
-        data: {}
-    default:
-    - data:
-        target:
-        - media_player.kitchen_echo_dot
-        message: <speak><break time='100ms'/></speak>
-        data:
-          type: tts
-      action: notify.alexa_media
-    - delay:
-        seconds: 2
-    - target:
-        device_id:
-        - b07a5e4dc39e8b6d440aafa032bb4161
+  - action: spotcast.play_media
+    data:
+      media_player:
+        entity_id: media_player.kitchen_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+      account: 01KAB2YAREPM46QYFDTBFC0CWH
+      spotify_uri: '{{ playlist_uri }}'
       data:
+        volume: 50
         shuffle: true
-      action: media_player.shuffle_set
-    - data:
-        media_player:
-          device_id:
-          - f33666e567ec215a45f023eb55e37f1e
-        spotify_uri: '{{ playlist_uri }}'
-        account: 01KAB2YAREPM46QYFDTBFC0CWH
-      action: spotcast.play_media
-    - delay:
-        seconds: 2
-    - target:
-        device_id:
-        - b07a5e4dc39e8b6d440aafa032bb4161
-      action: media_player.media_next_track
-      data: {}
+        random: true
   - delay:
-      seconds: 4
+      hours: 0
+      minutes: 0
+      seconds: 7
+      milliseconds: 0
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
