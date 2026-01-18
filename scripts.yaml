@@ -595,3 +595,63 @@ send_doorbell_notification_to_balcony_tv:
   alias: Send Doorbell Notification to Balcony TV
   description: Sends notification with doorbell snapshot to Living Room TV when TV
     is on
+kids_room_echo_random_spotify_playlist:
+  sequence:
+  - variables:
+      playlist_uri: "{{ [\n  'spotify:playlist:37i9dQZF1DX8tYYl2HSCud',\n  'spotify:playlist:78p6xNZmo20hYBhPrB4U15',\n
+        \ 'spotify:playlist:4uwPaEmia138KSh24KxfA6',\n  'spotify:playlist:6XMhvUe2OfARE6iEjhx96k',\n
+        \ 'spotify:playlist:08yhaHLLhnCAoe7Gzq0yZr',\n  'spotify:playlist:1Mgq2IxAEKELkC8IlNvTtV'\n]
+        | random }}\n"
+  - action: spotcast.play_media
+    data:
+      media_player:
+        entity_id:
+        - media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+      account: 01KAB2YAREPM46QYFDTBFC0CWH
+      spotify_uri: '{{ playlist_uri }}'
+      data:
+        volume: 30
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 7
+      milliseconds: 0
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',
+        'media_album_name') }} \U0001F6BF\n"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: 'Kids Room Echo - Random Spotify Playlist '
+  mode: restart
+  description: ''
+living_room_echo_random_spotify_playlist:
+  sequence:
+  - variables:
+      playlist_uri: "{{ [\n  'spotify:playlist:37i9dQZF1DX8tYYl2HSCud',\n  'spotify:playlist:78p6xNZmo20hYBhPrB4U15',\n
+        \ 'spotify:playlist:4uwPaEmia138KSh24KxfA6',\n  'spotify:playlist:6XMhvUe2OfARE6iEjhx96k',\n
+        \ 'spotify:playlist:08yhaHLLhnCAoe7Gzq0yZr',\n  'spotify:playlist:1Mgq2IxAEKELkC8IlNvTtV'\n]
+        | random }}\n"
+  - action: spotcast.play_media
+    data:
+      media_player:
+        entity_id:
+        - media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+      account: 01KAB2YAREPM46QYFDTBFC0CWH
+      spotify_uri: '{{ playlist_uri }}'
+      data:
+        volume: 30
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 7
+      milliseconds: 0
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - \U0001F3B5 Living Room Music Script - {{ state_attr('media_player.livingroom_echo_pop',
+        'media_album_name') }} \U0001F6CB️\n"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: 'Living Room Echo - Random Spotify Playlist '
+  mode: restart
+  description: ''
