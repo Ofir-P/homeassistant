@@ -610,7 +610,7 @@ kids_room_echo_random_spotify_playlist:
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
-        volume: 30
+        volume: 35
   - delay:
       hours: 0
       minutes: 0
