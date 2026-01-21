@@ -110,14 +110,7 @@ home_leave:
             entity_id: input_select.living_room_tv_status
             state: 'On'
           sequence:
-          - action: mqtt.publish
-            data:
-              topic: zigbee2mqtt/Smart IR Remote Control/set
-              payload: '{"ir_code_to_send": "BWEjoBE5AsABA8sGOQLgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwn5nWEj8wg5Av//4GIHAgg5Ag=="}'
-              qos: 0
-              retain: false
-            enabled: false
-          - action: script.ir_turn_on_off_living_room_tv
+          - action: script.ir_toggle_living_room_tv
             data: {}
       - choose:
         - conditions:
@@ -599,7 +592,7 @@ kids_room_echo_random_spotify_playlist:
   sequence:
   - variables:
       playlist_uri: "{{ [\n  'spotify:playlist:37i9dQZF1DX8tYYl2HSCud',\n  'spotify:playlist:78p6xNZmo20hYBhPrB4U15',\n
-        \ 'spotify:playlist:4uwPaEmia138KSh24KxfA6',\n  'spotify:playlist:6XMhvUe2OfARE6iEjhx96k',\n
+        \ 'spotify:album:1EaRZ2v6nxWflL1LlXHuCc',\n  'spotify:playlist:4uwPaEmia138KSh24KxfA6',\n
         \ 'spotify:playlist:08yhaHLLhnCAoe7Gzq0yZr',\n  'spotify:playlist:1Mgq2IxAEKELkC8IlNvTtV'\n]
         | random }}\n"
   - action: spotcast.play_media
@@ -611,6 +604,7 @@ kids_room_echo_random_spotify_playlist:
       spotify_uri: '{{ playlist_uri }}'
       data:
         volume: 55
+        shuffle: true
   - delay:
       hours: 0
       minutes: 0
@@ -640,7 +634,9 @@ living_room_echo_random_spotify_playlist:
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
-        volume: 30
+        volume: 35
+        shuffle: true
+        random: true
   - delay:
       hours: 0
       minutes: 0
@@ -654,4 +650,21 @@ living_room_echo_random_spotify_playlist:
       entity_id: notify.supervisor_telegram
   alias: 'Living Room Echo - Random Spotify Playlist '
   mode: restart
+  description: ''
+ir_toggle_living_room_tv:
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BWkjrBFAAsABA8oGQALgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwk3nmkj3ghAAv//4AIHAghAAg=="}'
+      qos: 0
+      retain: false
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - Living Room IR to turn ON/OFF TV has been triggered"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: IR Toggle Living Room TV
+  mode: single
+  icon: mdi:remote-tv
   description: ''

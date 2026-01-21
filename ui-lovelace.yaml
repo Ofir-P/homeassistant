@@ -135,9 +135,9 @@ views:
                     return variables.translate_unknown;
                 }
               ]]]
-            #            tap_action:
-            #              action: call-service
-            #              service: script.
+            tap_action:
+              action: call-service
+              service: script.ir_toggle_living_room_tv
 
             template:
               - base
