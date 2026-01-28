@@ -293,11 +293,9 @@ turn_all_lights_off:
       - kitchen
       - living_room
       - shower
-      entity_id:
-      - light.office
-      - light.office_bathroom
-      - light.office_wall_light
-      - light.bathroom
+      - balcony
+      - office_room
+      - hallway
     data: {}
   - action: notify.send_message
     data:
@@ -405,7 +403,9 @@ toggle_dining_table_light:
   sequence:
   - action: light.toggle
     target:
-      entity_id: light.living_room_l2
+      entity_id:
+      - light.dining_table_l1
+      - light.dining_table_l2
     data: {}
   - action: notify.send_message
     data:
@@ -667,4 +667,36 @@ ir_toggle_living_room_tv:
   alias: IR Toggle Living Room TV
   mode: single
   icon: mdi:remote-tv
+  description: ''
+guest_bathroom_echo_random_spotify_playlist:
+  sequence:
+  - variables:
+      playlist_uri: "{{ [\n  'spotify:playlist:37i9dQZF1DX8tYYl2HSCud',\n  'spotify:playlist:78p6xNZmo20hYBhPrB4U15',\n
+        \ 'spotify:playlist:4uwPaEmia138KSh24KxfA6',\n  'spotify:playlist:6XMhvUe2OfARE6iEjhx96k',\n
+        \ 'spotify:playlist:08yhaHLLhnCAoe7Gzq0yZr',\n  'spotify:playlist:1Mgq2IxAEKELkC8IlNvTtV'\n]
+        | random }}\n"
+  - action: spotcast.play_media
+    data:
+      media_player:
+        entity_id:
+        - media_player.bedroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+      account: 01KAB2YAREPM46QYFDTBFC0CWH
+      spotify_uri: '{{ playlist_uri }}'
+      data:
+        volume: 65
+        shuffle: true
+        random: true
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 7
+      milliseconds: 0
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - \U0001F3B5 Guest Bathroom Music Script - {{ state_attr('media_player.guest_bathroom_echo_dot',
+        'media_album_name') }} \U0001F6CB️\n"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: Guest Bathroom Echo - Random Spotify Playlist
+  mode: restart
   description: ''

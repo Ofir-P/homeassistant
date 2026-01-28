@@ -21,9 +21,6 @@ legacy: false
 devices:
   '0xa4c138058812e73e':
     friendly_name: Bedroom Wireless Remote Switch
-  '0xa4c13870da020238':
-    friendly_name: Laundry Machine
-    description: Smart Switch EU
   '0xa4c1383422d28f86':
     friendly_name: Bedroom Temperature Sensor
     description: Temp - located next to the plugs, behind the TV.
@@ -79,12 +76,9 @@ devices:
   '0xa4c1386c61626446':
     friendly_name: Living Room Temperature Sensor
     description: On top of BOSCH speaker next to the Main Door
-  '0xa4c13813fa807dac':
-    friendly_name: Office
-    description: office right top box, controls Office and Bathroom lights.
   '0xa4c13895aac85991':
-    friendly_name: Office Bathroom
-    description: office left top box, controls Office Bathroom and Shower
+    friendly_name: Office
+    description: inside lightbulb on celling
   '0xa4c1380cd141e5fa':
     friendly_name: Bedroom
     description: bedroom box top of the door
@@ -92,13 +86,10 @@ devices:
     friendly_name: Shower
     description: box next to boiler, controls Shower and Corridor
   '0xa4c1387d201f5691':
-    friendly_name: Wardrobe
-    description: inside the switch box of Wardrobe.
+    friendly_name: Kids Room
+    description: Inside the celling light
   '0xa4c138d230136a38':
     friendly_name: Laundry Machine Light
-  '0xa4c138ec28a26421':
-    friendly_name: Living Room
-    description: located right side of the door.
   '0xa4c138e6fc18ec4e':
     friendly_name: Kitchen
     description: located above the fridge
@@ -111,8 +102,6 @@ devices:
     friendly_name: Dining Table Sticker Switch button 2nd
   '0xa4c1383bed0900d7':
     friendly_name: Plant Monitor
-  '0xa4c138641cb105b1':
-    friendly_name: Office Bathroom Motion Sensor
   '0x00158d000ad8180f':
     friendly_name: Guest Bathroom Door Sensor
   '0x00158d0008dff275':
@@ -156,8 +145,6 @@ devices:
     friendly_name: Balcony Smart IR Remote Control
   '0xd44867fffe07863a':
     friendly_name: Balcony Presence Sensor
-  '0x54ef441000c4bc27':
-    friendly_name: '0x54ef441000c4bc27'
   '0xa4c138cf6f460fd1':
     friendly_name: Living Room Deco
   '0xa4c138c861145739':
@@ -181,4 +168,18 @@ devices:
     friendly_name: Living Room Smart IR Remote Control
   '0xa4c13834eeb0fcc9':
     friendly_name: Kids Room Wireless Remote Switch
+  '0xa4c138807e5b8466':
+    friendly_name: Hallway Upper
+    description: 'On hallway celling air-conditioning '
+  '0xa4c138279098a045':
+    friendly_name: Hallway Lower
+  '0xa4c138201f8662ee':
+    friendly_name: Living Room
+  '0xa4c138ef2efbd135':
+    friendly_name: Dining Table
+  '0xa4c138a41c484649':
+    friendly_name: Balcony
+  '0xa4c13887884f6ebc':
+    friendly_name: Main Door
+    description: On the celling inside the light
 version: 4

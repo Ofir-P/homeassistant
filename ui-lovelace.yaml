@@ -332,7 +332,7 @@ views:
         columns: 2
         cards:
           - type: custom:button-card
-            entity: light.shower_l1
+            entity: light.kids_room
             name: Light
             template:
               - light

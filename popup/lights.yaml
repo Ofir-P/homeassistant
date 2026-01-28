@@ -13,38 +13,48 @@ browser_mod:
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
-              entity: light.bathroom
+              entity: light.dining_table_l2
+            - type: custom:mushroom-light-card
+              entity: light.living_room_l2
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.balcony
             - type: custom:mushroom-light-card
               entity: light.bedroom
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
               entity: light.shower_l2
+              name: Laundry Machine
+            - type: custom:mushroom-light-card
+              entity: light.dining_table_l1
+              fill_container: false
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.hallway_lower
+            - type: custom:mushroom-light-card
+              entity: light.hallway_upper
+        - type: horizontal-stack
+          cards:
+            - type: custom:mushroom-light-card
+              entity: light.kids_room
             - type: custom:mushroom-light-card
               entity: light.kitchen_l1
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
               entity: light.laundry_machine_light
-              name: Laundry Machine
             - type: custom:mushroom-light-card
               entity: light.living_room_l1
-              fill_container: false
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
               entity: light.kitchen_l2
             - type: custom:mushroom-light-card
-              entity: light.living_room_l2
+              entity: light.office
         - type: horizontal-stack
           cards:
             - type: custom:mushroom-light-card
               entity: light.shower_l1
-            - type: custom:mushroom-light-card
-              entity: light.wardrobe
-        - type: horizontal-stack
-          cards:
-            - type: custom:mushroom-light-card
-              entity: light.office
-            - type: custom:mushroom-light-card
-              entity: light.office_bathroom
