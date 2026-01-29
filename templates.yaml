@@ -41,23 +41,24 @@
         active: >
           <b>
           {% set lights = [
-            states.light.bathroom,
+            states.light.dining_table_l2,
+            states.light.living_room_l2,
+            states.light.balcony,
             states.light.bedroom,
             states.light.shower_l2,
+            states.light.dining_table_l1,
+            states.light.hallway_lower,
+            states.light.hallway_upper,
+            states.light.kids_room,
             states.light.kitchen_l1,
             states.light.laundry_machine_light,
             states.light.living_room_l1,
             states.light.kitchen_l2,
             states.light.office,
-            states.light.office_bathroom,
-            states.light.office_wall_light,
-            states.light.shower_l1,
-            states.light.wardrobe,
-            states.light.living_room_l2
+            states.light.shower_l1
           ] %}
 
           {% set devices = [
-            states.switch.boiler,
             states.input_select.washing_machine_status,
             states.input_select.dish_washer_status,
             states.vacuum.s8_pro_ultra
