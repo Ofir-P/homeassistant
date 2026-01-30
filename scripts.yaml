@@ -296,6 +296,7 @@ turn_all_lights_off:
       - balcony
       - office_room
       - hallway
+      entity_id: light.kids_room
     data: {}
   - action: notify.send_message
     data:
@@ -679,7 +680,7 @@ guest_bathroom_echo_random_spotify_playlist:
     data:
       media_player:
         entity_id:
-        - media_player.bedroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+        - media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:

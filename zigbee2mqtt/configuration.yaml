@@ -65,8 +65,8 @@ devices:
     friendly_name: Living Room Presence Sensor
     description: Presence - located on top of eufy HomeBase
   '0xa4c1385f2de174b5':
-    friendly_name: Bedroom Motion Sensor
-    description: Motion Sensor - located next to Ofir bed side.
+    friendly_name: Hallway Office Motion Sensor
+    description: Above office door frame
   '0xbc026efffe8436d2':
     friendly_name: Clothes Dryer
     description: plug next to Laundry Machine
@@ -118,7 +118,8 @@ devices:
     friendly_name: Zigbee Dongle Router
     description: Kids Room
   '0xa4c1388091f09665':
-    friendly_name: Wardrobe Motion Sensor
+    friendly_name: Hallway Bedroom Motion Sensor
+    description: Above bedroom door frame
   '0x54ef4410010f7cbe':
     friendly_name: Shower Motion Sensor
   '0xf082c0fffe89fdaf':
@@ -166,8 +167,6 @@ devices:
     friendly_name: Smart Plug Kids Room
   '0x20a716fffe48989f':
     friendly_name: Living Room Smart IR Remote Control
-  '0xa4c13834eeb0fcc9':
-    friendly_name: Kids Room Wireless Remote Switch
   '0xa4c138807e5b8466':
     friendly_name: Hallway Upper
     description: 'On hallway celling air-conditioning '
@@ -182,4 +181,6 @@ devices:
   '0xa4c13887884f6ebc':
     friendly_name: Main Door
     description: On the celling inside the light
+  '0xa4c13834eeb0fcc9':
+    friendly_name: Kids Room Wireless Remote Switch
 version: 4
