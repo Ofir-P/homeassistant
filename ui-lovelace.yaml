@@ -110,15 +110,15 @@ views:
               entity_id: light.living_room_l1
 
           - type: custom:button-card
-            entity: light.living_room_l1
-            name: Light
+            entity: light.living_room_l2
+            name: Above TV Light
             template:
               - light
               - icon_hue
             action: call-service
             service: light.toggle
             service_data:
-              entity_id: light.living_room_l1
+              entity_id: light.living_room_l2
 
           - type: custom:button-card
             entity: input_select.living_room_tv_status
@@ -145,11 +145,15 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: light.kitchen_l1
-            name: Kitchen
+            entity: light.dining_table_l1
+            name: Dining Table
             template:
               - light
               - icon_hue
+            action: call-service
+            service: light.toggle
+            service_data:
+              entity_id: light.dining_table_l1
 
       #################################################
       #                                               #
@@ -258,8 +262,8 @@ views:
               - loader
 
           - type: custom:button-card
-            entity: light.shower_l2
-            name: Corridor
+            entity: light.hallway_lower
+            name: Hallway Lower
             template:
               - light
               - icon_lamp

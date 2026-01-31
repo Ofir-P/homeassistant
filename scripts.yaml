@@ -609,8 +609,14 @@ kids_room_echo_random_spotify_playlist:
   - delay:
       hours: 0
       minutes: 0
-      seconds: 7
+      seconds: 12
       milliseconds: 0
+  - action: media_player.shuffle_set
+    metadata: {}
+    target:
+      device_id: 86ba0c575ee9202fa82ac55b73ab1165
+    data:
+      shuffle: false
   - action: notify.send_message
     data:
       message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',

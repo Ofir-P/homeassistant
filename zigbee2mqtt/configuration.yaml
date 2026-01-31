@@ -49,9 +49,6 @@ devices:
     friendly_name: Balcony TV
   '0xa4c13849a2e5e351':
     friendly_name: Living Room TV
-  '0xa4c1383a2646aef0':
-    friendly_name: Office Presence Sensor
-    description: Presence Sensor - located in Office room, next to the side window.
   '0x00158d000a9c73de':
     friendly_name: Water Leak Guest Bathroom Sink
     description: Under the sink in 2nd drawer
@@ -183,4 +180,6 @@ devices:
     description: On the celling inside the light
   '0xa4c13834eeb0fcc9':
     friendly_name: Kids Room Wireless Remote Switch
+  '0xa4c1383a2646aef0':
+    friendly_name: Office Presence Sensor
 version: 4
