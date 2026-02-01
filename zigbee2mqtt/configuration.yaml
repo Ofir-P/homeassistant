@@ -57,7 +57,7 @@ devices:
     description: Presence - located above the kitchen cabinet, next to the reolink camera
   '0x040d84fffebdf9a6':
     friendly_name: Living Room Zigbee Extender
-    description: Extender - located under the AC
+    description: ''
   '0xa4c1380973dca97e':
     friendly_name: Living Room Presence Sensor
     description: Presence - located on top of eufy HomeBase

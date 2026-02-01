@@ -617,6 +617,11 @@ kids_room_echo_random_spotify_playlist:
       device_id: 86ba0c575ee9202fa82ac55b73ab1165
     data:
       shuffle: false
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 12
+      milliseconds: 0
   - action: notify.send_message
     data:
       message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',
@@ -636,8 +641,7 @@ living_room_echo_random_spotify_playlist:
   - action: spotcast.play_media
     data:
       media_player:
-        entity_id:
-        - media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+        device_id: d00953a99c35a74268d26e7753c199fc
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
@@ -684,15 +688,13 @@ guest_bathroom_echo_random_spotify_playlist:
         | random }}\n"
   - action: spotcast.play_media
     data:
-      media_player:
-        entity_id:
-        - media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
         volume: 65
         shuffle: true
-        random: true
+      media_player:
+        entity_id: media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast
   - delay:
       hours: 0
       minutes: 0
