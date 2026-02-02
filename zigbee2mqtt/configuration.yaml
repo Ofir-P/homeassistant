@@ -118,7 +118,7 @@ devices:
     friendly_name: Hallway Bedroom Motion Sensor
     description: Above bedroom door frame
   '0x54ef4410010f7cbe':
-    friendly_name: Shower Motion Sensor
+    friendly_name: Office Motion Sensor
   '0xf082c0fffe89fdaf':
     friendly_name: Bedroom Zigbee Signal Repeater
   '0xa4c1381dac33f60b':
@@ -143,8 +143,6 @@ devices:
     friendly_name: Balcony Smart IR Remote Control
   '0xd44867fffe07863a':
     friendly_name: Balcony Presence Sensor
-  '0xa4c138cf6f460fd1':
-    friendly_name: Living Room Deco
   '0xa4c138c861145739':
     friendly_name: Tami 4
   '0xbc026efffe8e9bf2':
