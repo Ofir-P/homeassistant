@@ -1,0 +1,7 @@
+template:
+  - sensor:
+      - name: "Spotify Kids URIs"
+        unique_id: spotify_kids_uris
+        state: "ready"
+        attributes:
+          items: !include ../spotify_kids_uris.yaml

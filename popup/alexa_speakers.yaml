@@ -30,17 +30,6 @@ browser_mod:
           type: markdown
         - cards:
             - artwork: cover
-              entity: media_player.livingroom_echo_pop
-              hide:
-                power_state: false
-                source: true
-                volume: false
-              icon: mdi:soundbar
-              tts:
-                platform: alexa
-                entity_id: media_player.livingroom_echo_pop
-              type: custom:mini-media-player
-            - artwork: cover
               entity: media_player.balcony_echo_dot
               hide:
                 power_state: false
@@ -52,7 +41,7 @@ browser_mod:
                 entity_id: media_player.balcony_echo_dot
               type: custom:mini-media-player
             - artwork: cover
-              entity: media_player.bedroom_echo_dot
+              entity: media_player.guest_bathroom_echo_dot
               hide:
                 power_state: false
                 source: true
@@ -60,7 +49,8 @@ browser_mod:
               icon: mdi:soundbar
               tts:
                 platform: alexa
-                entity_id: media_player.bedroom_echo_dot
+                entity_id: media_player.guest_bathroom_echo_dot
+              type: custom:mini-media-player
             - artwork: cover
               entity: media_player.kitchen_echo_dot
               hide:
@@ -71,6 +61,16 @@ browser_mod:
               tts:
                 platform: alexa
                 entity_id: media_player.kitchen_echo_dot
+            - artwork: cover
+              entity: media_player.master_bedroom_shower_echo_dot
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:soundbar
+              tts:
+                platform: alexa
+                entity_id: media_player.master_bedroom_shower_echo_dot
               type: custom:mini-media-player
             - artwork: cover
               entity: media_player.office_echo_show5
@@ -78,9 +78,31 @@ browser_mod:
                 power_state: false
                 source: true
                 volume: false
-              icon: mdi:monitor-speaker
+              icon: mdi:soundbar
               tts:
                 platform: alexa
                 entity_id: media_player.office_echo_show5
+              type: custom:mini-media-player
+            - artwork: cover
+              entity: media_player.livingroom_echo_pop
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:soundbar
+              tts:
+                platform: alexa
+                entity_id: media_player.livingroom_echo_pop
+              type: custom:mini-media-player
+            - artwork: cover
+              entity: media_player.master_bedroom_echo_spot
+              hide:
+                power_state: false
+                source: true
+                volume: false
+              icon: mdi:monitor-speaker
+              tts:
+                platform: alexa
+                entity_id: media_player.master_bedroom_echo_spot
               type: custom:mini-media-player
           type: vertical-stack
