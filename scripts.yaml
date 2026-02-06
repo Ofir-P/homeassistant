@@ -694,7 +694,7 @@ guest_bathroom_echo_random_spotify_playlist:
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
-        volume: 65
+        volume: 45
         shuffle: true
       media_player:
         entity_id: media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast

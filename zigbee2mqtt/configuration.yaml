@@ -180,4 +180,6 @@ devices:
     friendly_name: Kids Room Wireless Remote Switch
   '0xa4c1383a2646aef0':
     friendly_name: Office Presence Sensor
+  '0xa4c138641cb105b1':
+    friendly_name: Kids Room Motion Sensor
 version: 5
