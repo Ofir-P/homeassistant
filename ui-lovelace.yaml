@@ -175,21 +175,21 @@ views:
               - icon_hue
 
           - type: custom:button-card
-            entity: light.office_bathroom
+            entity: light.office
             name: Bathroom
             template:
               - light
               - icon_hue
 
           - type: custom:button-card
-            entity: light.office_bathroom
+            entity: light.office
             name: Bathroom
             template:
               - light
               - icon_hue
 
           - type: custom:button-card
-            entity: light.office_bathroom
+            entity: light.office
             name: Bathroom
             template:
               - light
@@ -372,8 +372,8 @@ views:
               - icon_spotify
 
           - type: custom:button-card
-            entity: light.wardrobe
-            name: Light
+            entity: switch.smart_plug_kids_room
+            name: Small Light
             template:
               - light
               - icon_hue
