@@ -53,8 +53,8 @@ devices:
     friendly_name: Water Leak Guest Bathroom Sink
     description: Under the sink in 2nd drawer
   '0x54ef4410007588b8':
-    friendly_name: Kitchen Presence Sensor
-    description: Presence - located above the kitchen cabinet, next to the reolink camera
+    friendly_name: Kids Room Presence Sensor
+    description: Presence kids room next to changing area
   '0x040d84fffebdf9a6':
     friendly_name: Living Room Zigbee Extender
     description: ''
