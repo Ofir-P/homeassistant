@@ -27,5 +27,15 @@ browser_mod:
             - camera_view: auto
               type: picture-glance
               entities: []
+              camera_image: camera.parking_parking
+              aspect_ratio: "20:15"
+            - camera_view: auto
+              type: picture-glance
+              entities: []
+              camera_image: camera.doorbell
+              aspect_ratio: "20:15"
+            - camera_view: auto
+              type: picture-glance
+              entities: []
               camera_image: camera.aquarium_sub
               aspect_ratio: "20:15"
