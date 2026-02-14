@@ -591,11 +591,21 @@ send_doorbell_notification_to_balcony_tv:
   description: Sends notification with doorbell snapshot to Living Room TV when TV
     is on
 kids_room_echo_random_spotify_playlist:
+  alias: Kids Room Echo - Random Spotify Playlist
+  mode: restart
+  description: ''
   sequence:
   - variables:
       raw_items: '{{ state_attr(''sensor.spotify_kids_uris'', ''items'') }}'
-      items: '{{ raw_items.split('', '') if raw_items is string else raw_items }}'
-      playlist_uri: '{{ (items | random) if (items | length) > 0 else ''spotify:playlist:37i9dQZF1DX8tYYl2HSCud''
+      items: '{{ raw_items.split('', '') if raw_items is string else (raw_items if
+        raw_items is not none else []) }}'
+      picked_item: '{{ (items | random) if (items | length) > 0 else ''Kids Playlist|spotify:playlist:37i9dQZF1DX8tYYl2HSCud''
+        }}'
+      picked_name: '{{ (picked_item.split(''|'')[0] | trim) if (''|'' in picked_item)
+        else '''' }}'
+      picked_uri: '{{ (picked_item.split(''|'')[1] | trim) if (''|'' in picked_item)
+        else picked_item }}'
+      chosen_label: '{{ picked_name if picked_name not in [none,''''] else picked_uri
         }}'
   - action: spotcast.play_media
     data:
@@ -603,37 +613,23 @@ kids_room_echo_random_spotify_playlist:
         entity_id:
         - media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
       account: 01KAB2YAREPM46QYFDTBFC0CWH
-      spotify_uri: '{{ playlist_uri }}'
+      spotify_uri: '{{ picked_uri }}'
       data:
         volume: 55
         shuffle: true
   - delay:
-      hours: 0
-      minutes: 0
       seconds: 3
-      milliseconds: 0
   - action: media_player.shuffle_set
-    metadata: {}
     target:
       device_id: 86ba0c575ee9202fa82ac55b73ab1165
     data:
       shuffle: true
-  - wait_template: '{{ state_attr(''media_player.master_bedroom_shower_echo_dot'',
-      ''media_album_name'') not in [none, ''''] }}
-
-      '
-    timeout: 00:00:25
-    continue_on_timeout: true
   - action: notify.send_message
     target:
       entity_id: notify.supervisor_telegram
     data:
-      message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music - {{\n  state_attr('media_player.master_bedroom_shower_echo_dot',
-        'media_album_name')\n  or state_attr('media_player.master_bedroom_shower_echo_dot',
-        'media_title')\n  or 'unknown'\n}} \U0001F9F8\n"
-  alias: 'Kids Room Echo - Random Spotify Playlist '
-  mode: restart
-  description: ''
+      message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music - {{ chosen_label }}
+        \U0001F9F8\n"
 living_room_echo_random_spotify_playlist:
   sequence:
   - variables:
