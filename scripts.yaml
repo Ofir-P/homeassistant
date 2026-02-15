@@ -708,3 +708,37 @@ guest_bathroom_echo_random_spotify_playlist:
   alias: Guest Bathroom Echo - Random Spotify Playlist
   mode: restart
   description: ''
+toggle_above_tv_light:
+  sequence:
+  - action: light.toggle
+    target:
+      entity_id:
+      - light.dining_table_l2
+    data: {}
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script – Living Room Above Couch Light has been triggered!
+        \U0001F6CB️"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: Toggle Above Couch Light
+  mode: single
+  icon: mdi:ceiling-light
+  description: ''
+toggle_above_tv_light_2:
+  sequence:
+  - action: light.toggle
+    target:
+      entity_id:
+      - light.living_room_l2
+    data: {}
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script – Living Room Above TV Light has been triggered!
+        \U0001F6CB️"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: Toggle Above TV Light
+  mode: single
+  icon: mdi:ceiling-light
+  description: ''
