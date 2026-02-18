@@ -391,7 +391,7 @@ house_clean:
   sequence:
   - action: vacuum.start
     target:
-      entity_id: vacuum.s8_pro_ultra
+      entity_id: vacuum.x50_ultra
     data: {}
   - action: notify.send_message
     data:
