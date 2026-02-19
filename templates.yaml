@@ -61,7 +61,7 @@
           {% set devices = [
             states.input_select.washing_machine_status,
             states.input_select.dish_washer_status,
-            states.vacuum.s8_pro_ultra
+            states.vacuum.x50_ultra
           ] %}
 
           {% set lights_on = lights | selectattr('state','eq','on') | list %}

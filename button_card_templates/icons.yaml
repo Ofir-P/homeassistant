@@ -868,8 +868,8 @@ icon_vacuum_cleaning:
   variables:
     # Safe lookup (works in HA’s old JS engine)
     vacuum_state: >
-      [[[ return states['vacuum.s8_pro_ultra']
-            ? states['vacuum.s8_pro_ultra'].state
+      [[[ return states['vacuum.x50_ultra']
+            ? states['vacuum.x50_ultra'].state
             : null; ]]]
     state_on: >
       [[[ return variables.vacuum_state === 'cleaning'; ]]]
