@@ -859,36 +859,37 @@ icon_away:
 
 # ─── icon_vacuum_cleaning (fixed) ─────────────────────────────────────────────
 icon_vacuum_cleaning:
+  show_state: true
   state_display: >
-    [[[           // Pretty-print the real vacuum state
-      const s = variables.vacuum_state || 'unknown';
+    [[[
+      const s = entity?.state ?? 'unknown';
       return s.charAt(0).toUpperCase() + s.slice(1);
     ]]]
 
   variables:
-    # Safe lookup (works in HA’s old JS engine)
-    vacuum_state: >
-      [[[ return states['vacuum.x50_ultra']
-            ? states['vacuum.x50_ultra'].state
-            : null; ]]]
     state_on: >
-      [[[ return variables.vacuum_state === 'cleaning'; ]]]
+      [[[
+        return entity?.state === 'cleaning';
+      ]]]
 
   styles:
     card:
       - transition: all 0.3s ease-out
-      # turn card background white when cleaning
       - background-color: >
-          [[[ return variables.state_on
-                ? 'rgba(255,255,255,0.85)'
-                : 'rgba(115,115,115,0.25)'; ]]]
+          [[[
+            return variables.state_on
+              ? 'rgba(255,255,255,0.85)'
+              : 'rgba(115,115,115,0.25)';
+          ]]]
     custom_fields:
       icon:
         - width: 79%
         - margin-left: -1%
         - margin-top: -1%
         - fill: >
-            [[[ return variables.state_on ? '#44a9ff' : '#9da0a2'; ]]]
+            [[[
+              return variables.state_on ? '#44a9ff' : '#9da0a2';
+            ]]]
 
   custom_fields:
     icon: >
