@@ -17,14 +17,14 @@ from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.entity_platform import async_get_platforms
 from homeassistant.helpers.service import async_register_admin_service
 
-from custom_components.oref_alert.event import RecordsSchemaLoader
+from custom_components.oref_alert.classifier import Classifier
 
 from .areas_checker import AreasChecker
+from .bus_events import OrefAlertBusEventManager
 from .metadata.areas_and_groups import AREAS_AND_GROUPS
 from .pushy import PushyNotifications
 from .template import inject_template_extensions
 from .tzevaadom import TzevaAdomNotifications
-from .update_events import OrefAlertUpdateEventManager
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -48,15 +48,12 @@ from .const import (
     ADD_AREAS,
     ADD_SENSOR_ACTION,
     CATEGORY_FIELD,
-    CONF_ALERT_ACTIVE_DURATION,
-    CONF_ALERT_MAX_AGE_DEPRECATED,
     CONF_AREA,
     CONF_AREAS,
     CONF_DURATION,
     CONF_SENSORS,
     DOMAIN,
     EDIT_SENSOR_ACTION,
-    END_TIME_ID_SUFFIX,
     LOGGER,
     REMOVE_AREAS,
     REMOVE_SENSOR_ACTION,
@@ -67,6 +64,8 @@ from .const import (
 )
 from .coordinator import OrefAlertCoordinatorUpdater, OrefAlertDataUpdateCoordinator
 from .metadata.areas import AREAS
+
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 PLATFORMS = (
     Platform.EVENT,
@@ -134,16 +133,16 @@ class OrefAlertRuntimeData:
     unload_template_extensions: Callable[[], None]
     pushy: PushyNotifications
     tzevaadom: TzevaAdomNotifications
-    records_schema: RecordsSchemaLoader
-    update_events: OrefAlertUpdateEventManager
+    classifier: Classifier
+    bus_events: OrefAlertBusEventManager
 
     async def stop(self) -> None:
         """Stop background managers and release resources."""
         self.areas_checker.stop()
         self.updater.stop()
         self.unload_template_extensions()
-        self.update_events.stop()
-        self.records_schema.stop()
+        self.bus_events.stop()
+        self.classifier.stop()
         await asyncio.gather(
             self.pushy.stop(),
             self.tzevaadom.stop(),
@@ -212,8 +211,12 @@ async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
             if name != sensor_key
         }
         entity_reg.async_remove(entity_id)
-        for suffix in [TIME_TO_SHELTER_ID_SUFFIX, END_TIME_ID_SUFFIX]:
-            delete_entity = f"{Platform.SENSOR}.{entity_id.split('.')[1]}_{suffix}"
+        for platform, suffix in [
+            (Platform.SENSOR, f"_{TIME_TO_SHELTER_ID_SUFFIX}"),
+            (Platform.SENSOR, None),
+            (Platform.EVENT, None),
+        ]:
+            delete_entity = f"{platform}.{entity_id.split('.')[1]}{suffix or ''}"
             if entity_reg.async_get(delete_entity) is not None:
                 entity_reg.async_remove(delete_entity)
         hass.config_entries.async_update_entry(
@@ -280,13 +283,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: OrefAlertConfigEntry) ->
     """Set up entity from a config entry."""
     entry.async_on_unload(entry.add_update_listener(config_entry_update_listener))
 
-    if CONF_ALERT_MAX_AGE_DEPRECATED in entry.options:
-        options = {**entry.options}
-        options[CONF_ALERT_ACTIVE_DURATION] = options.pop(CONF_ALERT_MAX_AGE_DEPRECATED)
-        hass.config_entries.async_update_entry(entry, options=options)
-        # config_entry_update_listener will be called and trigger a reload.
-        return True
-
     sensor_key_renamed = False
     sensors = {**entry.options.get(CONF_SENSORS, {})}
     sensor_names = set(sensors.keys())
@@ -333,14 +329,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: OrefAlertConfigEntry) ->
         await inject_template_extensions(hass),
         pushy,
         tzevaadom,
-        RecordsSchemaLoader(hass),
-        OrefAlertUpdateEventManager(hass, entry),
+        Classifier(hass),
+        OrefAlertBusEventManager(hass, entry),
     )
 
-    entry.runtime_data.update_events.start()
+    entry.runtime_data.bus_events.start()
 
     try:
-        await entry.runtime_data.records_schema.load()
+        await entry.runtime_data.classifier.load()
 
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
