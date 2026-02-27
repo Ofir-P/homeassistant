@@ -122,12 +122,12 @@ class OrefAlertLocationEvent(OrefAlertEntity, GeolocationEvent):
         attributes: dict[str, Any] = {}
         attributes = {
             key: value
-            for key, value in asdict(record.item).items()
+            for key, value in asdict(record.raw).items()
             if key not in {AREA_FIELD, DATE_FIELD}
         }
         attributes[ATTR_DATE] = record.time
-        attributes[ATTR_ICON] = category_to_icon(record.item.category)
-        attributes[ATTR_EMOJI] = category_to_emoji(record.item.category)
+        attributes[ATTR_ICON] = category_to_icon(record.raw.category)
+        attributes[ATTR_EMOJI] = category_to_emoji(record.raw.category)
         self._alert_attributes = attributes
 
     @callback
@@ -168,7 +168,7 @@ class OrefAlertLocationEventManager:
             ) and record.record_type == RecordType.ALERT:
                 self._location_events[area].async_update(record)
             else:
-                self._location_events[area].async_remove_self()
+                self._location_events.pop(area).async_remove_self()
 
         to_add = {
             area: OrefAlertLocationEvent(self._hass, self._config_entry, area, record)

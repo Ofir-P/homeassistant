@@ -8,6 +8,7 @@ import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from http import HTTPStatus
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Any
 
 import homeassistant.util.dt as dt_util
@@ -40,7 +41,7 @@ from .const import (
 from .metadata.areas import AREAS
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Callable, Iterable, Mapping
 
     from homeassistant.core import HomeAssistant
 
@@ -67,7 +68,7 @@ DEDUP_WINDOW_SECONDS = 60
 class OrefAlertCoordinatorData:
     """Class for holding coordinator data."""
 
-    areas: dict[str, RecordAndMetadata]
+    areas: Mapping[str, RecordAndMetadata]
 
 
 class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorData]):
@@ -92,7 +93,7 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
         self._channels_change: list[datetime | None] = []
         self._synthetic_alerts: list[tuple[datetime, RecordAndMetadata]] = []
         self._areas: dict[str, RecordAndMetadata] = {}
-        self.data = OrefAlertCoordinatorData({})
+        self.data = OrefAlertCoordinatorData(MappingProxyType({}))
 
     def get_records(
         self,
@@ -101,7 +102,7 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
     ) -> list[dict[str, str | int]]:
         """Return the records as dict, sorted, and for the given areas and types."""
         return [
-            asdict(sorted_record.item)
+            asdict(sorted_record.raw)
             for sorted_record in sorted(
                 sorted(
                     {
@@ -110,7 +111,7 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
                         if (areas is None or area in areas)
                         and (record_types is None or record.record_type in record_types)
                     },
-                    key=lambda record: record.item.data,
+                    key=lambda record: record.raw.data,
                 ),
                 key=lambda record: record.time,
                 reverse=True,
@@ -127,10 +128,19 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
             record_types and record.record_type not in record_types
         ):
             return None
-        return asdict(record.item)
+        return asdict(record.raw)
 
     async def _async_update_data(self) -> OrefAlertCoordinatorData:
         """Request the data from Oref servers."""
+        # Remove expired records.
+        now = dt_util.now()
+        self._areas = {
+            area: record
+            for area, record in self._areas.items()
+            if not record.expire or record.expire > now
+        }
+
+        # Check if there are new records.
         channels_change = [channel.changed() for channel in self._channels]
         (current, current_modified), (history, history_modified) = await asyncio.gather(
             *[
@@ -154,24 +164,30 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
                     channel.items() for channel in self._channels
                 ),
             ):
-                if not category_is_alert(
-                    record.item.category
-                ) and not category_is_update(record.item.category):
+                # Check if a valid record.
+                if (
+                    not category_is_alert(record.raw.category)
+                    and not category_is_update(record.raw.category)
+                ) or (record.expire and record.expire <= now):
                     continue
 
+                # Handle "all areas" record.
                 for area in (
-                    (record.item.data,)
-                    if record.item.data not in ALL_AREAS_ALIASES
+                    (record.raw.data,)
+                    if record.raw.data not in ALL_AREAS_ALIASES
                     else AREAS
                 ):
+                    # If we don't have anything else for this area.
                     if (current := self._areas.get(area)) is None:
                         self._areas[area] = record
                         if area not in AREAS:
                             LOGGER.error("Alert has an unrecognized area: %s", area)
+                    # If this is not a newer record.
                     elif record.time <= current.time:
                         continue
+                    # Same category records within the dedup window are ignored.
                     elif (
-                        record.item.category != current.item.category
+                        record.raw.category != current.raw.category
                         or record.time - current.time
                         > timedelta(seconds=DEDUP_WINDOW_SECONDS)
                     ):
@@ -179,15 +195,7 @@ class OrefAlertDataUpdateCoordinator(DataUpdateCoordinator[OrefAlertCoordinatorD
 
             self._channels_change = channels_change
 
-        # Remove expired records.
-        now = dt_util.now()
-        self._areas = {
-            area: record
-            for area, record in self._areas.items()
-            if not record.expire or record.expire > now
-        }
-
-        return OrefAlertCoordinatorData(self._areas)
+        return OrefAlertCoordinatorData(MappingProxyType(self._areas))
 
     async def _async_fetch_url(self, url: str) -> tuple[Any, bool]:
         """Fetch data from Oref servers."""
