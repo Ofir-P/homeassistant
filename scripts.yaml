@@ -742,3 +742,123 @@ toggle_above_tv_light_2:
   mode: single
   icon: mdi:ceiling-light
   description: ''
+clean_office:
+  alias: Clean Office
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 2
+      repeats: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F5A5️ Robot Vacuum Clean Office Alexa
+        \U0001F9FC"
+  mode: single
+clean_master_bedroom:
+  alias: Clean Master Bedroom
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 3
+      repeats: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F6CF️ Robot Vacuum Clean Master Bedroom
+        Alexa \U0001F9FC"
+  mode: single
+clean_corridor:
+  alias: Clean Corridor
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 5
+      repeats: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F6B6 Robot Vacuum Clean Corridor Alexa
+        \U0001F9FC"
+  mode: single
+clean_kids_room:
+  alias: Clean Kids Room
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 6
+      repeats: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F9F8 Robot Vacuum Clean Kids Room Alexa
+        \U0001F9FC"
+  mode: single
+clean_kitchen:
+  alias: Clean Kitchen
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 7
+      repeats: 2
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F373 Robot Vacuum Clean Kitchen Alexa
+        \U0001F9FC"
+  mode: single
+clean_living_room:
+  alias: Clean Living Room
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 9
+      repeats: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F6CB️ Robot Vacuum Clean Living Room
+        Alexa \U0001F9FC"
+  mode: single
+clean_living_room_and_kitchen:
+  alias: Clean Living Room and Kitchen
+  description: ''
+  sequence:
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.x50_ultra
+    data:
+      segments:
+      - 9
+      - 7
+      repeats: 1
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation - \U0001F6CB️\U0001F373 Robot Vacuum Clean Living
+        Room and Kitchen Alexa \U0001F9FC"
+  mode: single
