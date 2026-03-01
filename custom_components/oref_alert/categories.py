@@ -50,13 +50,11 @@ FIRST_DRILL_CATEGORY: Final = 15
 # and the following mapping is for history categories.
 REAL_TIME_TO_HISTORY_CATEGORY: Final = {
     1: 1,  # missile
-    2: 4,  # info
     3: 7,  # earthquake
     4: 9,  # radiological
     5: 11,  # tsunami
     6: 2,  # aircraftIntrusion
     7: 12,  # hazardousMaterials
-    10: 13,  # info
     13: 10,  # terroristInfiltration
 }
 
