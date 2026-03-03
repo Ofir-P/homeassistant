@@ -5,7 +5,7 @@ from __future__ import annotations
 import enum
 import logging
 import zoneinfo
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
@@ -74,15 +74,21 @@ class Record:
     alertDate: str  # noqa: N815
     title: str
 
+    def __post_init__(self) -> None:
+        """Convert StrEnum to plain str."""
+        if isinstance(self.channel, enum.StrEnum):
+            object.__setattr__(self, "channel", self.channel.value)
+
 
 @dataclass(frozen=True)
 class RecordAndMetadata:
     """Class for holding a record with additional metadata."""
 
     raw: Record
-    time: datetime
-    record_type: RecordType | None
-    expire: datetime | None
+    raw_dict: dict[str, str | int] = field(hash=False, compare=False)
+    time: datetime = field(hash=False, compare=False)
+    record_type: RecordType | None = field(hash=False, compare=False)
+    expire: datetime | None = field(hash=False, compare=False)
 
 
 class RecordSource(enum.StrEnum):
