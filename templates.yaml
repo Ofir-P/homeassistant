@@ -139,3 +139,9 @@
            or is_state('device_tracker.ofir_honor_magic_5_pro', 'home') }}
 
 # [=========================]Phones at home[=========================]
+- binary_sensor:
+    - name: StreamDeck_Oref_Alerts_Active
+      unique_id: streamdeck_oref_alerts_active
+      state: >
+        {% set s = states('sensor.oref_alert') | lower %}
+        {{ s not in ['ok', 'unknown', 'unavailable'] }}
