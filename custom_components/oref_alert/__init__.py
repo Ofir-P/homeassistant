@@ -4,24 +4,26 @@ from __future__ import annotations
 
 import asyncio
 import itertools
-from pathlib import Path
 from typing import TYPE_CHECKING, Final, cast
 
 import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from attr import dataclass
-from homeassistant.components.frontend import add_extra_js_url
-from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
-from homeassistant.const import CONF_ENTITY_ID, CONF_NAME, Platform
+from homeassistant.const import (
+    CONF_ENTITY_ID,
+    CONF_NAME,
+    EVENT_HOMEASSISTANT_STOP,
+    Platform,
+)
 from homeassistant.exceptions import ConfigEntryError, ConfigEntryNotReady
 from homeassistant.helpers import entity_registry, selector
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.entity_platform import async_get_platforms
 from homeassistant.helpers.service import async_register_admin_service
-from homeassistant.loader import async_get_integration
 
 from custom_components.oref_alert.classifier import Classifier
+from custom_components.oref_alert.custom_cards import publish_cards
 
 from .areas_checker import AreasChecker
 from .bus_events import OrefAlertBusEventManager
@@ -45,6 +47,7 @@ if TYPE_CHECKING:
 
 from homeassistant.core import (
     SupportsResponse,
+    callback,
 )
 
 from .config_flow import AREAS_CONFIG
@@ -70,9 +73,6 @@ from .coordinator import OrefAlertCoordinatorUpdater, OrefAlertDataUpdateCoordin
 from .metadata.areas import AREAS
 
 CONFIG_SCHEMA: Final = cv.config_entry_only_config_schema(DOMAIN)
-
-FRONTEND_PATH: Final = Path(__file__).parent / "cards"
-URL_BASE: Final = f"/{DOMAIN}_internal_static"
 
 PLATFORMS = (
     Platform.EVENT,
@@ -151,6 +151,7 @@ class OrefAlertRuntimeData:
         self.bus_events.stop()
         self.classifier.stop()
         await asyncio.gather(
+            self.coordinator.async_save(),
             self.pushy.stop(),
             self.tzevaadom.stop(),
             return_exceptions=True,
@@ -162,11 +163,7 @@ type OrefAlertConfigEntry = ConfigEntry[OrefAlertRuntimeData]
 
 async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:  # noqa: PLR0915
     """Set up custom actions."""
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig(URL_BASE, str(FRONTEND_PATH), cache_headers=True)]
-    )
-    integration = await async_get_integration(hass, DOMAIN)
-    add_extra_js_url(hass, f"{URL_BASE}/oref-alert-map.js?v={integration.version or 0}")
+    await publish_cards(hass)
 
     def get_config_entry() -> OrefAlertConfigEntry:
         """Get the integration's config first (and only) entry."""
@@ -345,6 +342,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: OrefAlertConfigEntry) ->
         OrefAlertBusEventManager(hass, entry),
     )
 
+    @callback
+    def _handle_shutdown(*_: object) -> None:
+        """Persist coordinator state on Home Assistant shutdown."""
+        hass.async_create_task(entry.runtime_data.coordinator.async_save())
+
+    entry.async_on_unload(
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, _handle_shutdown)
+    )
+
     entry.runtime_data.bus_events.start()
 
     try:
@@ -352,6 +358,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: OrefAlertConfigEntry) ->
 
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+        await entry.runtime_data.coordinator.async_restore()
         await entry.runtime_data.coordinator.async_config_entry_first_refresh()
 
         await asyncio.gather(
