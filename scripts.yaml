@@ -458,9 +458,8 @@ ir_learn_mode_on_balcony:
       retain: false
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script - Balcony IR device is now on Learn Mode"
-    target:
       entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - Balcony IR device is now on Learn Mode"
   alias: IR Learn Mode On (Balcony)
   mode: single
   icon: mdi:remote
@@ -475,9 +474,8 @@ ir_toggle_balcony_tv:
       retain: false
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script - Balcony IR to turn ON/OFF TV has been triggered"
-    target:
       entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - Balcony IR to turn ON/OFF TV has been triggered"
   alias: IR Toggle Balcony TV
   mode: single
   icon: mdi:remote-tv
@@ -531,10 +529,9 @@ wake_shower_echo_random_spotify_playlist:
       milliseconds: 0
   - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script - {{ state_attr('media_player.balcony_echo_dot',
         'media_album_name') }} \U0001F6BF\n"
-    target:
-      entity_id: notify.supervisor_telegram
 wake_kitchen_echo_random_spotify_playlist:
   sequence:
   - variables:
@@ -624,9 +621,8 @@ kids_room_echo_random_spotify_playlist:
     data:
       shuffle: true
   - action: notify.send_message
-    target:
-      entity_id: notify.supervisor_telegram
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music - {{ chosen_label }}
         \U0001F9F8\n"
 living_room_echo_random_spotify_playlist:
@@ -653,10 +649,9 @@ living_room_echo_random_spotify_playlist:
       milliseconds: 0
   - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - \U0001F3B5 Living Room Music Script - {{ state_attr('media_player.livingroom_echo_pop',
         'media_album_name') }} \U0001F6CB️\n"
-    target:
-      entity_id: notify.supervisor_telegram
   alias: 'Living Room Echo - Random Spotify Playlist '
   mode: restart
   description: ''
@@ -670,9 +665,8 @@ ir_toggle_living_room_tv:
       retain: false
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script - Living Room IR to turn ON/OFF TV has been triggered"
-    target:
       entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - Living Room IR to turn ON/OFF TV has been triggered"
   alias: IR Toggle Living Room TV
   mode: single
   icon: mdi:remote-tv
@@ -700,10 +694,9 @@ guest_bathroom_echo_random_spotify_playlist:
       milliseconds: 0
   - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script - \U0001F3B5 Guest Bathroom Music Script - {{ state_attr('media_player.guest_bathroom_echo_dot',
         'media_album_name') }} \U0001F6CB️\n"
-    target:
-      entity_id: notify.supervisor_telegram
   alias: Guest Bathroom Echo - Random Spotify Playlist
   mode: restart
   description: ''
@@ -716,10 +709,9 @@ toggle_above_tv_light:
     data: {}
   - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – Living Room Above Couch Light has been triggered!
         \U0001F6CB️"
-    target:
-      entity_id: notify.supervisor_telegram
   alias: Toggle Above Couch Light
   mode: single
   icon: mdi:ceiling-light
@@ -733,10 +725,9 @@ toggle_above_tv_light_2:
     data: {}
   - action: notify.send_message
     data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – Living Room Above TV Light has been triggered!
         \U0001F6CB️"
-    target:
-      entity_id: notify.supervisor_telegram
   alias: Toggle Above TV Light
   mode: single
   icon: mdi:ceiling-light
