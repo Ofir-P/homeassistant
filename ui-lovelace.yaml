@@ -111,7 +111,7 @@ views:
 
           - type: custom:button-card
             entity: light.living_room_l2
-            name: Above TV Light
+            name: Above TV
             template:
               - light
               - icon_hue
