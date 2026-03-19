@@ -852,3 +852,17 @@ clean_living_room_and_kitchen:
       message: "\U0001F916 Automation - \U0001F6CB️\U0001F373 Robot Vacuum Clean Living
         Room and Kitchen Alexa \U0001F9FC"
   mode: single
+eggs_timer:
+  sequence:
+  - action: notify.alexa_media
+    data:
+      message: <audio src='https://3t6d68jf8e966qfhla8sjf21kyd3jk0d.ui.nabu.casa/local/mp3/eggs_alexa.mp3'/>
+      target: media_player.kitchen_echo_dot
+      data:
+        type: tts
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F916 Automation – \U0001F95A Eggs Timer is on \U0001F52A"
+  alias: Eggs Timer
+  description: ''
