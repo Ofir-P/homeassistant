@@ -15,7 +15,6 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util.location import vincenty
 
 from custom_components.oref_alert.metadata.area_to_district import AREA_TO_DISTRICT
-from custom_components.oref_alert.records_schema import RecordType
 
 from .categories import (
     category_to_emoji,
@@ -34,6 +33,7 @@ from .const import (
     TITLE_FIELD,
     Record,
     RecordAndMetadata,
+    RecordType,
 )
 from .metadata.area_info import AREA_INFO
 from .ttl_deque import TTLDeque
@@ -92,7 +92,7 @@ class OrefAlertBusEventManager:
             except Exception:  # noqa: BLE001
                 LOGGER.debug("Skipping invalid restored history record", exc_info=True)
                 continue
-            record_metadata = self._config_entry.runtime_data.classifier.add_metadata(
+            record_metadata = self._config_entry.runtime_data.coordinator.add_metadata(
                 record
             )
             self._history_records.add(record_metadata, record_metadata.time)
