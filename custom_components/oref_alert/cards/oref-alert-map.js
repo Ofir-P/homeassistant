@@ -15,6 +15,9 @@ function _t(english, hebrew) {
   return _isHebrewLanguage() ? hebrew : english;
 }
 
+const ALERT_COLOR = "rgb(241, 146, 146)";
+const PRE_ALERT_COLOR = "rgb(253, 224, 71)";
+
 class OrefAlertMap extends HTMLElement {
   constructor() {
     super();
@@ -23,17 +26,17 @@ class OrefAlertMap extends HTMLElement {
     this._layout = undefined;
     this._mapCard = null;
     this._mapCardPromise = null;
-    this._areas = [];
     this._polygons = null;
-    this._updateToken = 0;
+    this._hassUpdateToken = 0;
+    this._lastUpdated = undefined;
     this._refreshId = null;
     this._refreshDeadline = Date.now() + 60_000;
   }
 
   set hass(hass) {
     this._hass = hass;
-    void this._applyHass(++this._updateToken).catch((error) => {
-      console.error("oref-alert-map update failed", error);
+    void this._applyHass(++this._hassUpdateToken).catch((error) => {
+      console.error("oref-alert-map hass apply failed", error);
     });
   }
 
@@ -43,13 +46,13 @@ class OrefAlertMap extends HTMLElement {
     this._stopRefresh();
     this._mapCard = null;
     this._mapCardPromise = null;
-    this._areas = [];
+    this._lastUpdated = undefined;
     this._refreshDeadline = Date.now() + 60_000;
     this.replaceChildren();
 
     if (this._hass) {
-      void this._applyHass(++this._updateToken).catch((error) => {
-        console.error("oref-alert-map update failed", error);
+      void this._applyHass(++this._hassUpdateToken).catch((error) => {
+        console.error("oref-alert-map setConfig apply failed", error);
       });
     }
   }
@@ -76,63 +79,83 @@ class OrefAlertMap extends HTMLElement {
         };
   }
 
-  async _applyHass(token) {
+  async _applyHass(hassToken) {
     this._checkRefresh();
 
-    if (token !== this._updateToken) {
+    if (hassToken !== this._hassUpdateToken) {
       return;
     }
 
-    const mapCard = await this._ensureMapCard(token);
+    const mapCard = await this._ensureMapCard(hassToken);
     if (!mapCard) {
       return;
     }
-    if (token !== this._updateToken) {
+
+    if (hassToken !== this._hassUpdateToken) {
       return;
     }
-    if (this.firstElementChild !== mapCard) {
-      this.replaceChildren(mapCard);
-    }
+
     mapCard.hass = this._hass;
     this._setTileLayer();
 
-    const areas = this._getOrefAreas();
-    if (
-      this._areas.length === areas.length &&
-      this._areas.every((area, i) =>
-        Object.keys(area).every((key) => area[key] === areas[i][key]),
-      )
-    ) {
-      return;
+    if (this.firstElementChild !== mapCard) {
+      this.replaceChildren(mapCard);
     }
 
-    const layers = await this._createLayers(areas);
-    const map = this._map;
+    await this._refreshAreas(hassToken);
 
-    if (token === this._updateToken && map && layers.length === areas.length) {
-      map.layers = layers;
-      this._areas = areas;
-      this._checkRefresh();
-    }
+    this._checkRefresh();
   }
 
   disconnectedCallback() {
     this._stopRefresh();
   }
 
-  _getOrefAreas() {
-    const states = this._hass?.states;
-    if (!states) {
-      return [];
+  async _getLastUpdate() {
+    const result = await this._hass?.callService(
+      "oref_alert",
+      "last_update",
+      {},
+      undefined,
+      false,
+      true,
+    );
+
+    return result?.response?.last_update ?? null;
+  }
+
+  async _getOrefAreas() {
+    const result = await this._hass?.callService(
+      "oref_alert",
+      "areas_status",
+      {},
+      undefined,
+      false,
+      true,
+    );
+
+    return Object.values(result?.response || {})
+      .filter((area) => this._config?.show_pre_alert || area.type === "alert")
+      .sort((a, b) => a.area.localeCompare(b.area));
+  }
+
+  async _refreshAreas(hassToken) {
+    const lastUpdated = await this._getLastUpdate();
+    if (this._lastUpdated !== undefined && this._lastUpdated === lastUpdated) {
+      return;
     }
-    return Object.values(states)
-      .filter(
-        (stateObj) =>
-          stateObj.entity_id.startsWith("geo_location.") &&
-          stateObj.attributes?.source === "oref_alert",
-      )
-      .map((stateObj) => stateObj.attributes)
-      .sort((a, b) => a.friendly_name.localeCompare(b.friendly_name));
+
+    const areas = await this._getOrefAreas();
+    const layers = await this._createLayers(areas);
+    const map = this._map;
+    if (
+      hassToken === this._hassUpdateToken &&
+      map &&
+      layers.length === areas.length
+    ) {
+      map.layers = layers;
+      this._lastUpdated = lastUpdated;
+    }
   }
 
   async _createLayers(areas) {
@@ -144,12 +167,12 @@ class OrefAlertMap extends HTMLElement {
 
     const layers = [];
     for (const area of areas) {
-      const layer = createPolygon(polygons[area.friendly_name], {
-        color: "#f19292",
+      const layer = createPolygon(polygons[area.area], {
+        color: area.type === "alert" ? ALERT_COLOR : PRE_ALERT_COLOR,
       });
       const date = new Date(area.date);
       layer.bindTooltip(
-        `${area.friendly_name}<br />` +
+        `${area.area}<br />` +
           `${String(date.getHours()).padStart(2, "0")}:` +
           `${String(date.getMinutes()).padStart(2, "0")} ` +
           area.emoji,
@@ -159,7 +182,7 @@ class OrefAlertMap extends HTMLElement {
     return layers;
   }
 
-  async _ensureMapCard(token) {
+  async _ensureMapCard(hassToken) {
     if (this._mapCard) {
       return this._mapCard;
     }
@@ -180,7 +203,7 @@ class OrefAlertMap extends HTMLElement {
       return null;
     }
 
-    if (token !== this._updateToken) {
+    if (hassToken !== this._hassUpdateToken) {
       return null;
     }
 
@@ -268,7 +291,7 @@ class OrefAlertMap extends HTMLElement {
   }
 
   _checkRefresh() {
-    if (this._areas.length > 0) {
+    if (this._map) {
       this._stopRefresh();
       return;
     }
@@ -286,14 +309,13 @@ class OrefAlertMap extends HTMLElement {
       this._refreshId = window.setInterval(() => {
         if (
           !this.isConnected ||
-          this._areas.length > 0 ||
+          this._map ||
           Date.now() >= this._refreshDeadline
         ) {
           this._stopRefresh();
           return;
         }
-        const token = ++this._updateToken;
-        void this._applyHass(token).catch((error) => {
+        void this._applyHass(++this._hassUpdateToken).catch((error) => {
           console.error("oref-alert-map refresh retry failed", error);
         });
       }, 1000);
@@ -313,6 +335,7 @@ class OrefAlertMap extends HTMLElement {
         { name: "auto_fit", selector: { boolean: {} } },
         { name: "show_home", selector: { boolean: {} } },
         { name: "hebrew_basemap", selector: { boolean: {} } },
+        { name: "show_pre_alert", selector: { boolean: {} } },
       ],
       computeLabel: (schema) => {
         if (schema.name === "auto_fit") {
@@ -327,6 +350,9 @@ class OrefAlertMap extends HTMLElement {
         if (schema.name === "hebrew_basemap") {
           return _t("Hebrew basemap", "מפת בסיס בעברית");
         }
+        if (schema.name === "show_pre_alert") {
+          return _t("Show pre-alert", "הצג הנחיות מקדימות");
+        }
         return undefined;
       },
     };
@@ -337,6 +363,7 @@ class OrefAlertMap extends HTMLElement {
       auto_fit: true,
       show_home: false,
       hebrew_basemap: true,
+      show_pre_alert: false,
     };
   }
 }
