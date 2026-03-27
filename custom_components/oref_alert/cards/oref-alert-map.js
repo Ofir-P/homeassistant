@@ -17,6 +17,8 @@ function _t(english, hebrew) {
 
 const ALERT_COLOR = "rgb(241, 146, 146)";
 const PRE_ALERT_COLOR = "rgb(253, 224, 71)";
+const RELOAD_GUARD_KEY = "oref-alert-map-reload-version";
+const CURRENT_VERSION = new URL(import.meta.url).searchParams.get("v");
 
 class OrefAlertMap extends HTMLElement {
   constructor() {
@@ -25,17 +27,16 @@ class OrefAlertMap extends HTMLElement {
     this._config = null;
     this._layout = undefined;
     this._mapCard = null;
-    this._mapCardPromise = null;
     this._polygons = null;
-    this._hassUpdateToken = 0;
+    this._applyHassPromise = null;
     this._lastUpdated = undefined;
     this._refreshId = null;
-    this._refreshDeadline = Date.now() + 60_000;
+    this._bootstrapWindow = Date.now() + 10_000;
   }
 
   set hass(hass) {
     this._hass = hass;
-    void this._applyHass(++this._hassUpdateToken).catch((error) => {
+    void this._applyHass().catch((error) => {
       console.error("oref-alert-map hass apply failed", error);
     });
   }
@@ -45,13 +46,12 @@ class OrefAlertMap extends HTMLElement {
 
     this._stopRefresh();
     this._mapCard = null;
-    this._mapCardPromise = null;
     this._lastUpdated = undefined;
-    this._refreshDeadline = Date.now() + 60_000;
+    this._bootstrapWindow = Date.now() + 10_000;
     this.replaceChildren();
 
     if (this._hass) {
-      void this._applyHass(++this._hassUpdateToken).catch((error) => {
+      void this._applyHass().catch((error) => {
         console.error("oref-alert-map setConfig apply failed", error);
       });
     }
@@ -79,19 +79,35 @@ class OrefAlertMap extends HTMLElement {
         };
   }
 
-  async _applyHass(hassToken) {
-    this._checkRefresh();
+  async _applyHass() {
+    while (true) {
+      const inflightApply = this._applyHassPromise;
+      if (inflightApply) {
+        await inflightApply.catch(() => {});
+        if (this._applyHassPromise === inflightApply) {
+          this._applyHassPromise = null;
+        }
+        continue;
+      }
 
-    if (hassToken !== this._hassUpdateToken) {
-      return;
+      const applyPromise = this._performApplyHass();
+      const inflightPromise = applyPromise
+        .catch(() => {})
+        .finally(() => {
+          if (this._applyHassPromise === inflightPromise) {
+            this._applyHassPromise = null;
+          }
+        });
+      this._applyHassPromise = inflightPromise;
+      return applyPromise;
     }
+  }
 
-    const mapCard = await this._ensureMapCard(hassToken);
+  async _performApplyHass() {
+    this._startRefresh();
+
+    const mapCard = await this._ensureMapCard();
     if (!mapCard) {
-      return;
-    }
-
-    if (hassToken !== this._hassUpdateToken) {
       return;
     }
 
@@ -102,9 +118,7 @@ class OrefAlertMap extends HTMLElement {
       this.replaceChildren(mapCard);
     }
 
-    await this._refreshAreas(hassToken);
-
-    this._checkRefresh();
+    await this._refreshAreas();
   }
 
   disconnectedCallback() {
@@ -121,7 +135,10 @@ class OrefAlertMap extends HTMLElement {
       true,
     );
 
-    return result?.response?.last_update ?? null;
+    return {
+      lastUpdated: result?.response?.last_update ?? null,
+      version: result?.response?.version ?? null,
+    };
   }
 
   async _getOrefAreas() {
@@ -139,8 +156,11 @@ class OrefAlertMap extends HTMLElement {
       .sort((a, b) => a.area.localeCompare(b.area));
   }
 
-  async _refreshAreas(hassToken) {
-    const lastUpdated = await this._getLastUpdate();
+  async _refreshAreas() {
+    const { lastUpdated, version } = await this._getLastUpdate();
+    if (this._maybeReloadForVersion(version)) {
+      return;
+    }
     if (this._lastUpdated !== undefined && this._lastUpdated === lastUpdated) {
       return;
     }
@@ -148,14 +168,42 @@ class OrefAlertMap extends HTMLElement {
     const areas = await this._getOrefAreas();
     const layers = await this._createLayers(areas);
     const map = this._map;
-    if (
-      hassToken === this._hassUpdateToken &&
-      map &&
-      layers.length === areas.length
-    ) {
+    if (map && layers.length === areas.length) {
       map.layers = layers;
       this._lastUpdated = lastUpdated;
     }
+  }
+
+  _maybeReloadForVersion(version) {
+    const currentVersion = this._getCurrentVersion();
+    if (!version || !currentVersion || version === currentVersion) {
+      if (version) {
+        try {
+          if (window.sessionStorage.getItem(RELOAD_GUARD_KEY) === version) {
+            window.sessionStorage.removeItem(RELOAD_GUARD_KEY);
+          }
+        } catch (_) {
+          // Ignore storage issues.
+        }
+      }
+      return false;
+    }
+
+    try {
+      if (window.sessionStorage.getItem(RELOAD_GUARD_KEY) === version) {
+        return true;
+      }
+      window.sessionStorage.setItem(RELOAD_GUARD_KEY, version);
+    } catch (_) {
+      // Ignore storage issues and still try to reload once.
+    }
+
+    window.location.reload();
+    return true;
+  }
+
+  _getCurrentVersion() {
+    return CURRENT_VERSION;
   }
 
   async _createLayers(areas) {
@@ -182,33 +230,18 @@ class OrefAlertMap extends HTMLElement {
     return layers;
   }
 
-  async _ensureMapCard(hassToken) {
+  async _ensureMapCard() {
     if (this._mapCard) {
       return this._mapCard;
     }
-    if (!this._mapCardPromise) {
-      this._mapCardPromise = this._createMapCard().catch((error) => {
-        console.error("oref-alert-map failed to create map card", error);
-        this._mapCardPromise = null;
-      });
-    }
-    const mapCardPromise = this._mapCardPromise;
-    const mapCard = await mapCardPromise;
 
-    if (this._mapCardPromise === mapCardPromise) {
-      this._mapCardPromise = null;
-    }
-
-    if (!mapCard) {
+    try {
+      this._mapCard = await this._createMapCard();
+    } catch (error) {
+      console.error("oref-alert-map failed to create map card", error);
       return null;
     }
-
-    if (hassToken !== this._hassUpdateToken) {
-      return null;
-    }
-
-    this._mapCard = mapCard;
-    return mapCard;
+    return this._mapCard;
   }
 
   async _createMapCard() {
@@ -248,7 +281,7 @@ class OrefAlertMap extends HTMLElement {
     return this._polygons;
   }
 
-  async _setTileLayer() {
+  _setTileLayer() {
     let tileLayer;
     if (this._config?.tileLayer) {
       tileLayer = this._config.tileLayer;
@@ -290,32 +323,14 @@ class OrefAlertMap extends HTMLElement {
     }
   }
 
-  _checkRefresh() {
-    if (this._map) {
-      this._stopRefresh();
-      return;
-    }
-
-    if (Date.now() >= this._refreshDeadline) {
-      this._stopRefresh();
-      return;
-    }
-
-    this._startRefresh();
-  }
-
   _startRefresh() {
-    if (!this._refreshId) {
+    if (!this._refreshId && Date.now() < this._bootstrapWindow) {
       this._refreshId = window.setInterval(() => {
-        if (
-          !this.isConnected ||
-          this._map ||
-          Date.now() >= this._refreshDeadline
-        ) {
+        if (!this.isConnected || Date.now() >= this._bootstrapWindow) {
           this._stopRefresh();
           return;
         }
-        void this._applyHass(++this._hassUpdateToken).catch((error) => {
+        void this._applyHass().catch((error) => {
           console.error("oref-alert-map refresh retry failed", error);
         });
       }, 1000);
