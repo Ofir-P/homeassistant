@@ -522,16 +522,11 @@ wake_shower_echo_random_spotify_playlist:
         volume: 70
         shuffle: true
         random: true
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 7
-      milliseconds: 0
   - action: notify.send_message
     data:
+      message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script\U0001F6BF\n"
+    target:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script - {{ state_attr('media_player.balcony_echo_dot',
-        'media_album_name') }} \U0001F6BF\n"
 wake_kitchen_echo_random_spotify_playlist:
   sequence:
   - variables:
