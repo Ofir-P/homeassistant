@@ -630,7 +630,7 @@ living_room_echo_random_spotify_playlist:
   - action: spotcast.play_media
     data:
       media_player:
-        device_id: d00953a99c35a74268d26e7753c199fc
+        device_id: 6b22972e50027e2e19097887ab2217d7
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
@@ -860,4 +860,21 @@ eggs_timer:
       entity_id: notify.supervisor_telegram
       message: "\U0001F916 Automation – \U0001F95A Eggs Timer is on \U0001F52A"
   alias: Eggs Timer
+  description: ''
+living_room_good_morning_spotify_song:
+  sequence:
+  - action: spotcast.play_media
+    data:
+      media_player:
+        device_id: 6b22972e50027e2e19097887ab2217d7
+      account: 01KAB2YAREPM46QYFDTBFC0CWH
+      spotify_uri: spotify:track:1pVtUZcZiWwnhzl6RfU6dK
+      data:
+        volume: 55
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script - \U0001F3B5 Living Room Good Morning Music \U0001F6CB️\n"
+  alias: Living Room  - Good Morning Spotify Song
+  mode: single
   description: ''
