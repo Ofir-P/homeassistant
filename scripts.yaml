@@ -62,21 +62,6 @@ turn_on_switcher_for_60mins:
     target:
       entity_id: switch.switcher_boiler_43b9
     data: {}
-toggle_living_room_ac:
-  alias: Toggle Living Room AC
-  mode: single
-  icon: mdi:air-conditioner
-  sequence:
-  - action: remote.send_command
-    target:
-      entity_id: remote.livingroom_broadlink_remote
-    data:
-      device: livingroom_ac
-      command: toggle
-  - action: notify.send_message
-    data:
-      entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script – ❄️ Living Room Broadlink AC toggle activated \U0001F6CB️"
 home_leave:
   alias: Home Leave
   sequence:
@@ -866,7 +851,7 @@ living_room_good_morning_spotify_song:
   - action: spotcast.play_media
     data:
       media_player:
-        device_id: 6b22972e50027e2e19097887ab2217d7
+        entity_id: media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: spotify:track:1pVtUZcZiWwnhzl6RfU6dK
       data:
@@ -877,4 +862,67 @@ living_room_good_morning_spotify_song:
       message: "\U0001F4DC Script - \U0001F3B5 Living Room Good Morning Music \U0001F6CB️\n"
   alias: Living Room  - Good Morning Spotify Song
   mode: single
+  description: ''
+ir_learn_mode_on_living_room:
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
+      qos: 0
+      retain: false
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - Living Room IR device is now on Learn Mode"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: IR Learn Mode On (Living Room)
+  mode: single
+  icon: mdi:remote
+  description: ''
+'1776503780973':
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "D8gKLQ+SB9MD0wOSB5IH0wPgCQGAFQGSB0ABAdMD4A0BgBmABeAHAYAVC5IHkgfTA9MDLQ8tD4AJBZIHkgfTA+AJAYAVAZIHQAEB0wPgDQGAGYAF4AcBgBULkgeSB9MD0wMtDy0PgAkFkgeSB9MD4AkBgBUBkgdAAQHTA+ANAYAZgAXgBwGAFQmSB5IH0wPTA9cS"}'
+      qos: 0
+      retain: false
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+    enabled: false
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "D8gKLQ+SB9MD0wOSB5IH0wPgCQGAFQGSB0ABAdMD4A0BgBmABeAHAYAVC5IHkgfTA9MDLQ8tD4AJBZIHkgfTA+AJAYAVAZIHQAEB0wPgDQGAGYAF4AcBgBULkgeSB9MD0wMtDy0PgAkFkgeSB9MD4AkBgBUBkgdAAQHTA+ANAYAZgAXgBwGAFQmSB5IH0wPTA9cS"}'
+      qos: 0
+      retain: false
+    enabled: false
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – ❄️ Living Room AC toggle \U0001F6CB️"
+  alias: IR Toggle Living Room AC
+  mode: single
+  icon: mdi:remote-tv
+  description: ''
+ir_clean_button_living_room_ac:
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
+      payload: '{"ir_code_to_send": "BWQLZAvRA+AbAQeOB9ED0QOOB0ABAdED4DkBC44HjgfRA2QLZAvRA+AbAUAtA9EDjgdAAQHRA+A5AQuOB44H0QNkC2QL0QPgGwFALQPRA44HQAEB0QPgOQEHjgeOB9EDGw8="}'
+      qos: 0
+      retain: false
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script – ❄️ Living Room AC Clear Button \U0001F6CB️"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: IR Clean Button Living Room AC
+  mode: single
+  icon: mdi:remote-tv
   description: ''
