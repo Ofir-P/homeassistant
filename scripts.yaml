@@ -885,22 +885,9 @@ ir_learn_mode_on_living_room:
   - action: mqtt.publish
     data:
       topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "D8gKLQ+SB9MD0wOSB5IH0wPgCQGAFQGSB0ABAdMD4A0BgBmABeAHAYAVC5IHkgfTA9MDLQ8tD4AJBZIHkgfTA+AJAYAVAZIHQAEB0wPgDQGAGYAF4AcBgBULkgeSB9MD0wMtDy0PgAkFkgeSB9MD4AkBgBUBkgdAAQHTA+ANAYAZgAXgBwGAFQmSB5IH0wPTA9cS"}'
+      payload: '{"ir_code_to_send": "CU0LKA+LB9QD1AOABUAB4AEJQAGADYAF4BMBgCGABeAHAYAVC4sHiwfUA9QDKA8oD4AJgAVAAeABCUABgA2ABeATAYAhgAXgBwGAFQuLB4sH1APUAygPKA+ACYAFQAHgAQlAAYANgAXgEwGAIYAF4AcBgBUJiweLB9QD1APYEg=="}'
       qos: 0
       retain: false
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 3
-      milliseconds: 0
-    enabled: false
-  - action: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "D8gKLQ+SB9MD0wOSB5IH0wPgCQGAFQGSB0ABAdMD4A0BgBmABeAHAYAVC5IHkgfTA9MDLQ8tD4AJBZIHkgfTA+AJAYAVAZIHQAEB0wPgDQGAGYAF4AcBgBULkgeSB9MD0wMtDy0PgAkFkgeSB9MD4AkBgBUBkgdAAQHTA+ANAYAZgAXgBwGAFQmSB5IH0wPTA9cS"}'
-      qos: 0
-      retain: false
-    enabled: false
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
