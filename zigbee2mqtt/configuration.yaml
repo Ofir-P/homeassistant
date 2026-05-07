@@ -183,4 +183,6 @@ devices:
     friendly_name: Hallway Office Motion Sensor
   '0xe406bffffef68c06':
     friendly_name: Master Bedroom Presence Sensor
+  '0x54ef441000c4bc27':
+    friendly_name: '0x54ef441000c4bc27'
 version: 5
