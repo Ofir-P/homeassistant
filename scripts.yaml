@@ -913,3 +913,20 @@ ir_clean_button_living_room_ac:
   mode: single
   icon: mdi:remote-tv
   description: ''
+ir_learn_mode_on_kids_room:
+  sequence:
+  - action: mqtt.publish
+    data:
+      topic: zigbee2mqtt/Kids Room Smart IR Remote Control/set
+      payload: '{"learn_ir_code":"ON"}'
+      qos: 0
+      retain: false
+  - action: notify.send_message
+    data:
+      message: "\U0001F4DC Script - Kids Room IR device is now on Learn Mode"
+    target:
+      entity_id: notify.supervisor_telegram
+  alias: IR Learn Mode On (Kids Room)
+  mode: single
+  icon: mdi:remote
+  description: ''

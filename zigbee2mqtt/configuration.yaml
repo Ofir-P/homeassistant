@@ -185,4 +185,6 @@ devices:
     friendly_name: Master Bedroom Presence Sensor
   '0x54ef441000c4bc27':
     friendly_name: '0x54ef441000c4bc27'
+  '0x18690afffef795fa':
+    friendly_name: Kids Room Smart IR Remote Control
 version: 5
