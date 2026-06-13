@@ -885,7 +885,7 @@ ir_learn_mode_on_living_room:
   - action: mqtt.publish
     data:
       topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
-      payload: '{"ir_code_to_send": "CU0LKA+LB9QD1AOABUAB4AEJQAGADYAF4BMBgCGABeAHAYAVC4sHiwfUA9QDKA8oD4AJgAVAAeABCUABgA2ABeATAYAhgAXgBwGAFQuLB4sH1APUAygPKA+ACYAFQAHgAQlAAYANgAXgEwGAIYAF4AcBgBUJiweLB9QD1APYEg=="}'
+      payload: '{"ir_code_to_send": "C3ALOA+RB9QD1AORB4ABAdQD4AEBgA3ABQORB9QD4AkBgBWABeAHAYAVC5EHkQfUA9QDOA84D4AJAZEHgAEB1APgAQGADcAFA5EH1APgCQGAFYAF4AcBgBULkQeRB9QD1AM4DzgPgAkBkQeAAQHUA+ABAYANwAUDkQfUA+AJAYAVgAXgBwGAFQmRB5EH1APUA9YS"}'
       qos: 0
       retain: false
   - action: notify.send_message
