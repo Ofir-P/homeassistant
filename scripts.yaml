@@ -643,6 +643,17 @@ ir_toggle_living_room_tv:
       payload: '{"ir_code_to_send": "BWkjrBFAAsABA8oGQALgCwFAF0ADQAFAB+AHA+ADAUAb4AcBQBPAA0ABwAvABwk3nmkj3ghAAv//4AIHAghAAg=="}'
       qos: 0
       retain: false
+    enabled: false
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.broadlink
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: LivingRoomTV
+      command: power
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
@@ -888,6 +899,17 @@ ir_learn_mode_on_living_room:
       payload: '{"ir_code_to_send": "C3ALOA+RB9QD1AORB4ABAdQD4AEBgA3ABQORB9QD4AkBgBWABeAHAYAVC5EHkQfUA9QDOA84D4AJAZEHgAEB1APgAQGADcAFA5EH1APgCQGAFYAF4AcBgBULkQeRB9QD1AM4DzgPgAkBkQeAAQHUA+ABAYANwAUDkQfUA+AJAYAVgAXgBwGAFQmRB5EH1APUA9YS"}'
       qos: 0
       retain: false
+    enabled: false
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.broadlink
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: LivingRoomAC
+      command: power
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
