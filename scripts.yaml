@@ -874,23 +874,6 @@ living_room_good_morning_spotify_song:
   alias: Living Room  - Good Morning Spotify Song
   mode: single
   description: ''
-ir_learn_mode_on_living_room:
-  sequence:
-  - action: mqtt.publish
-    data:
-      topic: zigbee2mqtt/Living Room Smart IR Remote Control/set
-      payload: '{"learn_ir_code":"ON"}'
-      qos: 0
-      retain: false
-  - action: notify.send_message
-    data:
-      message: "\U0001F4DC Script - Living Room IR device is now on Learn Mode"
-    target:
-      entity_id: notify.supervisor_telegram
-  alias: IR Learn Mode On (Living Room)
-  mode: single
-  icon: mdi:remote
-  description: ''
 '1776503780973':
   sequence:
   - action: mqtt.publish
@@ -926,6 +909,17 @@ ir_clean_button_living_room_ac:
       payload: '{"ir_code_to_send": "BWQLZAvRA+AbAQeOB9ED0QOOB0ABAdED4DkBC44HjgfRA2QLZAvRA+AbAUAtA9EDjgdAAQHRA+A5AQuOB44H0QNkC2QL0QPgGwFALQPRA44HQAEB0QPgOQEHjgeOB9EDGw8="}'
       qos: 0
       retain: false
+    enabled: false
+  - action: remote.send_command
+    metadata: {}
+    target:
+      entity_id: remote.broadlink
+    data:
+      num_repeats: 1
+      delay_secs: 0.4
+      hold_secs: 0
+      device: LivingRoomAC
+      command: clean
   - action: notify.send_message
     data:
       message: "\U0001F4DC Script – ❄️ Living Room AC Clear Button \U0001F6CB️"

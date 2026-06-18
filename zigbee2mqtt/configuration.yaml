@@ -157,8 +157,6 @@ devices:
     friendly_name: Building Camera Fingerbot
   '0x3425b4fffed6604b':
     friendly_name: Smart Plug Kids Room
-  '0x20a716fffe48989f':
-    friendly_name: Living Room Smart IR Remote Control
   '0xa4c138807e5b8466':
     friendly_name: Hallway Upper
     description: 'On hallway celling air-conditioning '
@@ -187,4 +185,6 @@ devices:
     friendly_name: '0x54ef441000c4bc27'
   '0x18690afffef795fa':
     friendly_name: Kids Room Smart IR Remote Control
+  '0x20a716fffe48989f':
+    friendly_name: '0x20a716fffe48989f'
 version: 5
