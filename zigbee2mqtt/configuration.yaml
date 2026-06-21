@@ -186,5 +186,5 @@ devices:
   '0x18690afffef795fa':
     friendly_name: Kids Room Smart IR Remote Control
   '0x20a716fffe48989f':
-    friendly_name: '0x20a716fffe48989f'
+    friendly_name: Office Smart IR Remote Control
 version: 5
