@@ -171,8 +171,6 @@ devices:
   '0xa4c13887884f6ebc':
     friendly_name: Main Door
     description: On the celling inside the light
-  '0xa4c13834eeb0fcc9':
-    friendly_name: Kids Room Wireless Remote Switch
   '0xa4c1383a2646aef0':
     friendly_name: Office Presence Sensor
   '0xa4c138641cb105b1':
@@ -187,4 +185,6 @@ devices:
     friendly_name: Kids Room Smart IR Remote Control
   '0x20a716fffe48989f':
     friendly_name: Office Smart IR Remote Control
+  '0xa4c13834eeb0fcc9':
+    friendly_name: Kids Room Wireless Remote Switch
 version: 5

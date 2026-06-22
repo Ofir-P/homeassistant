@@ -857,23 +857,6 @@ eggs_timer:
       message: "\U0001F916 Automation – \U0001F95A Eggs Timer is on \U0001F52A"
   alias: Eggs Timer
   description: ''
-living_room_good_morning_spotify_song:
-  sequence:
-  - action: spotcast.play_media
-    data:
-      media_player:
-        entity_id: media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
-      account: 01KAB2YAREPM46QYFDTBFC0CWH
-      spotify_uri: spotify:track:1pVtUZcZiWwnhzl6RfU6dK
-      data:
-        volume: 55
-  - action: notify.send_message
-    data:
-      entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Living Room Good Morning Music \U0001F6CB️\n"
-  alias: Living Room  - Good Morning Spotify Song
-  mode: single
-  description: ''
 '1776503780973':
   sequence:
   - action: mqtt.publish
