@@ -179,12 +179,12 @@ devices:
     friendly_name: Hallway Office Motion Sensor
   '0xe406bffffef68c06':
     friendly_name: Master Bedroom Presence Sensor
-  '0x54ef441000c4bc27':
-    friendly_name: '0x54ef441000c4bc27'
   '0x18690afffef795fa':
     friendly_name: Kids Room Smart IR Remote Control
   '0x20a716fffe48989f':
     friendly_name: Office Smart IR Remote Control
   '0xa4c13834eeb0fcc9':
     friendly_name: Kids Room Wireless Remote Switch
+  '0x00158d0008d0bf86':
+    friendly_name: AC Unit Vibration Sensor
 version: 5

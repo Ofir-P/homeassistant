@@ -929,3 +929,47 @@ ir_learn_mode_on_kids_room:
   mode: single
   icon: mdi:remote
   description: ''
+toggle_office_room_damper:
+  alias: Toggle Office Room Damper
+  sequence:
+  - if:
+    - condition: state
+      entity_id: input_boolean.office_damper_state
+      state: 'off'
+    then:
+    - action: notify.send_message
+      data:
+        message: "\U0001F916 Script – ❄️ Office AC Damper On \U0001F4BC"
+      target:
+        entity_id: notify.supervisor_telegram
+    - action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Office Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BcQPxA9JAsABCr8C0gGnBEkCpwS/IAMDSQI5BYAPQAFAD8ABQAsBpwSAIwenBMQPxA9JAuADAQGnBMADgCNARwlJAkkCpwRJAr8C4AELQA8CpwS/IAMDxA/ED4AXgAFAEwFJAuABA4APQAEDpwRJAsABQAsLpwRJAqcESQKnBIAf"}'
+        qos: 0
+        retain: false
+      alias: Damper on
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.office_damper_state
+      alias: Update Helper to ON
+    else:
+    - action: notify.send_message
+      data:
+        message: "\U0001F916 Script – ❄️ Office AC Damper Off \U0001F4BC"
+      target:
+        entity_id: notify.supervisor_telegram
+    - action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Office Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BbkPuQ9HAoABCLEC1AGxAqMER+AIAwFHAoAXgAGACwVDBdQBRwJAAQa5D7kPsQJH4AIBgEMD1AGjBMALBUcCRwKxAoAHQAGAC+AFQwFHAuABAYAfAaME4BlDC6MERwJHAkcCRwK+Hw=="}'
+        qos: 0
+        retain: false
+      alias: Damper off
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.office_damper_state
+      alias: Update Helper to OFF
+  mode: single
+  icon: mdi:air-conditioner
+  description: ''
