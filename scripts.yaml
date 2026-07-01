@@ -607,25 +607,20 @@ kids_room_echo_random_spotify_playlist:
         \U0001F9F8\n"
 living_room_echo_random_spotify_playlist:
   sequence:
-  - variables:
-      raw_items: '{{ state_attr(''sensor.spotify_kids_uris'', ''items'') }}'
-      items: '{{ raw_items.split('', '') if raw_items is string else raw_items }}'
-      playlist_uri: '{{ (items | random) if (items | length) > 0 else ''spotify:playlist:37i9dQZF1DX8tYYl2HSCud''
-        }}'
   - action: spotcast.play_media
     data:
       media_player:
-        device_id: 6b22972e50027e2e19097887ab2217d7
+        entity_id: media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
       account: 01KAB2YAREPM46QYFDTBFC0CWH
-      spotify_uri: '{{ playlist_uri }}'
+      spotify_uri: https://open.spotify.com/playlist/6xxZcY9hXiiA1hJ2xIX7mv?si=BXAsb34mQ8iupr1fgTqOOg
       data:
-        volume: 35
+        volume: 55
         shuffle: true
         random: true
   - delay:
       hours: 0
       minutes: 0
-      seconds: 7
+      seconds: 4
       milliseconds: 0
   - action: notify.send_message
     data:
