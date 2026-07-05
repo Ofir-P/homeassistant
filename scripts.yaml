@@ -662,7 +662,7 @@ guest_bathroom_echo_random_spotify_playlist:
   - variables:
       raw_items: '{{ state_attr(''sensor.spotify_kids_uris'', ''items'') }}'
       items: '{{ raw_items.split('', '') if raw_items is string else raw_items }}'
-      playlist_uri: '{{ (items | random) if (items | length) > 0 else ''spotify:playlist:37i9dQZF1DX8tYYl2HSCud''
+      playlist_uri: '{{ (items | random) if items and (items | length) > 0 else ''spotify:playlist:37i9dQZF1DX8tYYl2HSCud''
         }}'
   - action: spotcast.play_media
     data:
