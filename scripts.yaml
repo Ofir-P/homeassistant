@@ -359,6 +359,8 @@ fetch_calendar_events:
         label: ⚽
       - entity: calendar.champions_league
         label: ⚽
+      - entity: calendar.fifa_world_cup_2026
+        label: ⚽
       - entity: calendar.birthdays_2
         label: "\U0001F389"
   - action: calendar.get_events
