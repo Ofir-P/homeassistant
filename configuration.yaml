@@ -120,7 +120,7 @@ zone:
   - name: Home
     latitude: !secret latitude_home
     longitude: !secret longitude_home
-    radius: 42
+    radius: 55
     icon: mdi:account-multiple
 # [=========================]Home Zone[=========================]
 # [=========================]Telegram[=========================]
