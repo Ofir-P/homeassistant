@@ -13,17 +13,39 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import entity_registry as er
 from homeassistant.core import HomeAssistant
 
-from custom_components.spotcast.utils import fuzzy_match
 from custom_components.spotcast.services.exceptions import (
     TooManyMediaPlayersError,
     AmbiguousDeviceIdError,
     UnmanagedSelectionError,
     DeviceNotFoundError,
 )
-from custom_components.spotcast.services.exceptions import (
-    InvalidCategoryError,
-)
-from custom_components.spotcast.utils import LowRatioError
+
+
+def track_context(value: str) -> str:
+    """Validates the `track_context` play option.
+
+    Accepts `track` (play only the song), `album` (play the song's
+    album), or an album or playlist Spotify URI to play the track inside
+    that specific context.
+
+    Raises:
+        - vol.Invalid: when the value is neither keyword nor a supported
+            album/playlist URI.
+    """
+    if value in ("track", "album"):
+        return value
+
+    if isinstance(value, str) and (
+        value.startswith("spotify:album:")
+        or value.startswith("spotify:playlist:")
+    ):
+        return value
+
+    raise vol.Invalid(
+        "track_context must be 'track', 'album', or a Spotify album or "
+        "playlist URI"
+    )
+
 
 EXTRAS_SCHEMA = vol.Schema({
     vol.Optional("position"): cv.positive_float,
@@ -36,7 +58,7 @@ EXTRAS_SCHEMA = vol.Schema({
     vol.Optional("shuffle"): cv.boolean,
     vol.Optional("limit"): cv.positive_int,
     vol.Optional("random"): cv.boolean,
-    vol.Optional("track_context"): vol.In(["track", "album"]),
+    vol.Optional("track_context"): track_context,
 })
 
 
@@ -50,7 +72,7 @@ def entity_from_target_selector(
 
     count = 0
 
-    for key, value in media_players.items():
+    for value in media_players.values():
         count += len(value)
 
     if count > 1:
@@ -134,18 +156,3 @@ def clean_extras(extras: dict, keep: Iterable) -> dict:
         result[key] = value
 
     return result
-
-
-def find_category(categories: dict, category_str: str) -> dict:
-
-    try:
-        return fuzzy_match(categories, category_str, "name")
-    except LowRatioError:
-        try:
-            return {x["id"]: x for x in categories}[category_str]
-        except KeyError as exc:
-            raise InvalidCategoryError(
-                "Incapable of finding a proper match for category "
-                f"`{category_str}`. No category name match found and not a "
-                "valid ID."
-            ) from exc

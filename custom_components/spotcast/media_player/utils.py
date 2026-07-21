@@ -193,7 +193,9 @@ async def async_build_from_type(
     if isinstance(entity, CastDevice):
         entity: CastDevice
         media_player = Chromecast(
-            entity._cast_info.cast_info,
+            # HA's cast integration keeps CastInfo private with no
+            # public accessor.
+            entity._cast_info.cast_info,  # pylint: disable=protected-access
             zconf=ChromeCastZeroconf.get_zeroconf()
         )
 
@@ -214,6 +216,18 @@ async def async_build_from_type(
                 spotify_controller.launch_app,
                 media_player,
             )
+
+            activated_id = spotify_controller.activated_device_id
+
+            if activated_id is not None and activated_id != media_player.id:
+                LOGGER.debug(
+                    "Cast device `%s` registered under id `%s`, which "
+                    "differs from the requested id; using it as the "
+                    "playback target",
+                    media_player.name,
+                    activated_id,
+                )
+                media_player.id = activated_id
 
         return media_player
 
