@@ -378,7 +378,7 @@ house_clean:
   sequence:
   - action: vacuum.start
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data: {}
   - action: notify.send_message
     data:
@@ -726,10 +726,10 @@ clean_office:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 2
+      - 3
       repeats: 1
   - action: notify.send_message
     data:
@@ -743,10 +743,11 @@ clean_master_bedroom:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 3
+      - 4
+      - 2
       repeats: 1
   - action: notify.send_message
     data:
@@ -760,10 +761,10 @@ clean_corridor:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 5
+      - 7
       repeats: 1
   - action: notify.send_message
     data:
@@ -777,10 +778,10 @@ clean_kids_room:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 6
+      - 8
       repeats: 1
   - action: notify.send_message
     data:
@@ -794,10 +795,10 @@ clean_kitchen:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 7
+      - 9
       repeats: 2
   - action: notify.send_message
     data:
@@ -811,10 +812,10 @@ clean_living_room:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 9
+      - 10
       repeats: 1
   - action: notify.send_message
     data:
@@ -828,11 +829,11 @@ clean_living_room_and_kitchen:
   sequence:
   - action: dreame_vacuum.vacuum_clean_segment
     target:
-      entity_id: vacuum.x50_ultra
+      entity_id: vacuum.x50_ultra_2
     data:
       segments:
       - 9
-      - 7
+      - 10
       repeats: 1
   - action: notify.send_message
     data:
