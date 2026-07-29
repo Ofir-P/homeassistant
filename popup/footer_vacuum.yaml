@@ -20,17 +20,17 @@ browser_mod:
           cards:
             - type: logbook
               entities:
-                - vacuum.x50_ultra
-                - sensor.x50_ultra_current_room
+                - vacuum.x50_ultra_2
+                - sensor.x50_ultra_current_room_2
               card_mod:
                 style: |
                   ha-logbook {
                     max-height: 265px !important;
                   }
             - type: custom:xiaomi-vacuum-map-card
-              entity: vacuum.x50_ultra
+              entity: vacuum.x50_ultra_2
               map_source:
-                camera: camera.x50_ultra_map
+                camera: camera.x50_ultra_map_2
               calibration_source:
                 camera: true
               vacuum_platform: Tasshack/dreame-vacuum

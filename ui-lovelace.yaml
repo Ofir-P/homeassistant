@@ -424,7 +424,7 @@ views:
               - icon_away
 
           - type: custom:button-card
-            entity: vacuum.x50_ultra
+            entity: vacuum.x50_ultra_2
             show_state: true
             state_display: >
               [[[ return entity?.state ?? 'no-entity'; ]]]
