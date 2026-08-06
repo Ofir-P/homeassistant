@@ -22,7 +22,8 @@ from homeassistant.helpers.typing import StateType
 from iec_api.models.invoice import Invoice
 from iec_api.models.remote_reading import PeriodConsumption
 
-from .commons import TIMEZONE, IecEntityType, find_reading_by_date, localize_datetime
+from .bill import _parse_invoice_last_date
+from .commons import TIMEZONE, IecEntityType, find_reading_by_date
 from .const import (
     ACCESS_TOKEN_EXPIRATION_TIME,
     ACCESS_TOKEN_ISSUED_AT,
@@ -31,7 +32,6 @@ from .const import (
     BACKSTREAM_TOTALS_DICT_NAME,
     CONTRACT_DICT_NAME,
     DAILY_READINGS_DICT_NAME,
-    DOMAIN,
     EMPTY_INVOICE,
     EMPTY_REMOTE_READING,
     EST_BILL_CONSUMPTION_PRICE_ATTR_NAME,
@@ -123,7 +123,8 @@ def _get_reading_by_date(
 
     except StopIteration:
         _LOGGER.info(
-            f"Couldn't find daily reading for date: {desired_date.strftime('%Y-%m-%d')}"
+            "Couldn't find daily reading for date: %s",
+            desired_date.strftime("%Y-%m-%d"),
         )
         return EMPTY_REMOTE_READING
 
@@ -235,7 +236,7 @@ SMART_ELEC_SENSORS: tuple[IecEntityDescription, ...] = (
                 data[DAILY_READINGS_DICT_NAME][
                     data[ATTRIBUTES_DICT_NAME][METER_ID_ATTR_NAME]
                 ],
-                localize_datetime(datetime.now()),
+                datetime.now(TIMEZONE),
             ).consumption
             if (
                 data[DAILY_READINGS_DICT_NAME]
@@ -256,7 +257,7 @@ SMART_ELEC_SENSORS: tuple[IecEntityDescription, ...] = (
                     data[DAILY_READINGS_DICT_NAME][
                         data[ATTRIBUTES_DICT_NAME][METER_ID_ATTR_NAME]
                     ],
-                    localize_datetime(datetime.now()) - timedelta(days=1),
+                    datetime.now(TIMEZONE) - timedelta(days=1),
                 ).consumption
             )
             if (data[DAILY_READINGS_DICT_NAME])
@@ -277,8 +278,7 @@ SMART_ELEC_SENSORS: tuple[IecEntityDescription, ...] = (
                         for reading in data[DAILY_READINGS_DICT_NAME][
                             data[ATTRIBUTES_DICT_NAME][METER_ID_ATTR_NAME]
                         ]
-                        if reading.interval.month
-                        == localize_datetime(datetime.now()).month
+                        if reading.interval.month == datetime.now(TIMEZONE).month
                     ]
                 )
             )
@@ -340,7 +340,7 @@ BACKSTREAM_ELEC_SENSORS: tuple[IecEntityDescription, ...] = (
                 data[DAILY_READINGS_DICT_NAME][
                     data[ATTRIBUTES_DICT_NAME][METER_ID_ATTR_NAME]
                 ],
-                localize_datetime(datetime.now()),
+                datetime.now(TIMEZONE),
             ).back_stream
             if _is_backstream_meter(data)
             else None
@@ -409,7 +409,10 @@ ELEC_SENSORS: tuple[IecEntityDescription, ...] = (
         device_class=SensorDeviceClass.DATE,
         value_fn=lambda data: (
             data[INVOICE_DICT_NAME].to_date.date()
-            if (data[INVOICE_DICT_NAME] != EMPTY_INVOICE)
+            if (
+                data[INVOICE_DICT_NAME] != EMPTY_INVOICE
+                and data[INVOICE_DICT_NAME].to_date is not None
+            )
             else None
         ),
     ),
@@ -417,7 +420,7 @@ ELEC_SENSORS: tuple[IecEntityDescription, ...] = (
         key="iec_bill_last_payment_date",
         device_class=SensorDeviceClass.DATE,
         value_fn=lambda data: (
-            IecApiCoordinator._parse_invoice_last_date(
+            _parse_invoice_last_date(
                 data[INVOICE_DICT_NAME].last_date
             )
             if (data[INVOICE_DICT_NAME] != EMPTY_INVOICE)
@@ -457,11 +460,13 @@ async def async_setup_entry(
 ) -> None:
     """Set up the IEC sensor."""
 
-    coordinator: IecApiCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: IecApiCoordinator = entry.runtime_data
     entities: list[SensorEntity] = []
 
     if coordinator.data is None:
-        _LOGGER.error("Coordinator has no data - skipping sensor setup. Reauth may be needed.")
+        _LOGGER.error(
+            "Coordinator has no data - skipping sensor setup. Reauth may be needed."
+        )
         return
 
     is_multi_contract = (

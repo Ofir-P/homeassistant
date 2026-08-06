@@ -18,7 +18,6 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .commons import get_device_info, IecEntityType
 from .const import (
-    DOMAIN,
     STATICS_DICT_NAME,
     INVOICE_DICT_NAME,
     IS_SHARED_ATTR_NAME,
@@ -66,10 +65,12 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up a IEC binary sensors based on a config entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: IecApiCoordinator = entry.runtime_data
 
     if coordinator.data is None:
-        _LOGGER.error("Coordinator has no data - skipping binary sensor setup. Reauth may be needed.")
+        _LOGGER.error(
+            "Coordinator has no data - skipping binary sensor setup. Reauth may be needed."
+        )
         return
 
     is_multi_contract = (
