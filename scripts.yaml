@@ -232,7 +232,7 @@ boil_tami4_water:
     metadata: {}
     data: {}
     target:
-      entity_id: button.tami4_boil_water
+      entity_id: button.kitchen_boil_water
   - data:
       message: "\U0001F4DC Script -  Boil Tami4 Water has been triggered!"
     action: notify.supervisor_telegram
