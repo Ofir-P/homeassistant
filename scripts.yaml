@@ -540,33 +540,6 @@ wake_kitchen_echo_random_spotify_playlist:
   alias: Wake Kitchen Echo - random Spotify playlist
   mode: restart
   description: ''
-send_doorbell_notification_to_balcony_tv:
-  sequence:
-  - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.balcony_tv_status
-        state: 'Off'
-    then:
-    - action: notify.balcony_tv
-      data:
-        data:
-          duration: 10
-          position: top-left
-          fontsize: medium
-          transparency: 50%
-          timeout: 10
-          color: cyan
-          interrupt: 0
-          image:
-            path: /config/www/tmp/snapshot_doorbell.jpg
-        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
-          Snapshot Captured!"
-        title: Doorbell Notification
-  alias: Send Doorbell Notification to Balcony TV
-  description: Sends notification with doorbell snapshot to Living Room TV when TV
-    is on
 kids_room_echo_random_spotify_playlist:
   alias: Kids Room Echo - Random Spotify Playlist
   mode: restart

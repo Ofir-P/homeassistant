@@ -116,26 +116,6 @@ browser_mod:
                       letter-spacing: '-0.01em';
                     }
               type: markdown
-            - cards:
-                - accent_color: "#2b374e"
-                  border_color: "#13274b"
-                  date: ddmm
-                  entity: sensor.trakt_upcoming_shows
-                  flag: false
-                  flag_color: "#13274b"
-                  image_style: fanart
-                  line1_text: $empty
-                  line2_size: small
-                  line2_text: $episode
-                  line3_text: $number
-                  line4_text: "Runtime: $runtime"
-                  max: 3
-                  title: false
-                  title_size: large
-                  title_text: $title
-                  type: custom:upcoming-media-card
-              type: vertical-stack
-          type: vertical-stack
         - cards:
             - content: >
                 # <img width="30" height="30" src='/local/Logos/plex-removebg.png'
