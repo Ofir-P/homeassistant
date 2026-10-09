@@ -188,4 +188,6 @@ devices:
     friendly_name: Kids Room Sticker AC Button
   '0xa4c1381afb200f3f':
     friendly_name: '0xa4c1381afb200f3f'
+  '0x54ef441000c4bc27':
+    friendly_name: '0x54ef441000c4bc27'
 version: 5
