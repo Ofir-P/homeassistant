@@ -942,3 +942,28 @@ toggle_office_room_damper:
   mode: single
   icon: mdi:air-conditioner
   description: ''
+cover_command_safe:
+  alias: Cover Command Safe
+  description: Sends open/close to a cover in the background so a cloud error can't
+    stop the calling automation.
+  mode: parallel
+  max: 10
+  fields:
+    entity:
+      name: Entity
+      required: true
+      selector:
+        entity:
+          domain: cover
+    command:
+      name: Command
+      required: true
+      selector:
+        select:
+          options:
+          - open
+          - close
+  sequence:
+  - action: cover.{{ command }}_cover
+    target:
+      entity_id: '{{ entity }}'
