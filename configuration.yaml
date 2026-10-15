@@ -4,24 +4,6 @@ logbook:
   exclude:
     entities:
       - sensor.time
-# [=========================]trakt.tv[=========================]
-trakt_tv:
-  language: en
-  timezone: Europe/Paris
-  sensors:
-    upcoming:
-      show:
-        days_to_fetch: 30
-        max_medias: 10
-      movie:
-        days_to_fetch: 45
-        max_medias: 5
-    recommendation:
-      show:
-        max_medias: 3
-      movie:
-        max_medias: 3
-# [=========================]trakt.tv[=========================]
 # [=========================]Authenticated[=========================]
 logger:
   default: info
