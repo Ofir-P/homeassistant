@@ -4,6 +4,38 @@ logbook:
   exclude:
     entities:
       - sensor.time
+    entity_globs:
+      - "*.browser_mod_*"
+      - sensor.*_browser_path
+      - sensor.*_browser_visibility
+      - sensor.*_browser_useragent
+      - sensor.*_browser_user
+      - sensor.*_browser_id
+      - sensor.*_browser_width
+      - sensor.*_browser_height
+      - sensor.*_browser_battery
+      - sensor.*_panel
+      - binary_sensor.*_browser_fullykiosk
+      - binary_sensor.*_browser_dark_mode
+      - binary_sensor.*_browser_charging
+      - light.*_screen
+recorder:
+  exclude:
+    entity_globs:
+      - "*.browser_mod_*"
+      - sensor.*_browser_path
+      - sensor.*_browser_visibility
+      - sensor.*_browser_useragent
+      - sensor.*_browser_user
+      - sensor.*_browser_id
+      - sensor.*_browser_width
+      - sensor.*_browser_height
+      - sensor.*_browser_battery
+      - sensor.*_panel
+      - binary_sensor.*_browser_fullykiosk
+      - binary_sensor.*_browser_dark_mode
+      - binary_sensor.*_browser_charging
+      - light.*_screen
 # [=========================]Authenticated[=========================]
 logger:
   default: info

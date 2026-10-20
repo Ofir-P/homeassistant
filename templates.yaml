@@ -103,7 +103,7 @@
             <b>S8 Robot is done</b>
           {% endif %}
         weather: >
-          {% set entity = 'weather.forecast_home' %}
+          {% set entity = 'weather.home' %}
           {% set temp = state_attr(entity, 'temperature') %}
           {{ 'Today temperature is ' ~ temp | round ~ '°' if temp is number else 'Cannot load weather...' }}
 
