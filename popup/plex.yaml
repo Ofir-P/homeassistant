@@ -116,6 +116,7 @@ browser_mod:
                       letter-spacing: '-0.01em';
                     }
               type: markdown
+          type: vertical-stack
         - cards:
             - content: >
                 # <img width="30" height="30" src='/local/Logos/plex-removebg.png'
@@ -210,8 +211,8 @@ browser_mod:
               title: false
               type: glance
             - content: >
-                # <img width="30" height="30" src='/local/Logos/overseerr.png'
-                style='vertical-align:middle' /> Overseerr Requests
+                # <img height="30" src='/local/Logos/overseerr.png'
+                style='vertical-align:middle' /> Requests
               style:
                 .: |
                   ha-card {
