@@ -700,7 +700,7 @@ clean_office:
       entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 3
+      - 4
       repeats: 1
   - action: notify.send_message
     data:
@@ -717,8 +717,7 @@ clean_master_bedroom:
       entity_id: vacuum.x50_ultra_2
     data:
       segments:
-      - 4
-      - 2
+      - 5
       repeats: 1
   - action: notify.send_message
     data:
