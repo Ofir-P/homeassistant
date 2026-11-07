@@ -234,8 +234,9 @@ boil_tami4_water:
     target:
       entity_id: button.kitchen_boil_water
   - data:
+      entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script -  Boil Tami4 Water has been triggered!"
-    action: notify.supervisor_telegram
+    action: notify.send_message
   - if:
     - condition: state
       entity_id: person.elian

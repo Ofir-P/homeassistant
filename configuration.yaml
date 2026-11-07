@@ -56,53 +56,53 @@ lovelace:
       icon: mdi:view-dashboard
       show_in_sidebar: true
   resources: [
-      { url: "/hacsfiles/apexcharts-card/apexcharts-card.js", type: module },
-      { url: "/hacsfiles/button-card/button-card.js", type: module },
-      { url: "/hacsfiles/vacuum-card/vacuum-card.js", type: module },
-      { url: "/hacsfiles/kiosk-mode/kiosk-mode.js", type: module },
-      { url: "/hacsfiles/lovelace-card-mod/card-mod.js", type: module }, #tablet theme
-      { url: "/hacsfiles/stack-in-card/stack-in-card.js", type: module }, # Lock button
+      { url: "/local/community/apexcharts-card/apexcharts-card.js", type: module },
+      { url: "/local/community/button-card/button-card.js", type: module },
+      { url: "/local/community/vacuum-card/vacuum-card.js", type: module },
+      { url: "/local/community/kiosk-mode/kiosk-mode.js", type: module },
+      { url: "/local/community/lovelace-card-mod/card-mod.js", type: module }, #tablet theme
+      { url: "/local/community/stack-in-card/stack-in-card.js", type: module }, # Lock button
       {
-        url: "/hacsfiles/lovelace-xiaomi-vacuum-map-card/xiaomi-vacuum-map-card.js",
+        url: "/local/community/lovelace-xiaomi-vacuum-map-card/xiaomi-vacuum-map-card.js",
         type: module,
       },
-      { url: "/hacsfiles/room-card/room-card.js", type: module }, # Mobile Dashboard Cards
+      { url: "/local/community/room-card/room-card.js", type: module }, # Mobile Dashboard Cards
       {
-        url: "/hacsfiles/mini-climate-card/mini-climate-card-bundle.js",
+        url: "/local/community/mini-climate-card/mini-climate-card-bundle.js",
         type: module,
       }, # Mobile Cards
-      { url: "/hacsfiles/lovelace-layout-card/layout-card.js", type: module }, # Grid Layout - Tablet Dashboard
-      { url: "/hacsfiles/lovelace-mushroom/mushroom.js", type: module },
+      { url: "/local/community/lovelace-layout-card/layout-card.js", type: module }, # Grid Layout - Tablet Dashboard
+      { url: "/local/community/lovelace-mushroom/mushroom.js", type: module },
       {
-        url: "/hacsfiles/lovelace-slider-entity-row/slider-entity-row.js",
+        url: "/local/community/lovelace-slider-entity-row/slider-entity-row.js",
         type: module,
       },
-      { url: "/hacsfiles/swipe-card/swipe-card.js", type: module },
+      { url: "/local/community/swipe-card/swipe-card.js", type: module },
       {
-        url: "/hacsfiles/lovelace-multiple-entity-row/multiple-entity-row.js",
-        type: module,
-      },
-      {
-        url: "/hacsfiles/mini-media-player/mini-media-player-bundle.js",
+        url: "/local/community/lovelace-multiple-entity-row/multiple-entity-row.js",
         type: module,
       },
       {
-        url: "/hacsfiles/upcoming-media-card/upcoming-media-card.js",
+        url: "/local/community/mini-media-player/mini-media-player-bundle.js",
         type: module,
       },
       {
-        url: "/hacsfiles/mini-graph-card/mini-graph-card-bundle.js",
+        url: "/local/community/upcoming-media-card/upcoming-media-card.js",
         type: module,
       },
       {
-        url: "/hacsfiles/light-entity-card/light-entity-card.js",
+        url: "/local/community/mini-graph-card/mini-graph-card-bundle.js",
+        type: module,
+      },
+      {
+        url: "/local/community/light-entity-card/light-entity-card.js",
         type: module,
       }, #Mobile Dashboard
       {
-        url: "/hacsfiles/calendar-card-pro/calendar-card-pro.js",
+        url: "/local/community/calendar-card-pro/calendar-card-pro.js",
         type: module,
       }, #Calendar Pro
-      { url: "/hacsfiles/Bubble-Card/bubble-card.js", type: module }, #Bubble Card for Doorbell photo
+      { url: "/local/community/Bubble-Card/bubble-card.js", type: module }, #Bubble Card for Doorbell photo
       { url: "/local/marked.min.js?v=4.2.1", type: module }, #Tablet Dashboard
       { url: "/local/vanilla-tilt.min.js?v=1.7.3", type: module }, #Tablet Dashboard
       { url: "/local/browser_mod_icon.js?v=0.5", type: module }, #Tablet Dashboard
@@ -139,12 +139,6 @@ zone:
 # [=========================]Home Zone[=========================]
 # [=========================]Telegram[=========================]
 notify:
-  - platform: telegram
-    name: Home Assistant Group
-    chat_id: !secret telegram_groupChatId
-  - platform: telegram
-    name: Supervisor Telegram
-    chat_id: !secret telegramSupervisor_groupChatId
   - platform: group
     name: mobile_app_group_ofir_and_elian
     services:
