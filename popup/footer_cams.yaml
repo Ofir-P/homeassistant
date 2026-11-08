@@ -14,16 +14,18 @@ browser_mod:
           columns: 1
           type: grid
           cards:
-            - camera_view: auto
-              type: picture-glance
-              entities: []
-              camera_image: camera.living_room_sub
-              aspect_ratio: "20:15"
-            - camera_view: auto
-              type: picture-glance
-              entities: []
-              camera_image: camera.dining_table_sub
-              aspect_ratio: "20:15"
+            - type: custom:webrtc-camera
+              entity: camera.living_room_sub
+              title: Balcony
+              muted: true
+              ui: true
+              intersection: 0
+            - type: custom:webrtc-camera
+              entity: camera.dining_table_sub
+              title: Main Door
+              muted: true
+              ui: true
+              intersection: 0
             - camera_view: auto
               type: picture-glance
               entities: []
@@ -34,8 +36,9 @@ browser_mod:
               entities: []
               camera_image: camera.doorbell
               aspect_ratio: "20:15"
-            - camera_view: auto
-              type: picture-glance
-              entities: []
-              camera_image: camera.aquarium_sub
-              aspect_ratio: "20:15"
+            - type: custom:webrtc-camera
+              entity: camera.aquarium_sub
+              title: Office
+              muted: true
+              ui: true
+              intersection: 0
