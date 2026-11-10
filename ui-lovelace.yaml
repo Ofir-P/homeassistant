@@ -81,11 +81,345 @@ views:
         cards:
           - type: custom:button-card
             entity: sensor.template_sidebar
-            tap_action:
-              action: navigate
-              navigation_path: /config/dashboard
+            tap_action: !include popup/kitchen_timer.yaml
             template: sidebar
-
+            variables:
+              skip: [active, vacuum, battery]
+          # Lights-on line (tap: list of lights + turn all off)
+          - type: custom:button-card
+            entity: sensor.template_sidebar
+            template: sidebar
+            name: "[[[ return '<p>' + entity.attributes.active + '</p>' ]]]"
+            tap_action: !include popup/lights_on.yaml
+            styles:
+              card: [margin-top: -30px]
+              name: [padding-top: 0]
+          # Battery / other notices from the sidebar sensor
+          - type: custom:button-card
+            entity: sensor.template_sidebar
+            template: sidebar
+            name: "[[[ const b = entity.attributes.battery; return b ? '<p>' + b + '</p>' : '' ]]]"
+            styles:
+              card: [margin-top: -30px, display: "[[[ return entity.attributes.battery ? 'block' : 'none' ]]]"]
+              name: [padding-top: 0]
+          # Kitchen timer countdown (only while a timer is running)
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: timer.kitchen_timer
+                state_not: idle
+            card:
+              type: entities
+              entities:
+                - entity: timer.kitchen_timer
+                  name: Kitchen timer
+                  icon: mdi:timer-sand
+              card_mod:
+                style: |
+                  ha-card { background: transparent !important; box-shadow: none !important; border: none !important; --primary-text-color: #d8b56a; --state-icon-color: #d8b56a; }
+                  #states { padding: 0 0 0 35px !important; }
+          # Shabbat candle lighting (Fridays only, until candle lighting)
+          - type: conditional
+            conditions:
+              - condition: time
+                weekdays:
+                  - fri
+            card:
+              type: markdown
+              content: >
+                {% set cl = as_datetime(states('sensor.jewish_calendar_upcoming_candle_lighting')) %}
+                {% if cl and as_local(cl).date() == now().date() and now() < cl %}🕯️ <b>Candle lighting {{ as_local(cl).strftime('%H:%M') }}</b>{% endif %}
+              card_mod:
+                style: |
+                  ha-card { background: transparent !important; box-shadow: none !important; border: none !important; font-size: 17px; color: #d8b56a; padding-left: 30px; }
+          # Morning commute (Waze) – workdays 06:00–11:00, only while that person is home
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: person.ofir
+                state: home
+              - condition: time
+                after: "06:00:00"
+                before: "11:00:00"
+                weekdays: [sun, mon, tue, wed, thu]
+            card:
+              type: custom:mushroom-chips-card
+              card_mod:
+                style: |
+                  ha-card { padding-left: 51px; margin-top: -8px; }
+              chips:
+                - type: template
+                  picture: "{{ state_attr('person.ofir', 'entity_picture') }}"
+                  content: "{{ states('sensor.waze_ofir_to_work') | float(0) | round(0) | int }} min to Experda"
+                  tap_action:
+                    action: more-info
+                  entity: sensor.waze_ofir_to_work
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: person.elian
+                state: home
+              - condition: time
+                after: "06:00:00"
+                before: "11:00:00"
+                weekdays: [sun, mon, tue, wed, thu]
+            card:
+              type: custom:mushroom-chips-card
+              card_mod:
+                style: |
+                  ha-card { padding-left: 51px; margin-top: -8px; }
+              chips:
+                - type: template
+                  picture: "{{ state_attr('person.elian', 'entity_picture') }}"
+                  content: "{{ states('sensor.waze_elian_to_work') | float(0) | round(0) | int }} min to work"
+                  tap_action:
+                    action: more-info
+                  entity: sensor.waze_elian_to_work
+          # Umbrella reminder – workday mornings when rain is expected today
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: binary_sensor.rain_expected_today
+                state: "on"
+              - condition: time
+                after: "06:00:00"
+                before: "11:00:00"
+                weekdays: [sun, mon, tue, wed, thu]
+            card:
+              type: custom:mushroom-chips-card
+              card_mod:
+                style: |
+                  ha-card { padding-left: 51px; margin-top: -8px; }
+              chips:
+                - type: template
+                  icon: mdi:umbrella
+                  icon_color: indigo
+                  content: Take an umbrella
+          # Running appliances (only visible while running)
+          - type: custom:mushroom-chips-card
+            alignment: start
+            card_mod:
+              style: |
+                ha-card { padding-left: 51px; margin-top: -8px; }
+            chips:
+              # Vacuum needs attention (error / low water)
+              - type: conditional
+                conditions:
+                  - entity: sensor.x50_ultra_error_2
+                    state_not: no_error
+                  - entity: sensor.x50_ultra_error_2
+                    state_not: unavailable
+                  - entity: sensor.x50_ultra_error_2
+                    state_not: unknown
+                chip:
+                  type: template
+                  icon: mdi:robot-vacuum-alert
+                  icon_color: red
+                  entity: vacuum.x50_ultra_2
+                  content: "Vacuum: {{ state_attr('vacuum.x50_ultra_2','error') }}"
+                  tap_action:
+                    action: more-info
+              - type: conditional
+                conditions:
+                  - entity: sensor.x50_ultra_low_water_warning_2
+                    state_not: no_warning
+                  - entity: sensor.x50_ultra_low_water_warning_2
+                    state_not: unavailable
+                  - entity: sensor.x50_ultra_low_water_warning_2
+                    state_not: unknown
+                chip:
+                  type: template
+                  icon: mdi:water-alert-outline
+                  icon_color: orange
+                  entity: vacuum.x50_ultra_2
+                  content: "Vacuum: {{ state_attr('vacuum.x50_ultra_2','low_water_warning') }}"
+                  tap_action:
+                    action: more-info
+              # Water leaks
+              - type: conditional
+                conditions:
+                  - entity: binary_sensor.water_leak_shower_sink_water_leak
+                    state: "on"
+                chip:
+                  type: template
+                  icon: mdi:water-alert
+                  icon_color: red
+                  entity: binary_sensor.water_leak_shower_sink_water_leak
+                  content: "Leak · Shower sink"
+                  tap_action:
+                    action: more-info
+              - type: conditional
+                conditions:
+                  - entity: binary_sensor.water_leak_laundry_machine_water_leak
+                    state: "on"
+                chip:
+                  type: template
+                  icon: mdi:water-alert
+                  icon_color: red
+                  entity: binary_sensor.water_leak_laundry_machine_water_leak
+                  content: "Leak · Laundry machine"
+                  tap_action:
+                    action: more-info
+              - type: conditional
+                conditions:
+                  - entity: binary_sensor.water_leak_sensor_kitchen_sink_water_leak
+                    state: "on"
+                chip:
+                  type: template
+                  icon: mdi:water-alert
+                  icon_color: red
+                  entity: binary_sensor.water_leak_sensor_kitchen_sink_water_leak
+                  content: "Leak · Kitchen sink"
+                  tap_action:
+                    action: more-info
+              - type: conditional
+                conditions:
+                  - entity: binary_sensor.water_leak_guest_bathroom_sink_water_leak
+                    state: "on"
+                chip:
+                  type: template
+                  icon: mdi:water-alert
+                  icon_color: red
+                  entity: binary_sensor.water_leak_guest_bathroom_sink_water_leak
+                  content: "Leak · Guest bathroom sink"
+                  tap_action:
+                    action: more-info
+              - type: conditional
+                conditions:
+                  - entity: input_select.washing_machine_status
+                    state: "On"
+                chip:
+                  type: template
+                  icon: mdi:washing-machine
+                  icon_color: blue
+                  content: Laundry running
+              - type: conditional
+                conditions:
+                  - entity: input_select.dish_washer_status
+                    state: "on"
+                chip:
+                  type: template
+                  icon: mdi:dishwasher
+                  icon_color: cyan
+                  content: Dishwasher running
+              - type: conditional
+                conditions:
+                  - entity: vacuum.x50_ultra_2
+                    state: "cleaning"
+                chip:
+                  type: template
+                  icon: mdi:robot-vacuum
+                  icon_color: green
+                  content: Vacuum cleaning
+              - type: conditional
+                conditions:
+                  - entity: vacuum.x50_ultra_2
+                    state: "returning"
+                chip:
+                  type: template
+                  icon: mdi:robot-vacuum
+                  icon_color: amber
+                  content: Vacuum returning
+              - type: conditional
+                conditions:
+                  - entity: binary_sensor.solar_rain_sensor_rain
+                    state: "on"
+                chip:
+                  type: template
+                  icon: mdi:weather-pouring
+                  icon_color: indigo
+                  content: Raining
+              - type: template
+                icon: mdi:lightning-bolt
+                icon_color: >
+                  {% set days = now().day if now().day > 1 else 1 %}{% set avg = (states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) / days %}
+                  {% set last = states('sensor.iec_contract_349077514_last_bill_electric_usage_to_date_of_000349077514') | float(0) / (states('sensor.iec_contract_349077514_last_bill_length_in_days_of_000349077514') | float(30)) %}
+                  {{ 'orange' if last > 0 and avg > last * 1.2 else 'yellow' }}
+                content: >
+                  ₪{{ ((states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) * (states('sensor.iec_kwh_tariff') | float(0))) | round(0) | int }} this month · ~₪{{ states('sensor.iec_meter_23179017_next_electric_bill_forecasted_cost_of_000349077514') | float(0) | round(0) | int }} bill
+              - type: conditional
+                conditions:
+                  - condition: numeric_state
+                    entity: sensor.plant_monitor_soil_moisture
+                    below: 25
+                    above: 0
+                chip:
+                  type: template
+                  icon: mdi:sprout
+                  icon_color: brown
+                  content: "Water the plant ({{ states('sensor.plant_monitor_soil_moisture') | int(0) }}%)"
+          # 3-day forecast
+          - type: weather-forecast
+            entity: weather.home
+            show_current: false
+            show_forecast: true
+            forecast_type: daily
+            forecast_slots: 3
+            round_temperature: true
+            card_mod:
+              style: |
+                ha-card { background: transparent !important; box-shadow: none !important; border: none !important; padding-top: 14px !important; padding-bottom: 6px !important; }
+                /* First two days read "Today" / "Tomorrow" */
+                .forecast-item:nth-child(-n+2) .forecast-item-label { font-size: 0 !important; }
+                .forecast-item:nth-child(-n+2) .forecast-item-label::after { font-size: 12px; line-height: 12px; }
+                .forecast-item:nth-child(1) .forecast-item-label::after { content: "Today"; }
+                .forecast-item:nth-child(2) .forecast-item-label::after { content: "Tomorrow"; }
+                /* Moon next to the night (low) temperature */
+                .templow::before { content: "🌙"; font-size: 0.8em; margin-right: 3px; display: inline-block; filter: grayscale(1) brightness(1.6); }
+          # Next calendar events – tap to open the full week
+          - type: custom:button-card
+            entity: sensor.sidebar_upcoming_events
+            show_icon: false
+            show_state: false
+            triggers_update:
+              - sensor.time
+            name: |
+              [[[
+                const evs = (entity && entity.attributes.events) || [];
+                if (!evs.length) return '';
+                const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                const pic = p => states[p] && states[p].attributes.entity_picture;
+                const p2 = n => String(n).padStart(2, '0');
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+                let out = "<div class='hdr'>Next up</div>";
+                let lastDay = null;
+                for (const e of evs) {
+                  const d = e.all_day ? new Date(e.start + 'T00:00:00') : new Date(e.start);
+                  const diff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - today) / 86400000);
+                  const day = diff <= 0 ? 'Today' : diff === 1 ? 'Tomorrow' : days[d.getDay()] + ' ' + p2(d.getDate()) + '/' + p2(d.getMonth() + 1);
+                  if (day !== lastDay) { out += "<div class='day'>" + day + "</div>"; lastDay = day; }
+                  // highlight events starting within the next 2 hours
+                  const mins = (d - now) / 60000;
+                  const soon = !e.all_day && mins <= 120 && mins > -60;
+                  let badge = '';
+                  if (soon) {
+                    const m = Math.max(0, Math.round(mins));
+                    badge = " <span class='badge'>" + (m === 0 ? 'now' : 'in ' + (m < 60 ? m + 'm' : Math.floor(m / 60) + 'h' + (m % 60 ? ' ' + (m % 60) + 'm' : ''))) + "</span>";
+                  }
+                  const time = e.all_day ? 'All day' : p2(d.getHours()) + ':' + p2(d.getMinutes());
+                  let icon = "<ha-icon icon='mdi:calendar'></ha-icon>";
+                  if (e.cal === 'calendar.calendar_2') icon = "<img src='" + pic('person.elian') + "'>";
+                  else if (e.cal === 'calendar.ofirx3_gmail_com') icon = "<img src='" + pic('person.ofir') + "'>";
+                  // <bdi> keeps Hebrew titles in the right direction
+                  out += "<div class='row" + (soon ? " soon" : "") + "'>" + icon + "<b>" + time + "</b>&nbsp;· <bdi>" + esc(e.summary) + "</bdi>" + badge + "</div>";
+                }
+                return out;
+              ]]]
+            tap_action: !include popup/footer_calendar.yaml
+            styles:
+              card: [background: transparent, box-shadow: none, border: none, padding: "8px 0 8px 51px"]
+              grid: [grid-template-areas: '"n"']
+              name: [justify-self: start, text-align: left, white-space: normal, font-size: 15px, color: '#9aa3a7', line-height: 1.6, width: 100%]
+            extra_styles: |
+              img { width: 18px; height: 18px; border-radius: 50%; vertical-align: middle; margin-right: 6px; object-fit: cover; }
+              #name ha-icon { --mdc-icon-size: 18px; width: 18px !important; height: 18px !important; vertical-align: middle; margin-right: 6px; color: #6a7377; }
+              .hdr { color: #6a7377; font-weight: bold; }
+              .row { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+              .day { color: #6a7377; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; line-height: 1.5; }
+              .row.soon b, .row.soon bdi { color: #d8b56a; }
+              .badge { background: rgba(216,181,106,0.18); color: #d8b56a; border-radius: 8px; padding: 1px 7px; font-size: 12px; margin-left: 6px; }
       #################################################
       #                                               #
       #                  Living Room                   #
@@ -94,6 +428,10 @@ views:
 
       - type: grid
         title: Living Room
+        card_mod:
+          style: |
+            .card-header::after { content: " · {{ states('sensor.living_room_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.living_room_presence_sensor_presence', 'on') or is_state('binary_sensor.living_room_motion', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
         view_layout:
           grid-area: LR
         columns: 2
@@ -146,7 +484,7 @@ views:
 
           - type: custom:button-card
             entity: light.dining_table_l1
-            name: Dining Table
+            name: Dining
             template:
               - light
               - icon_hue
@@ -163,6 +501,10 @@ views:
 
       - type: grid
         title: Office
+        card_mod:
+          style: |
+            .card-header::after { content: " · {{ states('sensor.office_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.office_presence_sensor_presence', 'on') or is_state('binary_sensor.office_motion_sensor_occupancy', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
         view_layout:
           grid-area: Office
         columns: 2
@@ -203,6 +545,10 @@ views:
 
       - type: grid
         title: Master Bedroom
+        card_mod:
+          style: |
+            .card-header::after { content: " · {{ states('sensor.bedroom_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.master_bedroom_presence_sensor_occupancy', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
         view_layout:
           grid-area: Bedroom
         columns: 2
@@ -263,7 +609,7 @@ views:
 
           - type: custom:button-card
             entity: light.hallway_lower
-            name: Hallway Lower
+            name: Hallway
             template:
               - light
               - icon_lamp
@@ -289,30 +635,28 @@ views:
                 cards:
                   - type: conditional
                     conditions:
-                      - entity: media_player.plex_plex_for_android_tv_km2_plus_2
-                        state: playing
+                      - condition: or
+                        conditions:
+                          - entity: media_player.plex_plex_for_android_tv_km2_plus_2
+                            state: playing
+                          - entity: media_player.plex_plex_for_android_tv_0
+                            state: playing
                     card:
-                      type: custom:mini-media-player
-                      entity: media_player.plex_plex_for_android_tv_km2_plus_2
-                      artwork: full-cover
-                      mini-media-player-scale: 1.25
-                      hide:
-                        power: true
-                        source: true
-                        controls: true
-                        volume: true
-                        progress: true
-                      card_mod:
-                        style: |
-                          ha-card {
-                            border: solid 1px var(--primary-text-color);
-                            background-color: rgba(0, 0, 0, 0);
-                            height: 100%;
-                            width: 100%;
-                          }
+                      # Now playing: fanart from Sonarr/Radarr (sensor.now_playing_art)
+                      type: custom:button-card
+                      entity: sensor.now_playing_art
+                      name: Now Playing
+                      template:
+                        - conditional_media
+                        - icon_plex
+                      tap_action:
+                        action: more-info
+                        entity: "[[[ return (entity && entity.attributes.player) || 'media_player.plex_plex_for_android_tv_km2_plus_2'; ]]]"
                   - type: conditional
                     conditions:
                       - entity: media_player.plex_plex_for_android_tv_km2_plus_2
+                        state_not: playing
+                      - entity: media_player.plex_plex_for_android_tv_0
                         state_not: playing
                     card:
                       type: custom:button-card
@@ -331,6 +675,10 @@ views:
 
       - type: grid
         title: Kids Room
+        card_mod:
+          style: |
+            .card-header::after { content: " · {{ states('sensor.kids_room_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.kids_room_presence_sensor_presence', 'on') or is_state('binary_sensor.kids_room_motion_detected', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
         view_layout:
           grid-area: Shower
         columns: 2
@@ -351,29 +699,38 @@ views:
 
           - type: custom:button-card
             entity: media_player.spotify_elian_sarfaty
-            show_state: false
-            state_display: >
-              [[[
-                if (variables.state.toLowerCase() === 'on') {
-                    return 'On';
-                }
-                else if (variables.state.toLowerCase() === 'off') {
-                    return 'Off';
-                }                
-                else if (variables.state.toLowerCase() === 'unknown') {
-                    return variables.translate_unknown;
-                } 
-                else { return 'Error'; }
-              ]]]
+            # Spotify logo turns Spotify-green while music is playing
+            state:
+              - value: playing
+                styles:
+                  custom_fields:
+                    icon:
+                      - color: '#1DB954'
+                      - fill: '#1DB954'
             tap_action: !include popup/spotify.yaml
-            name: Spotify
             template:
               - base
               - icon_spotify
+            # Shows album art + song while Spotify is playing
+            name: "[[[ return entity.state === 'playing' ? (entity.attributes.media_title || 'Spotify') : 'Spotify'; ]]]"
+            show_state: true
+            state_display: "[[[ return entity.state === 'playing' ? (entity.attributes.media_artist || 'Playing') : (entity.state === 'paused' ? 'Paused' : 'Off'); ]]]"
+            styles:
+              card:
+                - background-image: "[[[ const p = entity.attributes.entity_picture; return (entity.state === 'playing' && p) ? `linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2)), url('${p}')` : 'none'; ]]]"
+                - background-size: cover
+                - background-position: center
+              name:
+                - color: "[[[ return entity.state === 'playing' ? '#ffffff' : 'inherit'; ]]]"
+                - white-space: nowrap
+                - overflow: hidden
+                - text-overflow: ellipsis
+              state:
+                - color: "[[[ return entity.state === 'playing' ? 'rgba(255,255,255,0.8)' : 'inherit'; ]]]"
 
           - type: custom:button-card
             entity: switch.smart_plug_kids_room
-            name: Small Light
+            name: Lamp
             template:
               - light
               - icon_hue
@@ -417,7 +774,8 @@ views:
 
           - type: custom:button-card
             entity: script.home_leave
-            name: Home Leave
+            name: Leave
+            state_display: Home
             template:
               - base
               - loader
@@ -429,7 +787,7 @@ views:
             state_display: >
               [[[ return entity?.state ?? 'no-entity'; ]]]
 
-            name: Clean House
+            name: Vacuum
             tap_action:
               action: call-service
               service: script.house_clean
@@ -489,12 +847,6 @@ views:
 
           - type: custom:button-card
             name: >
-              <ha-icon icon="mdi:calendar-account"></ha-icon> Calendar
-            tap_action: !include popup/footer_calendar.yaml
-            template: footer
-
-          - type: custom:button-card
-            name: >
               <ha-icon icon="mdi:cctv"></ha-icon> Cams
             tap_action: !include popup/footer_cams.yaml
             template: footer
@@ -526,3 +878,28 @@ views:
                             parseFloat(states[id[3]].state) >= 85;
                 ]]]
             template: footer
+
+          - type: custom:button-card
+            name: >
+              <ha-icon icon="mdi:weather-night"></ha-icon> Good Night
+            tap_action:
+              action: perform-action
+              perform_action: script.turn_all_lights_off
+              confirmation:
+                text: Turn off all the lights in the house?
+            template: footer
+
+          - type: custom:button-card
+            entity: input_boolean.guest_mode
+            name: >
+              <ha-icon icon="mdi:account-multiple"></ha-icon> Guest Mode
+            tap_action:
+              action: toggle
+            template: footer
+            # Colored only while Guest Mode is on (otherwise same look as the other footer buttons)
+            state:
+              - value: 'on'
+                styles:
+                  card:
+                    - background-color: rgba(76, 175, 80, 0.85)
+                    - color: "#ffffff"

@@ -1,0 +1,362 @@
+# Lights-on popup (tablet sidebar "Lights on" line)
+# Each light only shows while it's on. Tap a row to turn it off, hold for details.
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Lights on
+    content:
+      type: vertical-stack
+      cards:
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.dining_table_l2
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.dining_table_l2
+            primary: "Living Room"
+            secondary: "Above Couch"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.living_room_l2
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.living_room_l2
+            primary: "Living Room"
+            secondary: "Above TV"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.balcony
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.balcony
+            primary: "Balcony"
+            secondary: "Ceiling light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.bedroom
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.bedroom
+            primary: "Master Bedroom"
+            secondary: "Ceiling light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.shower_l2
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.shower_l2
+            primary: "Master Bedroom Shower"
+            secondary: "Corridor"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.dining_table_l1
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.dining_table_l1
+            primary: "Living Room"
+            secondary: "Dining Table"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.hallway_lower
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.hallway_lower
+            primary: "Hallway"
+            secondary: "Hallway Lower"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.hallway_upper
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.hallway_upper
+            primary: "Hallway"
+            secondary: "Hallway Upper"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.kids_room
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.kids_room
+            primary: "Kids Room"
+            secondary: "Ceiling light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.kitchen_l1
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.kitchen_l1
+            primary: "Kitchen"
+            secondary: "Ceiling light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.laundry_machine_light
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.laundry_machine_light
+            primary: "Utility Room"
+            secondary: "Laundry Machine Light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.living_room_l1
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.living_room_l1
+            primary: "Living Room"
+            secondary: "Ceiling light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.kitchen_l2
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.kitchen_l2
+            primary: "Kitchen"
+            secondary: "Main Door"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.office
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.office
+            primary: "Office"
+            secondary: "Ceiling light"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: light.shower_l1
+              state: "on"
+          card:
+            type: custom:mushroom-template-card
+            entity: light.shower_l1
+            primary: "Master Bedroom Shower"
+            secondary: "Shower"
+            icon: mdi:lightbulb-on
+            icon_color: amber
+            tap_action:
+              action: toggle
+            hold_action:
+              action: more-info
+            card_mod:
+              style: |
+                ha-card { background: rgba(255,255,255,0.04) !important; border: none !important; box-shadow: none !important; }
+        - type: conditional
+          conditions:
+            - condition: or
+              conditions:
+                - condition: state
+                  entity: light.dining_table_l2
+                  state: "on"
+                - condition: state
+                  entity: light.living_room_l2
+                  state: "on"
+                - condition: state
+                  entity: light.balcony
+                  state: "on"
+                - condition: state
+                  entity: light.bedroom
+                  state: "on"
+                - condition: state
+                  entity: light.shower_l2
+                  state: "on"
+                - condition: state
+                  entity: light.dining_table_l1
+                  state: "on"
+                - condition: state
+                  entity: light.hallway_lower
+                  state: "on"
+                - condition: state
+                  entity: light.hallway_upper
+                  state: "on"
+                - condition: state
+                  entity: light.kids_room
+                  state: "on"
+                - condition: state
+                  entity: light.kitchen_l1
+                  state: "on"
+                - condition: state
+                  entity: light.laundry_machine_light
+                  state: "on"
+                - condition: state
+                  entity: light.living_room_l1
+                  state: "on"
+                - condition: state
+                  entity: light.kitchen_l2
+                  state: "on"
+                - condition: state
+                  entity: light.office
+                  state: "on"
+                - condition: state
+                  entity: light.shower_l1
+                  state: "on"
+          card:
+            type: custom:button-card
+            name: Turn all off
+            icon: mdi:lightbulb-group-off-outline
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.sequence
+                data:
+                  sequence:
+                    - service: script.sidebar_lights_all_off
+                    - service: browser_mod.close_popup
+            styles:
+              card: [height: 52px, padding: 0, border-radius: 14px, background: "rgba(255,193,7,0.15)", margin-top: 4px]
+              grid: [grid-template-areas: '"i n"', grid-template-columns: "24px auto", grid-template-rows: "100%", height: 100%, justify-content: center, align-content: center, align-items: center, column-gap: 10px]
+              img_cell: [width: 24px, height: 24px]
+              icon: [width: 24px, height: 24px, "--mdc-icon-size": 24px, color: "#ffc107"]
+              name: [color: "#ffc107", font-weight: 600, font-size: 16px]

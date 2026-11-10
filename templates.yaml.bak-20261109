@@ -1,0 +1,400 @@
+# Sidebar
+- sensor:
+    - unique_id: sidebar
+      state: template
+      name: "Sidebar"
+      attributes:
+        time: >
+          {% set hours = now().strftime('%H') %}
+          {% set minutes = now().strftime('%M') %}
+          <span class="time">
+            {{ hours }}<span class="time-colon">:</span>{{ minutes }}
+          </span>
+        date: >
+          <font color='#6a7377'><b>
+          {% if strptime(states('sensor.date'), '%Y-%m-%d').day != None %}
+          {% set days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+          {% set months = ['January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'] %}
+            {{ days[now().weekday()] }}<br>
+            {{ strptime(states('sensor.date'), '%Y-%m-%d').day }} {{ months[now().month-1] }}
+          {% endif %}
+          </b></font>
+        greet: >
+          <b>
+          {% set time = now().hour %}
+          {% if time <= 1 %} Good night {{'\U0001F611'}}
+          {% elif time <= 3 %} Good night {{'\U0001F62A'}}
+          {% elif time <= 5 %} Good night {{'\U0001F634'}}
+          {% elif time <= 7 %} Good morning {{'\U0001F4A9'}}
+          {% elif time <= 9 %} Good morning {{'\u2615\uFE0F'}}
+          {% elif time <= 10 %} Good morning {{'\U0001F642'}}
+          {% elif time <= 13 %} Good day {{'\U0001F60A'}}
+          {% elif time <= 15 %} Good day {{'\U0001F60E'}}
+          {% elif time <= 17 %} Good day {{'\U0001F44B\U0001F3FB'}}
+          {% elif time <= 19 %} Good evening {{'\U0001F44B\U0001F3FB'}}
+          {% elif time <= 22 %} Good evening {{'\U0001F60C'}}
+          {% elif time <= 23 %} Good evening {{'\U0001F974'}}
+          {% else %} Good evening {{'\U0001F974'}}
+          {% endif %}
+          </b>
+        active: >
+          <b>
+          {% set lights = [
+            states.light.dining_table_l2,
+            states.light.living_room_l2,
+            states.light.balcony,
+            states.light.bedroom,
+            states.light.shower_l2,
+            states.light.dining_table_l1,
+            states.light.hallway_lower,
+            states.light.hallway_upper,
+            states.light.kids_room,
+            states.light.kitchen_l1,
+            states.light.laundry_machine_light,
+            states.light.living_room_l1,
+            states.light.kitchen_l2,
+            states.light.office,
+            states.light.shower_l1
+          ] %}
+
+          {% set devices = [
+            states.input_select.washing_machine_status,
+            states.input_select.dish_washer_status,
+            states.vacuum.x50_ultra_2
+          ] %}
+
+          {% set lights_on = lights | selectattr('state','eq','on') | list %}
+          {% set lights_name = lights | selectattr('state','eq','on') | map(attribute='name') | join(', ') %}
+
+          {% set devices_on = [] %}{# appliances now shown as chips under the sidebar #}
+          {% set devices_name = devices_on | map(attribute='name') | join(', ') %}
+
+          {% if (lights_on | length == 0) and (devices_on | length > 0) %}
+            {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} {{ 'is' if (devices_on | length == 1) else 'are' }} on
+
+          {% elif (lights_on | length == 1) and (devices_on | length == 1) %}
+            {{ lights_name }} and {{ devices_name }} are on
+
+          {% elif (lights_on | length == 1) and (devices_on | length > 1) %}
+            {{ lights_name }}, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} are on
+
+          {% elif (lights_on | length > 1) and (devices_on | length == 1) %}
+            {{ lights_on | length }} lamps and {{ devices_name }} are on
+
+          {% elif (lights_on | length > 1) and (devices_on | length > 1) %}
+            {{ lights_on | length }} lamps, {{ devices_name | regex_replace(',([^,]*)$',' and\\1') }} are on
+
+          {% elif (lights_on | length == 1) and (devices_on | length == 0) %}
+            {{ lights_name }} is on
+
+          {% elif (lights_on | length > 1) and (devices_on | length == 0) %}
+            {{ lights_on | length }} lamps are on
+
+          {% else %}
+            <font color='#6a7377'>Everything is turned off</font>
+          {% endif %}
+          </b>
+        vacuum: >
+          {% set entity_id = 'vacuum.s8_pro_ultra' %}
+          {% if is_state(entity_id, 'cleaning') %}
+            <b>S8 Robot is cleaning</b>
+          {% elif is_state(entity_id, 'returning') %}
+            <b>S8 Robot is done</b>
+          {% endif %}
+        weather: >
+          {% set entity = 'weather.home' %}
+          {% set temp = state_attr(entity, 'temperature') %}
+          {{ 'Today temperature is ' ~ temp | round ~ '°' if temp is number else 'Cannot load weather...' }}
+
+        battery: >
+          {% set entities = states.sensor 
+            | selectattr('entity_id', 'search', 'battery')
+            | rejectattr('entity_id', 'search', 'battery_state')
+            | map(attribute = 'entity_id') | list %}
+          {% for sensor in entities if states(sensor) != 'unknown' and states(sensor) !=
+          'unavailable' and states(sensor) != 'None' and states(sensor) | int(default=0) <= 25 %}
+            {% if loop.first %} {{'\u26A0\uFE0F'}} Battery {% else %}, {% endif %}
+            {{ state_attr(sensor, 'friendly_name') }} {{ states(sensor) }}%
+          {% endfor %}
+# [=========================]qBitTorrent[=========================]
+- sensor:
+    - name: "MB Sent"
+      unit_of_measurement: "MB/s"
+      availability: "{{ states('sensor.qbittorrent_down_speed')|is_number }}"
+      state: "{{ (states('sensor.qbittorrent_down_speed') | int / 1000) | round(1) }}"
+
+    - name: "MB Upload"
+      unit_of_measurement: "MB/s"
+      availability: "{{ states('sensor.qbittorrent_up_speed')|is_number }}"
+      state: "{{ (states('sensor.qbittorrent_up_speed') | int / 1000) | round(1) }}"
+# [=========================]qBitTorrent[=========================]
+# [=========================]Phones at home[=========================]
+- binary_sensor:
+    - name: "Any phone at home"
+      unique_id: any_phone_at_home
+      device_class: presence
+      state: >
+        {{ is_state('device_tracker.elians_iphone', 'home')
+           or is_state('device_tracker.ofir_honor_magic_5_pro', 'home') }}
+
+# [=========================]Phones at home[=========================]
+- binary_sensor:
+    - name: StreamDeck_Oref_Alerts_Active
+      unique_id: streamdeck_oref_alerts_active
+      state: >
+        {% set s = states('sensor.oref_alert') | lower %}
+        {{ s not in ['ok', 'unknown', 'unavailable'] }}
+
+# [=========================]Upcoming Media (Sonarr / Radarr)[=========================]
+# Feeds upcoming-media-card in the Plex popup (replaces the old Trakt sensors)
+- trigger:
+    - trigger: homeassistant
+      event: start
+    - trigger: time_pattern
+      minutes: "/30"
+  action:
+    - action: sonarr.get_upcoming
+      data:
+        entry_id: 1d1b3cdb2dc3d5a085f1db706b77aba6
+        days: 30
+      response_variable: sonarr_resp
+    - action: calendar.get_events
+      target:
+        entity_id: calendar.radarr
+      data:
+        duration:
+          days: 180
+      response_variable: radarr_cal
+    - action: radarr.get_movies
+      data:
+        entry_id: 8fe838d4ce37e36e6189aa65af2c9cec
+      response_variable: radarr_resp
+    - variables:
+        upcoming_episodes: >
+          {% set ns = namespace(items=[]) %}
+          {% set cutoff = utcnow().strftime('%Y-%m-%d %H:%M:%S') %}
+          {% set eps = (sonarr_resp.episodes | default({})).values() | list %}
+          {% for e in eps | sort(attribute='air_date_utc') %}
+            {% if e.air_date_utc[:19] >= cutoff and not e.has_file %}
+              {% set img = e.images | default({}) %}
+              {% set ns.items = ns.items + [{
+                'airdate': e.air_date_utc[:19] | replace(' ', 'T') ~ 'Z',
+                'release': '$day, $date $time',
+                'title': e.series_title,
+                'episode': e.title | default('TBA', true),
+                'number': e.episode_identifier,
+                'runtime': e.runtime | default('', true),
+                'studio': e.network | default('', true),
+                'genres': '',
+                'rating': '',
+                'poster': img.poster | default(''),
+                'fanart': img.fanart | default(img.poster | default('')),
+                'flag': false
+              }] %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.items[:10] }}
+        upcoming_movies: >
+          {% set ns = namespace(items=[], seen=[]) %}
+          {% set today = now().strftime('%Y-%m-%d') %}
+          {% set movies = radarr_resp.movies | default({}) %}
+          {% set events = radarr_cal['calendar.radarr'].events | default([]) %}
+          {% for ev in events | sort(attribute='start') %}
+            {% if ev.start[:10] >= today and ev.summary not in ns.seen %}
+              {% set m = movies.get(ev.summary, {}) %}
+              {% if not m.get('has_file', false) %}
+                {% set ns.seen = ns.seen + [ev.summary] %}
+                {% set img = m.get('images', {}) %}
+                {% set ns.items = ns.items + [{
+                  'airdate': ev.start[:10] ~ 'T00:00:00Z',
+                  'release': '$day, $date',
+                  'title': ev.summary,
+                  'episode': '',
+                  'number': m.get('year', ''),
+                  'runtime': '',
+                  'studio': '',
+                  'genres': '',
+                  'rating': '',
+                  'poster': img.get('poster', ''),
+                  'fanart': img.get('fanart', img.get('poster', '')),
+                  'flag': false
+                }] %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.items[:10] }}
+  sensor:
+    - unique_id: sonarr_upcoming_media
+      name: Sonarr Upcoming Media
+      icon: mdi:television-classic
+      state: "{{ upcoming_episodes | count }}"
+      attributes:
+        data: >
+          {{ [{'title_default': '$title', 'line1_default': '$episode', 'line2_default': '$release',
+               'line3_default': '$number', 'line4_default': '$studio', 'icon': 'mdi:arrow-down-bold'}]
+             + upcoming_episodes }}
+    - unique_id: radarr_upcoming_media
+      name: Radarr Upcoming Media
+      icon: mdi:movie-open
+      state: "{{ upcoming_movies | count }}"
+      attributes:
+        data: >
+          {{ [{'title_default': '$title', 'line1_default': '$release', 'line2_default': '$number',
+               'line3_default': '$empty', 'line4_default': '$empty', 'icon': 'mdi:arrow-down-bold'}]
+             + upcoming_movies }}
+
+# [=========================]Sidebar Upcoming Events[=========================]
+# Next 3 calendar events for the tablet sidebar (Overview dashboard)
+- trigger:
+    - trigger: homeassistant
+      event: start
+    - trigger: time_pattern
+      minutes: "/15"
+  action:
+    - action: calendar.get_events
+      target:
+        entity_id:
+          - calendar.ofirx3_gmail_com
+          - calendar.family
+          - calendar.calendar_2
+          - calendar.birthdays_2
+          - calendar.real_madrid
+          - calendar.hapoel_tel_aviv
+          - calendar.champions_league
+      data:
+        duration:
+          days: 14
+      response_variable: cal
+  sensor:
+    - unique_id: sidebar_upcoming_events
+      name: Sidebar Upcoming Events
+      icon: mdi:calendar-clock
+      state: "{{ cal.values() | map(attribute='events') | map('count') | sum }}"
+      attributes:
+        events: >
+          {% set ns = namespace(e=[]) %}
+          {% for k, v in cal.items() %}{% for ev in v.events %}
+          {% set ns.e = ns.e + [{'start': ev.start, 'summary': ev.summary, 'all_day': 'T' not in ev.start, 'cal': k}] %}
+          {% endfor %}{% endfor %}
+          {{ (ns.e | sort(attribute='start'))[:3] }}
+
+# [=========================]Rain Expected Today[=========================]
+# On if the hourly forecast shows rain for the rest of today (used for the umbrella chip on the tablet)
+- trigger:
+    - trigger: homeassistant
+      event: start
+    - trigger: time_pattern
+      minutes: "/30"
+  action:
+    - action: weather.get_forecasts
+      target:
+        entity_id: weather.home
+      data:
+        type: hourly
+      response_variable: wf
+  binary_sensor:
+    - unique_id: rain_expected_today
+      name: Rain Expected Today
+      icon: mdi:weather-pouring
+      state: >
+        {% set end = today_at('23:59') %}
+        {% set ns = namespace(r=false) %}
+        {% for f in wf['weather.home'].forecast if as_datetime(f.datetime) <= end %}
+          {% if (f.precipitation | float(0)) >= 0.3 or f.condition in ['rainy','pouring','lightning-rainy','snowy-rainy','hail'] %}{% set ns.r = true %}{% endif %}
+        {% endfor %}
+        {{ ns.r }}
+
+# [=========================]Now Playing Art[=========================]
+# Fanart for whatever Plex is playing on the living room or bedroom TV box (looked up in Sonarr/Radarr), used by the Media tile
+- trigger:
+    - trigger: state
+      entity_id: media_player.plex_plex_for_android_tv_km2_plus_2
+      to: playing
+    - trigger: state
+      entity_id: media_player.plex_plex_for_android_tv_km2_plus_2
+      attribute: media_title
+    - trigger: state
+      entity_id: media_player.plex_plex_for_android_tv_0
+      to: playing
+    - trigger: state
+      entity_id: media_player.plex_plex_for_android_tv_0
+      attribute: media_title
+    - trigger: homeassistant
+      event: start
+  action:
+    - action: sonarr.get_series
+      data:
+        entry_id: 1d1b3cdb2dc3d5a085f1db706b77aba6
+      response_variable: son
+    - action: radarr.get_movies
+      data:
+        entry_id: 8fe838d4ce37e36e6189aa65af2c9cec
+      response_variable: rad
+    - variables:
+        art: >
+          {% set p = 'media_player.plex_plex_for_android_tv_km2_plus_2' if is_state('media_player.plex_plex_for_android_tv_km2_plus_2', 'playing') or not is_state('media_player.plex_plex_for_android_tv_0', 'playing') else 'media_player.plex_plex_for_android_tv_0' %}
+          {% set room = 'Bedroom' if p == 'media_player.plex_plex_for_android_tv_0' else '' %}
+          {% set series = state_attr(p, 'media_series_title') %}
+          {% set title = state_attr(p, 'media_title') %}
+          {% set ns = namespace(img={}) %}
+          {% if series %}
+            {% for k, v in son.shows.items() if k | lower == series | lower %}{% set ns.img = v.images %}{% endfor %}
+          {% elif title %}
+            {% for k, v in rad.movies.items() if k | lower == title | lower %}{% set ns.img = v.images %}{% endfor %}
+          {% endif %}
+          {% set s = state_attr(p, 'media_season') %}{% set e = state_attr(p, 'media_episode') %}
+          {% set number = ('S%02dE%02d' % (s | int, e | int)) if series and s and e else '' %}
+          {% set number = (number ~ ' · ' ~ room) if number and room else (number or room) %}
+          {% set pic = state_attr(p, 'entity_picture') or '' %}
+          {{ {'title': series or title or 'Plex', 'episode': title if series else '', 'number': number,
+              'fanart': ns.img.get('fanart') or pic, 'poster': ns.img.get('poster') or pic, 'player': p} }}
+  sensor:
+    - unique_id: now_playing_art
+      name: Now Playing Art
+      icon: mdi:plex
+      state: "{{ art.title }}"
+      attributes:
+        player: "{{ art.player }}"
+        data: >
+          {{ [{'title_default': '$title', 'line1_default': '$episode', 'line2_default': '$number',
+               'line3_default': '$empty', 'line4_default': '$empty', 'icon': 'mdi:play'}, art] }}
+
+# [=========================]Dashboard Helpers[=========================]
+# Simple on/off helpers used to show/hide chips on the Mobile dashboard
+- binary_sensor:
+    - unique_id: workday_morning
+      name: Workday Morning
+      icon: mdi:briefcase-clock
+      # Sun-Thu, 06:00-11:00
+      state: "{{ now().weekday() in [6, 0, 1, 2, 3] and 6 <= now().hour < 11 }}"
+    - unique_id: electricity_usage_high
+      name: Electricity Usage High
+      icon: mdi:lightning-bolt-circle
+      # this month's daily average is more than 20% above the last bill's daily average
+      state: >
+        {% set days = [now().day, 1] | max %}
+        {% set avg = (states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) / days %}
+        {% set last = states('sensor.iec_contract_349077514_last_bill_electric_usage_to_date_of_000349077514') | float(0) / (states('sensor.iec_contract_349077514_last_bill_length_in_days_of_000349077514') | float(30)) %}
+        {{ last > 0 and avg > last * 1.2 }}
+
+# [=========================]Just Arrived Home[=========================]
+# On for 5 minutes after Ofir or Elian changes from away to home (shows the Open Building Door chip on the Mobile dashboard)
+- trigger:
+    - trigger: state
+      entity_id:
+        - person.ofir
+        - person.elian
+      to: home
+      not_from:
+        - home
+        - unknown
+        - unavailable
+  binary_sensor:
+    - unique_id: someone_just_arrived_home
+      name: Someone Just Arrived Home
+      icon: mdi:home-import-outline
+      state: "true"
+      auto_off: "00:05:00"
+      attributes:
+        who: "{{ trigger.to_state.name }}"

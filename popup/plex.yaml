@@ -116,6 +116,42 @@ browser_mod:
                       letter-spacing: '-0.01em';
                     }
               type: markdown
+            - type: custom:upcoming-media-card
+              entity: sensor.sonarr_upcoming_media
+              title: false
+              image_style: fanart
+              date: ddmm
+              clock: 24
+              max: 3
+              accent_color: "#2b374e"
+              border_color: "#13274b"
+              flag: false
+              flag_color: "#13274b"
+              title_text: $title
+              title_size: large
+              line1_text: $empty
+              line2_text: $episode
+              line2_size: small
+              line3_text: $number
+              line4_text: $release
+            - type: custom:upcoming-media-card
+              entity: sensor.radarr_upcoming_media
+              title: false
+              image_style: fanart
+              date: ddmm
+              clock: 24
+              max: 3
+              accent_color: "#2b374e"
+              border_color: "#13274b"
+              flag: false
+              flag_color: "#13274b"
+              title_text: $title
+              title_size: large
+              line1_text: $empty
+              line2_text: $release
+              line2_size: small
+              line3_text: $empty
+              line4_text: $empty
           type: vertical-stack
         - cards:
             - content: >

@@ -66,7 +66,7 @@ lovelace:
         url: "/local/community/lovelace-xiaomi-vacuum-map-card/xiaomi-vacuum-map-card.js",
         type: module,
       },
-      { url: "/local/community/room-card/room-card.js", type: module }, # Mobile Dashboard Cards
+      # { url: "/local/community/room-card/room-card.js", type: module }, # Mobile Dashboard Cards
       {
         url: "/local/community/mini-climate-card/mini-climate-card-bundle.js",
         type: module,
@@ -94,10 +94,10 @@ lovelace:
         url: "/local/community/mini-graph-card/mini-graph-card-bundle.js",
         type: module,
       },
-      {
-        url: "/local/community/light-entity-card/light-entity-card.js",
-        type: module,
-      }, #Mobile Dashboard
+      # {
+        # url: "/local/community/light-entity-card/light-entity-card.js",
+        # type: module,
+      # }, #Mobile Dashboard
       {
         url: "/local/community/calendar-card-pro/calendar-card-pro.js",
         type: module,

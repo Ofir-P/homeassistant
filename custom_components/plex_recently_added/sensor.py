@@ -289,7 +289,7 @@ class PlexRecentlyAddedSensor(Entity):
             """Make list of images in dir that use our naming scheme"""
             dir_re = re.compile(r'[pf]\d+\.jpg')  # p1234.jpg or f1234.jpg
             dir_images = list(filter(dir_re.search,
-                                     os.listdir(directory)))
+                                     await self.hass.async_add_executor_job(os.listdir, directory)))
             dir_ids = [file[1:-4] for file in dir_images]
             dir_ids.sort(key=int)
 
@@ -300,7 +300,7 @@ class PlexRecentlyAddedSensor(Entity):
                 """Remove images not in list"""
                 for file in dir_images:
                     if not any(str(ids) in file for ids in data_ids):
-                        os.remove(directory + file)
+                        await self.hass.async_add_executor_job(os.remove, directory + file)
                 """Retrieve image from Plex if it doesn't exist"""
                 for media in self.data:
                     if 'type' not in media:
@@ -322,14 +322,14 @@ class PlexRecentlyAddedSensor(Entity):
                         fanart_image = await request(image_url(
                             self, True, fanart, self.resolution), self, True, True)
                         if fanart_image:
-                            open(fanart_jpg, 'wb').write(fanart_image)
+                            await self.hass.async_add_executor_job(lambda: open(fanart_jpg, 'wb').write(fanart_image))
                         else:
                             pass
                     if not os.path.isfile(poster_jpg):
                         poster_image = await request(image_url(
                             self, True, poster, self.resolution), self, True, True)
                         if poster_image:
-                            open(poster_jpg, 'wb').write(poster_image)
+                            await self.hass.async_add_executor_job(lambda: open(poster_jpg, 'wb').write(poster_image))
                         else:
                             continue
         else:

@@ -1,0 +1,175 @@
+# Kitchen timer popup (tablet sidebar clock tap)
+# Sets the timer on the Kitchen Echo Dot - same device as the Eggs Timer
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Kitchen timer
+    content:
+      type: vertical-stack
+      cards:
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: timer.kitchen_timer
+              state_not: idle
+          card:
+            type: entities
+            entities:
+              - entity: timer.kitchen_timer
+                name: Running on Kitchen Echo Dot
+                icon: mdi:timer-sand
+        - type: grid
+          columns: 4
+          square: false
+          cards:
+            - type: custom:button-card
+              name: 1 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 1
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 3 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 3
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 5 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 5
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 10 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 10
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 15 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 15
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 20 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 20
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 30 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 30
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+            - type: custom:button-card
+              name: 45 min
+              show_icon: false
+              tap_action:
+                action: fire-dom-event
+                browser_mod:
+                  service: browser_mod.sequence
+                  data:
+                    sequence:
+                      - service: script.kitchen_timer_set
+                        data:
+                          minutes: 45
+                      - service: browser_mod.close_popup
+              styles:
+                card: [height: 64px, border-radius: 14px, background: "rgba(255,255,255,0.06)"]
+                name: [font-size: 18px, font-weight: 600]
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: timer.kitchen_timer
+              state_not: idle
+          card:
+            type: custom:button-card
+            name: Cancel timer
+            icon: mdi:timer-off-outline
+            layout: icon_name
+            tap_action:
+              action: fire-dom-event
+              browser_mod:
+                service: browser_mod.sequence
+                data:
+                  sequence:
+                    - service: script.kitchen_timer_cancel
+                    - service: browser_mod.close_popup
+            styles:
+              card: [height: 56px, border-radius: 14px, background: "rgba(229,57,53,0.18)"]
+              name: [color: "#ef5350", font-weight: 600]
+              icon: [color: "#ef5350", width: 22px]

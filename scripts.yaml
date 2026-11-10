@@ -269,21 +269,30 @@ boil_tami4_water:
   icon: mdi:kettle-steam
 turn_all_lights_off:
   alias: Turn ALL Lights OFF
-  description: ''
+  description: Turns off every house light (all 16 light entities, listed explicitly).
+    Used by the Good Night button on the tablet.
   icon: mdi:lamps-outline
   mode: single
   sequence:
   - action: light.turn_off
     target:
-      area_id:
-      - bedroom
-      - kitchen
-      - living_room
-      - shower
-      - balcony
-      - office_room
-      - hallway
-      entity_id: light.kids_room
+      entity_id:
+      - light.bedroom
+      - light.shower_l1
+      - light.shower_l2
+      - light.laundry_machine_light
+      - light.kitchen_l1
+      - light.kitchen_l2
+      - light.office
+      - light.hallway_upper
+      - light.hallway_lower
+      - light.kids_room
+      - light.living_room_l1
+      - light.living_room_l2
+      - light.main_door
+      - light.dining_table_l1
+      - light.dining_table_l2
+      - light.balcony
     data: {}
   - action: notify.send_message
     data:
@@ -967,3 +976,785 @@ cover_command_safe:
   - action: cover.{{ command }}_cover
     target:
       entity_id: '{{ entity }}'
+spotify_play_playlist:
+  alias: Spotify - Play Playlist
+  description: Plays a Spotify playlist (shuffled) on the device chosen in "Spotify
+    Play On". Used by the Spotify popup.
+  icon: mdi:spotify
+  mode: restart
+  fields:
+    uri:
+      name: Spotify URI
+      required: true
+      example: spotify:playlist:7dckM4o4SMNuAsUXj6yqgB
+      selector:
+        text: {}
+  sequence:
+  - variables:
+      devices:
+        Bedroom TV: media_player.mibox4_2
+        Living Room TV: media_player.living_room_tv_215z7qyr7dvusnoxesjixyxoi_spotcast
+        Living Room Echo Pop: media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+        Kitchen Echo Dot: media_player.kitchen_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_2
+        Balcony Echo Dot: media_player.balcony_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+        Office Echo Show 5: media_player.office_echo_show_5_215z7qyr7dvusnoxesjixyxoi_spotcast
+        Master Bedroom Echo Spot: media_player.master_bedroom_echo_spot_215z7qyr7dvusnoxesjixyxoi_spotcast
+        Master Bedroom Shower Echo Dot: media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+        Guest Bathroom Echo Dot: media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast
+        Everywhere: media_player.everywhere_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+      target: '{{ devices.get(states(''input_select.spotify_play_on'')) }}'
+  - if:
+    - condition: template
+      value_template: '{{ target is not none }}'
+    then:
+    - action: spotcast.play_media
+      data:
+        media_player:
+          entity_id: '{{ target }}'
+        spotify_uri: '{{ uri }}'
+        data:
+          random: true
+          shuffle: true
+    else:
+    - action: spotcast.play_media
+      data:
+        spotify_uri: '{{ uri }}'
+        data:
+          random: true
+          shuffle: true
+toggle_bedroom_damper:
+  alias: Toggle Bedroom Damper
+  description: Toggles the Master Bedroom AC damper (same IR codes as the bedroom
+    wireless remote, button 3 double). Used by the Mobile dashboard.
+  icon: mdi:hvac
+  mode: single
+  sequence:
+  - if:
+    - condition: state
+      entity_id: input_boolean.bedroom_damper_state
+      state: 'off'
+    then:
+    - action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BcQPxA9JAsABCr8C0gGnBEkCpwS/IAMDSQI5BYAPQAFAD8ABQAsBpwSAIwenBMQPxA9JAuADAQGnBMADgCNARwlJAkkCpwRJAr8C4AELQA8CpwS/IAMDxA/ED4AXgAFAEwFJAuABA4APQAEDpwRJAsABQAsLpwRJAqcESQKnBIAf"}'
+        qos: 0
+        retain: false
+      alias: Damper on
+    - action: notify.send_message
+      data:
+        message: "\U0001F916 Automation – ❄️ Bedroom AC Damper On \U0001F6CF️"
+      target:
+        entity_id: notify.supervisor_telegram
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.bedroom_damper_state
+      alias: Update Helper to ON
+    else:
+    - action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Bedroom Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BbkPuQ9HAoABCLEC1AGxAqMER+AIAwFHAoAXgAGACwVDBdQBRwJAAQa5D7kPsQJH4AIBgEMD1AGjBMALBUcCRwKxAoAHQAGAC+AFQwFHAuABAYAfAaME4BlDC6MERwJHAkcCRwK+Hw=="}'
+        qos: 0
+        retain: false
+      alias: Damper off
+    - action: notify.send_message
+      data:
+        message: "\U0001F916 Automation – ❄️ Bedroom AC Damper Off \U0001F6CF️"
+      target:
+        entity_id: notify.supervisor_telegram
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.bedroom_damper_state
+      alias: Update Helper to OFF
+robot_vacuum_clean_selected_rooms:
+  alias: Robot Vacuum - Clean Selected Rooms
+  description: Cleans every room whose "Robot - <room>" toggle is on (Mobile dashboard),
+    then clears the selection.
+  icon: mdi:robot-vacuum
+  mode: single
+  sequence:
+  - variables:
+      rooms_map:
+        input_boolean.robot_office: 4
+        input_boolean.robot_master_bedroom: 5
+        input_boolean.robot_guest_shower: 6
+        input_boolean.robot_hallway: 7
+        input_boolean.robot_kids_room: 8
+        input_boolean.robot_kitchen: 9
+        input_boolean.robot_living_room: 10
+        input_boolean.robot_dining_room: 11
+      segs: '{% set ns = namespace(s=[]) %}{% for k, v in rooms_map.items() if is_state(k,
+        ''on'') %}{% set ns.s = ns.s + [v] %}{% endfor %}{{ ns.s }}'
+  - if:
+    - condition: template
+      value_template: '{{ segs | count > 0 }}'
+    then:
+    - action: dreame_vacuum.vacuum_clean_segment
+      target:
+        entity_id: vacuum.x50_ultra_2
+      data:
+        segments: '{{ segs }}'
+        repeats: 1
+    - action: input_boolean.turn_off
+      target:
+        entity_id:
+        - input_boolean.robot_office
+        - input_boolean.robot_master_bedroom
+        - input_boolean.robot_guest_shower
+        - input_boolean.robot_hallway
+        - input_boolean.robot_kids_room
+        - input_boolean.robot_kitchen
+        - input_boolean.robot_living_room
+        - input_boolean.robot_dining_room
+    - action: notify.send_message
+      data:
+        entity_id: notify.supervisor_telegram
+        message: "\U0001F916 Script - \U0001F9F9 Robot Vacuum cleaning selected rooms
+          ({{ segs | count }})"
+kitchen_timer_set:
+  alias: Kitchen Timer - Set
+  description: Sets a timer on the Kitchen Echo Dot (same device as Eggs Timer) and
+    tracks it in HA for the tablet sidebar
+  icon: mdi:timer-plus-outline
+  mode: restart
+  fields:
+    minutes:
+      name: Minutes
+      required: true
+      selector:
+        number:
+          min: 1
+          max: 180
+          unit_of_measurement: min
+  sequence:
+  - action: timer.start
+    target:
+      entity_id: timer.kitchen_timer
+    data:
+      duration: '{{ (minutes|int) * 60 }}'
+  - action: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_echo_dot
+    data:
+      media_content_type: custom
+      media_content_id: set a timer for {{ minutes|int }} minutes
+kitchen_timer_cancel:
+  alias: Kitchen Timer - Cancel
+  description: Cancels the kitchen timer on the Echo Dot and in HA
+  icon: mdi:timer-off-outline
+  mode: single
+  sequence:
+  - action: timer.cancel
+    target:
+      entity_id: timer.kitchen_timer
+  - action: media_player.play_media
+    target:
+      entity_id: media_player.kitchen_echo_dot
+    data:
+      media_content_type: custom
+      media_content_id: cancel all timers
+sidebar_lights_all_off:
+  alias: Sidebar - Turn off lights that are on
+  description: Used by the tablet sidebar "Lights on" popup. Turns off only the sidebar
+    lights that are currently on.
+  icon: mdi:lightbulb-group-off-outline
+  mode: single
+  variables:
+    lights:
+    - light.dining_table_l2
+    - light.living_room_l2
+    - light.balcony
+    - light.bedroom
+    - light.shower_l2
+    - light.dining_table_l1
+    - light.hallway_lower
+    - light.hallway_upper
+    - light.kids_room
+    - light.kitchen_l1
+    - light.laundry_machine_light
+    - light.living_room_l1
+    - light.kitchen_l2
+    - light.office
+    - light.shower_l1
+  sequence:
+  - condition: template
+    value_template: '{{ lights | select(''is_state'',''on'') | list | count > 0 }}'
+  - action: light.turn_off
+    target:
+      entity_id: '{{ lights | select(''is_state'',''on'') | list }}'
+toggle_kids_room_damper:
+  alias: Toggle Kids Room Damper
+  description: Toggles the Kids Room AC damper (same IR codes as the Kids Room AC
+    sticker button, single press). Used by the Mobile dashboard.
+  icon: mdi:hvac
+  mode: single
+  sequence:
+  - if:
+    - condition: state
+      entity_id: input_boolean.kids_room_damper_state
+      state: 'off'
+    then:
+    - action: notify.send_message
+      data:
+        message: "\U0001F916 Automation – ❄️ Kids Room AC Damper On \U0001F9F8"
+      target:
+        entity_id: notify.supervisor_telegram
+    - action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Kids Room Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BcQPxA9JAsABCr8C0gGnBEkCpwS/IAMDSQI5BYAPQAFAD8ABQAsBpwSAIwenBMQPxA9JAuADAQGnBMADgCNARwlJAkkCpwRJAr8C4AELQA8CpwS/IAMDxA/ED4AXgAFAEwFJAuABA4APQAEDpwRJAsABQAsLpwRJAqcESQKnBIAf"}'
+        qos: 0
+        retain: false
+      alias: Damper on
+      enabled: false
+    - alias: Damper on
+      action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/0xa4c1381afb200f3f/set
+        payload: '{"ir_code_to_send": "JgBrAH58EhEREhUQESYRJhAmESYRJhISEyUREhYNEyQRKBAmESZ9fRUOERISEhEmESYRJxEmEiYSEhImExASEhImEiURKA8mfX0REhESERQPJhIlESYRJxEmERYNJhISEhYNJhImEyQRKfc="}'
+        qos: 0
+        retain: false
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.kids_room_damper_state
+      alias: Update Helper to ON
+    else:
+    - action: notify.send_message
+      data:
+        message: "\U0001F916 Automation – ❄️ Kids Room AC Damper Off \U0001F9F8"
+      target:
+        entity_id: notify.supervisor_telegram
+    - action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/Kids Room Smart IR Remote Control/set
+        payload: '{"ir_code_to_send": "BbkPuQ9HAoABCLEC1AGxAqMER+AIAwFHAoAXgAGACwVDBdQBRwJAAQa5D7kPsQJH4AIBgEMD1AGjBMALBUcCRwKxAoAHQAGAC+AFQwFHAuABAYAfAaME4BlDC6MERwJHAkcCRwK+Hw=="}'
+        qos: 0
+        retain: false
+      alias: Damper off
+      enabled: false
+    - alias: Damper off
+      action: mqtt.publish
+      data:
+        topic: zigbee2mqtt/0xa4c1381afb200f3f/set
+        payload: '{"ir_code_to_send": "JgBrAH59ERISFQ0SESYSJhEmFiESJhEUDyUXDBETECYSJhISEhJ+fhESERcMEhImESYRJhEmEiYSFA8mERIRFA8mESYREhISfn0REhISERMQJhEmEiYSJhEmERYNJhESERUPJhEmERIREvo="}'
+        qos: 0
+        retain: false
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.kids_room_damper_state
+      alias: Update Helper to OFF
+sort_shopping_list:
+  alias: Sort Shopping List by Category
+  description: Reorders the active items in todo.shopping_list by supermarket category
+    (produce → bakery → meat → dairy → frozen → dry goods → unknown → snacks/drinks
+    → baby → disposables → personal care → paper → cleaning last). Re-adds items in
+    order then removes the old copies (by uid), so nothing is lost. Does nothing if
+    the list is already sorted. Same order as the Claude "sort-shopping-list" skill.
+  icon: mdi:sort
+  mode: single
+  variables:
+    keywords:
+    - - קפוא
+      - 50
+    - - טבעות בצל
+      - 50
+    - - כדורי פירה
+      - 50
+    - - שניצלונים
+      - 50
+    - - בורקס
+      - 50
+    - - גלידה
+      - 50
+    - - צ'יפס
+      - 50
+    - - עלי סיגר
+      - 50
+    - - ירקות קפואים
+      - 50
+    - - אפונה
+      - 50
+    - - ריצפז
+      - 120
+    - - אסלות
+      - 120
+    - - אסלה
+      - 120
+    - - כביסה
+      - 120
+    - - מדיח
+      - 120
+    - - פיניש
+      - 120
+    - - סמרטוט
+      - 120
+    - - אקונומיקה
+      - 120
+    - - סנו
+      - 120
+    - - מנקה
+      - 120
+    - - ניקוי
+      - 120
+    - - ספוג
+      - 120
+    - - שקיות אשפה
+      - 120
+    - - שקית אשפה
+      - 120
+    - - סבון כלים
+      - 120
+    - - נוזל כלים
+      - 120
+    - - גל אורנים
+      - 120
+    - - דורגול
+      - 120
+    - - מטהר
+      - 120
+    - - מסיר שומנים
+      - 120
+    - - כלור
+      - 120
+    - - נייר טואלט
+      - 110
+    - - נייר סופג
+      - 110
+    - - מפיות
+      - 110
+    - - טישו
+      - 110
+    - - ממחטות
+      - 110
+    - - שמפו
+      - 100
+    - - מרכך שיער
+      - 100
+    - - קרם
+      - 100
+    - - מי פה
+      - 100
+    - - ליסטרין
+      - 100
+    - - משחת שיניים
+      - 100
+    - - מברשת שיניים
+      - 100
+    - - דאודורנט
+      - 100
+    - - סבון
+      - 100
+    - - ג'ל רחצה
+      - 100
+    - - תחבושות
+      - 100
+    - - סכיני גילוח
+      - 100
+    - - צמר גפן
+      - 100
+    - - מקלוני
+      - 100
+    - - קונדישנר
+      - 100
+    - - ספריי לשיער
+      - 100
+    - - מגשים
+      - 90
+    - - נייר אלומיניום
+      - 90
+    - - נייר כסף
+      - 90
+    - - ניילון נצמד
+      - 90
+    - - נייר אפייה
+      - 90
+    - - שקיות
+      - 90
+    - - כוסות חד
+      - 90
+    - - צלחות חד
+      - 90
+    - - סכו"ם
+      - 90
+    - - קיסמים
+      - 90
+    - - תבניות
+      - 90
+    - - חיתולים
+      - 80
+    - - מגבונים
+      - 80
+    - - מטרנה
+      - 80
+    - - סימילאק
+      - 80
+    - - דייסה
+      - 80
+    - - תמ"ל
+      - 80
+    - - מוצץ
+      - 80
+    - - האגיס
+      - 80
+    - - פמפרס
+      - 80
+    - - בייבי
+      - 80
+    - - נוטלה
+      - 70
+    - - אוראו
+      - 70
+    - - שוקולד
+      - 70
+    - - במבה
+      - 70
+    - - ביסלי
+      - 70
+    - - תפוצ'יפס
+      - 70
+    - - חטיף
+      - 70
+    - - עוגיות
+      - 70
+    - - סוכריות
+      - 70
+    - - משקה
+      - 70
+    - - סודה
+      - 70
+    - - קולה
+      - 70
+    - - מיץ
+      - 70
+    - - בירה
+      - 70
+    - - יין
+      - 70
+    - - מים מינרלים
+      - 70
+    - - תרכיז
+      - 70
+    - - ופלים
+      - 70
+    - - קרקרים
+      - 70
+    - - מסטיק
+      - 70
+    - - פופקורן
+      - 70
+    - - קוטג
+      - 40
+    - - חלב
+      - 40
+    - - גבינ
+      - 40
+    - - יוגורט
+      - 40
+    - - שמנת
+      - 40
+    - - חמאה
+      - 40
+    - - ביצים
+      - 40
+    - - לבנה
+      - 40
+    - - לאבנה
+      - 40
+    - - פטה
+      - 40
+    - - מעדן
+      - 40
+    - - מוצרלה
+      - 40
+    - - בולגרית
+      - 40
+    - - צפתית
+      - 40
+    - - ריקוטה
+      - 40
+    - - פודינג
+      - 40
+    - - פסטו
+      - 60
+    - - מיונז
+      - 60
+    - - קטשופ
+      - 60
+    - - חרדל
+      - 60
+    - - צ'ילי
+      - 60
+    - - רוטב
+      - 60
+    - - שמן
+      - 60
+    - - שומשום
+      - 60
+    - - תבלין
+      - 60
+    - - מלח
+      - 60
+    - - פלפל שחור
+      - 60
+    - - פפריקה
+      - 60
+    - - כמון
+      - 60
+    - - סוכר
+      - 60
+    - - קמח
+      - 60
+    - - אורז
+      - 60
+    - - פסטה
+      - 60
+    - - ספגטי
+      - 60
+    - - קוסקוס
+      - 60
+    - - פתיתים
+      - 60
+    - - עדשים
+      - 60
+    - - שעועית
+      - 60
+    - - חומוס
+      - 60
+    - - טחינה
+      - 60
+    - - שימורים
+      - 60
+    - - תירס
+      - 60
+    - - טונה
+      - 60
+    - - רסק
+      - 60
+    - - קרוטונים
+      - 60
+    - - שקדי מרק
+      - 60
+    - - אבקת
+      - 60
+    - - שמרים
+      - 60
+    - - דבש
+      - 60
+    - - ריבה
+      - 60
+    - - קפה
+      - 60
+    - - 'תה '
+      - 60
+    - - דגני
+      - 60
+    - - קורנפלקס
+      - 60
+    - - גרנולה
+      - 60
+    - - אגוזים
+      - 60
+    - - שקדים
+      - 60
+    - - צימוקים
+      - 60
+    - - חומץ
+      - 60
+    - - סויה
+      - 60
+    - - מרק
+      - 60
+    - - זיתים
+      - 60
+    - - מלפפון חמוץ
+      - 60
+    - - חמוצים
+      - 60
+    - - וניל
+      - 60
+    - - קקאו
+      - 60
+    - - עוף
+      - 30
+    - - חזה
+      - 30
+    - - שניצל
+      - 30
+    - - בשר
+      - 30
+    - - טחון
+      - 30
+    - - כרעיים
+      - 30
+    - - שוקיים
+      - 30
+    - - פרגיות
+      - 30
+    - - סלמון
+      - 30
+    - - דג
+      - 30
+    - - נקניק
+      - 30
+    - - פסטרמה
+      - 30
+    - - המבורגר
+      - 30
+    - - קבב
+      - 30
+    - - כבד
+      - 30
+    - - אנטריקוט
+      - 30
+    - - צלעות
+      - 30
+    - - הודו
+      - 30
+    - - כנפיים
+      - 30
+    - - לחם
+      - 20
+    - - לחמני
+      - 20
+    - - פיתות
+      - 20
+    - - פיתה
+      - 20
+    - - בגט
+      - 20
+    - - חלה
+      - 20
+    - - טורטיה
+      - 20
+    - - לאפה
+      - 20
+    - - מאפה
+      - 20
+    - - עוגה
+      - 20
+    - - קרואסון
+      - 20
+    - - בייגל
+      - 20
+    - - תפוחי אדמה
+      - 10
+    - - תפוח
+      - 10
+    - - בננ
+      - 10
+    - - אבוקדו
+      - 10
+    - - עגבני
+      - 10
+    - - מלפפון
+      - 10
+    - - בצל
+      - 10
+    - - שום
+      - 10
+    - - גזר
+      - 10
+    - - חסה
+      - 10
+    - - לימון
+      - 10
+    - - פלפל
+      - 10
+    - - קישוא
+      - 10
+    - - חציל
+      - 10
+    - - ברוקולי
+      - 10
+    - - כרובית
+      - 10
+    - - כרוב
+      - 10
+    - - פטרוזיליה
+      - 10
+    - - כוסברה
+      - 10
+    - - שמיר
+      - 10
+    - - נענע
+      - 10
+    - - בטטה
+      - 10
+    - - תפוז
+      - 10
+    - - קלמנטינ
+      - 10
+    - - ענבים
+      - 10
+    - - אבטיח
+      - 10
+    - - מלון
+      - 10
+    - - תות
+      - 10
+    - - אגס
+      - 10
+    - - אפרסק
+      - 10
+    - - שזיף
+      - 10
+    - - פטריות
+      - 10
+    - - רוקט
+      - 10
+    - - סלק
+      - 10
+    - - צנון
+      - 10
+    - - ג'ינג'ר
+      - 10
+    - - דלעת
+      - 10
+    - - ירק
+      - 10
+    - - פירות
+      - 10
+    - - מנגו
+      - 10
+    - - קיווי
+      - 10
+    - - רימון
+      - 10
+    - - ליים
+      - 10
+  sequence:
+  - action: todo.get_items
+    target:
+      entity_id: todo.shopping_list
+    data:
+      status: needs_action
+    response_variable: resp
+  - variables:
+      plan: '{% set ns = namespace(out=[]) %}{% for it in resp[''todo.shopping_list''][''items'']
+        %}{% set m = namespace(c=-1) %}{% for p in keywords %}{% if m.c == -1 and
+        p[0] in it.summary %}{% set m.c = p[1] %}{% endif %}{% endfor %}{% set ns.out
+        = ns.out + [{''uid'': it.uid, ''summary'': it.summary, ''c'': (m.c if m.c
+        != -1 else 65), ''i'': loop.index0}] %}{% endfor %}{{ ns.out | sort(attribute=''c'')
+        }}'
+      current: '{{ resp[''todo.shopping_list''][''items''] | map(attribute=''uid'')
+        | list }}'
+  - condition: template
+    value_template: '{{ plan | count > 1 and (plan | map(attribute=''uid'') | list)
+      != current }}'
+  - repeat:
+      for_each: '{{ plan }}'
+      sequence:
+      - action: todo.add_item
+        target:
+          entity_id: todo.shopping_list
+        data:
+          item: '{{ repeat.item.summary }}'
+  - repeat:
+      for_each: '{{ plan }}'
+      sequence:
+      - action: todo.remove_item
+        target:
+          entity_id: todo.shopping_list
+        data:
+          item: '{{ repeat.item.uid }}'

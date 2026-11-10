@@ -34,15 +34,251 @@ browser_mod:
                           letter-spacing: '-0.01em';
                         }
                   type: markdown
-                - account: default
-                  device: media_player.
-                  grid_covers_per_row: "5"
-                  hide_warning: true
-                  limit: 15
-                  playlist_type: default
-                  spotify_entity: media_player.spotify_elian_sarfaty
-                  type: custom:spotify-card
-                  grid_center_covers: true
-                  display_style: grid
-                  always_play_random_song: true
-                  hide_top_header: true
+                # Now playing: artwork, track info, prev/play/next, shuffle, repeat and volume
+                - type: custom:mini-media-player
+                  entity: media_player.spotify_elian_sarfaty
+                  name: Now Playing
+                  artwork: cover
+                  info: scroll
+                  hide:
+                    power: true
+                    source: true
+                    shuffle: false
+                    repeat: false
+                    progress: false
+                    volume: false
+                # Device picker + playlist grid (replaces the old spotify-card, which no longer works with Spotcast v6)
+                - type: entities
+                  entities:
+                    - entity: input_select.spotify_play_on
+                      name: Play on
+                      icon: mdi:speaker
+                - type: grid
+                  columns: 5
+                  square: false
+                  cards:
+                    - type: custom:button-card
+                      name: "Mini Wedding 1"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e020aa18e80cce01cc9b7c72ed5ab67616d00001e024d8af36fe2c8606ec59df04aab67616d00001e02508b835b5dd68662ec44646aab67616d00001e0266a74de4b48539c8153b8ea1"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:7dckM4o4SMNuAsUXj6yqgB"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "Mini Wedding"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e021e01c7a923e7d264998ce020ab67616d00001e025afed1d629cca6f5fbe58bb2ab67616d00001e028a1469ecc8700e55d482624eab67616d00001e02c20125f3b7526d2c40568e77"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:3Z1mpgXv4K8RKqnCKYyOGE"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "Happy new year"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e0213b3e37318a0c247b550bccdab67616d00001e021dcba4a728ca0b17cbd204a5ab67616d00001e0283c4d7d5ae01da1278eb6774ab67616d00001e02ad86452926a17a895062cf53"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:0FQGoGpJzE6NX2zBZGBsvX"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Love"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e022dc219f646be779b0e43a36bab67616d00001e0256ff19308ebeb48e2ba6094bab67616d00001e029549aab58d86eb39fe930f43ab67616d00001e02c2248a5b79dededa74edfde0"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:6itwBU1Sj1hk8RKjaXhMto"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Groovie:)"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e0260eec5a0953d4a33d77ed71dab67616d00001e026239187793c9e492e687db01ab67616d00001e026809892ec4db63e0a6ee661cab67616d00001e02ef9f1e3fc5b3c8bd40720e5f"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:46Gco7FmV6GduZNh2An13s"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Diva"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e020959c715939cce84513402cdab67616d00001e0256ac7b86e090f307e218e9c8ab67616d00001e0260b71e669c856f7e453abe13ab67616d00001e027cd872c7701c4737b2f81d87"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:7xUg5MsnIFnxRgmwr69Q0N"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Sad"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e0218911c5e24c3866c654bb13eab67616d00001e025524689d9913b2c10bb3ca07ab67616d00001e026ebd5e789646a833b8f7d4baab67616d00001e02c82c71cbbcbf1c15274c8df2"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:1UejOJuYI9PNew1X4vDDQ0"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Nostalgic"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e02438ffdfd7094b5f12130d427ab67616d00001e0261ffafd5e31a37336531cf95ab67616d00001e029a5826c1c124b2cf89d9aa43ab67616d00001e02f070431449fa1a72a8a37ea4"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:03SHPAJEYVmyO0Ok0gSKZI"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Rise"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e021b2e455ebf25db530027c276ab67616d00001e025e8eba05c89911656a531692ab67616d00001e02b3994164520409b6a98f51beab67616d00001e02bd7e3177085de2f9a792c80a"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:2ClqQZoDQp6JO6FNUginQ5"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Chill"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e024245f996f39eb4e9b2eefef8ab67616d00001e0261ffafd5e31a37336531cf95ab67616d00001e02c42212db6d665fab0c51d495ab67616d00001e02f7ec724fbf97a30869d06240"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:5yfiMr7XoCdsJ3nlQcH9P5"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "YK: Dancing"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e0263facc42e4a35eb3aa182b59ab67616d00001e02c5b46ee859d728b295062346ab67616d00001e02f89996e214be1763b2a9e948ab67616d00001e02fceb9d92981970dbeea23257"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:6nYnbomDdnPwkeO6FeI6ok"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "i like it"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://mosaic.scdn.co/300/ab67616d00001e02896ffcd42561c44fea2bae7bab67616d00001e02becb1296c2b82f631d61ab7bab67616d00001e02f4af8e0a1d05f9aa228ea4c5ab67616d00001e02f9508eb3070b95ceeb82788b"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:2QQKhApYZGCwx6aOwUGWzz"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "Hebrew Old Memories"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da8421960ad5f1e51e628957612a"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:0wIlowOPZ5Fbhzd0i8U9qJ"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "Old Is The New Gold"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da840f8fc7904ad4ecc25346dde6"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:19x1tlgbyvG7xatQ3UX4Qk"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]
+                    - type: custom:button-card
+                      name: "Gangsta's Paradise"
+                      show_icon: false
+                      show_entity_picture: true
+                      entity_picture: "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da840e44eb0ce44882ab630230f6"
+                      tap_action:
+                        action: perform-action
+                        perform_action: script.spotify_play_playlist
+                        data:
+                          uri: "spotify:playlist:3mp9kNj2SdzziDBHAJJ3s1"
+                      styles:
+                        card: [padding: 4px, background: transparent, box-shadow: none]
+                        grid: [grid-template-areas: '"i" "n"']
+                        entity_picture: [width: 100%, border-radius: 6px, aspect-ratio: 1/1, object-fit: cover]
+                        name: [font-size: 11px, white-space: nowrap, overflow: hidden, text-overflow: ellipsis, width: 100%, padding-top: 4px]

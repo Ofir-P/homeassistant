@@ -20,7 +20,21 @@ const PRE_ALERT_COLOR = "rgb(253, 224, 71)";
 const END_ALERT_COLOR = "rgb(16, 205, 83)";
 const RELOAD_GUARD_KEY = "oref-alert-map-reload-version";
 const CURRENT_VERSION = new URL(import.meta.url).searchParams.get("v");
+// Must match POLYGONS_URL in custom_cards.py (a Python test checks it).
+const POLYGONS_URL = "/oref_alert_polygons.json";
+// Same cache-busting version (?v=) as this script.
+const POLYGONS_FETCH_URL = new URL(
+  `${POLYGONS_URL}${new URL(import.meta.url).search}`,
+  import.meta.url,
+);
+// Covers the whole download (~620 KB), so it allows for slow mobile links.
+const POLYGONS_FETCH_TIMEOUT_MS = 120_000;
+const POLYGONS_MAX_RETRY_DELAY_MS = 60_000;
 const LEAFLET_ENGINE = Symbol("oref-alert-leaflet-engine");
+// Shared by every copy of this module, so a reloaded one recognizes the map
+// cards of another and doesn't wrap "ha-map" twice.
+const OREF_MAP_CARD = Symbol.for("oref-alert-map-card");
+const OREF_LOAD_MAP = Symbol.for("oref-alert-map-load-map");
 const MAP_CONFIG_PASSTHROUGH_KEYS = [
   "aspect_ratio",
   "cluster",
@@ -36,16 +50,19 @@ const MAP_CONFIG_PASSTHROUGH_KEYS = [
 ];
 
 class OrefAlertMap extends HTMLElement {
+  // One shared fetch and one parsed copy for all card instances.
+  static _polygons = { promise: undefined, failures: 0, retryAt: 0 };
+
   constructor() {
     super();
     this._hass = null;
     this._config = null;
     this._layout = undefined;
     this._mapCard = null;
-    this._polygons = null;
     this._applyHassPromise = null;
     this._lastUpdated = undefined;
     this._refreshId = null;
+    this._polygonsRetryId = null;
     this._bootstrapWindow = Date.now() + 10_000;
     this._geoWatchId = undefined;
     this._locationMarker = null;
@@ -149,6 +166,10 @@ class OrefAlertMap extends HTMLElement {
   }
 
   _resetCardState() {
+    if (this._polygonsRetryId) {
+      window.clearTimeout(this._polygonsRetryId);
+      this._polygonsRetryId = null;
+    }
     this._stopRefresh();
     this._stopLocationWatch();
     this._removeLocationMarker();
@@ -334,6 +355,7 @@ class OrefAlertMap extends HTMLElement {
   async _createMapCard() {
     const helpers = await window.loadCardHelpers();
     const mapCard = await helpers.createCardElement(this._buildMapConfig());
+    mapCard[OREF_MAP_CARD] = true;
     if (this._layout !== undefined) {
       mapCard.layout = this._layout;
     }
@@ -365,15 +387,63 @@ class OrefAlertMap extends HTMLElement {
   }
 
   async _getPolygons() {
-    if (!this._polygons) {
-      const polygonsTag = "oref-alert-polygons";
-      await customElements.whenDefined(polygonsTag);
-      const card = document.createElement(polygonsTag);
-      if (card) {
-        this._polygons = card.polygons;
-      }
+    const polygons = await this._loadPolygons();
+    if (!polygons) {
+      this._schedulePolygonsRetry();
     }
-    return this._polygons;
+    return polygons;
+  }
+
+  // Re-render when the retry delay ends, rather than waiting for the next
+  // hass update (which may not come soon on a quiet system).
+  _schedulePolygonsRetry() {
+    if (this._polygonsRetryId) {
+      return;
+    }
+    this._polygonsRetryId = window.setTimeout(
+      () => {
+        this._polygonsRetryId = null;
+        if (this.isConnected) {
+          void this._applyHass();
+        }
+      },
+      Math.max(OrefAlertMap._polygons.retryAt - Date.now(), 0),
+    );
+  }
+
+  _loadPolygons() {
+    const state = OrefAlertMap._polygons;
+    if (!state.promise) {
+      if (Date.now() < state.retryAt) {
+        return Promise.resolve(null);
+      }
+      // AbortController rather than AbortSignal.timeout(), which older
+      // browsers (e.g. Safari before 16) don't have.
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(
+        () => controller.abort(),
+        POLYGONS_FETCH_TIMEOUT_MS,
+      );
+      state.promise = fetch(POLYGONS_FETCH_URL, { signal: controller.signal })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          return response.json();
+        })
+        .finally(() => window.clearTimeout(timeoutId))
+        .catch((error) => {
+          console.error("oref-alert-map: failed to load polygons", error);
+          // Retry on a later call, waiting longer after each failure.
+          state.retryAt =
+            Date.now() +
+            Math.min(1000 * 2 ** state.failures, POLYGONS_MAX_RETRY_DELAY_MS);
+          state.failures += 1;
+          state.promise = undefined;
+          return null;
+        });
+    }
+    return state.promise;
   }
 
   _setTileLayer() {
@@ -430,6 +500,27 @@ class OrefAlertMap extends HTMLElement {
     }
   }
 
+  // Home Assistant 2026.10+ starts "ha-map" on MapLibre and moves to Leaflet
+  // only after a fatal error, so our map was drawn twice. Flagging the maps of
+  // our map cards as already on that fallback before they load starts them on
+  // Leaflet. "_loadMap" is wrapped, since browsers read "connectedCallback"
+  // only at definition. Older versions have no engines and ignore the flag,
+  // and "_prepareMap" still switches a map that loaded without it.
+  static _startMapsOnLeaflet(HaMap) {
+    const proto = HaMap?.prototype;
+    const loadMap = proto?._loadMap;
+    if (typeof loadMap !== "function" || Object.hasOwn(proto, OREF_LOAD_MAP)) {
+      return;
+    }
+    proto[OREF_LOAD_MAP] = true;
+    proto._loadMap = function (...args) {
+      if (this.getRootNode()?.host?.[OREF_MAP_CARD]) {
+        this._forceLeaflet = true;
+      }
+      return loadMap.apply(this, args);
+    };
+  }
+
   // Home Assistant 2026.10 replaced the Leaflet-only "ha-map" with a pluggable
   // engine (MapLibre GL by default) and removed "layers", "Leaflet" and
   // "leafletMap". Polygons need Leaflet, so we ask "ha-map" to rebuild itself
@@ -442,10 +533,12 @@ class OrefAlertMap extends HTMLElement {
     }
 
     if (!engine?.leafletMap || !engine.Leaflet) {
+      // A non-Leaflet engine is switched even when "_forceLeaflet" is set, as
+      // we set it ourselves and a newer "ha-map" might not read it. "ha-map"
+      // ignores the call while it's already on the fallback.
       if (
         map._handleEngineFatal &&
-        !map._forceLeaflet &&
-        (engine || map._loading)
+        (engine || (map._loading && !map._forceLeaflet))
       ) {
         map._handleEngineFatal();
       }
@@ -767,6 +860,10 @@ class OrefAlertMap extends HTMLElement {
     };
   }
 }
+
+customElements
+  .whenDefined("ha-map")
+  .then(() => OrefAlertMap._startMapsOnLeaflet(customElements.get("ha-map")));
 
 const elementTag = "oref-alert-map";
 customElements.define(elementTag, OrefAlertMap);

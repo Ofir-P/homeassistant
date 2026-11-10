@@ -8,7 +8,7 @@ sidebar:
       if (entity) {
           let attr = [];
           for (let [k, value] of Object.entries(entity.attributes)) {
-              if (k !== 'friendly_name') {
+              if (k !== 'friendly_name' && !((variables && variables.skip) || []).includes(k)) {
                   window.navigator.userAgent.match(/iPhone/i) ?
                       k !== 'time' && k !== 'date' && value !== false && (attr += `<p>${k === 'greet' ? `<span class="iphone">${value}</span>` : `${value}`}</p>`) :
                       value !== false && (attr += `<p>${value}</p>`);
