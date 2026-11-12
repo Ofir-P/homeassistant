@@ -811,12 +811,27 @@ views:
             entity: binary_sensor.doorbell_ringing
             state: "on"
         cards:
-          - type: picture-entity
-            show_state: false
-            show_name: false
-            camera_view: live
-            image: /config/www/tmp/snapshot_doorbell.jpg
-            entity: camera.doorbell
+          - type: vertical-stack
+            cards:
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: camera.doorbell
+                    state_not: streaming
+                card:
+                  type: markdown
+                  content: "⏳ מתחבר לפעמון..."
+              - type: conditional
+                conditions:
+                  - condition: state
+                    entity: camera.doorbell
+                    state: streaming
+                card:
+                  type: custom:webrtc-camera
+                  entity: camera.doorbell
+                  mode: webrtc
+                  muted: true
+                  style: ".mode {display: none !important} .status {display: none !important}"
 
       #################################################
       #                                               #

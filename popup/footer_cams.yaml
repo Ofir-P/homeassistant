@@ -3,6 +3,10 @@ browser_mod:
   service: browser_mod.popup
   data:
     title: Cams
+    dismiss_action:
+      service: button.press
+      data:
+        entity_id: button.doorbell_stop_p2p_stream
     card_mod:
       style:
         #popup header
@@ -31,11 +35,36 @@ browser_mod:
               entities: []
               camera_image: camera.parking_parking
               aspect_ratio: "20:15"
-            - camera_view: auto
-              type: picture-glance
-              entities: []
-              camera_image: camera.doorbell
-              aspect_ratio: "20:15"
+            - type: vertical-stack
+              cards:
+                - type: conditional
+                  conditions:
+                    - condition: state
+                      entity: camera.doorbell
+                      state_not: streaming
+                  card:
+                    type: picture-glance
+                    title: Doorbell - tap for live
+                    camera_image: camera.doorbell
+                    camera_view: auto
+                    aspect_ratio: "20:15"
+                    entities: []
+                    tap_action:
+                      action: perform-action
+                      perform_action: button.press
+                      target:
+                        entity_id: button.doorbell_start_p2p_stream
+                - type: conditional
+                  conditions:
+                    - condition: state
+                      entity: camera.doorbell
+                      state: streaming
+                  card:
+                    type: custom:webrtc-camera
+                    entity: camera.doorbell
+                    mode: webrtc
+                    muted: true
+                    style: ".mode {display: none !important} .status {display: none !important}"
             - type: custom:webrtc-camera
               entity: camera.aquarium_sub
               title: Office

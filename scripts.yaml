@@ -298,60 +298,6 @@ turn_all_lights_off:
     data:
       entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – All house lights have been turned off! \U0001F4A1\U0001F50C"
-send_doorbell_notification_to_lg_tv:
-  alias: Send Doorbell Notification to Living Room TV
-  description: Sends notification with doorbell snapshot to Living Room TV when TV
-    is on
-  sequence:
-  - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.living_room_tv_status
-        state: 'Off'
-    then:
-    - action: notify.living_room_tv
-      data:
-        data:
-          duration: 10
-          position: top-left
-          fontsize: medium
-          transparency: 50%
-          timeout: 10
-          color: cyan
-          interrupt: 0
-          image:
-            path: /config/www/tmp/snapshot_doorbell.jpg
-        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
-          Snapshot Captured!"
-        title: Doorbell Notification
-send_doorbell_notification_to_bedroom_tv:
-  alias: Send Doorbell Notification to Master Bedroom TV
-  description: Sends notification with doorbell snapshot to Master Bedroom TV when
-    TV is on
-  sequence:
-  - if:
-    - condition: not
-      conditions:
-      - condition: state
-        entity_id: input_select.bedroom_tv_status
-        state: 'Off'
-    then:
-    - action: notify.bedroom_tv
-      data:
-        message: "\U0001F916 Automation - \U0001F514 Doorbell Ring Detected! \U0001F4F8
-          Snapshot Captured!"
-        title: Doorbell Notification
-        data:
-          duration: 10
-          position: top-left
-          fontsize: medium
-          transparency: 50%
-          timeout: 10
-          color: cyan
-          interrupt: 0
-          image:
-            path: /config/www/tmp/snapshot_doorbell.jpg
 fetch_calendar_events:
   alias: Fetch Calendar Events for Today
   sequence:
@@ -1261,3 +1207,238 @@ sort_shopping_list:
   - action: pyscript.shopping_list_sort
     data:
       entity_id: todo.shopping_list
+doorbell_tv_popup_living_room:
+  alias: Doorbell TV Popup - Living Room
+  description: Shows the live doorbell video on the Living Room TV (PiPup). The "Open
+    the door" button is added only when someone is in the living room (presence sensor)
+    and at least one person is home; otherwise video only. Stops the doorbell stream
+    after the popup ends.
+  mode: restart
+  icon: mdi:doorbell-video
+  sequence:
+  - condition: state
+    entity_id: media_player.living_room_lg_webos_smart_tv
+    state: 'on'
+  - wait_template: '{{ is_state(''camera.doorbell'',''streaming'') }}'
+    timeout:
+      seconds: 10
+    continue_on_timeout: true
+  - alias: Show popup (unlock button only if someone is in the living room)
+    if:
+    - condition: state
+      entity_id: binary_sensor.living_room_presence_sensor_presence
+      state: 'on'
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - action: pipup.show
+      target:
+        entity_id: binary_sensor.living_room_tv_popup
+      data:
+        popup_id: doorbell
+        title: "\U0001F514 Doorbell"
+        message: Someone is at the door
+        duration: '{{ states(''input_number.doorbell_tv_popup_seconds'') | int(15)
+          }}'
+        video_url: rtsp://10.0.0.150:8554/T8210P7422441C73
+        media_width: 640
+        muted: false
+        live_badge: true
+        dismiss_screensaver: true
+        buttons:
+        - id: unlock_main_door
+          label: "\U0001F513 Open the door"
+        position: top_left
+      continue_on_error: true
+    else:
+    - action: pipup.show
+      target:
+        entity_id: binary_sensor.living_room_tv_popup
+      data:
+        popup_id: doorbell
+        title: "\U0001F514 Doorbell"
+        message: Someone is at the door
+        duration: '{{ states(''input_number.doorbell_tv_popup_seconds'') | int(15)
+          }}'
+        video_url: rtsp://10.0.0.150:8554/T8210P7422441C73
+        media_width: 640
+        muted: false
+        live_badge: true
+        dismiss_screensaver: true
+        position: top_left
+      continue_on_error: true
+  - delay:
+      seconds: '{{ (states(''input_number.doorbell_tv_popup_seconds'') | int(15))
+        + 30 }}'
+  - if:
+    - condition: state
+      entity_id: camera.doorbell
+      state: streaming
+    then:
+    - action: button.press
+      target:
+        entity_id: button.doorbell_stop_p2p_stream
+      continue_on_error: true
+doorbell_tv_popup_balcony:
+  alias: Doorbell TV Popup - Balcony
+  description: Shows the live doorbell video on the Balcony TV (PiPup). The "Open
+    the door" button is added only when someone is in the balcony (presence sensor)
+    and at least one person is home; otherwise video only. Stops the doorbell stream
+    after the popup ends.
+  mode: restart
+  icon: mdi:doorbell-video
+  sequence:
+  - condition: numeric_state
+    entity_id: sensor.balcony_tv_power
+    above: 12
+  - wait_template: '{{ is_state(''camera.doorbell'',''streaming'') }}'
+    timeout:
+      seconds: 10
+    continue_on_timeout: true
+  - alias: Show popup (unlock button only if someone is in the balcony)
+    if:
+    - condition: state
+      entity_id: binary_sensor.balcony_presence_sensor_occupancy
+      state: 'on'
+    - condition: numeric_state
+      entity_id: zone.home
+      above: 0
+    then:
+    - action: pipup.show
+      target:
+        entity_id: binary_sensor.balcony_tv_popup
+      data:
+        popup_id: doorbell
+        title: "\U0001F514 Doorbell"
+        message: Someone is at the door
+        duration: '{{ states(''input_number.doorbell_tv_popup_seconds'') | int(15)
+          }}'
+        video_url: rtsp://10.0.0.150:8554/T8210P7422441C73
+        media_width: 640
+        muted: false
+        live_badge: true
+        dismiss_screensaver: true
+        buttons:
+        - id: unlock_main_door
+          label: "\U0001F513 Open the door"
+        position: top_left
+      continue_on_error: true
+    else:
+    - action: pipup.show
+      target:
+        entity_id: binary_sensor.balcony_tv_popup
+      data:
+        popup_id: doorbell
+        title: "\U0001F514 Doorbell"
+        message: Someone is at the door
+        duration: '{{ states(''input_number.doorbell_tv_popup_seconds'') | int(15)
+          }}'
+        video_url: rtsp://10.0.0.150:8554/T8210P7422441C73
+        media_width: 640
+        muted: false
+        live_badge: true
+        dismiss_screensaver: true
+        position: top_left
+      continue_on_error: true
+  - delay:
+      seconds: '{{ (states(''input_number.doorbell_tv_popup_seconds'') | int(15))
+        + 30 }}'
+  - if:
+    - condition: state
+      entity_id: camera.doorbell
+      state: streaming
+    then:
+    - action: button.press
+      target:
+        entity_id: button.doorbell_stop_p2p_stream
+      continue_on_error: true
+doorbell_tv_popup_bedroom:
+  alias: Doorbell TV Popup - Bedroom
+  description: Shows the live doorbell video on the Bedroom TV (PiPup), video only
+    (no unlock button). Stops the doorbell stream after the popup ends.
+  mode: restart
+  icon: mdi:doorbell-video
+  sequence:
+  - condition: numeric_state
+    entity_id: sensor.bedroom_tv_power
+    above: 12
+  - wait_template: '{{ is_state(''camera.doorbell'',''streaming'') }}'
+    timeout:
+      seconds: 10
+    continue_on_timeout: true
+  - action: pipup.show
+    target:
+      entity_id: binary_sensor.bedroom_tv_popup
+    data:
+      popup_id: doorbell
+      title: "\U0001F514 Doorbell"
+      message: Someone is at the door
+      duration: '{{ states(''input_number.doorbell_tv_popup_seconds'') | int(15) }}'
+      video_url: rtsp://10.0.0.150:8554/T8210P7422441C73
+      media_width: 640
+      muted: false
+      live_badge: true
+      dismiss_screensaver: true
+      position: top_left
+    continue_on_error: true
+  - delay:
+      seconds: '{{ (states(''input_number.doorbell_tv_popup_seconds'') | int(15))
+        + 30 }}'
+  - if:
+    - condition: state
+      entity_id: camera.doorbell
+      state: streaming
+    then:
+    - action: button.press
+      target:
+        entity_id: button.doorbell_stop_p2p_stream
+      continue_on_error: true
+main_door_tv_popup_bedroom:
+  alias: Main Door TV Popup - Bedroom
+  description: Shows the live entrance camera (Main Door Fluent) on the Bedroom TV
+    (PiPup) when the main door opens.
+  mode: restart
+  icon: mdi:door-open
+  sequence:
+  - condition: numeric_state
+    entity_id: sensor.bedroom_tv_power
+    above: 12
+  - action: pipup.show
+    target:
+      entity_id: binary_sensor.bedroom_tv_popup
+    data:
+      popup_id: main_door
+      title: "\U0001F6AA Main Door"
+      message: The main door is open
+      duration: '{{ states(''input_number.doorbell_tv_popup_seconds'') | int(15) }}'
+      video_url: rtsp://10.0.0.150:8554/camera.dining_table_sub
+      media_width: 640
+      muted: true
+      live_badge: true
+      dismiss_screensaver: true
+      position: top_left
+    continue_on_error: true
+baby_monitor_tv_popup_bedroom:
+  alias: Baby Monitor TV Popup - Bedroom
+  description: Shows the Baby Monitor camera (Surveillance Station) live on the Bedroom
+    TV (PiPup) for 10 seconds, muted.
+  mode: single
+  icon: mdi:baby-face-outline
+  sequence:
+  - action: pipup.show
+    target:
+      entity_id: binary_sensor.bedroom_tv_popup
+    data:
+      popup_id: baby_monitor
+      title: "\U0001F476 Baby Monitor"
+      message: Live check
+      duration: 10
+      position: top_left
+      camera_entity: camera.parking_parking
+      camera_mode: stream
+      media_width: 640
+      muted: true
+      live_badge: true
+      dismiss_screensaver: true
+    continue_on_error: true
