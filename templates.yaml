@@ -301,12 +301,14 @@
     - unique_id: now_playing_art
       name: Now Playing Art
       icon: mdi:plex
-      state: "{{ art.title }}"
+      state: "{{ art.title if art is defined else this.state }}"
       attributes:
-        player: "{{ art.player }}"
+        player: "{{ art.player if art is defined else this.attributes.player | default(none) }}"
         data: >
+          {% if art is not defined %}{{ this.attributes.data | default([]) }}{% else %}
           {{ [{'title_default': '$title', 'line1_default': '$episode', 'line2_default': '$number',
                'line3_default': '$empty', 'line4_default': '$empty', 'icon': 'mdi:play'}, art] }}
+          {% endif %}
 
 # [=========================]Dashboard Helpers[=========================]
 # Simple on/off helpers used to show/hide chips on the Mobile dashboard

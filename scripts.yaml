@@ -1421,8 +1421,8 @@ main_door_tv_popup_bedroom:
     continue_on_error: true
 baby_monitor_tv_popup_bedroom:
   alias: Baby Monitor TV Popup - Bedroom
-  description: Shows the Baby Monitor camera (Surveillance Station) live on the Bedroom
-    TV (PiPup) for 10 seconds, muted.
+  description: Shows the Baby Monitor camera (Surveillance Station) live (MJPEG) on
+    the Bedroom TV via PiPup for 15 seconds, muted.
   mode: single
   icon: mdi:baby-face-outline
   sequence:
@@ -1433,10 +1433,10 @@ baby_monitor_tv_popup_bedroom:
       popup_id: baby_monitor
       title: "\U0001F476 Baby Monitor"
       message: Live check
-      duration: 10
+      duration: 15
       position: top_left
       camera_entity: camera.parking_parking
-      camera_mode: stream
+      camera_mode: mjpeg
       media_width: 640
       muted: true
       live_badge: true

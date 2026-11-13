@@ -337,6 +337,9 @@ views:
                   {{ 'orange' if last > 0 and avg > last * 1.2 else 'yellow' }}
                 content: >
                   ₪{{ ((states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) * (states('sensor.iec_kwh_tariff') | float(0))) | round(0) | int }} this month · ~₪{{ states('sensor.iec_meter_23179017_next_electric_bill_forecasted_cost_of_000349077514') | float(0) | round(0) | int }} bill
+                tap_action:
+                  action: navigate
+                  navigation_path: /config/dashboard
               - type: conditional
                 conditions:
                   - condition: numeric_state
