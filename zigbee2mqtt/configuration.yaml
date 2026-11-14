@@ -190,4 +190,6 @@ devices:
     friendly_name: '0xa4c1381afb200f3f'
   '0x54ef441000c4bc27':
     friendly_name: '0x54ef441000c4bc27'
+  '0xa4c13870da020238':
+    friendly_name: Dining Table Smart Plug
 version: 5
