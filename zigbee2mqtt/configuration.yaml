@@ -91,8 +91,6 @@ devices:
     friendly_name: Dining Table Sticker Switch button
   '0x00158d0009cf58c2':
     friendly_name: Dining Table Sticker Switch button 2nd
-  '0xa4c1383bed0900d7':
-    friendly_name: Plant Monitor
   '0x00158d000ad8180f':
     friendly_name: Guest Bathroom Door Sensor
   '0x00158d0008dff275':
@@ -192,4 +190,6 @@ devices:
     friendly_name: '0x54ef441000c4bc27'
   '0xa4c13870da020238':
     friendly_name: Dining Table Smart Plug
+  '0xa4c1383bed0900d7':
+    friendly_name: Plant Monitor
 version: 5

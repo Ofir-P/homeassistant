@@ -1,0 +1,19 @@
+# Low batteries popup (tablet sidebar chip): every battery sensor at 25% or below.
+# Opened by the "N low batteries" chip in ui-lovelace.yaml (sensor.low_batteries_count).
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: Low batteries
+    content:
+      type: markdown
+      content: |-
+        {%- set ns = namespace(rows=[]) -%}
+        {%- for s in states.sensor if s.attributes.get('device_class') == 'battery' and s.state | is_number and s.state | float(100) <= 25 -%}
+          {%- set ns.rows = ns.rows + [{'v': s.state | float | round(0) | int, 'n': (s.name | replace(' Battery', '') | replace(' battery', '')), 'a': area_name(s.entity_id) or ''}] -%}
+        {%- endfor -%}
+        Batteries at 25% or below:
+
+        {% for r in ns.rows | sort(attribute='v') -%}
+        - {{ '🔴' if r.v <= 10 else '🟠' }} **{{ r.v }}%** · {{ r.n }}{{ ' · ' ~ r.a if r.a else '' }}
+        {% endfor %}

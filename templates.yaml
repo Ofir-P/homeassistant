@@ -318,15 +318,6 @@
       icon: mdi:briefcase-clock
       # Sun-Thu, 06:00-11:00
       state: "{{ now().weekday() in [6, 0, 1, 2, 3] and 6 <= now().hour < 11 }}"
-    - unique_id: electricity_usage_high
-      name: Electricity Usage High
-      icon: mdi:lightning-bolt-circle
-      # this month's daily average is more than 20% above the last bill's daily average
-      state: >
-        {% set days = [now().day, 1] | max %}
-        {% set avg = (states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) / days %}
-        {% set last = states('sensor.iec_contract_349077514_last_bill_electric_usage_to_date_of_000349077514') | float(0) / (states('sensor.iec_contract_349077514_last_bill_length_in_days_of_000349077514') | float(30)) %}
-        {{ last > 0 and avg > last * 1.2 }}
 
 # [=========================]Just Arrived Home[=========================]
 # On for 5 minutes after Ofir or Elian changes from away to home (shows the Open Building Door chip on the Mobile dashboard)

@@ -30,7 +30,7 @@ browser_mod:
           type: markdown
         - cards:
             - artwork: cover
-              entity: media_player.balcony_echo_dot
+              entity: media_player.master_bedroom_shower_echo_dot
               hide:
                 power_state: false
                 source: true
@@ -38,7 +38,7 @@ browser_mod:
               icon: mdi:soundbar
               tts:
                 platform: alexa
-                entity_id: media_player.balcony_echo_dot
+                entity_id: media_player.master_bedroom_shower_echo_dot
               type: custom:mini-media-player
             - artwork: cover
               entity: media_player.guest_bathroom_echo_dot
@@ -62,7 +62,7 @@ browser_mod:
                 platform: alexa
                 entity_id: media_player.kitchen_echo_dot
             - artwork: cover
-              entity: media_player.master_bedroom_shower_echo_dot
+              entity: media_player.kids_room_echo_dot
               hide:
                 power_state: false
                 source: true
@@ -70,7 +70,7 @@ browser_mod:
               icon: mdi:soundbar
               tts:
                 platform: alexa
-                entity_id: media_player.master_bedroom_shower_echo_dot
+                entity_id: media_player.kids_room_echo_dot
               type: custom:mini-media-player
             - artwork: cover
               entity: media_player.office_echo_show5

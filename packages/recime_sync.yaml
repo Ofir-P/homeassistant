@@ -1,0 +1,4 @@
+# ReciMe -> recipe-book sync. Script: /config/recime_sync/recime_sync.py
+# Credentials live in secrets.yaml (recime_email, recime_password).
+shell_command:
+  recime_sync: "python3 /config/recime_sync/recime_sync.py {{ mode }}"

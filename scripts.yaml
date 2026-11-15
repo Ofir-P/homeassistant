@@ -12,7 +12,7 @@ ir_learn_mode_on_bedroom:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - Bedroom IR device is now on Learn Mode"
+      message: "\U0001F4DC Script – Bedroom IR device is now on Learn Mode \U0001F4E1"
 ir_turn_on_off_bedroom_tv:
   alias: IR Toggle Bedroom TV
   mode: single
@@ -27,7 +27,8 @@ ir_turn_on_off_bedroom_tv:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - Bedroom IR to turn ON/OFF TV has been triggered"
+      message: "\U0001F4DC Script – Bedroom IR to turn ON/OFF TV has been triggered
+        \U0001F4FA"
 turn_off_on_kitchen_light:
   alias: Toggle Kitchen Light
   description: ''
@@ -41,8 +42,8 @@ turn_off_on_kitchen_light:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation – \U0001F4A1 Kitchen Light is {{\n  'on' if
-        is_state('light.kitchen_l1', 'off') else 'off'\n}} \U0001F52A\n"
+      message: "\U0001F4DC Script – \U0001F4A1 Kitchen Light is {{\n  'on' if is_state('light.kitchen_l1',
+        'off') else 'off'\n}} \U0001F52A\n"
 turn_on_switcher_for_60mins:
   alias: Turn ON Boiler for 60 minutes
   mode: single
@@ -68,7 +69,7 @@ home_leave:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - Home Leave activated!"
+      message: "\U0001F4DC Script – Home Leave activated! \U0001F3C3"
   - repeat:
       while:
       - condition: template
@@ -113,7 +114,7 @@ home_leave:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - Home Leave electric devices are OFF!"
+      message: "\U0001F4DC Script – Home Leave electric devices are OFF! \U0001F50C"
   - continue_on_error: true
     action: light.turn_off
     target:
@@ -130,7 +131,7 @@ home_leave:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - House devices are OFF!"
+      message: "\U0001F4DC Script – House devices are OFF! \U0001F3E0"
   - choose:
     - conditions:
       - condition: state
@@ -211,7 +212,7 @@ toggle_bedroom_light:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - Bedroom Light has been triggered!"
+      message: "\U0001F4DC Script – Bedroom Light has been triggered! \U0001F6CF️"
 unlock_main_door:
   alias: Unlock Main Door
   mode: single
@@ -235,7 +236,7 @@ boil_tami4_water:
       entity_id: button.kitchen_boil_water
   - data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script -  Boil Tami4 Water has been triggered!"
+      message: "\U0001F4DC Script – Boil Tami4 Water has been triggered! ♨️"
     action: notify.send_message
   - if:
     - condition: state
@@ -337,7 +338,7 @@ house_clean:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - Robot Vacuum Clean House Alexa \U0001F9FC"
+      message: "\U0001F4DC Script – Robot Vacuum Clean House Alexa \U0001F9FC"
 toggle_dining_table_light:
   alias: Toggle Dining Table Light
   description: ''
@@ -353,8 +354,8 @@ toggle_dining_table_light:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation – \U0001F4A1 Dining Table Light is {{\n  'on'
-        if is_state('light.living_room_l2', 'off') else 'off'\n}} \U0001F37D️\n"
+      message: "\U0001F4DC Script – \U0001F4A1 Dining Table Light is {{\n  'on' if
+        is_state('light.living_room_l2', 'off') else 'off'\n}} \U0001F37D️\n"
 notify_elian_arrived_home:
   alias: Notify – Elian Arrived Home
   mode: single
@@ -400,7 +401,7 @@ ir_learn_mode_on_balcony:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - Balcony IR device is now on Learn Mode"
+      message: "\U0001F4DC Script – Balcony IR device is now on Learn Mode \U0001F4E1"
   alias: IR Learn Mode On (Balcony)
   mode: single
   icon: mdi:remote
@@ -416,7 +417,8 @@ ir_toggle_balcony_tv:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - Balcony IR to turn ON/OFF TV has been triggered"
+      message: "\U0001F4DC Script – Balcony IR to turn ON/OFF TV has been triggered
+        \U0001F4FA"
   alias: IR Toggle Balcony TV
   mode: single
   icon: mdi:remote-tv
@@ -441,7 +443,7 @@ building_entrance_door_unlock:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F6AA Building Door unlocked by Fingerbot
+      message: "\U0001F4DC Script – \U0001F6AA Building Door unlocked by Fingerbot
         \U0001F3E2"
   description: ''
   icon: mdi:lock-open-variant
@@ -456,7 +458,7 @@ wake_shower_echo_random_spotify_playlist:
     data:
       media_player:
         entity_id:
-        - media_player.balcony_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+        - media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ playlist_uri }}'
       data:
@@ -465,7 +467,7 @@ wake_shower_echo_random_spotify_playlist:
         random: true
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script - \U0001F3B5 Shower Music Script\U0001F6BF\n"
+      message: "\U0001F4DC Script – \U0001F3B5 Shower Music Script \U0001F6BF\n"
     target:
       entity_id: notify.supervisor_telegram
 wake_kitchen_echo_random_spotify_playlist:
@@ -491,7 +493,7 @@ wake_kitchen_echo_random_spotify_playlist:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Kitchen Music Script - {{ state_attr('media_player.kitchen_echo_dot',
+      message: "\U0001F4DC Script – \U0001F3B5 Kitchen Music Script - {{ state_attr('media_player.kitchen_echo_dot',
         'media_album_name') }} \U0001F6BF\n"
   alias: Wake Kitchen Echo - random Spotify playlist
   mode: restart
@@ -517,7 +519,7 @@ kids_room_echo_random_spotify_playlist:
     data:
       media_player:
         entity_id:
-        - media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+        - media_player.kids_room_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
       account: 01KAB2YAREPM46QYFDTBFC0CWH
       spotify_uri: '{{ picked_uri }}'
       data:
@@ -532,7 +534,7 @@ kids_room_echo_random_spotify_playlist:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Kids Room Music - {{ chosen_label }}
+      message: "\U0001F4DC Script – \U0001F3B5 Kids Room Music - {{ chosen_label }}
         \U0001F9F8\n"
 living_room_echo_random_spotify_playlist:
   sequence:
@@ -554,7 +556,7 @@ living_room_echo_random_spotify_playlist:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Living Room Music Script - {{ state_attr('media_player.livingroom_echo_pop',
+      message: "\U0001F4DC Script – \U0001F3B5 Living Room Music Script - {{ state_attr('media_player.livingroom_echo_pop',
         'media_album_name') }} \U0001F6CB️\n"
   alias: 'Living Room Echo - Random Spotify Playlist '
   mode: restart
@@ -581,7 +583,8 @@ ir_toggle_living_room_tv:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - Living Room IR to turn ON/OFF TV has been triggered"
+      message: "\U0001F4DC Script – Living Room IR to turn ON/OFF TV has been triggered
+        \U0001F4FA"
   alias: IR Toggle Living Room TV
   mode: single
   icon: mdi:remote-tv
@@ -610,7 +613,7 @@ guest_bathroom_echo_random_spotify_playlist:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F4DC Script - \U0001F3B5 Guest Bathroom Music Script - {{ state_attr('media_player.guest_bathroom_echo_dot',
+      message: "\U0001F4DC Script – \U0001F3B5 Guest Bathroom Music Script - {{ state_attr('media_player.guest_bathroom_echo_dot',
         'media_album_name') }} \U0001F6CB️\n"
   alias: Guest Bathroom Echo - Random Spotify Playlist
   mode: restart
@@ -661,8 +664,7 @@ clean_office:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F5A5️ Robot Vacuum Clean Office Alexa
-        \U0001F9FC"
+      message: "\U0001F4DC Script – \U0001F5A5️ Robot Vacuum Clean Office Alexa \U0001F9FC"
   mode: single
 clean_master_bedroom:
   alias: Clean Master Bedroom
@@ -678,7 +680,7 @@ clean_master_bedroom:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F6CF️ Robot Vacuum Clean Master Bedroom
+      message: "\U0001F4DC Script – \U0001F6CF️ Robot Vacuum Clean Master Bedroom
         Alexa \U0001F9FC"
   mode: single
 clean_corridor:
@@ -695,8 +697,7 @@ clean_corridor:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F6B6 Robot Vacuum Clean Corridor Alexa
-        \U0001F9FC"
+      message: "\U0001F4DC Script – \U0001F6B6 Robot Vacuum Clean Corridor Alexa \U0001F9FC"
   mode: single
 clean_kids_room:
   alias: Clean Kids Room
@@ -712,7 +713,7 @@ clean_kids_room:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F9F8 Robot Vacuum Clean Kids Room Alexa
+      message: "\U0001F4DC Script – \U0001F9F8 Robot Vacuum Clean Kids Room Alexa
         \U0001F9FC"
   mode: single
 clean_kitchen:
@@ -729,8 +730,7 @@ clean_kitchen:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F373 Robot Vacuum Clean Kitchen Alexa
-        \U0001F9FC"
+      message: "\U0001F4DC Script – \U0001F373 Robot Vacuum Clean Kitchen Alexa \U0001F9FC"
   mode: single
 clean_living_room:
   alias: Clean Living Room
@@ -746,8 +746,8 @@ clean_living_room:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F6CB️ Robot Vacuum Clean Living Room
-        Alexa \U0001F9FC"
+      message: "\U0001F4DC Script – \U0001F6CB️ Robot Vacuum Clean Living Room Alexa
+        \U0001F9FC"
   mode: single
 clean_living_room_and_kitchen:
   alias: Clean Living Room and Kitchen
@@ -764,7 +764,7 @@ clean_living_room_and_kitchen:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation - \U0001F6CB️\U0001F373 Robot Vacuum Clean Living
+      message: "\U0001F4DC Script – \U0001F6CB️\U0001F373 Robot Vacuum Clean Living
         Room and Kitchen Alexa \U0001F9FC"
   mode: single
 eggs_timer:
@@ -778,7 +778,7 @@ eggs_timer:
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
-      message: "\U0001F916 Automation – \U0001F95A Eggs Timer is on \U0001F52A"
+      message: "\U0001F4DC Script – \U0001F95A Eggs Timer is on \U0001F52A"
   alias: Eggs Timer
   description: ''
 '1776503780973':
@@ -846,7 +846,7 @@ ir_learn_mode_on_kids_room:
       retain: false
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script - Kids Room IR device is now on Learn Mode"
+      message: "\U0001F4DC Script – Kids Room IR device is now on Learn Mode \U0001F4E1"
     target:
       entity_id: notify.supervisor_telegram
   alias: IR Learn Mode On (Kids Room)
@@ -942,12 +942,12 @@ spotify_play_playlist:
         Living Room TV: media_player.living_room_tv_215z7qyr7dvusnoxesjixyxoi_spotcast
         Living Room Echo Pop: media_player.living_room_echo_pop_215z7qyr7dvusnoxesjixyxoi_spotcast_2
         Kitchen Echo Dot: media_player.kitchen_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_2
-        Balcony Echo Dot: media_player.balcony_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
         Office Echo Show 5: media_player.office_echo_show_5_215z7qyr7dvusnoxesjixyxoi_spotcast
         Master Bedroom Echo Spot: media_player.master_bedroom_echo_spot_215z7qyr7dvusnoxesjixyxoi_spotcast
-        Master Bedroom Shower Echo Dot: media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
         Guest Bathroom Echo Dot: media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast
         Everywhere: media_player.everywhere_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+        Kids Room Echo Dot: media_player.kids_room_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
+        Master Bedroom Shower Echo Dot: media_player.master_bedroom_shower_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast_3
       target: '{{ devices.get(states(''input_select.spotify_play_on'')) }}'
   - if:
     - condition: template
@@ -1056,8 +1056,8 @@ robot_vacuum_clean_selected_rooms:
     - action: notify.send_message
       data:
         entity_id: notify.supervisor_telegram
-        message: "\U0001F916 Script - \U0001F9F9 Robot Vacuum cleaning selected rooms
-          ({{ segs | count }})"
+        message: "\U0001F916 Script – \U0001F9F9 Robot Vacuum cleaning selected rooms
+          ({{ segs | count }}) \U0001F9FC"
 kitchen_timer_set:
   alias: Kitchen Timer - Set
   description: Sets a timer on the Kitchen Echo Dot (same device as Eggs Timer) and
@@ -1089,7 +1089,7 @@ kitchen_timer_set:
     data:
       entity_id: notify.supervisor_telegram
       message: "\U0001F916 Automation – ⏲️ Kitchen timer set for {{ minutes|int }}
-        minutes"
+        minutes \U0001F37D️"
 kitchen_timer_cancel:
   alias: Kitchen Timer - Cancel
   description: Cancels the kitchen timer on the Echo Dot and in HA
@@ -1442,3 +1442,95 @@ baby_monitor_tv_popup_bedroom:
       live_badge: true
       dismiss_screensaver: true
     continue_on_error: true
+prepare_kids_room_for_sleep:
+  alias: Prepare Kids Room for Sleep
+  icon: mdi:teddy-bear
+  mode: single
+  description: 'Gets the kids room ready before the child goes to sleep: opens the
+    curtain fully (only if it is closed/unknown), then closes it for a fixed 12 seconds,
+    turns the room light off if it is on, and starts the kids playlist on the room''s
+    Echo.'
+  variables:
+    full_open_seconds: 30
+    close_seconds: 12
+  sequence:
+  - parallel:
+    - alias: Light off + kids playlist
+      sequence:
+      - alias: Turn the light off if it is on
+        if:
+        - condition: state
+          entity_id: light.kids_room
+          state: 'on'
+        then:
+        - action: light.turn_off
+          target:
+            entity_id: light.kids_room
+      - alias: Play the kids playlist on the room Echo
+        action: script.kids_room_echo_random_spotify_playlist
+    - alias: Curtain
+      sequence:
+      - alias: Open fully only if closed/unknown
+        if:
+        - condition: state
+          entity_id: cover.kids_room_window_curtain
+          state:
+          - closed
+          - unknown
+        then:
+        - action: cover.open_cover
+          target:
+            entity_id: cover.kids_room_window_curtain
+        - alias: Wait for the curtain to finish opening
+          delay:
+            seconds: '{{ full_open_seconds }}'
+        note: The curtain has no position feedback, so a fixed wait is used. If it
+          is not fully open before closing starts, raise full_open_seconds in the
+          variables above.
+      - alias: Close it
+        action: cover.close_cover
+        target:
+          entity_id: cover.kids_room_window_curtain
+      - alias: Close for a fixed time
+        delay:
+          seconds: '{{ close_seconds }}'
+        note: Fixed 12 s partial close, taken from the last manual use. Change close_seconds
+          in the variables above to adjust.
+      - alias: Stop
+        action: cover.stop_cover
+        target:
+          entity_id: cover.kids_room_window_curtain
+  - action: notify.send_message
+    data:
+      entity_id: notify.supervisor_telegram
+      message: "\U0001F4DC Script – \U0001F319 Kids Room prepared for sleep (curtain,
+        light, music) \U0001F9F8"
+shopping_move_item:
+  alias: Shopping - Move Item Between Lists
+  description: Moves the item picked in input_select.shopping_move_item to the list
+    picked in input_select.shopping_move_to.
+  mode: single
+  icon: mdi:swap-horizontal
+  sequence:
+  - condition: template
+    value_template: '{{ '' › '' in states(''input_select.shopping_move_item'') }}'
+  - variables:
+      sel: '{{ states(''input_select.shopping_move_item'') }}'
+      m: '{{ {''קניות'': ''todo.shopping_list'', ''סופר פארם'': ''todo.super_pharm'',
+        ''KSP'': ''todo.ksp'', ''Online Shopping'': ''todo.online_shopping''} }}'
+  - variables:
+      src_ent: '{{ m[sel.split('' › '')[0]] }}'
+      dst_ent: '{{ m[states(''input_select.shopping_move_to'')] }}'
+      item: '{{ sel.split('' › '', 1)[1] }}'
+  - condition: template
+    value_template: '{{ src_ent != dst_ent }}'
+  - action: todo.add_item
+    target:
+      entity_id: '{{ dst_ent }}'
+    data:
+      item: '{{ item }}'
+  - action: todo.remove_item
+    target:
+      entity_id: '{{ src_ent }}'
+    data:
+      item: '{{ item }}'

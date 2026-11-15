@@ -4,6 +4,15 @@ logs
 # Python cache
 __pycache__
 *.pyc
+# MCP server config / secrets
+.mcp.json
+*.mcp.json
+mcp.json
+mcp-servers.json
+.claude/
+.claude.json
+secrets.yaml
+.storage/
 
 # Other
 *.uuid

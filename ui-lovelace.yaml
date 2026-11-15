@@ -85,23 +85,6 @@ views:
             template: sidebar
             variables:
               skip: [active, vacuum, battery]
-          # Lights-on line (tap: list of lights + turn all off)
-          - type: custom:button-card
-            entity: sensor.template_sidebar
-            template: sidebar
-            name: "[[[ return '<p>' + entity.attributes.active + '</p>' ]]]"
-            tap_action: !include popup/lights_on.yaml
-            styles:
-              card: [margin-top: -30px]
-              name: [padding-top: 0]
-          # Battery / other notices from the sidebar sensor
-          - type: custom:button-card
-            entity: sensor.template_sidebar
-            template: sidebar
-            name: "[[[ const b = entity.attributes.battery; return b ? '<p>' + b + '</p>' : '' ]]]"
-            styles:
-              card: [margin-top: -30px, display: "[[[ return entity.attributes.battery ? 'block' : 'none' ]]]"]
-              name: [padding-top: 0]
           # Kitchen timer countdown (only while a timer is running)
           - type: conditional
             conditions:
@@ -202,6 +185,38 @@ views:
               style: |
                 ha-card { padding-left: 51px; margin-top: -8px; }
             chips:
+              # Lights on: number of lights that are on; tap = list of lights to turn off
+              - type: conditional
+                conditions:
+                  - entity: sensor.lights_on_count
+                    state_not: "0"
+                  - entity: sensor.lights_on_count
+                    state_not: unavailable
+                  - entity: sensor.lights_on_count
+                    state_not: unknown
+                chip:
+                  type: template
+                  entity: sensor.lights_on_count
+                  icon: mdi:lightbulb-on
+                  icon_color: amber
+                  content: "{{ states('sensor.lights_on_count') | int(0) }} light{{ '' if states('sensor.lights_on_count') | int(0) == 1 else 's' }} on"
+                  tap_action: !include popup/lights_on.yaml
+              # Low batteries: shown only while a battery is at 25% or below; tap = details
+              - type: conditional
+                conditions:
+                  - entity: sensor.low_batteries_count
+                    state_not: "0"
+                  - entity: sensor.low_batteries_count
+                    state_not: unavailable
+                  - entity: sensor.low_batteries_count
+                    state_not: unknown
+                chip:
+                  type: template
+                  entity: sensor.low_batteries_count
+                  icon: mdi:battery-alert
+                  icon_color: red
+                  content: "{{ states('sensor.low_batteries_count') | int(0) }} low {{ 'battery' if states('sensor.low_batteries_count') | int(0) == 1 else 'batteries' }}"
+                  tap_action: !include popup/low_batteries.yaml
               # Vacuum needs attention (error / low water)
               - type: conditional
                 conditions:
@@ -329,17 +344,6 @@ views:
                   icon: mdi:weather-pouring
                   icon_color: indigo
                   content: Raining
-              - type: template
-                icon: mdi:lightning-bolt
-                icon_color: >
-                  {% set days = now().day if now().day > 1 else 1 %}{% set avg = (states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) / days %}
-                  {% set last = states('sensor.iec_contract_349077514_last_bill_electric_usage_to_date_of_000349077514') | float(0) / (states('sensor.iec_contract_349077514_last_bill_length_in_days_of_000349077514') | float(30)) %}
-                  {{ 'orange' if last > 0 and avg > last * 1.2 else 'yellow' }}
-                content: >
-                  ₪{{ ((states('sensor.iec_meter_23179017_this_month_electric_consumption_of_000349077514') | float(0)) * (states('sensor.iec_kwh_tariff') | float(0))) | round(0) | int }} this month · ~₪{{ states('sensor.iec_meter_23179017_next_electric_bill_forecasted_cost_of_000349077514') | float(0) | round(0) | int }} bill
-                tap_action:
-                  action: navigate
-                  navigation_path: /config/dashboard
               - type: conditional
                 conditions:
                   - condition: numeric_state
