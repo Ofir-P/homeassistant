@@ -41,6 +41,9 @@ logger:
   default: info
   logs:
     custom_components.authenticated: debug
+  default: warning
+  logs:
+    homeassistant.helpers.script.trigger_update_coordinator: error
 # [=========================]Authenticated[=========================]
 # [=========================]Themes[=========================]
 frontend:

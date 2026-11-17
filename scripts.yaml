@@ -465,9 +465,16 @@ wake_shower_echo_random_spotify_playlist:
         volume: 70
         shuffle: true
         random: true
+  - wait_template: '{{ state_attr(''media_player.master_bedroom_shower_echo_dot'',
+      ''media_album_name'') not in [none, '''', ''None'', ''unknown''] }}'
+    timeout:
+      seconds: 30
+    continue_on_timeout: true
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script – \U0001F3B5 Shower Music Script \U0001F6BF\n"
+      message: "\U0001F4DC Script – \U0001F3B5 Shower Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',
+        'media_album_name') or state_attr('media_player.master_bedroom_shower_echo_dot',
+        'media_title') or 'Unknown album' }} \U0001F6BF\n"
     target:
       entity_id: notify.supervisor_telegram
 wake_kitchen_echo_random_spotify_playlist:
@@ -485,16 +492,17 @@ wake_kitchen_echo_random_spotify_playlist:
         volume: 50
         shuffle: true
         random: true
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 7
-      milliseconds: 0
+  - wait_template: '{{ state_attr(''media_player.kitchen_echo_dot'', ''media_album_name'')
+      not in [none, '''', ''None'', ''unknown''] }}'
+    timeout:
+      seconds: 30
+    continue_on_timeout: true
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – \U0001F3B5 Kitchen Music Script - {{ state_attr('media_player.kitchen_echo_dot',
-        'media_album_name') }} \U0001F6BF\n"
+        'media_album_name') or state_attr('media_player.kitchen_echo_dot', 'media_title')
+        or 'Unknown album' }} \U0001F6BF\n"
   alias: Wake Kitchen Echo - random Spotify playlist
   mode: restart
   description: ''
@@ -548,16 +556,17 @@ living_room_echo_random_spotify_playlist:
         volume: 55
         shuffle: true
         random: true
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 4
-      milliseconds: 0
+  - wait_template: '{{ state_attr(''media_player.livingroom_echo_pop'', ''media_album_name'')
+      not in [none, '''', ''None'', ''unknown''] }}'
+    timeout:
+      seconds: 30
+    continue_on_timeout: true
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – \U0001F3B5 Living Room Music Script - {{ state_attr('media_player.livingroom_echo_pop',
-        'media_album_name') }} \U0001F6CB️\n"
+        'media_album_name') or state_attr('media_player.livingroom_echo_pop', 'media_title')
+        or 'Unknown album' }} \U0001F6CB️\n"
   alias: 'Living Room Echo - Random Spotify Playlist '
   mode: restart
   description: ''
@@ -605,16 +614,17 @@ guest_bathroom_echo_random_spotify_playlist:
         shuffle: true
       media_player:
         entity_id: media_player.guest_bathroom_echo_dot_215z7qyr7dvusnoxesjixyxoi_spotcast
-  - delay:
-      hours: 0
-      minutes: 0
-      seconds: 7
-      milliseconds: 0
+  - wait_template: '{{ state_attr(''media_player.guest_bathroom_echo_dot'', ''media_album_name'')
+      not in [none, '''', ''None'', ''unknown''] }}'
+    timeout:
+      seconds: 30
+    continue_on_timeout: true
   - action: notify.send_message
     data:
       entity_id: notify.supervisor_telegram
       message: "\U0001F4DC Script – \U0001F3B5 Guest Bathroom Music Script - {{ state_attr('media_player.guest_bathroom_echo_dot',
-        'media_album_name') }} \U0001F6CB️\n"
+        'media_album_name') or state_attr('media_player.guest_bathroom_echo_dot',
+        'media_title') or 'Unknown album' }} \U0001F6CB️\n"
   alias: Guest Bathroom Echo - Random Spotify Playlist
   mode: restart
   description: ''
