@@ -38,11 +38,9 @@ recorder:
       - light.*_screen
 # [=========================]Authenticated[=========================]
 logger:
-  default: info
-  logs:
-    custom_components.authenticated: debug
   default: warning
   logs:
+    custom_components.authenticated: debug
     homeassistant.helpers.script.trigger_update_coordinator: error
 # [=========================]Authenticated[=========================]
 # [=========================]Themes[=========================]

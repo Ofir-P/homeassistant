@@ -192,4 +192,6 @@ devices:
     friendly_name: Dining Table Smart Plug
   '0xa4c1383bed0900d7':
     friendly_name: Plant Monitor
+  '0xa4c1381b68cc2352':
+    friendly_name: Balcony Sliding Door Sensor
 version: 5

@@ -1209,11 +1209,33 @@ sort_shopping_list:
   alias: Sort Shopping List by Category
   icon: mdi:sort
   mode: single
-  description: Reorders the active items in todo.shopping_list by supermarket category
-    using pyscript.shopping_list_sort. Categories and keywords live in /config/pyscript/shopping_categories.json
-    (shared with the Claude "sort-shopping-list" skill). Items are only moved, never
-    re-added. Does nothing if the list is already sorted.
+  description: First moves a leading quantity in an item name to the end ("7 גמבות"
+    -> "גמבות 7") so it displays number-first in the RTL Hebrew UI; items are renamed
+    in place, keeping their uid and position. Then reorders the active items in todo.shopping_list
+    by supermarket category using pyscript.shopping_list_sort. Categories and keywords
+    live in /config/pyscript/shopping_categories.json (shared with the Claude "sort-shopping-list"
+    skill). Items are only moved, never re-added. Does nothing if the list is already
+    sorted.
   sequence:
+  - alias: Read active shopping items
+    action: todo.get_items
+    target:
+      entity_id: todo.shopping_list
+    data:
+      status: needs_action
+    response_variable: shopping_items
+  - alias: Move a leading number to the end of the item name (RTL display fix)
+    repeat:
+      for_each: '{{ shopping_items[''todo.shopping_list''][''items''] | selectattr(''summary'',''match'',''^\\d+([.,]\\d+)?\\s+\\S'')
+        | list }}'
+      sequence:
+      - action: todo.update_item
+        target:
+          entity_id: todo.shopping_list
+        data:
+          item: '{{ repeat.item.uid }}'
+          rename: '{{ repeat.item.summary | regex_replace(''^(\\d+(?:[.,]\\d+)?)\\s+(.+)$'',
+            ''\\2 \\1'') }}'
   - action: pyscript.shopping_list_sort
     data:
       entity_id: todo.shopping_list
