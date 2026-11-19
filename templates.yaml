@@ -107,13 +107,18 @@
         entry_id: 1d1b3cdb2dc3d5a085f1db706b77aba6
         days: 30
       response_variable: sonarr_resp
-    - action: calendar.get_events
-      target:
-        entity_id: calendar.radarr
-      data:
-        duration:
-          days: 180
-      response_variable: radarr_cal
+    # Radarr calendar goes unavailable when Radarr restarts; skip it instead of erroring
+    - if:
+        - condition: template
+          value_template: "{{ states('calendar.radarr') not in ['unavailable', 'unknown'] }}"
+      then:
+        - action: calendar.get_events
+          target:
+            entity_id: calendar.radarr
+          data:
+            duration:
+              days: 180
+          response_variable: radarr_cal
     - action: radarr.get_movies
       data:
         entry_id: 8fe838d4ce37e36e6189aa65af2c9cec
@@ -147,7 +152,7 @@
           {% set ns = namespace(items=[], seen=[]) %}
           {% set today = now().strftime('%Y-%m-%d') %}
           {% set movies = radarr_resp.movies | default({}) %}
-          {% set events = radarr_cal['calendar.radarr'].events | default([]) %}
+          {% set events = ((radarr_cal | default({})).get('calendar.radarr') or {}).get('events', []) %}
           {% for ev in events | sort(attribute='start') %}
             {% if ev.start[:10] >= today and ev.summary not in ns.seen %}
               {% set m = movies.get(ev.summary, {}) %}
