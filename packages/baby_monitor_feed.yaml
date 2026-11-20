@@ -1,0 +1,12 @@
+command_line:
+- binary_sensor:
+    name: Baby Monitor Live Feed
+    unique_id: baby_monitor_live_feed
+    device_class: connectivity
+    icon: mdi:video
+    command: >-
+      curl -s -o /dev/null -m 10 -w '%{http_code}'
+      'http://localhost:8123/api/camera_proxy/camera.parking_parking?token={{ state_attr("camera.parking_parking", "access_token") }}'
+    command_timeout: 15
+    scan_interval: 60
+    value_template: "{{ 'ON' if value == '200' else 'OFF' }}"

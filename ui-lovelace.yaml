@@ -46,7 +46,8 @@ views:
       #extra_styles fix, do not remove
       #also warn if theme is not set
 
-      - type: custom:button-card
+      - &tc_theme_warning
+        type: custom:button-card
         view_layout:
           grid-area: 1 / 2 / 2 / 5
         name: SET THEME TO "tablet" IN PROFILE
@@ -75,7 +76,8 @@ views:
       #                                               #
       #################################################
 
-      - type: vertical-stack
+      - &tc_sidebar
+        type: vertical-stack
         view_layout:
           grid-area: sidebar
         cards:
@@ -154,7 +156,7 @@ views:
               chips:
                 - type: template
                   picture: "{{ state_attr('person.elian', 'entity_picture') }}"
-                  content: "{{ states('sensor.waze_elian_to_work') | float(0) | round(0) | int }} min to work"
+                  content: "{{ states('sensor.waze_elian_to_work') | float(0) | round(0) | int }} min to Logica-IT"
                   tap_action:
                     action: more-info
                   entity: sensor.waze_elian_to_work
@@ -433,7 +435,8 @@ views:
       #                                               #
       #################################################
 
-      - type: grid
+      - &tc_living_room
+        type: grid
         title: Living Room
         card_mod:
           style: |
@@ -506,7 +509,8 @@ views:
       #                                               #
       #################################################
 
-      - type: grid
+      - &tc_office
+        type: grid
         title: Office
         card_mod:
           style: |
@@ -550,7 +554,8 @@ views:
       #                                               #
       #################################################
 
-      - type: grid
+      - &tc_bedroom
+        type: grid
         title: Master Bedroom
         card_mod:
           style: |
@@ -626,7 +631,8 @@ views:
       #                     MEDIA                     #
       #################################################
 
-      - type: grid
+      - &tc_media
+        type: grid
         title: Media
         view_layout:
           grid-area: media
@@ -680,7 +686,8 @@ views:
       #                                               #
       #################################################
 
-      - type: grid
+      - &tc_kids
+        type: grid
         title: Kids Room
         card_mod:
           style: |
@@ -748,7 +755,8 @@ views:
       #                                               #
       #################################################
 
-      - type: grid
+      - &tc_home
+        type: grid
         title: Home
         view_layout:
           grid-area: Home
@@ -809,7 +817,8 @@ views:
       #                                               #
       #################################################
 
-      - type: custom:bubble-card
+      - &tc_doorbell
+        type: custom:bubble-card
         card_type: pop-up
         hash: "#doorbell"
         close_on_click: true
@@ -850,7 +859,8 @@ views:
         view_layout:
           grid-area: footer
         cards:
-          - type: custom:button-card
+          - &tf_shopping
+            type: custom:button-card
             name: >
               <ha-icon icon="mdi:cart"></ha-icon> Shopping
             tap_action: !include popup/footer_shopping.yaml
@@ -861,25 +871,29 @@ views:
                 ]]]
             template: footer
 
-          - type: custom:button-card
+          - &tf_lights
+            type: custom:button-card
             name: >
               <ha-icon icon="mdi:lightbulb-multiple-outline"></ha-icon> Lights
             tap_action: !include popup/lights.yaml
             template: footer
 
-          - type: custom:button-card
+          - &tf_cams
+            type: custom:button-card
             name: >
               <ha-icon icon="mdi:cctv"></ha-icon> Cams
             tap_action: !include popup/footer_cams.yaml
             template: footer
 
-          - type: custom:button-card
+          - &tf_vacuum
+            type: custom:button-card
             name: >
               <ha-icon icon="mdi:robot-vacuum-variant"></ha-icon> Vacuum
             tap_action: !include popup/footer_vacuum.yaml
             template: footer
 
-          - type: custom:button-card
+          - &tf_nas
+            type: custom:button-card
             name: >
               <ha-icon icon="mdi:nas"></ha-icon> NAS
             tap_action: !include popup/footer_nas.yaml
@@ -901,7 +915,8 @@ views:
                 ]]]
             template: footer
 
-          - type: custom:button-card
+          - &tf_goodnight
+            type: custom:button-card
             name: >
               <ha-icon icon="mdi:weather-night"></ha-icon> Good Night
             tap_action:
@@ -911,7 +926,8 @@ views:
                 text: Turn off all the lights in the house?
             template: footer
 
-          - type: custom:button-card
+          - &tf_guest
+            type: custom:button-card
             entity: input_boolean.guest_mode
             name: >
               <ha-icon icon="mdi:account-multiple"></ha-icon> Guest Mode
@@ -925,3 +941,77 @@ views:
                   card:
                     - background-color: rgba(76, 175, 80, 0.85)
                     - color: "#ffffff"
+
+  # Teclast P26T (viewport ~1101x688, landscape): same cards as the "Home" view
+  # (shared with a YAML anchor), but a 2-row grid so nothing needs scrolling.
+  # Open it at /lovelace/teclast
+  - type: custom:grid-layout
+    title: Teclast
+    path: teclast
+    layout:
+      margin: 0
+      grid-gap: 8px 12px
+      grid-template-columns: 360px repeat(3, minmax(0, 1fr)) 12px
+      grid-template-rows: 0 repeat(3, fit-content(100%))
+      grid-template-areas: |
+        "sidebar  .       .       .        ."
+        "sidebar  LR      Office  Bedroom  ."
+        "sidebar  Shower  media   Home     ."
+        "sidebar  footer  footer  footer   ."
+    cards:
+      - *tc_theme_warning
+      - *tc_sidebar
+      - *tc_living_room
+      - *tc_office
+      - *tc_bedroom
+      - *tc_media
+      - *tc_kids
+      - *tc_home
+      - *tc_doorbell
+      # Compact footer for the small screen: same 7 buttons/actions (merged from the
+      # main footer), but smaller text/icons, in a single non-wrapping row.
+      - type: horizontal-stack
+        view_layout:
+          grid-area: footer
+        card_mod:
+          style: |
+            #root { flex-wrap: nowrap !important; justify-content: space-between !important; margin-top: 0 !important; padding-bottom: 0 !important; overflow: hidden !important; gap: 6px !important; }
+            #root > * { flex: 1 1 0 !important; min-width: 0 !important; margin: 0 !important; }
+        cards:
+          - <<: *tf_shopping
+            styles: &tf_small
+              card:
+                - padding: 6px 3px
+                - font-size: 12px
+                - border-radius: 8px
+                - width: 100%
+                - min-width: 0
+                - box-sizing: border-box
+              name:
+                - font-size: 12px
+                - white-space: nowrap
+                - overflow: hidden
+                - text-overflow: ellipsis
+            extra_styles: &tf_small_css |
+              :host { display: block; width: 100%; min-width: 0; }
+              #card { width: 100% !important; padding: 6px 3px !important; box-sizing: border-box; }
+              #name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+              ha-icon { --mdc-icon-size: 15px; }
+          - <<: *tf_lights
+            styles: *tf_small
+            extra_styles: *tf_small_css
+          - <<: *tf_cams
+            styles: *tf_small
+            extra_styles: *tf_small_css
+          - <<: *tf_vacuum
+            styles: *tf_small
+            extra_styles: *tf_small_css
+          - <<: *tf_nas
+            styles: *tf_small
+            extra_styles: *tf_small_css
+          - <<: *tf_goodnight
+            styles: *tf_small
+            extra_styles: *tf_small_css
+          - <<: *tf_guest
+            styles: *tf_small
+            extra_styles: *tf_small_css
