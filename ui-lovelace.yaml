@@ -412,7 +412,7 @@ views:
                   if (e.cal === 'calendar.calendar_2') icon = "<img src='" + pic('person.elian') + "'>";
                   else if (e.cal === 'calendar.ofirx3_gmail_com') icon = "<img src='" + pic('person.ofir') + "'>";
                   // <bdi> keeps Hebrew titles in the right direction
-                  out += "<div class='row" + (soon ? " soon" : "") + "'>" + icon + "<b>" + time + "</b>&nbsp;· <bdi>" + esc(e.summary) + "</bdi>" + badge + "</div>";
+                  out += "<div class='row" + (soon ? " soon" : "") + "'><span class='mq'>" + icon + "<b>" + time + "</b>&nbsp;· <bdi>" + esc(e.summary) + "</bdi>" + badge + "</span></div>";
                 }
                 return out;
               ]]]
@@ -425,7 +425,10 @@ views:
               img { width: 18px; height: 18px; border-radius: 50%; vertical-align: middle; margin-right: 6px; object-fit: cover; }
               #name ha-icon { --mdc-icon-size: 18px; width: 18px !important; height: 18px !important; vertical-align: middle; margin-right: 6px; color: #6a7377; }
               .hdr { color: #6a7377; font-weight: bold; }
-              .row { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+              /* Long titles scroll back and forth like a news ticker; short ones stay still */
+              .row { white-space: nowrap; overflow: hidden; container-type: inline-size; }
+              .mq { display: inline-block; animation: mq-scroll 9s ease-in-out 2s infinite alternate; }
+              @keyframes mq-scroll { from { transform: translateX(0); } to { transform: translateX(min(0px, calc(100cqw - 100%))); } }
               .day { color: #6a7377; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; line-height: 1.5; }
               .row.soon b, .row.soon bdi { color: #d8b56a; }
               .badge { background: rgba(216,181,106,0.18); color: #d8b56a; border-radius: 8px; padding: 1px 7px; font-size: 12px; margin-left: 6px; }
@@ -961,57 +964,159 @@ views:
     cards:
       - *tc_theme_warning
       - *tc_sidebar
-      - *tc_living_room
-      - *tc_office
-      - *tc_bedroom
+      # Room cards: smaller button text on this screen so icons/avatars don't overlap it
+      - <<: *tc_living_room
+        card_mod:
+          style: |
+            :host { --button-card-font-size: 1.05vw; }
+            .card-header::after { content: " · {{ states('sensor.living_room_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.living_room_presence_sensor_presence', 'on') or is_state('binary_sensor.living_room_motion', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
+      - <<: *tc_office
+        card_mod:
+          style: |
+            :host { --button-card-font-size: 1.05vw; }
+            .card-header::after { content: " · {{ states('sensor.office_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.office_presence_sensor_presence', 'on') or is_state('binary_sensor.office_motion_sensor_occupancy', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
+      - <<: *tc_bedroom
+        title: Bedroom
+        card_mod:
+          style: |
+            :host { --button-card-font-size: 1.05vw; }
+            .card-header::after { content: " · {{ states('sensor.bedroom_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.master_bedroom_presence_sensor_occupancy', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
       - *tc_media
-      - *tc_kids
-      - *tc_home
+      - <<: *tc_kids
+        card_mod:
+          style: |
+            :host { --button-card-font-size: 1.05vw; }
+            .card-header::after { content: " · {{ states('sensor.kids_room_temperature_sensor_temperature') | float(0) | round(0) | int }}°"; color: #6a7377; font-weight: 400; font-size: 0.85em; {% if is_state('binary_sensor.kids_room_presence_sensor_presence', 'on') or is_state('binary_sensor.kids_room_motion_detected', 'on') %}padding-right: 20px; background: radial-gradient(circle at calc(100% - 6px) 55%, #4caf50 0 5px, transparent 6px) no-repeat;{% endif %} }
+            .card-header { white-space: nowrap; }
+      - <<: *tc_home
+        card_mod:
+          style: |
+            :host { --button-card-font-size: 1.05vw; }
       - *tc_doorbell
       # Compact footer for the small screen: same 7 buttons/actions (merged from the
       # main footer), but smaller text/icons, in a single non-wrapping row.
-      - type: horizontal-stack
+      - type: custom:layout-card
+        layout_type: custom:grid-layout
         view_layout:
           grid-area: footer
-        card_mod:
-          style: |
-            #root { flex-wrap: nowrap !important; justify-content: space-between !important; margin-top: 0 !important; padding-bottom: 0 !important; overflow: hidden !important; gap: 6px !important; }
-            #root > * { flex: 1 1 0 !important; min-width: 0 !important; margin: 0 !important; }
+        layout:
+          margin: 0
+          padding: 0
+          grid-gap: 6px
+          grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(0, 1.1fr) minmax(0, 1.3fr)
+          grid-template-rows: auto
         cards:
           - <<: *tf_shopping
+            view_layout:
+              place-self: stretch
+            # Own look instead of the shared 'footer' template (which has a fixed width
+            # that pushed the last buttons off-screen).
+            template: []
+            name: Shopping
+            icon: mdi:cart
+            custom_fields: &tf_fields
+              badge: >
+                [[[
+                  const n = variables.notify;
+                  if (!n) return '';
+                  return '<span class="nb">' + ((typeof n === 'number' && n > 1) ? n : '1') + '</span>';
+                ]]]
             styles: &tf_small
+              grid:
+                - grid-template-areas: '"i n"'
+                - grid-template-columns: auto auto
+                - grid-template-rows: 1fr
+                - justify-content: center
+                - align-items: center
+              icon:
+                - width: 16px
+                - margin-right: 4px
+                - opacity: 0.4
+                - color: '#97989c'
               card:
-                - padding: 6px 3px
+                - padding: 11px 2px
                 - font-size: 12px
                 - border-radius: 8px
                 - width: 100%
-                - min-width: 0
+                - min-width: 76px
                 - box-sizing: border-box
+                - position: relative
+                - background-color: rgba(115, 115, 115, 0.10)
+                - color: '#97989c'
+                - border: 1px solid rgba(115, 115, 115, 0.2)
+                - box-shadow: none
+                - text-align: center
               name:
                 - font-size: 12px
+                - justify-self: center
                 - white-space: nowrap
                 - overflow: hidden
                 - text-overflow: ellipsis
+              custom_fields:
+                badge:
+                  - position: absolute
+                  - top: 1px
+                  - right: 1px
             extra_styles: &tf_small_css |
-              :host { display: block; width: 100%; min-width: 0; }
-              #card { width: 100% !important; padding: 6px 3px !important; box-sizing: border-box; }
+              :host { display: block; width: 100%; }
+              #card { width: 100% !important; box-sizing: border-box; position: relative; }
               #name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-              ha-icon { --mdc-icon-size: 15px; }
+              ha-icon { --mdc-icon-size: 15px; opacity: 0.4; }
+              .nb { display: inline-block; background: #8b3333; color: #d6d6d6; border-radius: 50%; min-width: 16px; height: 16px; line-height: 16px; font-size: 10px; text-align: center; }
           - <<: *tf_lights
+            view_layout:
+              place-self: stretch
+            name: Lights
+            icon: mdi:lightbulb-multiple-outline
+            template: []
+            custom_fields: *tf_fields
             styles: *tf_small
             extra_styles: *tf_small_css
           - <<: *tf_cams
+            view_layout:
+              place-self: stretch
+            name: Cams
+            icon: mdi:cctv
+            template: []
+            custom_fields: *tf_fields
             styles: *tf_small
             extra_styles: *tf_small_css
           - <<: *tf_vacuum
+            view_layout:
+              place-self: stretch
+            name: Vacuum
+            icon: mdi:robot-vacuum-variant
+            template: []
+            custom_fields: *tf_fields
             styles: *tf_small
             extra_styles: *tf_small_css
           - <<: *tf_nas
+            view_layout:
+              place-self: stretch
+            name: NAS
+            icon: mdi:nas
+            template: []
+            custom_fields: *tf_fields
             styles: *tf_small
             extra_styles: *tf_small_css
           - <<: *tf_goodnight
+            view_layout:
+              place-self: stretch
+            name: Good Night
+            icon: mdi:weather-night
+            template: []
+            custom_fields: *tf_fields
             styles: *tf_small
             extra_styles: *tf_small_css
           - <<: *tf_guest
+            view_layout:
+              place-self: stretch
+            name: Guest Mode
+            icon: mdi:account-multiple
+            template: []
+            custom_fields: *tf_fields
             styles: *tf_small
             extra_styles: *tf_small_css

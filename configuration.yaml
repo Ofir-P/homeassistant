@@ -146,3 +146,6 @@ notify:
       - service: mobile_app_ofir_honor_magic_5_pro
       - service: mobile_app_elians_iphone
 # [=========================]Telegram[=========================]
+http:
+  ip_ban_enabled: true
+  login_attempts_threshold: 5

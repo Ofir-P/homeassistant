@@ -452,8 +452,11 @@ wake_shower_echo_random_spotify_playlist:
   mode: restart
   sequence:
   - variables:
-      playlist_uri: "{{ [\n  'spotify:playlist:3mp9kNj2SdzziDBHAJJ3s1',\n  'spotify:playlist:19x1tlgbyvG7xatQ3UX4Qk',\n
-        \ 'spotify:playlist:6eYN2mMJ7sjLM49eXbwe7i'\n] | random }}\n"
+      playlists:
+        spotify:playlist:3mp9kNj2SdzziDBHAJJ3s1: Gangsta's Paradise
+        spotify:playlist:19x1tlgbyvG7xatQ3UX4Qk: Old Is The New Gold
+        spotify:playlist:6eYN2mMJ7sjLM49eXbwe7i: Bassgasma
+      playlist_uri: '{{ playlists.keys() | list | random }}'
   - action: spotcast.play_media
     data:
       media_player:
@@ -465,16 +468,10 @@ wake_shower_echo_random_spotify_playlist:
         volume: 70
         shuffle: true
         random: true
-  - wait_template: '{{ state_attr(''media_player.master_bedroom_shower_echo_dot'',
-      ''media_album_name'') not in [none, '''', ''None'', ''unknown''] }}'
-    timeout:
-      seconds: 30
-    continue_on_timeout: true
   - action: notify.send_message
     data:
-      message: "\U0001F4DC Script – \U0001F3B5 Shower Music Script - {{ state_attr('media_player.master_bedroom_shower_echo_dot',
-        'media_album_name') or state_attr('media_player.master_bedroom_shower_echo_dot',
-        'media_title') or 'Unknown album' }} \U0001F6BF\n"
+      message: "\U0001F4DC Script – \U0001F3B5 Shower Music Script - {{ playlists[playlist_uri]
+        }} \U0001F6BF"
     target:
       entity_id: notify.supervisor_telegram
 wake_kitchen_echo_random_spotify_playlist:
