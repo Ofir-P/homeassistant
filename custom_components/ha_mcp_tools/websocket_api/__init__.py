@@ -38,8 +38,9 @@ the info handshake carries no capability entry:
   requested entity_id (a pure ``hass.states.get`` in-memory read) plus the list
   of ids with no state, so the server's ``ha_get_state`` serves a 100-entity
   bulk call from one in-process frame instead of up to 100 REST GETs. The body
-  is byte-identical to the REST ``/api/states/<id>`` serialization by
-  construction; the server maps found/missing onto its per-id error contract.
+  is the REST ``/api/states/<id>`` serialization with the live
+  ``last_reported``, which Core's cached one can lag; the server maps
+  found/missing onto its per-id error contract.
 * ``ha_mcp_tools/blueprint_get`` — the full body of one installed blueprint
   (``{metadata, config, yaml}``), which core's ``blueprint/list`` never returns (it
   serves only ``{metadata}``). The path is jailed under
@@ -66,17 +67,20 @@ the info handshake carries no capability entry:
   equivalent of ``config/device_registry/list`` served through the component
   seam, so ``ha_get_device`` list mode need not mix a legacy WS read with the
   component path.
-* ``ha_mcp_tools/entity_enrich`` — the area/floor/labels/aliases join for a set
-  of entity_ids (``{entities: {id: {area, floor, labels, aliases}}}``), computed
-  by the SAME ``_entity_record``/``_RegistryView`` registry join the search path
-  uses (device-inherited area/labels included). Lets ``ha_get_entity`` add the
+* ``ha_mcp_tools/entity_enrich`` — the area/floor/labels/aliases join and the
+  name Core composes for a set of entity_ids (``{entities: {id: {area, floor,
+  labels, aliases, full_name}}}``). The join is the SAME
+  ``_entity_record``/``_RegistryView`` registry join the search path uses
+  (device-inherited area/labels included); ``full_name`` is the composed name
+  the overview serves as ``full_name`` (search's ``name`` falls back to
+  friendly_name where it is None). Lets ``ha_get_entity`` add the
   resolved-name enrichment fields the raw registry entry lacks (it carries
   ``area_id`` / label *ids*, not resolved names) without the caller fanning out
   its own area/floor/label registry reads. Registry-only entities (no state) are
   enriched too — the join keys off the registry, not the state machine.
 * ``ha_mcp_tools/exposure`` — voice-assistant exposure with names/areas attached.
   List mode mirrors core's ``ws_list_exposed_entities`` (``{exposed_entities:
-  {id: {assistant: True}}}`` — byte-identical to ``homeassistant/expose_entity/
+  {id: {assistant: True}}}`` — the same entries as ``homeassistant/expose_entity/
   list``); single-entity mode reads core's module-level
   ``async_get_entity_settings``. Both add a sibling ``entity_info`` map enriching
   each id through the same registry join (friendly_name/domain/area/floor/labels),
@@ -129,11 +133,26 @@ the info handshake carries no capability entry:
   serializes a form it shows, and the step that follows it, read from the
   loaded flow handler on every call. A form or next step Core computes from
   earlier answers is marked, not evaluated. See ``flow_outline.py``.
-* ``ha_mcp_tools/flow_record`` — what a config, options or subentry flow in
-  progress was started for (its handler, source and entry anchors), read from
-  the flow manager that holds it. Core's flow endpoints do not report it, and
-  the server binds a ``flow_id`` it did not open itself (it restarted) to a
+* ``ha_mcp_tools/flow_record`` — what a config, options, subentry or Repairs
+  fix flow in progress was started for (its handler, source, entry and issue
+  anchors), read from the flow manager that holds it. Core's flow endpoints
+  do not report it, and the server binds a ``flow_id`` it did not open itself
+  (it restarted, or Core opened the flow, as it opens a reauth flow) to a
   call's target with it. See ``flow_record.py``.
+* ``ha_mcp_tools/update_entities`` — every update state, restored ones
+  included, with its integration, the names of its ``UpdateEntityFeature``
+  flags and, for a loaded hassio entity, the kind its Core class gives it,
+  which no state or REST answer carries. See ``update_entities.py``.
+* ``ha_mcp_tools/config_file_items`` — the scripts, scenes and automations
+  whose definition draws on a given config file, from the configuration loaded
+  the way Core loads it. See ``config_file_items.py``.
+* ``ha_mcp_tools/recorder_status`` — the recorder's purge settings and oldest
+  state, and whether it records an entity, which Core's API does not serve;
+  with ``wait``, held until the recorder has finished its work. See
+  ``recorder_status.py``.
+* ``ha_mcp_tools/scene_ignored_domains`` — the domains the scene editor leaves
+  out of a picked device's entities, read from the installed frontend build,
+  the only place the list exists. See ``scene_editor.py``.
 * ``ha_mcp_tools/logbook_events`` — Core's own logbook query run in-process:
   ``EventProcessor`` with the REST flags (``timestamp=False`` ISO ``when``,
   ``include_entity_name=True``) and the ``logbook/get_events`` filter set
@@ -143,6 +162,14 @@ the info handshake carries no capability entry:
   the handler sends finished bytes instead of encoding on the event loop; the
   server's ``ha_get_logs`` logbook source prefers this command and keeps
   ``/api/logbook`` + ``logbook/get_events`` as its fallbacks.
+* ``ha_mcp_tools/trace_context`` — Core's live trace store scanned in process
+  for a run whose own context or ``context.parent_id`` matches the requested
+  context, preferring a real run over a not-triggered diagnostic and returning
+  the trace's ``as_extended_dict()`` (the frontend's trace-view/Download shape).
+  The server's ``ha_get_automation_traces`` prefers this command and keeps
+  Core's public ``trace/contexts`` (a run's own context) as its
+  component-absent fallback; a parent context there is a not-found that names
+  this command.
 * ``ha_mcp_tools/search`` (``search_visibility`` capability) — the search command
   additionally accepts a raw ``visibility`` config dict; when present it excludes
   the server's opt-in hidden entities before counts/pagination (the pure
@@ -209,6 +236,11 @@ the info handshake carries no capability entry:
   (``get_caller_token`` → arbitrary config-dir file/YAML writes). A confirmation
   timeout is reported as ``partial`` (``success`` still holds); a failure BEFORE
   the dispatch raises, a failure AFTER it does not (the call already landed).
+  A call asking for a response also returns ``changed_states``, every state
+  written under the call's context (Core's REST call lists the same) followed
+  by each target's state that is none of them, and a response Core rejects after the service ran comes back as ``response_error``.
+  A ``HomeAssistantError`` such a call raises comes back as ``service_error``
+  (``translation_key``, ``message``): it may have run.
 * ``ha_mcp_tools/bulk_call_service`` — the BATCH write capability (D5a). One frame
   runs the D1 ``ha_mcp_tools`` domain block for EVERY operation FIRST, before any
   dispatch or listener: a batch is fail-closed — one refused op raises the whole
@@ -252,29 +284,33 @@ the info handshake carries no capability entry:
   live objects the health path reads: ``config_entries`` (identity fields only —
   no options/subentries), ``issues`` (the ``_overview_repairs`` slice),
   ``entities`` (the ``registry_lookup`` row shape), ``states``
-  (``State.as_dict()``). ``include_*`` flags gate each section. Reading them in a
+  (``State.as_dict()`` with the live ``last_reported``). ``include_*`` flags gate each section. Reading them in a
   single frame kills the 3x ``config_entries/get`` TOCTOU the server had.
 * ``ha_mcp_tools/entity_lookup`` — registry entries whose ``unique_id`` matches
   (optionally narrowed by ``domain`` / ``platform``), returned as
   ``{matches: [{entity_id, unique_id, platform, domain, config_entry_id,
-  categories, disabled_by, hidden_by}]}``. Multiple matches across platforms are
-  all returned; the server picks. The in-process read is authoritative
+  categories, disabled_by, hidden_by, loaded}]}``, ``loaded`` whether the
+  domain's entity component holds the entity (flag ``entity_lookup_loaded``).
+  Multiple matches across platforms are all returned; the server picks. The in-process read is authoritative
   immediately (no registry-write settle retry).
 * ``ha_mcp_tools/registries`` — the area / floor / label / category registries as
-  the FULL-FIELD ``config/<x>_registry/list`` shapes (byte-compatible with the
-  legacy WS list responses; timestamps as ``created_at`` / ``modified_at``
-  floats via ``.timestamp()``). Only the requested ``registries`` keys are
-  present; ``category`` REQUIRES a non-empty ``category_scopes`` (categories are
+  the rows Core's ``config/<x>_registry/list`` sends (Core's own serializers,
+  so a field Core adds is listed without a change here). Only the requested
+  ``registries`` keys are present; ``category`` REQUIRES a non-empty ``category_scopes`` (categories are
   scoped) — a ``category`` request without one raises ``HomeAssistantError``
   rather than silently serving ``{}``. ``category_registry`` is imported
   function-locally (not needed at module top).
+* ``ha_mcp_tools/registry_fields`` — the fields Core's commands take for a
+  registry, and how Core keeps the fields of one of its entries (see
+  ``registries._do_registry_fields``).
 
 ``ha_mcp_tools/config_get`` was withdrawn before release: it served an entity's
 ``raw_config``, whose freshness lags the config file between a write and the next
 completed reload (no version marker distinguishes a fresh body from a stale one),
 so a get racing a reload returned a pre-edit body. ``ha_config_get_{automation,
 script}`` stay on the legacy REST path (which reads the fresh config file);
-scenes were already legacy-only. A file-reading redesign may return (issue #1813).
+scenes were already legacy-only. YAML source support is planned for the dedicated
+get tools (issue #2632).
 
 Design notes that are load-bearing:
 
@@ -284,12 +320,11 @@ Design notes that are load-bearing:
   manifest version is reported for display only.
 * **Data minimization.** Flow-helper indexing reads ``ConfigEntry.options`` /
   ``title`` only — **never** ``ConfigEntry.data`` (integration credentials).
-* **YAML config bodies are never emitted.** automation/script/scene bodies are
-  indexed for *matching*, but a matched item's ``config`` body is returned only
-  when it is storage/editor-backed AND ``include_config`` is set. YAML-loaded
-  items return identity/metadata only (their ``raw_config`` may carry resolved
-  ``!secret`` plaintext). Body emission for YAML belongs to a future file-based
-  tool.
+* **Search result bodies come from saved editor definitions.** Search matches
+  automations, scripts and scenes against their loaded configuration. When
+  requested, automation and script bodies come from the editor file with YAML
+  tags preserved. A package match directs callers to ``ha_config_get_yaml``
+  for the source. Scenes return metadata only.
 * **Resolved secrets are scrubbed from the match corpus.** Because YAML bodies
   (and flow-helper options) can hold ``!secret`` values resolved to plaintext,
   a body leaf that exactly equals a ``secrets.yaml`` value is dropped before
@@ -314,7 +349,7 @@ code lives in the submodules:
 * ``registry``, ``secrets``, ``assist`` and ``flow_domains``: shared registry, secret-scrub, Assist exposure and flow-helper domain helpers.
 * ``search``, ``search_config``, ``search_score`` and ``visibility``: ``ha_mcp_tools/search``.
 * ``overview``, ``services``, ``lookups``, ``config_entries``, ``registries``,
-  ``dashboards`` and ``logbook``: the read commands.
+  ``dashboards``, ``logbook`` and ``trace_context``: the read commands.
 * ``system``: ``info``, ``system_snapshot``, ``server_entry``, ``server_entry_update`` and ``template_diagnose``.
 * ``call_service`` and ``bulk``: the write commands.
 * ``oauth_callbacks``: read and replace the none-mode OAuth callback allowlist.
@@ -339,6 +374,7 @@ from homeassistant.helpers import entity_registry as er
 
 from .. import (
     automation_config,
+    config_file_items,
     config_references,
     core_contract,
     dashboard_cards_ws,
@@ -346,7 +382,10 @@ from .. import (
     flow_outline,
     flow_record,
     helper_collections,
+    recorder_status,
+    scene_editor,
     todo_items,
+    update_entities,
 )
 from .bulk import _bulk_call_service_prep, _do_bulk_call_service
 from .call_event import _do_call_event
@@ -363,16 +402,16 @@ from .logbook import _do_logbook_events, _logbook_events_prep
 from .lookups import (
     _blueprint_get_prep,
     _do_blueprint_get,
-    _do_device_get,
     _do_device_list,
     _do_entity_enrich,
     _do_entity_lookup,
     _do_exposure,
     _do_registry_lookup,
+    do_device_get,
 )
 from .oauth_callbacks import command_specs as _oauth_callback_specs
-from .overview import _do_helpers_list, _do_overview, _do_states, _helpers_list_prep
-from .registries import _do_registries
+from .overview import _do_overview, _do_states, _helpers_list_prep, do_helpers_list
+from .registries import _do_registries, _do_registry_fields
 from .schemas import (
     _blueprint_get_schema,
     _bulk_call_service_schema,
@@ -392,6 +431,7 @@ from .schemas import (
     _overview_schema,
     _reference_data_schema,
     _registries_schema,
+    _registry_fields_schema,
     _registry_lookup_schema,
     _search_schema,
     _server_entry_schema,
@@ -400,19 +440,21 @@ from .schemas import (
     _states_schema,
     _system_snapshot_schema,
     _template_diagnose_schema,
+    _trace_context_schema,
 )
 from .seam import PreSerializedResult
-from .search import _do_search, _search_prep
+from .search import _search_prep, do_search
 from .services import _do_reference_data, _do_services_list, _services_list_prep
 from .system import (
-    _do_info,
     _do_server_entry,
     _do_server_entry_update,
     _do_system_snapshot,
     _do_template_diagnose,
     _server_entry_update_prep,
     _template_diagnose_prep,
+    do_info,
 )
+from .trace_context import _do_trace_context, _trace_context_prep
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -471,13 +513,13 @@ def _command_specs() -> list[tuple[dict[Any, Any], Any, Any]]:
     ``_do_*`` function a pure, synchronous in-memory read.
     """
     return [
-        (_info_schema(), lambda hass, msg: _do_info(hass), None),
-        (_search_schema(), _do_search, _search_prep),
+        (_info_schema(), lambda hass, msg: do_info(hass), None),
+        (_search_schema(), do_search, _search_prep),
         (_overview_schema(), _do_overview, None),
-        (_helpers_list_schema(), _do_helpers_list, _helpers_list_prep),
+        (_helpers_list_schema(), do_helpers_list, _helpers_list_prep),
         (_states_schema(), _do_states, None),
         (_blueprint_get_schema(), _do_blueprint_get, _blueprint_get_prep),
-        (_device_get_schema(), _do_device_get, None),
+        (_device_get_schema(), do_device_get, None),
         (_device_list_schema(), _do_device_list, None),
         (_entity_enrich_schema(), _do_entity_enrich, None),
         (_exposure_schema(), _do_exposure, None),
@@ -486,6 +528,7 @@ def _command_specs() -> list[tuple[dict[Any, Any], Any, Any]]:
         (_system_snapshot_schema(), _do_system_snapshot, None),
         (_entity_lookup_schema(), _do_entity_lookup, None),
         (_registries_schema(), _do_registries, None),
+        (_registry_fields_schema(), _do_registry_fields, None),
         (_dashboards_schema(), _do_dashboards, _dashboards_prep),
         (_dashboard_edit_schema(), _do_dashboard_edit, _dashboard_edit_prep),
         (_services_list_schema(), _do_services_list, _services_list_prep),
@@ -494,6 +537,9 @@ def _command_specs() -> list[tuple[dict[Any, Any], Any, Any]]:
         # the live process: the recorder read lives in the async prep, the
         # pure formatter only wraps the rows.
         (_logbook_events_schema(), _do_logbook_events, _logbook_events_prep),
+        # Core's live trace store: one in-process pass matches a run's own
+        # context or a triggering parent context across every stored item.
+        (_trace_context_schema(), _do_trace_context, _trace_context_prep),
         (_server_entry_schema(), _do_server_entry, None),
         # The WRITE counterpart of server_entry: the deferred ``async_update_entry``
         # scheduling is inherently async, so it lives in ``_server_entry_update_prep``
@@ -524,10 +570,14 @@ def _command_specs() -> list[tuple[dict[Any, Any], Any, Any]]:
         *entity_restore.command_specs(vol, er),
         *core_contract.command_specs(vol),
         *todo_items.command_specs(vol),
+        *update_entities.command_specs(vol),
         *flow_record.command_specs(vol),
         *flow_outline.command_specs(vol),
+        *scene_editor.command_specs(vol),
         *automation_config.command_specs(vol),
         *config_references.command_specs(vol),
+        *config_file_items.command_specs(vol),
+        *recorder_status.command_specs(vol),
         *dashboard_cards_ws.command_specs(vol),
         *_oauth_callback_specs(),
     ]

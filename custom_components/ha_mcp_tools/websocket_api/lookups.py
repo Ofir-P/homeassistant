@@ -8,14 +8,21 @@ from pathlib import Path
 from typing import Any, NamedTuple
 
 import yaml  # type: ignore[import-untyped]
+from homeassistant.components.blueprint.const import BLUEPRINT_FOLDER
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.entity_component import DATA_INSTANCES
 
-from .assist import _async_get_entity_settings, _is_unknown_entity_error
+from .assist import (
+    _async_get_assistant_settings,
+    _async_get_entity_settings,
+    _is_unknown_entity_error,
+)
 from .registry import (
     _all_device_entries,
     _all_entity_entries,
+    _composed_entity_name,
     _device_dict_repr,
     _effective_device_area_id,
     _entity_partial_dict,
@@ -125,17 +132,17 @@ def _read_blueprint_file(hass: HomeAssistant, domain: str, path: str) -> _Bluepr
     if not callable(path_fn):
         return _UNREADABLE_BLUEPRINT
     try:
-        base = Path(path_fn("blueprints", domain))
+        base = Path(path_fn(BLUEPRINT_FOLDER, domain))
         candidate = Path(path) if path.startswith("/") else base / path
         real = candidate.resolve()
         base_real = base.resolve()
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return _UNREADABLE_BLUEPRINT
     if not (real == base_real or real.is_relative_to(base_real)):
         return _UNREADABLE_BLUEPRINT
     try:
         text = real.read_text(encoding="utf-8")
-    except (OSError, ValueError):
+    except OSError, ValueError:
         return _UNREADABLE_BLUEPRINT
     try:
         # Instance form (not yaml.load) mirrors the component's existing
@@ -146,7 +153,7 @@ def _read_blueprint_file(hass: HomeAssistant, domain: str, path: str) -> _Bluepr
             parsed = loader.get_single_data()
         finally:
             loader.dispose()
-    except (ValueError, yaml.YAMLError):
+    except ValueError, yaml.YAMLError:
         return _BlueprintFile(text, None)
     return _BlueprintFile(text, parsed if isinstance(parsed, dict) else None)
 
@@ -182,7 +189,7 @@ _BlueprintLoader.add_multi_constructor("!", _drop_blueprint_tag)
 # =============================================================================
 # ha_mcp_tools/device_get + ha_mcp_tools/device_list
 # =============================================================================
-def _do_device_get(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any]:
+def do_device_get(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any]:
     """Return one device registry entry by id, optionally with its entities.
 
     ``{device: <DeviceEntry.dict_repr> | None}`` — a request-local snapshot over
@@ -221,8 +228,8 @@ def _do_device_get(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any
         and isinstance(entry_row.get("parent_device_id"), str)
     ):
         # Additive internal transport metadata. The raw child ``dict_repr`` stays
-        # byte-identical to Core while the server can expose its existing area_id
-        # field using Core's effective placement without a whole-registry read.
+        # byte-identical to Core while the server can report Core's effective
+        # placement as effective_area_id without a whole-registry read.
         result["effective_area_id"] = _effective_device_area_id(view, entry)
     if include_entities:
         result["entities"] = _device_entities(view, device_id) if device_id else []
@@ -234,7 +241,7 @@ def _do_device_list(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, An
 
     The in-process equivalent of ``config/device_registry/list``: each element is
     core's ``DeviceEntry.dict_repr`` returned VERBATIM (same byte-parity rationale
-    as :func:`_do_device_get`), so the server's existing device transforms consume
+    as :func:`do_device_get`), so the server's existing device transforms consume
     it unchanged. An entry whose ``dict_repr`` is unavailable is skipped rather
     than emitted as a partial record.
     """
@@ -294,13 +301,15 @@ def _entries_for_device(view: _RegistryView, device_id: str) -> list[Any]:
 # ha_mcp_tools/entity_enrich
 # =============================================================================
 def _do_entity_enrich(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any]:
-    """Return the area/floor/labels/aliases join for each requested entity_id.
+    """Return the area/floor/labels/aliases join and the composed name for each id.
 
-    ``{entities: {id: {area, floor, labels, aliases}}}`` — each id runs through the
-    SAME :func:`_registry_enrichment` join the search path uses (device-inherited
-    area/labels, resolved NAMES), so ``ha_get_entity`` adds the resolved-name
-    fields the raw registry entry lacks without the caller fanning out its own
-    area/floor/label registry reads. Pure O(id) in-memory registry lookups; a
+    ``{entities: {id: {area, floor, labels, aliases, full_name}}}`` — each id runs
+    through the SAME :func:`_registry_enrichment` join the search path uses
+    (device-inherited area/labels, resolved NAMES), so ``ha_get_entity`` adds the
+    resolved-name fields the raw registry entry lacks without the caller fanning
+    out its own area/floor/label registry reads. ``full_name`` is the name Home
+    Assistant shows, composed by Core as for search and the overview
+    (:func:`_composed_entity_name`). Pure O(id) in-memory registry lookups; a
     registry-only (stateless) entity is enriched too (the join keys off the
     registry, not the state machine). An id with no registry entry yields empty /
     ``None`` fields rather than being dropped, so the caller can pair the result
@@ -316,6 +325,7 @@ def _do_entity_enrich(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, 
             "floor": join["floor"],
             "labels": join["labels"],
             "aliases": join["aliases"],
+            "full_name": _composed_entity_name(view, _reg_entity(view, entity_id)),
         }
     return {"entities": entities}
 
@@ -327,7 +337,7 @@ def _do_exposure(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any]:
     """Return voice-assistant exposure with names/areas attached.
 
     ``{exposed_entities: {id: {assistant: True}}, entity_info: {id: {...}}}``.
-    ``exposed_entities`` is byte-identical to core's ``ws_list_exposed_entities``
+    ``exposed_entities`` holds the same entries as core's ``ws_list_exposed_entities``
     result (``homeassistant/expose_entity/list``): only ``should_expose``-true
     assistants appear, and an entity with none is omitted from the map — so the
     server's existing exposure shaping consumes it unchanged. ``entity_info`` is
@@ -340,9 +350,9 @@ def _do_exposure(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any]:
     * single-entity (``entity_id`` set) — reads core's module-level
       ``async_get_entity_settings`` for that id and enriches it (whether exposed or
       not — the caller asked about that specific entity).
-    * list (``entity_id`` omitted) — mirrors ``ws_list_exposed_entities``: walks
-      the exposed-entities store ids + the entity registry, keeps the exposed ones,
-      and enriches each.
+    * list (``entity_id`` omitted) — takes the ids core's
+      ``async_get_assistant_settings`` holds an option for (registry and
+      exposed-entities store alike), keeps the exposed ones, and enriches each.
 
     Parity guardrails (mirroring the legacy shape, pinned in tests):
 
@@ -364,15 +374,24 @@ def _do_exposure(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, Any]:
             "entity_info": {entity_id: _exposure_enrichment(hass, view, entity_id)},
         }
 
-    exposed_entities: dict[str, Any] = {}
-    entity_info: dict[str, Any] = {}
-    for eid in _all_exposable_entity_ids(hass, view):
-        exposed_to = _entity_exposed_to(hass, eid)
-        if not exposed_to:
-            continue
-        exposed_entities[eid] = exposed_to
-        entity_info[eid] = _exposure_enrichment(hass, view, eid)
-    return {"exposed_entities": exposed_entities, "entity_info": entity_info}
+    # Every id with a stored option for some assistant; each is then judged by
+    # the same per-entity read core's list uses (registry options win there).
+    candidates = dict.fromkeys(
+        eid
+        for settings in _async_get_assistant_settings(hass).values()
+        for eid in settings
+    )
+    exposed_entities = {
+        eid: exposed_to
+        for eid in candidates
+        if (exposed_to := _entity_exposed_to(hass, eid))
+    }
+    return {
+        "exposed_entities": exposed_entities,
+        "entity_info": {
+            eid: _exposure_enrichment(hass, view, eid) for eid in exposed_entities
+        },
+    }
 
 
 def _entity_exposed_to(hass: HomeAssistant, entity_id: str) -> dict[str, bool]:
@@ -430,50 +449,6 @@ def _exposure_enrichment(
         info["friendly_name"] = str(friendly)
         info["state"] = getattr(state, "state", "unknown")
     return info
-
-
-def _all_exposable_entity_ids(hass: HomeAssistant, view: _RegistryView) -> list[str]:
-    """Every id ``ws_list_exposed_entities`` walks: store ids plus registry ids.
-
-    Core iterates ``chain(exposed_entities.entities, entity_registry.entities)`` —
-    the legacy store (entities WITHOUT a unique_id, exposed manually) plus every
-    registry entity. This reproduces that union, de-duplicated with store-first
-    order, so an exposed YAML entity that lives only in the store is not missed.
-    """
-    ordered: list[str] = []
-    seen: set[str] = set()
-    for eid in _legacy_exposed_entity_ids(hass):
-        if eid and eid not in seen:
-            seen.add(eid)
-            ordered.append(eid)
-    for entry in _all_entity_entries(view):
-        entry_eid = getattr(entry, "entity_id", None)
-        if entry_eid and entry_eid not in seen:
-            seen.add(entry_eid)
-            ordered.append(entry_eid)
-    return ordered
-
-
-def _legacy_exposed_entity_ids(hass: HomeAssistant) -> list[str]:
-    """Entity ids in the exposed-entities store (entities without a unique_id).
-
-    The ``exposed_entities.entities`` half of core's ``ws_list_exposed_entities``
-    iteration. Imported lazily (test seam); a missing store / core drift yields
-    ``[]`` so list mode still enumerates the registry half.
-    """
-    try:
-        from homeassistant.components.homeassistant.const import (
-            DATA_EXPOSED_ENTITIES,
-        )
-
-        data = getattr(hass, "data", None)
-        store = data.get(DATA_EXPOSED_ENTITIES) if isinstance(data, Mapping) else None
-    except Exception:  # pragma: no cover - defensive; core drift  # noqa: BLE001
-        return []
-    entities = getattr(store, "entities", None)
-    if isinstance(entities, Mapping):
-        return [str(eid) for eid in entities]
-    return []
 
 
 # =============================================================================
@@ -553,7 +528,10 @@ def _do_entity_lookup(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, 
     """Return registry entries whose ``unique_id`` matches (domain/platform narrow).
 
     ``{matches: [{entity_id, unique_id, platform, domain, config_entry_id,
-    categories, disabled_by, hidden_by}]}``. Scans the entity registry for every
+    categories, disabled_by, hidden_by, loaded}]}``. ``loaded`` is whether the
+    domain's entity component holds the entity: not for a disabled entry, one
+    Core keeps only a restored placeholder state for (a removed YAML scene), or
+    one a reload is re-adding. Scans the entity registry for every
     entry whose ``unique_id`` equals the requested one, optionally narrowed by
     ``domain`` (the entity's own domain, from its entity_id) and ``platform``
     (the owning integration). Multiple matches across platforms are all returned
@@ -574,6 +552,7 @@ def _do_entity_lookup(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, 
     view = _resolve_registries(hass)
     if view.entity is None:
         raise _substrate_unavailable("entity registry")
+    components = hass.data.get(DATA_INSTANCES, {})
     matches: list[dict[str, Any]] = []
     for entry in _all_entity_entries(view):
         if getattr(entry, "unique_id", None) != unique_id:
@@ -584,6 +563,7 @@ def _do_entity_lookup(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, 
             continue
         if platform and getattr(entry, "platform", None) != platform:
             continue
+        component = components.get(ent_domain)
         matches.append(
             {
                 "entity_id": entity_id,
@@ -594,6 +574,8 @@ def _do_entity_lookup(hass: HomeAssistant, params: dict[str, Any]) -> dict[str, 
                 "categories": _plainify(getattr(entry, "categories", None) or {}),
                 "disabled_by": _enum_value(getattr(entry, "disabled_by", None)),
                 "hidden_by": _enum_value(getattr(entry, "hidden_by", None)),
+                "loaded": component is not None
+                and component.get_entity(entity_id) is not None,
             }
         )
     return {"matches": matches}

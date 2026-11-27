@@ -9,16 +9,21 @@ from homeassistant.generated.config_flows import FLOWS
 from .. import (
     automation_config,
     card_definitions,
+    config_file_items,
     config_references,
     core_contract,
     entity_restore,
     flow_outline,
     flow_record,
     helper_collections,
+    recorder_status,
+    scene_editor,
     todo_items,
+    update_entities,
 )
-from ..const import MAX_OAUTH_CALLBACK_LENGTH, MAX_OAUTH_CALLBACKS
+from ..oauth_redirect_allowlist import MAX_OAUTH_CALLBACK_LENGTH, MAX_OAUTH_CALLBACKS
 from . import logbook as _logbook
+from . import trace_context as _trace_context
 
 __all__ = [
     "ALL_SEARCH_TYPES",
@@ -69,6 +74,7 @@ __all__ = [
     "WS_OVERVIEW",
     "WS_REFERENCE_DATA",
     "WS_REGISTRIES",
+    "WS_REGISTRY_FIELDS",
     "WS_REGISTRY_LOOKUP",
     "WS_SEARCH",
     "WS_SERVER_ENTRY",
@@ -77,6 +83,7 @@ __all__ = [
     "WS_STATES",
     "WS_SYSTEM_SNAPSHOT",
     "WS_TEMPLATE_DIAGNOSE",
+    "WS_TRACE_CONTEXT",
     "_SPLIT_RE",
 ]
 
@@ -97,11 +104,13 @@ WS_REGISTRY_LOOKUP = f"{WS_API_PREFIX}/registry_lookup"
 WS_SYSTEM_SNAPSHOT = f"{WS_API_PREFIX}/system_snapshot"
 WS_ENTITY_LOOKUP = f"{WS_API_PREFIX}/entity_lookup"
 WS_REGISTRIES = f"{WS_API_PREFIX}/registries"
+WS_REGISTRY_FIELDS = f"{WS_API_PREFIX}/registry_fields"
 WS_DASHBOARDS = f"{WS_API_PREFIX}/dashboards"
 WS_DASHBOARD_EDIT = f"{WS_API_PREFIX}/dashboard_edit"
 WS_SERVICES_LIST = f"{WS_API_PREFIX}/services_list"
 WS_REFERENCE_DATA = f"{WS_API_PREFIX}/reference_data"
 WS_LOGBOOK_EVENTS = f"{WS_API_PREFIX}/logbook_events"
+WS_TRACE_CONTEXT = f"{WS_API_PREFIX}/trace_context"
 WS_SERVER_ENTRY = f"{WS_API_PREFIX}/server_entry"
 WS_SERVER_ENTRY_UPDATE = f"{WS_API_PREFIX}/server_entry_update"
 WS_CALL_EVENT = f"{WS_API_PREFIX}/call_event"
@@ -124,6 +133,7 @@ CAPABILITIES: list[str] = [
     "search",
     # Location/state filters precede pagination; search accepts any result window.
     "search_unified",
+    "search_editor_bodies",
     # A flag on search: gates its additive result_fields request and generic
     # is_group/member_entity_ids response fields.
     "search_entity_membership",
@@ -153,6 +163,9 @@ CAPABILITIES: list[str] = [
     # unless this flag accompanies the individual command capability.
     "device_registry_child_semantics",
     "entity_enrich",
+    # A flag on entity_enrich: each entity carries ``full_name``, the name Core
+    # composes, as the overview's ``full_name``.
+    "entity_enrich_full_name",
     "exposure",
     "config_entries",
     # A flag on config_entries: gates its opt-in ``include_subentry_data``, the
@@ -164,7 +177,11 @@ CAPABILITIES: list[str] = [
     "registry_lookup",
     "system_snapshot",
     "entity_lookup",
+    # A flag on entity_lookup: each match carries ``loaded``, whether the
+    # domain's entity component holds the entity.
+    "entity_lookup_loaded",
     "registries",
+    "registry_fields",
     "dashboards",
     "dashboard_edit",
     # A flag, not a standalone command: gates the additive whole-document
@@ -187,6 +204,7 @@ CAPABILITIES: list[str] = [
     # entity names) with the entity/device/context filter set; the server's
     # ``ha_get_logs`` logbook source prefers it and falls back to REST/WS.
     *_logbook.CAPABILITIES,
+    *_trace_context.CAPABILITIES,
     # A flag, not a standalone command: gates the optional ``visibility`` param
     # the server may pass to ``ha_mcp_tools/search`` so an old component that
     # would ignore the param is never sent it (param-sniffing is banned for
@@ -197,6 +215,10 @@ CAPABILITIES: list[str] = [
     # server sends that key only to a component advertising this flag, and with
     # an active allowlist requires the flag or falls back to its legacy resolver.
     "search_visibility_allowlist_authorization",
+    # A semantic flag on search_visibility: this component understands the
+    # ``enforce`` wire key and then omits the config records that reference a
+    # hidden entity. The server sends an enforcing search here only with it.
+    "search_visibility_enforce",
     "server_entry",
     # The WRITE counterpart of ``server_entry`` (Phase 3). The server gates its
     # ``ha_dev_manage_server(update_source)`` embedded-mode direct-write on this; an
@@ -226,10 +248,15 @@ CAPABILITIES: list[str] = [
     core_contract.CAPABILITY,
     core_contract.INTEGRATION_CAPABILITY,
     todo_items.CAPABILITY,
+    update_entities.CAPABILITY,
     flow_record.CAPABILITY,
+    flow_record.REPAIRS_CAPABILITY,
     flow_outline.CAPABILITY,
+    scene_editor.CAPABILITY,
     automation_config.CAPABILITY,
     config_references.CAPABILITY,
+    config_file_items.CAPABILITY,
+    recorder_status.CAPABILITY,
     *card_definitions.CAPABILITIES,
 ]
 
@@ -263,7 +290,7 @@ CALL_SERVICE_MAX_TIMEOUT = 60.0
 # Delay before ``server_entry_update``'s deferred ``async_update_entry`` fires, so
 # the WS ``{scheduled: True}`` response flushes to the calling (embedded) server
 # BEFORE the resulting entry reload tears that server's thread down. Mirrors the
-# server side's ``tools_dev._SELF_ACTION_FLUSH_DELAY_S`` (its legacy options-flow
+# server side's ``tools_dev.SELF_ACTION_FLUSH_DELAY_S`` (its legacy options-flow
 # self-restart uses the same headroom for the ingress/webhook hop).
 SERVER_ENTRY_UPDATE_FLUSH_DELAY_S = 1.0
 
@@ -316,7 +343,7 @@ FLOW_HELPER_DOMAINS = frozenset(FLOWS["helper"])
 # ``<type>/list`` handler sends. ``person/list`` also sends the YAML persons
 # and ``tag/list`` adds registry names, so those two are left OUT of
 # ``covered_types`` and the server lists them with ``person/list`` /
-# ``tag/list``. See :func:`_do_helpers_list`.
+# ``tag/list``. See :func:`do_helpers_list`.
 HELPERS_LIST_COLLECTION_DOMAINS = COLLECTION_HELPER_DOMAINS | frozenset({"zone"})
 
 # Every ``EntityComponent`` self-registers here (core's

@@ -33,6 +33,7 @@ from .constants import (
     WS_OVERVIEW,
     WS_REFERENCE_DATA,
     WS_REGISTRIES,
+    WS_REGISTRY_FIELDS,
     WS_REGISTRY_LOOKUP,
     WS_SEARCH,
     WS_SERVER_ENTRY,
@@ -41,11 +42,22 @@ from .constants import (
     WS_STATES,
     WS_SYSTEM_SNAPSHOT,
     WS_TEMPLATE_DIAGNOSE,
+    WS_TRACE_CONTEXT,
 )
+from .trace_context import TRACE_DOMAINS
 
 
 def _info_schema() -> dict[Any, Any]:
     return {vol.Required("type"): WS_INFO}
+
+
+def _trace_context_schema() -> dict[Any, Any]:
+    return {
+        vol.Required("type"): WS_TRACE_CONTEXT,
+        vol.Required("context_id"): str,
+        vol.Optional("domain"): vol.In(TRACE_DOMAINS),
+        vol.Optional("item_id"): str,
+    }
 
 
 # The same bound as ha_eval_template's timeout parameter; it keeps one diagnosis
@@ -86,16 +98,19 @@ _VISIBILITY_BOOL_KEYS = (
     "exclude_hidden",
     "respect_assist_exposure",
     "allowlist_authorization",
+    "enforce",
 )
 
 
 def _visibility_param_schema() -> Any:
-    """Voluptuous schema for the ``search`` ``visibility`` dict — exactly the ten keys.
+    """Voluptuous schema for the ``search`` ``visibility`` dict — exactly these keys.
 
     The nine hide dimensions plus the ``allowlist_authorization`` precedence flag
     (sent only when this component advertises
     ``search_visibility_allowlist_authorization``; absent means legacy
-    precedence). Enumerating the known keys (PREVENT_EXTRA is voluptuous' default
+    precedence) and the ``enforce`` flag (sent only when it advertises
+    ``search_visibility_enforce``; with it the config records referencing a
+    hidden entity are omitted). Enumerating the known keys (PREVENT_EXTRA is voluptuous' default
     for a nested ``Schema``) makes an unknown key a loud ``invalid_format`` command
     error rather than a silent drop. If a newer server emits an eleventh key to
     this component, the server's error taxonomy converts that into a legacy
@@ -241,6 +256,15 @@ def _registries_schema() -> dict[Any, Any]:
     }
 
 
+def _registry_fields_schema() -> dict[Any, Any]:
+    return {
+        vol.Required("type"): WS_REGISTRY_FIELDS,
+        vol.Required("registry"): vol.In(("device", "entity", *REGISTRY_KINDS)),
+        vol.Optional("item_id"): str,
+        vol.Optional("scope"): str,
+    }
+
+
 def _dashboards_schema() -> dict[Any, Any]:
     return {
         vol.Required("type"): WS_DASHBOARDS,
@@ -372,6 +396,7 @@ def _logbook_events_schema() -> dict[Any, Any]:
     # message instead of raising inside Core's processor.
     from homeassistant.helpers import config_validation as cv
 
+    row_key = vol.ExactSequence([vol.Coerce(float), vol.In((0, 1)), int])
     return {
         vol.Required("type"): WS_LOGBOOK_EVENTS,
         vol.Required("start_time"): str,
@@ -379,6 +404,19 @@ def _logbook_events_schema() -> dict[Any, Any]:
         vol.Optional("entity_ids"): [cv.entity_id],
         vol.Optional("device_ids"): [str],
         vol.Optional("context_id"): str,
+        vol.Optional("page"): {
+            vol.Required("order"): vol.In(("oldest", "newest")),
+            vol.Required("limit"): vol.All(int, vol.Range(min=1, max=500)),
+            vol.Required("skip"): vol.All(int, vol.Range(min=0)),
+            vol.Optional("search"): str,
+            vol.Optional("count_range"): vol.ExactSequence(
+                [vol.Coerce(float), vol.Coerce(float)]
+            ),
+            vol.Optional("after"): row_key,
+            vol.Optional("used_bytes"): vol.All(int, vol.Range(min=0)),
+            vol.Optional("collect_keys"): vol.All(int, vol.Range(min=1, max=500)),
+            vol.Optional("keys"): vol.All([row_key], vol.Length(min=1, max=500)),
+        },
     }
 
 
